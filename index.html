@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Idle RPG - Game nhập vai treo máy đánh theo lượt, rèn đồ +100, ghép đồ, săn boss">
+  <title>⚔️ Idle RPG — Huyền Thoại Treo Máy (Turn-Based)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="app">
+
+    <!-- ====== NAVIGATION TABS (5 TABS) ====== -->
+    <nav id="nav-tabs">
+      <button class="tab-btn active" data-tab="battle" id="btn-tab-battle">
+        <span class="tab-icon">⚔️</span>
+        <span class="tab-label">Chiến đấu</span>
+      </button>
+      <button class="tab-btn" data-tab="boss" id="btn-tab-boss">
+        <span class="tab-icon">👹</span>
+        <span class="tab-label">Phòng Boss</span>
+      </button>
+      <button class="tab-btn" data-tab="inventory" id="btn-tab-inventory">
+        <span class="tab-icon">🎒</span>
+        <span class="tab-label">Kho đồ</span>
+      </button>
+      <button class="tab-btn" data-tab="forge" id="btn-tab-forge">
+        <span class="tab-icon">🔨</span>
+        <span class="tab-label">Rèn & Ghép</span>
+      </button>
+      <button class="tab-btn" data-tab="upgrades" id="btn-tab-upgrades">
+        <span class="tab-icon">⬆️</span>
+        <span class="tab-label">Nâng cấp</span>
+      </button>
+      <button class="tab-btn" data-tab="gacha" id="btn-tab-gacha">
+        <span class="tab-icon">🎰</span>
+        <span class="tab-label">Gacha</span>
+      </button>
+    </nav>
+
+    <!-- ====== MAIN CONTENT ====== -->
+    <main id="main-content">
+
+      <!-- ========================================== -->
+      <!-- TAB 1: BATTLE (TURN-BASED DUEL) -->
+      <!-- ========================================== -->
+      <section id="tab-battle" class="tab-content active">
+        <!-- Turn-based Arena Scene -->
+        <div id="battle-scene" class="glass-panel">
+          <div id="extra-turn-banner" class="hidden">⚡ EXTRA TURN! ĐÒN BỒI LIÊN HOÀN ⚡</div>
+
+          <div id="arena-stage">
+            <!-- Player Side -->
+            <div id="fighter-player" class="fighter-side">
+              <div class="fighter-header">
+                <span id="player-battle-name" class="fighter-name">Hiệp Sĩ</span>
+                <span id="player-battle-level" class="fighter-level">Lv. 1</span>
+              </div>
+              <div class="fighter-sprite-wrapper">
+                <div id="player-sprite" class="fighter-avatar">🧑‍🎤</div>
+                <div id="player-damage-container" class="damage-container"></div>
+              </div>
+              <!-- Player HP Bar -->
+              <div class="hp-bar-wrapper">
+                <div class="hp-bar player-hp-bar">
+                  <div id="player-hp-fill" class="hp-fill"></div>
+                </div>
+                <span id="player-hp-text" class="hp-text">120 / 120</span>
+              </div>
+            </div>
+
+            <!-- VS Badge -->
+            <div id="battle-vs-badge">
+              <span class="vs-text">VS</span>
+              <div id="turn-indicator">Lượt đánh</div>
+            </div>
+
+            <!-- Monster Side -->
+            <div id="fighter-monster" class="fighter-side">
+              <div class="fighter-header">
+                <span id="monster-name" class="fighter-name">Slime</span>
+                <span id="monster-level" class="fighter-level">Lv. 1</span>
+              </div>
+              <div class="fighter-sprite-wrapper">
+                <div id="monster-sprite" class="fighter-avatar">🟢</div>
+                <div id="monster-damage-container" class="damage-container"></div>
+              </div>
+              <!-- Monster HP Bar -->
+              <div class="hp-bar-wrapper">
+                <div class="hp-bar monster-hp-bar">
+                  <div id="monster-hp-fill" class="hp-fill"></div>
+                </div>
+                <span id="monster-hp-text" class="hp-text">50 / 50</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kill Counter -->
+          <div id="kill-counter">
+            <span>Tiêu diệt: </span>
+            <span id="kill-count">0</span> quái vật
+          </div>
+        </div>
+
+        <!-- Player Full Stats Panel -->
+        <div id="player-stats-panel" class="glass-panel">
+          <h2 class="panel-title">📊 Thuộc tính chiến đấu</h2>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-label">❤️ Máu tối đa</span>
+              <span class="stat-value" id="stat-hp">120</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">⚔️ Sát thương</span>
+              <span class="stat-value" id="stat-attack">15</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">🛡️ Phòng thủ</span>
+              <span class="stat-value" id="stat-defense">3</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">⚡ Tốc độ (SPD)</span>
+              <span class="stat-value" id="stat-speed">12</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">🧪 Hồi phục/Lượt</span>
+              <span class="stat-value" id="stat-regen">+2 HP</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">💨 Tỉ lệ Đòn bồi</span>
+              <span class="stat-value" id="stat-extra-turn">15%</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">💰 Tỉ lệ vàng</span>
+              <span class="stat-value" id="stat-gold-rate">x1.00</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">📈 EXP cần</span>
+              <span class="stat-value" id="stat-exp-needed">80</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Combat Log -->
+        <div id="combat-log-panel" class="glass-panel">
+          <h2 class="panel-title">📜 Nhật ký chiến đấu</h2>
+          <div id="combat-log"></div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 2: BOSS CHAMBER -->
+      <!-- ========================================== -->
+      <section id="tab-boss" class="tab-content">
+        <div class="section-header-box glass-panel">
+          <div class="boss-header-info">
+            <div>
+              <h2 class="section-title-sm">👹 Phòng Khiêu Chiến Boss</h2>
+              <p class="section-desc">Hạ gục Boss huyền thoại để nhận Bùa Bảo Hiểm & Trang Bị Cực Hiếm!</p>
+            </div>
+            <div class="key-counter-box">
+              <span class="key-icon">🗝️</span>
+              <span id="boss-key-count">0</span>
+              <button id="btn-buy-boss-key" class="btn btn-small btn-primary">Mua Key (💰 <span id="boss-key-price">2,000</span>)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Boss Battle Area (Visible only when fighting boss) -->
+        <div id="boss-active-arena" class="glass-panel hidden">
+          <div class="boss-arena-header">
+            <span id="boss-timer" class="boss-timer-badge">⏱️ 45.0s</span>
+            <button id="btn-forfeit-boss" class="btn btn-small btn-danger-small">Rút lui</button>
+          </div>
+
+          <div class="boss-duel-stage">
+            <div class="boss-avatar-box">
+              <div id="boss-active-sprite" class="boss-sprite">👑🟢</div>
+              <div id="boss-damage-container" class="damage-container"></div>
+            </div>
+            <h3 id="boss-active-name" class="boss-active-title">Vua Slime Khổng Lồ</h3>
+            <div class="hp-bar-wrapper boss-hp-wrapper">
+              <div class="hp-bar">
+                <div id="boss-hp-fill" class="hp-fill boss-hp-fill"></div>
+              </div>
+              <span id="boss-hp-text" class="hp-text">1200 / 1200</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Boss Selection List -->
+        <div id="boss-list-container">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 3: INVENTORY -->
+      <!-- ========================================== -->
+      <section id="tab-inventory" class="tab-content">
+        <!-- Equipped Items -->
+        <div id="equipped-section" class="glass-panel">
+          <h2 class="panel-title">🛡️ Trang bị đang mang</h2>
+          <div id="equipped-slots">
+            <div class="equip-slot" id="slot-weapon" data-slot="weapon">
+              <div class="slot-icon">⚔️</div>
+              <div class="slot-label">Vũ khí</div>
+              <div class="slot-item-name" id="equipped-weapon-name">Trống</div>
+            </div>
+            <div class="equip-slot" id="slot-armor" data-slot="armor">
+              <div class="slot-icon">🛡️</div>
+              <div class="slot-label">Giáp</div>
+              <div class="slot-item-name" id="equipped-armor-name">Trống</div>
+            </div>
+            <div class="equip-slot" id="slot-accessory" data-slot="accessory">
+              <div class="slot-icon">💍</div>
+              <div class="slot-label">Phụ kiện</div>
+              <div class="slot-item-name" id="equipped-accessory-name">Trống</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inventory Grid -->
+        <div id="inventory-section" class="glass-panel">
+          <div id="inventory-header">
+            <div class="inv-header-left">
+              <h2 class="panel-title" style="margin-bottom:0;">🎒 Kho đồ</h2>
+              <span id="inv-count" class="inv-count-badge">0 / 80</span>
+            </div>
+            <div id="inventory-controls">
+              <button id="btn-sort-inv" class="btn btn-small">Sắp xếp</button>
+            </div>
+          </div>
+          <div id="inventory-grid"></div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 4: FORGE & FUSION (RÈN & GHÉP) -->
+      <!-- ========================================== -->
+      <section id="tab-forge" class="tab-content">
+        <!-- Sub Tabs: Cường Hóa vs Ghép Đồ -->
+        <div class="forge-nav-sub">
+          <button class="sub-tab-btn active" id="btn-sub-enhance" data-sub="enhance">🔨 Cường Hóa (+1..+100)</button>
+          <button class="sub-tab-btn" id="btn-sub-fusion" data-sub="fusion">✨ Ghép Đồ (3 Món)</button>
+        </div>
+
+        <!-- --- SECTION: ENHANCEMENT --- -->
+        <div id="forge-sub-enhance" class="forge-sub-content active">
+          <div class="glass-panel enhance-station">
+            <h3 class="panel-title text-center">🔥 Lò Rèn Thần Khí (+0 đến +100)</h3>
+
+            <!-- Selected Item Slot -->
+            <div class="enhance-target-wrapper">
+              <div id="enhance-item-slot" class="enhance-slot-box">
+                <span class="slot-placeholder">Nhấp chọn trang bị bên dưới để rèn</span>
+              </div>
+            </div>
+
+            <!-- Enhancement Stats & Rates Preview -->
+            <div id="enhance-preview" class="enhance-rates-box hidden">
+              <div class="enhance-level-flow">
+                <span id="enhance-current-lvl" class="lvl-badge">+0</span>
+                <span class="lvl-arrow">➔</span>
+                <span id="enhance-next-lvl" class="lvl-badge next-lvl">+1</span>
+              </div>
+              <div class="enhance-rates-grid">
+                <div class="rate-box success-box">
+                  <span class="r-label">Thành công</span>
+                  <span id="rate-success" class="r-val">80%</span>
+                </div>
+                <div class="rate-box crit-box">
+                  <span class="r-label">Bạo kích (+2/+3)</span>
+                  <span id="rate-crit" class="r-val">8%</span>
+                </div>
+                <div class="rate-box drop-box">
+                  <span class="r-label">Rớt cấp (-1)</span>
+                  <span id="rate-drop" class="r-val">0%</span>
+                </div>
+                <div class="rate-box break-box">
+                  <span class="r-label">Vỡ về 0</span>
+                  <span id="rate-break" class="r-val">0%</span>
+                </div>
+              </div>
+
+              <!-- Protection Stone Checkbox -->
+              <div class="protection-toggle-box">
+                <label class="protection-label">
+                  <input type="checkbox" id="chk-use-protection">
+                  <span class="protection-text">
+                    🛡️ Sử dụng <strong>Bùa Bảo Hiểm</strong> (Còn: <span id="forge-protection-count">0</span>)
+                  </span>
+                </label>
+                <p class="protection-hint">Bảo toàn 100% cấp độ, không bị rớt cấp hay vỡ về 0 nếu đập thất bại!</p>
+              </div>
+
+              <!-- Action Button -->
+              <div class="enhance-btn-wrapper">
+                <button id="btn-do-enhance" class="btn btn-primary btn-enhance-large">
+                  <span class="btn-icon">🔨</span>
+                  <span>TIẾN HÀNH RÈN</span>
+                  <span id="enhance-cost-tag" class="cost-tag">💰 150</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Inventory Selector for Enhancing -->
+            <div class="forge-inv-selector">
+              <h4 class="selector-title">Chọn trang bị trong kho:</h4>
+              <div id="forge-inv-grid" class="forge-grid-mini"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- --- SECTION: FUSION (GHÉP ĐỒ) --- -->
+        <div id="forge-sub-fusion" class="forge-sub-content">
+          <div class="glass-panel fusion-station">
+            <h3 class="panel-title text-center">✨ Đài Dung Hợp Trang Bị</h3>
+            <p class="section-desc text-center">Dung hợp 3 trang bị cùng bậc để tạo ra 1 trang bị bậc cao hơn!</p>
+
+            <!-- 3 Input Slots -->
+            <div class="fusion-slots-container">
+              <div class="fusion-slot" id="fusion-slot-0" data-idx="0"><span>Trống</span></div>
+              <span class="fusion-plus">+</span>
+              <div class="fusion-slot" id="fusion-slot-1" data-idx="1"><span>Trống</span></div>
+              <span class="fusion-plus">+</span>
+              <div class="fusion-slot" id="fusion-slot-2" data-idx="2"><span>Trống</span></div>
+            </div>
+
+            <!-- Fusion Result Preview -->
+            <div id="fusion-preview" class="fusion-preview-box hidden">
+              <div class="fusion-arrow-down">⬇️</div>
+              <div class="fusion-target-info">
+                <span>Dung hợp lên: <strong id="fusion-target-rarity">Hiếm</strong></span>
+                <span class="fusion-rate-badge">Tỉ lệ thành công: <strong id="fusion-success-rate">85%</strong></span>
+              </div>
+              <button id="btn-do-fusion" class="btn btn-primary btn-fusion-large">✨ BẮT ĐẦU DUNG HỢP</button>
+            </div>
+
+            <!-- Quick Auto-Combine Bar -->
+            <div class="quick-combine-bar glass-panel">
+              <h4 class="selector-title">Ghép Nhanh Hàng Loạt:</h4>
+              <div class="quick-combine-btns">
+                <button class="btn btn-small btn-secondary btn-quick-combine" data-rarity="common">Ghép Thường ➔ Hiếm</button>
+                <button class="btn btn-small btn-secondary btn-quick-combine" data-rarity="rare">Ghép Hiếm ➔ Sử Thi</button>
+                <button class="btn btn-small btn-secondary btn-quick-combine" data-rarity="epic">Ghép Sử Thi ➔ Huyền Thoại</button>
+              </div>
+            </div>
+
+            <!-- Selectable Items for Fusion -->
+            <div class="forge-inv-selector">
+              <h4 class="selector-title">Chọn đồ đưa vào đài ghép:</h4>
+              <div id="fusion-inv-grid" class="forge-grid-mini"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 5: UPGRADES -->
+      <!-- ========================================== -->
+      <section id="tab-upgrades" class="tab-content">
+        <h2 class="section-title">⬆️ Nâng Cấp Chỉ Số Nhân Vật</h2>
+        <div id="upgrade-cards-list" class="upgrade-cards">
+          <!-- Rendered dynamically by UI.js -->
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 6: GACHA -->
+      <!-- ========================================== -->
+      <section id="tab-gacha" class="tab-content">
+        <!-- Banner -->
+        <div id="gacha-banner" class="glass-panel">
+          <div id="banner-art">
+            <div id="banner-glow"></div>
+            <div id="banner-title">✨ Vận Mệnh Thần Giới ✨</div>
+            <div id="banner-subtitle">Quay tìm trang bị quý hiếm — Khám phá thần khí bí ẩn ???</div>
+          </div>
+
+          <!-- Bag space alert indicator right on gacha screen -->
+          <div id="gacha-inv-status" class="gacha-bag-status">
+            🎒 Kho đồ: <span id="gacha-inv-count">0 / 80</span> (<span id="gacha-inv-free">còn 80 chỗ trống</span>)
+          </div>
+
+          <!-- Rates Info with 7 tiers -->
+          <div id="gacha-rates-info">
+            <span class="rate-badge rate-common">Thường 55%</span>
+            <span class="rate-badge rate-rare">Hiếm 30%</span>
+            <span class="rate-badge rate-epic">Sử Thi 12%</span>
+            <span class="rate-badge rate-legendary">Huyền Thoại 2.9%</span>
+            <span class="rate-badge rate-mythic">Thần Thoại 0.1%</span>
+            <span class="rate-badge rate-chaos">Hỗn Mang 0.005%</span>
+            <span class="rate-badge rate-unknown">??? 0.000001%</span>
+          </div>
+        </div>
+
+        <!-- Pull Buttons -->
+        <div id="gacha-buttons">
+          <button class="btn btn-gacha" id="btn-gacha-single">
+            <span class="gacha-btn-label">Quay ×1</span>
+            <span class="gacha-btn-cost">💰 100</span>
+          </button>
+          <button class="btn btn-gacha btn-gacha-multi" id="btn-gacha-multi">
+            <span class="gacha-btn-label">Quay ×10</span>
+            <span class="gacha-btn-cost">💰 900</span>
+            <span class="gacha-discount">Tiết kiệm 10%!</span>
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ====== STATUS BAR (ALWAYS VISIBLE) ====== -->
+    <footer id="status-bar">
+      <div class="status-item" id="status-level-section" title="Cấp độ nhân vật">
+        <span class="status-icon">⭐</span>
+        <span id="status-level">Lv. 1</span>
+      </div>
+      <div class="status-item" id="status-exp-section" title="Kinh nghiệm">
+        <div id="exp-bar">
+          <div id="exp-fill"></div>
+        </div>
+        <span id="exp-text">0 / 80</span>
+      </div>
+      <div class="status-item" id="status-gold-section" title="Vàng">
+        <span class="status-icon">💰</span>
+        <span id="status-gold">0</span>
+      </div>
+      <div class="status-item" id="status-diamond-section" title="Kim Cương">
+        <span class="status-icon">💎</span>
+        <span id="status-diamond">100</span>
+      </div>
+      <div class="status-item" id="status-keys-section" title="Chìa Khóa Boss">
+        <span class="status-icon">🗝️</span>
+        <span id="status-keys">0</span>
+      </div>
+      <div class="status-item" id="status-stones-section" title="Bùa Bảo Hiểm">
+        <span class="status-icon">🛡️</span>
+        <span id="status-stones">0</span>
+      </div>
+      <div class="status-item" id="status-save-section">
+        <button id="btn-save" class="btn btn-small" title="Lưu game">💾</button>
+        <button id="btn-reset" class="btn btn-small btn-danger-small" title="Xóa dữ liệu">🗑️</button>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ====== POPUPS & MODALS ====== -->
+
+  <!-- Item Detail Popup -->
+  <div id="item-detail-popup" class="popup-overlay hidden">
+    <div class="popup-box glass-panel">
+      <div id="detail-item-name" class="detail-name"></div>
+      <div id="detail-item-rarity" class="detail-rarity"></div>
+      <div id="detail-item-type" class="detail-type"></div>
+      <div id="detail-item-stats" class="detail-stats"></div>
+      <div id="detail-item-actions" class="detail-actions">
+        <button id="btn-equip-item" class="btn btn-primary">Trang bị</button>
+        <button id="btn-to-forge-item" class="btn btn-secondary">Đem Rèn</button>
+        <button id="btn-sell-item" class="btn btn-danger">Bán</button>
+        <button id="btn-close-detail" class="btn btn-secondary">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offline Popup -->
+  <div id="offline-popup" class="popup-overlay hidden">
+    <div class="popup-box glass-panel">
+      <h2>🌙 Chào mừng trở lại!</h2>
+      <p id="offline-time-text">Bạn đã offline ...</p>
+      <div id="offline-rewards">
+        <div class="offline-reward">
+          <span class="offline-icon">💰</span>
+          <span id="offline-gold">+0 Vàng</span>
+        </div>
+        <div class="offline-reward">
+          <span class="offline-icon">✨</span>
+          <span id="offline-exp">+0 EXP</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-offline-ok">Nhận thưởng!</button>
+    </div>
+  </div>
+
+  <!-- Gacha Result Popup -->
+  <div id="gacha-result-popup" class="popup-overlay hidden">
+    <div class="popup-box glass-panel gacha-result-box">
+      <h2>🎉 Kết quả Gacha</h2>
+      <div id="gacha-result-items"></div>
+      <button class="btn btn-primary" id="btn-gacha-ok">Tuyệt vời!</button>
+    </div>
+  </div>
+
+  <!-- Boss Victory Popup -->
+  <div id="boss-victory-popup" class="popup-overlay hidden">
+    <div class="popup-box glass-panel boss-victory-box">
+      <h2 class="victory-title">👑 CHIẾN THẮNG BOSS!</h2>
+      <p id="victory-boss-name" class="victory-name">Vua Slime Khổng Lồ</p>
+      <div class="victory-rewards-list">
+        <div class="reward-row">
+          <span>Vàng kiếm được:</span>
+          <strong id="victory-gold" class="text-gold">+0 💰</strong>
+        </div>
+        <div class="reward-row">
+          <span>Kinh nghiệm:</span>
+          <strong id="victory-exp" class="text-exp">+0 ✨</strong>
+        </div>
+        <div id="victory-stone-row" class="reward-row hidden">
+          <span>Phần thưởng quý hiếm:</span>
+          <strong class="text-stone">🛡️ +1 Bùa Bảo Hiểm!</strong>
+        </div>
+        <div id="victory-item-row" class="reward-row hidden">
+          <span>Trang bị rơi:</span>
+          <strong id="victory-item-name" class="text-item">Kiếm</strong>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-boss-victory-ok">Nhận thưởng!</button>
+    </div>
+  </div>
+
+  <!-- Forge Result Popup -->
+  <div id="forge-result-popup" class="popup-overlay hidden">
+    <div class="popup-box glass-panel forge-result-box">
+      <div id="forge-result-icon" class="forge-result-icon">🔨</div>
+      <h2 id="forge-result-title" class="forge-result-title">Rèn Thành Công!</h2>
+      <p id="forge-result-desc" class="forge-result-desc">+1 cấp</p>
+      <button class="btn btn-primary" id="btn-forge-result-ok">Xác nhận</button>
+    </div>
+  </div>
+
+  <!-- ====== SCRIPTS (STRICT LOAD ORDER) ====== -->
+  <script src="js/config.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/monster.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/combat.js"></script>
+  <script src="js/forge.js"></script>
+  <script src="js/boss.js"></script>
+  <script src="js/gacha.js"></script>
+  <script src="js/upgrades.js"></script>
+  <script src="js/save.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>
