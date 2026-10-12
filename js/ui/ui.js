@@ -1,7 +1,3 @@
-// ============================================================
-// ui.js — User Interface Module (Turn-Based, Boss, Forge & Gacha)
-// ============================================================
-
 const UI = {
   _currentTab: 'battle',
   _selectedItemId: null,
@@ -10,91 +6,56 @@ const UI = {
   _combatLogLines: [],
   _maxLogLines: 35,
 
-  // --- Initialize UI bindings ---
   init() {
-    // 1. Navigation Tab Buttons
+    // Tab switching
     document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        this.switchTab(btn.dataset.tab);
-      });
+      btn.addEventListener('click', () => this.switchTab(btn.dataset.tab));
     });
 
-    // 2. Forge Sub-tabs (Enhance vs Fusion)
-    const btnSubEnhance = document.getElementById('btn-sub-enhance');
-    const btnSubFusion = document.getElementById('btn-sub-fusion');
-    if (btnSubEnhance && btnSubFusion) {
-      btnSubEnhance.addEventListener('click', () => this.switchForgeSub('enhance'));
-      btnSubFusion.addEventListener('click', () => this.switchForgeSub('fusion'));
-    }
+    // Forge sub-tabs
+    document.getElementById('btn-sub-enhance')?.addEventListener('click', () => this.switchForgeSub('enhance'));
+    document.getElementById('btn-sub-fusion')?.addEventListener('click', () => this.switchForgeSub('fusion'));
+    document.getElementById('btn-do-enhance')?.addEventListener('click', () => this._handleEnhanceAction());
+    document.getElementById('btn-do-fusion')?.addEventListener('click', () => this._handleFusionAction());
 
-    // 3. Forge Enhancement Actions
-    const btnDoEnhance = document.getElementById('btn-do-enhance');
-    if (btnDoEnhance) {
-      btnDoEnhance.addEventListener('click', () => this._handleEnhanceAction());
-    }
-
-    // 4. Forge Fusion Actions
-    const btnDoFusion = document.getElementById('btn-do-fusion');
-    if (btnDoFusion) {
-      btnDoFusion.addEventListener('click', () => this._handleFusionAction());
-    }
-
-    // Quick Combine buttons
     document.querySelectorAll('.btn-quick-combine').forEach(btn => {
-      btn.addEventListener('click', () => {
-        this._handleQuickCombine(btn.dataset.rarity);
-      });
+      btn.addEventListener('click', () => this._handleQuickCombine(btn.dataset.rarity));
     });
 
-    // 5. Boss Chamber Actions
-    const btnBuyKey = document.getElementById('btn-buy-boss-key');
-    if (btnBuyKey) {
-      btnBuyKey.addEventListener('click', () => {
-        const res = Boss.buyKey();
-        if (res.success) {
-          this.showToast('🗝️ Đã mua 1 Chìa Khóa Boss!');
-        } else {
-          this.showToast('💰 Không đủ Vàng mua Chìa Khóa!');
-        }
-        this.updateStatusBar();
-        this.updateBossChamber();
-      });
-    }
+    // Boss actions
+    document.getElementById('btn-buy-boss-key')?.addEventListener('click', () => {
+      const res = Boss.buyKey();
+      this.showToast(res.success ? '🗝️ Đã mua 1 Chìa Khóa Boss!' : '💰 Không đủ Vàng mua Chìa Khóa!');
+      this.updateStatusBar();
+      this.updateBossChamber();
+    });
 
-    const btnForfeit = document.getElementById('btn-forfeit-boss');
-    if (btnForfeit) {
-      btnForfeit.addEventListener('click', () => {
-        Boss.forfeit();
-      });
-    }
+    document.getElementById('btn-forfeit-boss')?.addEventListener('click', () => Boss.forfeit());
 
-    // 6. Gacha Pull Actions
+    // Gacha buttons
     document.getElementById('btn-gacha-single').addEventListener('click', () => this._handleGachaSingle());
     document.getElementById('btn-gacha-multi').addEventListener('click', () => this._handleGachaMulti());
 
-    // 7. Inventory Sort & Controls
+    // Inventory sort
     document.getElementById('btn-sort-inv').addEventListener('click', () => {
       Inventory.sort();
       this.updateInventory();
       this.updateForge();
     });
 
-    // 8. Item Detail Modal Actions
+    // Item detail modal actions
     document.getElementById('btn-close-detail').addEventListener('click', () => this._closeItemDetail());
     document.getElementById('btn-equip-item').addEventListener('click', () => this._handleEquipItem());
     document.getElementById('btn-sell-item').addEventListener('click', () => this._handleSellItem());
-    const btnToForge = document.getElementById('btn-to-forge-item');
-    if (btnToForge) {
-      btnToForge.addEventListener('click', () => {
-        const id = this._selectedItemId;
-        this._closeItemDetail();
-        this.switchTab('forge');
-        this.switchForgeSub('enhance');
-        this.selectEnhanceItem(id);
-      });
-    }
+    document.getElementById('btn-to-forge-item')?.addEventListener('click', () => {
+      const id = this._selectedItemId;
+      this._closeItemDetail();
+      this.switchTab('forge');
+      this.switchForgeSub('enhance');
+      this.selectEnhanceItem(id);
+    });
 
-    // 9. Equipment Slots (Click to unequip)
+    // Equipment slot click unequip
     document.querySelectorAll('.equip-slot').forEach(slot => {
       slot.addEventListener('click', () => {
         const slotType = slot.dataset.slot;
@@ -110,67 +71,42 @@ const UI = {
       });
     });
 
-    // 10. Popups Close Bindings
+    // Popups close buttons
     document.getElementById('btn-offline-ok').addEventListener('click', () => {
       document.getElementById('offline-popup').classList.add('hidden');
     });
-
     document.getElementById('btn-gacha-ok').addEventListener('click', () => {
       document.getElementById('gacha-result-popup').classList.add('hidden');
     });
+    document.getElementById('btn-boss-victory-ok')?.addEventListener('click', () => {
+      document.getElementById('boss-victory-popup').classList.add('hidden');
+    });
+    document.getElementById('btn-forge-result-ok')?.addEventListener('click', () => {
+      document.getElementById('forge-result-popup').classList.add('hidden');
+    });
 
-    const btnBossVictoryOk = document.getElementById('btn-boss-victory-ok');
-    if (btnBossVictoryOk) {
-      btnBossVictoryOk.addEventListener('click', () => {
-        document.getElementById('boss-victory-popup').classList.add('hidden');
-      });
-    }
-
-    const btnForgeResultOk = document.getElementById('btn-forge-result-ok');
-    if (btnForgeResultOk) {
-      btnForgeResultOk.addEventListener('click', () => {
-        document.getElementById('forge-result-popup').classList.add('hidden');
-      });
-    }
-
-    // 11. Save / Reset Data
+    // Save and reset
     document.getElementById('btn-save').addEventListener('click', () => {
       SaveManager.save();
       this.showToast('💾 Đã lưu tiến trình!');
     });
+    document.getElementById('btn-reset').addEventListener('click', () => SaveManager.reset());
 
-    document.getElementById('btn-reset').addEventListener('click', () => {
-      SaveManager.reset();
-    });
-
-    // Render initial upgrade cards
     this._renderUpgradeCards();
   },
 
-  // ============================================================
-  // TAB SWITCHING
-  // ============================================================
   switchTab(tabName) {
     this._currentTab = tabName;
-
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.tab === tabName);
-    });
-
-    document.querySelectorAll('.tab-content').forEach(section => {
-      section.classList.toggle('active', section.id === `tab-${tabName}`);
-    });
-
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabName));
+    document.querySelectorAll('.tab-content').forEach(s => s.classList.toggle('active', s.id === `tab-${tabName}`));
     this.updateTabContent(tabName);
   },
 
   switchForgeSub(subName) {
     document.getElementById('btn-sub-enhance').classList.toggle('active', subName === 'enhance');
     document.getElementById('btn-sub-fusion').classList.toggle('active', subName === 'fusion');
-
     document.getElementById('forge-sub-enhance').classList.toggle('active', subName === 'enhance');
     document.getElementById('forge-sub-fusion').classList.toggle('active', subName === 'fusion');
-
     this.updateForge();
   },
 
@@ -190,9 +126,6 @@ const UI = {
     }
   },
 
-  // ============================================================
-  // STATUS BAR
-  // ============================================================
   updateStatusBar() {
     if (!GameState.player) return;
     const p = GameState.player;
@@ -203,16 +136,12 @@ const UI = {
     document.getElementById('status-keys').textContent = p.bossKeys || 0;
     document.getElementById('status-stones').textContent = p.protectionStones || 0;
 
-    // EXP Bar
     const needed = Player.getExpNeeded();
     const progress = Player.getExpProgress();
     document.getElementById('exp-fill').style.width = `${progress * 100}%`;
     document.getElementById('exp-text').textContent = `${this._formatNumber(p.exp)} / ${this._formatNumber(needed)}`;
   },
 
-  // ============================================================
-  // TAB 1: BATTLE SCENE
-  // ============================================================
   updateBattle() {
     this.updateBattleStatsOnly();
     this.updateMonsterDisplay();
@@ -222,26 +151,21 @@ const UI = {
   updateBattleStatsOnly() {
     if (!GameState.player) return;
     const p = GameState.player;
-
-    // Player Battle Side
-    document.getElementById('player-battle-level').textContent = `Lv. ${p.level}`;
     const pMaxHp = Player.getEffectiveMaxHp();
     const curHp = Math.max(0, p.currentHp);
-    const pHpPct = Player.getHpPercent();
 
-    document.getElementById('player-hp-fill').style.width = `${pHpPct}%`;
+    document.getElementById('player-battle-level').textContent = `Lv. ${p.level}`;
+    document.getElementById('player-hp-fill').style.width = `${Player.getHpPercent()}%`;
     document.getElementById('player-hp-text').textContent = `${this._formatNumber(curHp)} / ${this._formatNumber(pMaxHp)}`;
 
-    // Full Stats Panel
     document.getElementById('stat-hp').textContent = this._formatNumber(pMaxHp);
     document.getElementById('stat-attack').textContent = this._formatNumber(Player.getEffectiveAttack());
     document.getElementById('stat-defense').textContent = this._formatNumber(Player.getEffectiveDefense());
     document.getElementById('stat-speed').textContent = Player.getEffectiveSpeed();
     document.getElementById('stat-regen').textContent = `+${Player.getEffectiveHpRegen()} HP`;
 
-    const mSpeed = Monster.current ? Monster.current.speed : 10;
-    const extraChance = (Player.getExtraTurnChance(mSpeed) * 100).toFixed(0);
-    document.getElementById('stat-extra-turn').textContent = `${extraChance}%`;
+    const mSpeed = Monster.current?.speed || 10;
+    document.getElementById('stat-extra-turn').textContent = `${(Player.getExtraTurnChance(mSpeed) * 100).toFixed(0)}%`;
     document.getElementById('stat-gold-rate').textContent = `x${Player.getEffectiveGoldRate().toFixed(2)}`;
     document.getElementById('stat-exp-needed').textContent = this._formatNumber(Player.getExpNeeded());
   },
@@ -249,35 +173,22 @@ const UI = {
   updateMonsterDisplay() {
     const m = Monster.current;
     if (!m) return;
-
     document.getElementById('monster-name').textContent = m.name;
     document.getElementById('monster-level').textContent = `Lv. ${m.level}`;
     document.getElementById('monster-sprite').textContent = m.emoji;
-
-    const hpPct = Monster.getHpPercent();
-    document.getElementById('monster-hp-fill').style.width = `${hpPct}%`;
+    document.getElementById('monster-hp-fill').style.width = `${Monster.getHpPercent()}%`;
     document.getElementById('monster-hp-text').textContent = `${this._formatNumber(m.hp)} / ${this._formatNumber(m.maxHp)}`;
   },
 
-  // Floating damage numbers
   showDamageNumber(amount, isCrit, target) {
-    let container;
-    if (target === 'player') {
-      container = document.getElementById('player-damage-container');
-    } else if (target === 'boss') {
-      container = document.getElementById('boss-damage-container');
-    } else {
-      container = document.getElementById('monster-damage-container');
-    }
-
+    const id = target === 'player' ? 'player-damage-container' : target === 'boss' ? 'boss-damage-container' : 'monster-damage-container';
+    const container = document.getElementById(id);
     if (!container) return;
 
     const el = document.createElement('div');
     el.className = `damage-number ${target === 'player' ? 'damage-player' : 'damage-monster'} ${isCrit ? 'damage-crit' : ''}`;
     el.textContent = `-${amount}`;
-
-    const xOffset = Math.random() * 60 - 30;
-    el.style.left = `calc(50% + ${xOffset}px)`;
+    el.style.left = `calc(50% + ${Math.random() * 60 - 30}px)`;
     el.style.top = `${Math.random() * 20}px`;
 
     container.appendChild(el);
@@ -291,36 +202,19 @@ const UI = {
     setTimeout(() => banner.classList.add('hidden'), 1200);
   },
 
-  animatePlayerAttack() {
-    const sprite = document.getElementById('player-sprite');
-    if (!sprite) return;
-    sprite.classList.remove('player-attack-anim');
-    void sprite.offsetWidth;
-    sprite.classList.add('player-attack-anim');
-  },
+  animatePlayerAttack() { this._triggerAnim('player-sprite', 'player-attack-anim'); },
+  animatePlayerHit()    { this._triggerAnim('player-sprite', 'hit-flash'); },
+  animateMonsterAttack(){ this._triggerAnim('monster-sprite', 'monster-attack-anim'); },
+  animateMonsterHit()   { this._triggerAnim('monster-sprite', 'hit-flash'); },
+  animateBossAttack()   { this._triggerAnim('boss-active-sprite', 'monster-attack-anim'); },
+  animateBossHit()      { this._triggerAnim('boss-active-sprite', 'hit-flash'); },
 
-  animatePlayerHit() {
-    const sprite = document.getElementById('player-sprite');
-    if (!sprite) return;
-    sprite.classList.remove('hit-flash');
-    void sprite.offsetWidth;
-    sprite.classList.add('hit-flash');
-  },
-
-  animateMonsterAttack() {
-    const sprite = document.getElementById('monster-sprite');
-    if (!sprite) return;
-    sprite.classList.remove('monster-attack-anim');
-    void sprite.offsetWidth;
-    sprite.classList.add('monster-attack-anim');
-  },
-
-  animateMonsterHit() {
-    const sprite = document.getElementById('monster-sprite');
-    if (!sprite) return;
-    sprite.classList.remove('hit-flash');
-    void sprite.offsetWidth;
-    sprite.classList.add('hit-flash');
+  _triggerAnim(elementId, className) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    el.classList.remove(className);
+    void el.offsetWidth;
+    el.classList.add(className);
   },
 
   animateMonsterDeath(callback) {
@@ -335,48 +229,23 @@ const UI = {
     }, 350);
   },
 
-  animateBossAttack() {
-    const sprite = document.getElementById('boss-active-sprite');
-    if (!sprite) return;
-    sprite.classList.remove('monster-attack-anim');
-    void sprite.offsetWidth;
-    sprite.classList.add('monster-attack-anim');
-  },
-
-  animateBossHit() {
-    const sprite = document.getElementById('boss-active-sprite');
-    if (!sprite) return;
-    sprite.classList.remove('hit-flash');
-    void sprite.offsetWidth;
-    sprite.classList.add('hit-flash');
-  },
-
   addCombatLog(html, className) {
     this._combatLogLines.push({ html, className });
-    if (this._combatLogLines.length > this._maxLogLines) {
-      this._combatLogLines.shift();
-    }
+    if (this._combatLogLines.length > this._maxLogLines) this._combatLogLines.shift();
     const container = document.getElementById('combat-log');
     if (!container) return;
-    container.innerHTML = this._combatLogLines.map(line => {
-      return `<div class="log-entry ${line.className || ''}">${line.html}</div>`;
-    }).join('');
+    container.innerHTML = this._combatLogLines.map(l => `<div class="log-entry ${l.className || ''}">${l.html}</div>`).join('');
     container.scrollTop = container.scrollHeight;
   },
 
-  // ============================================================
-  // TAB 2: BOSS CHAMBER
-  // ============================================================
   updateBossChamber() {
-    const keys = GameState.player ? GameState.player.bossKeys || 0 : 0;
-    document.getElementById('boss-key-count').textContent = keys;
+    document.getElementById('boss-key-count').textContent = GameState.player?.bossKeys || 0;
     document.getElementById('boss-key-price').textContent = this._formatNumber(Boss.getKeyPrice());
 
     const activeArena = document.getElementById('boss-active-arena');
     const bossListContainer = document.getElementById('boss-list-container');
 
-    // If boss fight is active
-    if (GameState.boss && GameState.boss.active) {
+    if (GameState.boss?.active) {
       activeArena.classList.remove('hidden');
       bossListContainer.classList.add('hidden');
 
@@ -384,15 +253,11 @@ const UI = {
       document.getElementById('boss-active-name').textContent = b.name;
       document.getElementById('boss-active-sprite').textContent = b.emoji;
       document.getElementById('boss-timer').textContent = `⏱️ ${b.timer.toFixed(1)}s`;
-
-      const hpPct = Math.max(0, Math.min(100, (b.hp / b.maxHp) * 100));
-      document.getElementById('boss-hp-fill').style.width = `${hpPct}%`;
+      document.getElementById('boss-hp-fill').style.width = `${Math.max(0, Math.min(100, (b.hp / b.maxHp) * 100))}%`;
       document.getElementById('boss-hp-text').textContent = `${this._formatNumber(Math.max(0, b.hp))} / ${this._formatNumber(b.maxHp)}`;
     } else {
       activeArena.classList.add('hidden');
       bossListContainer.classList.remove('hidden');
-
-      // Render boss cards
       this._renderBossList();
     }
   },
@@ -404,11 +269,8 @@ const UI = {
     CONFIG.BOSS_LIST.forEach((boss, index) => {
       const card = document.createElement('div');
       card.className = 'boss-card glass-panel';
-
       const stonePct = (boss.protectionStoneDropRate * 100).toFixed(0);
-      const dropsHtml = boss.itemDropPool.map(r => {
-        return `<span class="reward-tag" style="color: ${CONFIG.RARITY_COLORS[r]}">${CONFIG.RARITY_NAMES[r]}</span>`;
-      }).join('');
+      const dropsHtml = boss.itemDropPool.map(r => `<span class="reward-tag" style="color: ${CONFIG.RARITY_COLORS[r]}">${CONFIG.RARITY_NAMES[r]}</span>`).join('');
 
       card.innerHTML = `
         <div class="boss-card-icon">${boss.emoji}</div>
@@ -434,13 +296,10 @@ const UI = {
 
       card.querySelector('.btn-challenge').addEventListener('click', () => {
         const res = Boss.startFight(index);
-        if (!res.success) {
-          if (res.error === 'not_enough_keys') {
-            this.showToast(`🗝️ Cần ${res.needed} Chìa Khóa để khiêu chiến Boss này!`);
-          }
+        if (!res.success && res.error === 'not_enough_keys') {
+          this.showToast(`🗝️ Cần ${res.needed} Chìa Khóa để khiêu chiến Boss này!`);
         }
       });
-
       container.appendChild(card);
     });
   },
@@ -450,13 +309,7 @@ const UI = {
     document.getElementById('victory-gold').textContent = `+${this._formatNumber(data.gold)} 💰`;
     document.getElementById('victory-exp').textContent = `+${this._formatNumber(data.exp)} ✨`;
 
-    const stoneRow = document.getElementById('victory-stone-row');
-    if (data.protectionStone) {
-      stoneRow.classList.remove('hidden');
-    } else {
-      stoneRow.classList.add('hidden');
-    }
-
+    document.getElementById('victory-stone-row').classList.toggle('hidden', !data.protectionStone);
     const itemRow = document.getElementById('victory-item-row');
     if (data.item) {
       itemRow.classList.remove('hidden');
@@ -466,23 +319,17 @@ const UI = {
     } else {
       itemRow.classList.add('hidden');
     }
-
     document.getElementById('boss-victory-popup').classList.remove('hidden');
   },
 
-  // ============================================================
-  // TAB 3: INVENTORY
-  // ============================================================
   updateInventory() {
     this._renderEquippedSlots();
     this._renderInventoryGrid();
-    document.getElementById('inv-count').textContent =
-      `${Inventory.getCount()} / ${CONFIG.INVENTORY_MAX}`;
+    document.getElementById('inv-count').textContent = `${Inventory.getCount()} / ${CONFIG.INVENTORY_MAX}`;
   },
 
   _renderEquippedSlots() {
     const eq = GameState.player.equipment;
-
     ['weapon', 'armor', 'accessory'].forEach(slot => {
       const slotEl = document.getElementById(`slot-${slot}`);
       const nameEl = document.getElementById(`equipped-${slot}-name`);
@@ -506,29 +353,24 @@ const UI = {
   _renderInventoryGrid() {
     const grid = document.getElementById('inventory-grid');
     grid.innerHTML = '';
-
     const items = GameState.inventory;
 
     items.forEach(item => {
       const el = document.createElement('div');
       el.className = `inv-item rarity-${item.rarity}`;
       el.dataset.itemId = item.id;
-
       const typeIcon = item.type === 'weapon' ? '⚔️' : item.type === 'armor' ? '🛡️' : '💍';
-      const enhanceBadge = (item.enhanceLevel && item.enhanceLevel > 0)
-        ? `<div class="enhance-tag">+${item.enhanceLevel}</div>` : '';
+      const enh = item.enhanceLevel > 0 ? `<div class="enhance-tag">+${item.enhanceLevel}</div>` : '';
 
       el.innerHTML = `
-        ${enhanceBadge}
+        ${enh}
         <div class="item-icon">${typeIcon}</div>
         <div class="item-name-short">${item.name}</div>
       `;
-
       el.addEventListener('click', () => this._openItemDetail(item.id));
       grid.appendChild(el);
     });
 
-    // Empty slots
     const emptyCount = CONFIG.INVENTORY_MAX - items.length;
     for (let i = 0; i < emptyCount; i++) {
       const el = document.createElement('div');
@@ -540,7 +382,6 @@ const UI = {
   _openItemDetail(itemId) {
     const item = Inventory.findItem(itemId);
     if (!item) return;
-
     this._selectedItemId = itemId;
     const enh = item.enhanceLevel > 0 ? ` (+${item.enhanceLevel})` : '';
 
@@ -555,17 +396,16 @@ const UI = {
     const typeNames = { weapon: 'Vũ khí', armor: 'Giáp', accessory: 'Phụ kiện' };
     document.getElementById('detail-item-type').textContent = `Loại: ${typeNames[item.type] || item.type}`;
 
-    // Effective Stats
     const statsHtml = [];
     const stats = Inventory.getItemEffectiveStats(item);
-    for (const stat in stats) {
-      const val = stats[stat];
-      switch (stat) {
-        case 'attack':   statsHtml.push(`⚔️ Tấn công: <strong>+${val}</strong>`); break;
-        case 'maxHp':    statsHtml.push(`❤️ Máu tối đa: <strong>+${val}</strong>`); break;
-        case 'defense':  statsHtml.push(`🛡️ Phòng thủ: <strong>+${val}</strong>`); break;
-        case 'speed':    statsHtml.push(`⚡ Tốc độ: <strong>+${val}</strong>`); break;
-        case 'goldRate': statsHtml.push(`💰 Tỉ lệ vàng: <strong>+${(val * 100).toFixed(0)}%</strong>`); break;
+    for (const s in stats) {
+      const v = stats[s];
+      switch (s) {
+        case 'attack':   statsHtml.push(`⚔️ Tấn công: <strong>+${v}</strong>`); break;
+        case 'maxHp':    statsHtml.push(`❤️ Máu tối đa: <strong>+${v}</strong>`); break;
+        case 'defense':  statsHtml.push(`🛡️ Phòng thủ: <strong>+${v}</strong>`); break;
+        case 'speed':    statsHtml.push(`⚡ Tốc độ: <strong>+${v}</strong>`); break;
+        case 'goldRate': statsHtml.push(`💰 Tỉ lệ vàng: <strong>+${(v * 100).toFixed(0)}%</strong>`); break;
       }
     }
     if (item.enhanceLevel > 0) {
@@ -573,11 +413,8 @@ const UI = {
     }
     document.getElementById('detail-item-stats').innerHTML = statsHtml.join('<br>');
 
-    // Sell Price
-    const basePrice = CONFIG.SELL_PRICES[item.rarity] || 10;
-    const sellPrice = basePrice + (item.enhanceLevel || 0) * 50;
-    document.getElementById('btn-sell-item').textContent = `Bán (${sellPrice} 💰)`;
-
+    const price = (CONFIG.SELL_PRICES[item.rarity] || 10) + (item.enhanceLevel || 0) * 50;
+    document.getElementById('btn-sell-item').textContent = `Bán (${price} 💰)`;
     document.getElementById('item-detail-popup').classList.remove('hidden');
   },
 
@@ -607,29 +444,22 @@ const UI = {
     }
   },
 
-  // ============================================================
-  // TAB 4: FORGE & FUSION
-  // ============================================================
   updateForge() {
     this._updateEnhanceSub();
     this._updateFusionSub();
   },
 
-  // --- Enhance Sub-View ---
   _updateEnhanceSub() {
-    const protectionCount = GameState.player ? GameState.player.protectionStones || 0 : 0;
-    document.getElementById('forge-protection-count').textContent = protectionCount;
-
+    document.getElementById('forge-protection-count').textContent = GameState.player?.protectionStones || 0;
     const slotBox = document.getElementById('enhance-item-slot');
     const previewBox = document.getElementById('enhance-preview');
 
     let item = null;
     if (this._enhanceTargetId) {
       item = Inventory.findItem(this._enhanceTargetId);
-      // check equipped
-      if (!item && GameState.player && GameState.player.equipment) {
+      if (!item && GameState.player?.equipment) {
         for (const s in GameState.player.equipment) {
-          if (GameState.player.equipment[s] && GameState.player.equipment[s].id === this._enhanceTargetId) {
+          if (GameState.player.equipment[s]?.id === this._enhanceTargetId) {
             item = GameState.player.equipment[s];
             break;
           }
@@ -640,15 +470,13 @@ const UI = {
     if (item) {
       slotBox.classList.add('has-item');
       slotBox.style.borderColor = CONFIG.RARITY_COLORS[item.rarity];
-      const enh = item.enhanceLevel > 0 ? ` +${item.enhanceLevel}` : '+0';
       slotBox.innerHTML = `
         <div style="font-size:2rem;">${item.type === 'weapon' ? '⚔️' : item.type === 'armor' ? '🛡️' : '💍'}</div>
         <div style="font-size:0.75rem; font-weight:700; color:${CONFIG.RARITY_COLORS[item.rarity]};">${item.name}</div>
-        <div style="font-size:0.7rem; color:#fff; font-weight:800;">${enh}</div>
+        <div style="font-size:0.7rem; color:#fff; font-weight:800;">+${item.enhanceLevel || 0}</div>
       `;
 
       previewBox.classList.remove('hidden');
-
       const curLvl = item.enhanceLevel || 0;
       document.getElementById('enhance-current-lvl').textContent = `+${curLvl}`;
       document.getElementById('enhance-next-lvl').textContent = `+${Math.min(CONFIG.ENHANCE_MAX, curLvl + 1)}`;
@@ -661,17 +489,13 @@ const UI = {
 
       const cost = CONFIG.getEnhanceCost(curLvl, item.rarity);
       document.getElementById('enhance-cost-tag').textContent = `💰 ${this._formatNumber(cost)}`;
-
-      const btnEnhance = document.getElementById('btn-do-enhance');
-      btnEnhance.disabled = (curLvl >= CONFIG.ENHANCE_MAX) || (GameState.player.gold < cost);
+      document.getElementById('btn-do-enhance').disabled = (curLvl >= CONFIG.ENHANCE_MAX) || (GameState.player.gold < cost);
     } else {
       slotBox.classList.remove('has-item');
       slotBox.style.borderColor = '';
       slotBox.innerHTML = `<span class="slot-placeholder">Nhấp chọn trang bị bên dưới để rèn</span>`;
       previewBox.classList.add('hidden');
     }
-
-    // Mini Inventory Grid for selecting target
     this._renderForgeMiniGrid();
   },
 
@@ -691,56 +515,34 @@ const UI = {
       const enh = item.enhanceLevel > 0 ? `<div class="enhance-tag">+${item.enhanceLevel}</div>` : '';
       const typeIcon = item.type === 'weapon' ? '⚔️' : item.type === 'armor' ? '🛡️' : '💍';
 
-      el.innerHTML = `
-        ${enh}
-        <div class="item-icon">${typeIcon}</div>
-        <div class="item-name-short">${item.name}</div>
-      `;
-
-      el.addEventListener('click', () => {
-        this.selectEnhanceItem(item.id);
-      });
+      el.innerHTML = `${enh}<div class="item-icon">${typeIcon}</div><div class="item-name-short">${item.name}</div>`;
+      el.addEventListener('click', () => this.selectEnhanceItem(item.id));
       grid.appendChild(el);
     });
   },
 
   _handleEnhanceAction() {
     if (!this._enhanceTargetId) return;
-
     const useProtection = document.getElementById('chk-use-protection').checked;
     const res = Forge.enhanceItem(this._enhanceTargetId, useProtection);
 
     if (res.error) {
-      if (res.error === 'not_enough_gold') {
-        this.showToast(`💰 Không đủ Vàng để rèn! (Cần ${this._formatNumber(res.cost)})`);
-      } else if (res.error === 'no_protection_stone') {
-        this.showToast('🛡️ Bạn không có Bùa Bảo Hiểm!');
-      } else if (res.error === 'max_level') {
-        this.showToast('⭐ Trang bị đã đạt cấp tối đa (+100)!');
-      }
+      if (res.error === 'not_enough_gold') this.showToast(`💰 Không đủ Vàng để rèn! (Cần ${this._formatNumber(res.cost)})`);
+      else if (res.error === 'no_protection_stone') this.showToast('🛡️ Bạn không có Bùa Bảo Hiểm!');
+      else if (res.error === 'max_level') this.showToast('⭐ Trang bị đã đạt cấp tối đa (+100)!');
       return;
     }
 
-    // Success outcome
     if (res.success) {
-      let title = '🎉 RÈN THÀNH CÔNG!';
-      let desc = `Lên +${res.newLevel}! (+${res.levelsGained} cấp)`;
-      if (res.type === 'crit2' || res.type === 'crit3') {
-        title = '⚡ BẠO KÍCH NHẢY BẬC!';
-        desc = `May mắn nhảy vọt +${res.levelsGained} bậc! Hiện tại là +${res.newLevel}!`;
-      }
+      const isCrit = res.type === 'crit2' || res.type === 'crit3';
+      const title = isCrit ? '⚡ BẠO KÍCH NHẢY BẬC!' : '🎉 RÈN THÀNH CÔNG!';
+      const desc = isCrit ? `May mắn nhảy vọt +${res.levelsGained} bậc! Lên +${res.newLevel}!` : `Lên +${res.newLevel}! (+${res.levelsGained} cấp)`;
       this.showForgeResultPopup('🔨', title, desc);
     } else {
-      // Failure outcome
-      if (res.type === 'protected') {
-        this.showForgeResultPopup('🛡️', 'BÙA BẢO HIỂM KÍCH HOẠT!', 'Đập thất bại nhưng Bùa đã cứu trang bị, giữ nguyên cấp độ!');
-      } else if (res.type === 'break') {
-        this.showForgeResultPopup('💥', 'TRANG BỊ BỊ VỠ!', `Đập thất bại nặng nề! Trang bị rớt về +0!`);
-      } else if (res.type === 'downgrade') {
-        this.showForgeResultPopup('❌', 'RÈN THẤT BẠI!', `Rớt xuống +${res.newLevel}!`);
-      } else {
-        this.showForgeResultPopup('❌', 'RÈN THẤT BẠI!', `Giữ nguyên cấp độ hiện tại (+${res.level})!`);
-      }
+      if (res.type === 'protected') this.showForgeResultPopup('🛡️', 'BÙA BẢO HIỂM KÍCH HOẠT!', 'Đập thất bại nhưng Bùa đã bảo vệ trang bị, giữ nguyên cấp!');
+      else if (res.type === 'break') this.showForgeResultPopup('💥', 'TRANG BỊ BỊ VỠ!', 'Đập thất bại nặng nề! Trang bị rớt về +0!');
+      else if (res.type === 'downgrade') this.showForgeResultPopup('❌', 'RÈN THẤT BẠI!', `Rớt xuống +${res.newLevel}!`);
+      else this.showForgeResultPopup('❌', 'RÈN THẤT BẠI!', `Giữ nguyên cấp độ hiện tại (+${res.level})!`);
     }
 
     this.updateStatusBar();
@@ -749,9 +551,7 @@ const UI = {
     this.updateBattleStatsOnly();
   },
 
-  // --- Fusion Sub-View ---
   _updateFusionSub() {
-    // 3 slots
     for (let i = 0; i < 3; i++) {
       const slotEl = document.getElementById(`fusion-slot-${i}`);
       const itemId = this._fusionSelectedIds[i];
@@ -776,23 +576,19 @@ const UI = {
       }
     }
 
-    // Preview
     const previewBox = document.getElementById('fusion-preview');
     if (this._fusionSelectedIds.length === 3) {
-      const items = this._fusionSelectedIds.map(id => Inventory.findItem(id)).filter(i => i);
+      const items = this._fusionSelectedIds.map(id => Inventory.findItem(id)).filter(Boolean);
       if (items.length === 3 && items[0].rarity === items[1].rarity && items[1].rarity === items[2].rarity) {
         const curRarity = items[0].rarity;
-        const curIdx = CONFIG.RARITY_ORDER.indexOf(curRarity);
-        const nextRarity = CONFIG.RARITY_ORDER[curIdx + 1];
+        const nextRarity = CONFIG.RARITY_ORDER[CONFIG.RARITY_ORDER.indexOf(curRarity) + 1];
 
         if (nextRarity) {
           previewBox.classList.remove('hidden');
           const targetEl = document.getElementById('fusion-target-rarity');
           targetEl.textContent = CONFIG.RARITY_NAMES[nextRarity];
           targetEl.style.color = CONFIG.RARITY_COLORS[nextRarity];
-
-          const ratePct = ((CONFIG.FUSION_RATES[curRarity] || 0.1) * 100).toFixed(1);
-          document.getElementById('fusion-success-rate').textContent = `${ratePct}%`;
+          document.getElementById('fusion-success-rate').textContent = `${((CONFIG.FUSION_RATES[curRarity] || 0.1) * 100).toFixed(1)}%`;
         } else {
           previewBox.classList.add('hidden');
         }
@@ -802,8 +598,6 @@ const UI = {
     } else {
       previewBox.classList.add('hidden');
     }
-
-    // Render Mini grid for fusion
     this._renderFusionMiniGrid();
   },
 
@@ -818,11 +612,7 @@ const UI = {
       el.className = `inv-item rarity-${item.rarity} ${isSelected ? 'selected-fusion-item' : ''}`;
       const typeIcon = item.type === 'weapon' ? '⚔️' : item.type === 'armor' ? '🛡️' : '💍';
 
-      el.innerHTML = `
-        <div class="item-icon">${typeIcon}</div>
-        <div class="item-name-short">${item.name}</div>
-      `;
-
+      el.innerHTML = `<div class="item-icon">${typeIcon}</div><div class="item-name-short">${item.name}</div>`;
       el.addEventListener('click', () => {
         if (isSelected) {
           this._fusionSelectedIds = this._fusionSelectedIds.filter(id => id !== item.id);
@@ -831,10 +621,9 @@ const UI = {
             this.showToast('Đã chọn đủ 3 món để ghép!');
             return;
           }
-          // Check rarity match
           if (this._fusionSelectedIds.length > 0) {
-            const firstItem = Inventory.findItem(this._fusionSelectedIds[0]);
-            if (firstItem && firstItem.rarity !== item.rarity) {
+            const first = Inventory.findItem(this._fusionSelectedIds[0]);
+            if (first && first.rarity !== item.rarity) {
               this.showToast('Phải chọn 3 món cùng phẩm cấp!');
               return;
             }
@@ -843,14 +632,12 @@ const UI = {
         }
         this._updateFusionSub();
       });
-
       grid.appendChild(el);
     });
   },
 
   _handleFusionAction() {
     if (this._fusionSelectedIds.length !== 3) return;
-
     const res = Forge.combineItems(this._fusionSelectedIds);
     this._fusionSelectedIds = [];
 
@@ -861,17 +648,9 @@ const UI = {
     }
 
     if (res.success) {
-      this.showForgeResultPopup(
-        '✨',
-        'DUNG HỢP THÀNH CÔNG!',
-        `Tạo ra trang bị bậc [${CONFIG.RARITY_NAMES[res.toRarity]}]: ${res.newItem.name}!`
-      );
+      this.showForgeResultPopup('✨', 'DUNG HỢP THÀNH CÔNG!', `Tạo ra trang bị [${CONFIG.RARITY_NAMES[res.toRarity]}]: ${res.newItem.name}!`);
     } else {
-      this.showForgeResultPopup(
-        '💨',
-        'DUNG HỢP THẤT BẠI!',
-        `Nguyên liệu biến mất! Nhận an ủi +${res.consolationGold} Vàng!`
-      );
+      this.showForgeResultPopup('💨', 'DUNG HỢP THẤT BẠI!', `Nguyên liệu biến mất! Nhận an ủi +${res.consolationGold} Vàng!`);
     }
 
     this.updateInventory();
@@ -881,13 +660,10 @@ const UI = {
 
   _handleQuickCombine(rarity) {
     const res = Forge.quickCombine(rarity);
-    if (res.error) {
-      if (res.error === 'not_enough_items') {
-        this.showToast(`Không đủ trang bị bậc [${CONFIG.RARITY_NAMES[rarity]}] để ghép nhanh (Cần ít nhất 3 món)!`);
-      }
+    if (res.error === 'not_enough_items') {
+      this.showToast(`Không đủ trang bị bậc [${CONFIG.RARITY_NAMES[rarity]}] để ghép nhanh (Cần ít nhất 3 món)!`);
       return;
     }
-
     this.showToast(`✨ Ghép nhanh: Thành công ${res.successes} / ${res.totalGroups} lần!`);
     this.updateInventory();
     this.updateForge();
@@ -901,9 +677,6 @@ const UI = {
     document.getElementById('forge-result-popup').classList.remove('hidden');
   },
 
-  // ============================================================
-  // TAB 5: UPGRADES
-  // ============================================================
   _renderUpgradeCards() {
     const container = document.getElementById('upgrade-cards-list');
     container.innerHTML = '';
@@ -926,11 +699,7 @@ const UI = {
           <span class="upgrade-cost" id="cost-upgrade-${type}">💰 50</span>
         </button>
       `;
-
-      card.querySelector('.btn-upgrade').addEventListener('click', () => {
-        this._handleUpgrade(type);
-      });
-
+      card.querySelector('.btn-upgrade').addEventListener('click', () => this._handleUpgrade(type));
       container.appendChild(card);
     }
   },
@@ -943,13 +712,10 @@ const UI = {
 
       const lvlEl = document.getElementById(`lvl-upgrade-${type}`);
       if (lvlEl) lvlEl.textContent = lvl;
-
       const bonusEl = document.getElementById(`bonus-upgrade-${type}`);
       if (bonusEl) bonusEl.textContent = bonusText;
-
       const costEl = document.getElementById(`cost-upgrade-${type}`);
       if (costEl) costEl.textContent = `💰 ${this._formatNumber(cost)}`;
-
       const btn = document.getElementById(`btn-upgrade-${type}`);
       if (btn) btn.disabled = !Upgrades.canAfford(type);
     }
@@ -964,9 +730,6 @@ const UI = {
     }
   },
 
-  // ============================================================
-  // TAB 6: GACHA
-  // ============================================================
   updateGacha() {
     const count = Inventory.getCount();
     const free = Inventory.getFreeSlots();
@@ -974,22 +737,15 @@ const UI = {
 
     const countEl = document.getElementById('gacha-inv-count');
     if (countEl) countEl.textContent = `${count} / ${CONFIG.INVENTORY_MAX}`;
-
     const freeEl = document.getElementById('gacha-inv-free');
     if (freeEl) freeEl.textContent = isFull ? 'HẾT CHỖ TRỐNG!' : `còn ${free} chỗ trống`;
-
     const statusBox = document.getElementById('gacha-inv-status');
     if (statusBox) statusBox.classList.toggle('bag-full', isFull);
 
     const btnSingle = document.getElementById('btn-gacha-single');
     const btnMulti = document.getElementById('btn-gacha-multi');
-
-    if (btnSingle) {
-      btnSingle.disabled = !Gacha.canAffordSingle() || isFull;
-    }
-    if (btnMulti) {
-      btnMulti.disabled = !Gacha.canAffordMulti() || (free < CONFIG.GACHA_MULTI_COUNT);
-    }
+    if (btnSingle) btnSingle.disabled = !Gacha.canAffordSingle() || isFull;
+    if (btnMulti) btnMulti.disabled = !Gacha.canAffordMulti() || (free < CONFIG.GACHA_MULTI_COUNT);
 
     this.updateStatusBar();
   },
@@ -999,17 +755,11 @@ const UI = {
       this.showToast('🎒 Kho đồ đã đầy! Hãy bán hoặc ghép bớt đồ để quay.');
       return;
     }
-
     const res = Gacha.pull('gold');
     if (!res.success) {
-      if (res.error === 'not_enough_gold') {
-        this.showToast('💰 Không đủ Vàng để quay!');
-      } else if (res.error === 'inventory_full') {
-        this.showToast('🎒 Kho đồ đã đầy!');
-      }
+      this.showToast(res.error === 'not_enough_gold' ? '💰 Không đủ Vàng để quay!' : '🎒 Kho đồ đã đầy!');
       return;
     }
-
     this._showGachaResults([res.item]);
     this.updateGacha();
     this.updateInventory();
@@ -1020,17 +770,11 @@ const UI = {
       this.showToast(`🎒 Cần ít nhất ${CONFIG.GACHA_MULTI_COUNT} ô trống trong túi đồ để quay x10!`);
       return;
     }
-
     const res = Gacha.pullMulti('gold');
     if (!res.success) {
-      if (res.error === 'not_enough_gold') {
-        this.showToast('💰 Không đủ Vàng để quay x10!');
-      } else {
-        this.showToast('🎒 Không đủ chỗ trống trong kho đồ!');
-      }
+      this.showToast(res.error === 'not_enough_gold' ? '💰 Không đủ Vàng để quay x10!' : '🎒 Không đủ chỗ trống trong kho đồ!');
       return;
     }
-
     this._showGachaResults(res.items);
     this.updateGacha();
     this.updateInventory();
@@ -1042,7 +786,6 @@ const UI = {
 
     items.forEach((item, index) => {
       const typeIcon = item.type === 'weapon' ? '⚔️' : item.type === 'armor' ? '🛡️' : '💍';
-
       const card = document.createElement('div');
       card.className = `gacha-item-card rarity-${item.rarity}`;
       card.style.animationDelay = `${index * 0.08}s`;
@@ -1053,26 +796,16 @@ const UI = {
         <div class="item-icon">${typeIcon}</div>
         <div class="item-name-short" style="color: ${CONFIG.RARITY_COLORS[item.rarity]}">${item.name}</div>
       `;
-
       container.appendChild(card);
     });
-
     document.getElementById('gacha-result-popup').classList.remove('hidden');
   },
 
-  // ============================================================
-  // OFFLINE POPUP & TOAST NOTIFICATION
-  // ============================================================
   showOfflinePopup(progress) {
     if (!progress) return;
-
-    document.getElementById('offline-time-text').textContent =
-      `Bạn đã offline ${SaveManager.formatOfflineTime(progress.seconds)}`;
-    document.getElementById('offline-gold').textContent =
-      `+${this._formatNumber(progress.gold)} Vàng`;
-    document.getElementById('offline-exp').textContent =
-      `+${this._formatNumber(progress.exp)} EXP`;
-
+    document.getElementById('offline-time-text').textContent = `Bạn đã offline ${SaveManager.formatOfflineTime(progress.seconds)}`;
+    document.getElementById('offline-gold').textContent = `+${this._formatNumber(progress.gold)} Vàng`;
+    document.getElementById('offline-exp').textContent = `+${this._formatNumber(progress.exp)} EXP`;
     document.getElementById('offline-popup').classList.remove('hidden');
   },
 
@@ -1089,7 +822,6 @@ const UI = {
 
   showToast(message) {
     document.querySelectorAll('.toast-notification').forEach(t => t.remove());
-
     const toast = document.createElement('div');
     toast.className = 'level-up-toast toast-notification';
     toast.style.fontSize = '0.9rem';
