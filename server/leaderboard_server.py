@@ -92,15 +92,15 @@ class RequestHandler(BaseHTTPRequestHandler):
         elif path == "/api/version":
             self._set_headers(200)
             v_data = {
-                "version": "2.2.2",
+                "version": "2.2.3",
                 "releaseDate": "2026-10-14",
-                "title": "Bản Cập Nhật v2.2.2 - Đài Dung Hợp Thần Thoại & Hỗn Mang",
+                "title": "Bản Cập Nhật v2.2.3 - Hoàn Thiện Dung Hợp Thần Thoại & Đồng Bộ Trực Tiếp",
                 "changelog": [
-                    "Mở khóa Dung hợp Thần Thoại ➔ Hỗn Mang và Hỗn Mang ➔ ??? (Vô Cực)",
-                    "Bổ sung nút Ghép Nhanh và Tự Động Dung Hợp đầy đủ mọi phẩm chất",
-                    "Khắc phục nút Update hiển thị thông báo popup rõ ràng",
-                    "Cải thiện thông báo trạng thái nổi (Toast Notification) rực rỡ và dễ nhìn",
-                    "Tối ưu toàn diện hiệu năng và giao diện RPG"
+                    "Cố định Popup Cập Nhật ngay trung tâm màn hình, không bị trôi hay che khuất",
+                    "Mở khóa Dung Hợp Thần Thoại ➔ Hỗn Mang và Hỗn Mang ➔ ???",
+                    "Mở đầy đủ nút Ghép Nhanh Hàng Loạt & Tự Động Dung Hợp mọi phẩm chất",
+                    "Bổ sung tùy chọn Quay ×1000 trong Tự Động Gacha",
+                    "Khóa chống lưu cache (No-Cache Headers) đảm bảo cập nhật ăn ngay tức thì"
                 ],
                 "bundleUrl": "/api/patch/bundle",
                 "cssUrl": "/api/patch/css",

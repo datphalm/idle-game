@@ -72,37 +72,50 @@ const Updater = {
 
     const modal = document.createElement('div');
     modal.id = 'update-modal';
-    modal.className = 'modal-overlay';
-    modal.style.zIndex = '99999';
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100vw';
+    modal.style.height = '100vh';
+    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
+    modal.style.backdropFilter = 'blur(10px)';
+    modal.style.webkitBackdropFilter = 'blur(10px)';
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    modal.style.zIndex = '999999';
+    modal.style.padding = '20px';
+    modal.style.boxSizing = 'border-box';
+
     modal.innerHTML = `
-      <div class="modal-box" style="border: 2px solid #00ffcc; box-shadow: 0 0 30px rgba(0,255,204,0.3); max-width: 500px;">
+      <div style="background: linear-gradient(155deg, #13192e, #0b0f1d); border: 2px solid #00ffcc; box-shadow: 0 0 40px rgba(0,255,204,0.4), 0 10px 40px rgba(0,0,0,0.8); max-width: 520px; width: 100%; border-radius: 16px; padding: 24px; box-sizing: border-box; position: relative; animation: modalPop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-          <h2 style="color: #00ffcc; font-size: 20px; margin: 0; display: flex; align-items: center; gap: 8px;">
+          <h2 style="color: #00ffcc; font-size: 20px; margin: 0; display: flex; align-items: center; gap: 8px; font-weight: 900;">
             🚀 BẢN CẬP NHẬT MỚI!
           </h2>
-          <span style="background: rgba(0,255,204,0.15); color: #00ffcc; border: 1px solid #00ffcc; padding: 2px 10px; border-radius: 12px; font-weight: bold; font-size: 13px;">
+          <span style="background: rgba(0,255,204,0.15); color: #00ffcc; border: 1px solid #00ffcc; padding: 4px 12px; border-radius: 12px; font-weight: 800; font-size: 13px;">
             v${updateData.version}
           </span>
         </div>
 
-        <p style="color: #94a3b8; font-size: 13px; margin-bottom: 14px;">
+        <p style="color: #e2e8f0; font-size: 13.5px; font-weight: 600; margin-bottom: 14px; line-height: 1.4;">
           ${updateData.title || 'Phiên bản mới đã sẵn sàng để tải về và trải nghiệm.'}
         </p>
 
-        <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; text-align: left;">
-          <div style="color: #e2e8f0; font-weight: bold; font-size: 13px; margin-bottom: 8px;">Nội dung cập nhật:</div>
-          <ul style="color: #cbd5e1; font-size: 13px; padding-left: 18px; margin: 0; line-height: 1.5;">
+        <div style="background: rgba(15,23,42,0.9); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 14px 16px; margin-bottom: 18px; text-align: left; max-height: 260px; overflow-y: auto;">
+          <div style="color: #00ffcc; font-weight: 800; font-size: 13px; margin-bottom: 8px;">Nội dung cập nhật mới:</div>
+          <ul style="color: #cbd5e1; font-size: 13px; padding-left: 18px; margin: 0; line-height: 1.6;">
             ${changelogHtml}
           </ul>
         </div>
 
-        <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center;">
-          <span style="font-size: 11px; color: #64748b; margin-right: auto;">Mẹo: Đóng và mở lại IdleRPG.exe để tự động cập nhật bản vá.</span>
-          <button class="btn btn-secondary" onclick="document.getElementById('update-modal').remove()">
+        <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center; flex-wrap: wrap;">
+          <span style="font-size: 11px; color: #94a3b8; margin-right: auto;">💡 Mẹo: Đóng và mở lại IdleRPG.exe để nạp bản mới.</span>
+          <button class="btn btn-secondary" onclick="document.getElementById('update-modal').remove()" style="padding: 8px 16px; font-weight: 700;">
             Để Sau
           </button>
-          <button class="btn btn-primary" onclick="location.reload()" style="background: #00ffcc; color: #0f172a; font-weight: bold; border-color: #00ffcc; display: inline-flex; align-items: center; gap: 6px;">
-            🔄 Tải Lại Game
+          <button class="btn btn-primary" onclick="location.reload()" style="background: linear-gradient(135deg, #00ffcc, #0284c7); color: #0f172a; font-weight: 900; border-color: #00ffcc; padding: 8px 18px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(0,255,204,0.4);">
+            🔄 Tải Lại Game Ngay
           </button>
         </div>
       </div>

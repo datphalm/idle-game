@@ -149,10 +149,13 @@ namespace IdleRPGLauncher
                 rawPath = rawPath.Replace('/', Path.DirectorySeparatorChar);
                 string filePath = Path.Combine(_baseDir, rawPath);
 
-                // Thêm Security Headers
+                // Thêm Security & No-Cache Headers để client luôn nạp file mới nhất
                 res.Headers.Add("X-Content-Type-Options", "nosniff");
                 res.Headers.Add("X-Frame-Options", "SAMEORIGIN");
                 res.Headers.Add("Access-Control-Allow-Origin", "*");
+                res.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate");
+                res.Headers.Add("Pragma", "no-cache");
+                res.Headers.Add("Expires", "0");
 
                 if (File.Exists(filePath))
                 {
