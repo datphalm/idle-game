@@ -39,6 +39,10 @@ const Forge = {
       }
 
       item.enhanceLevel = Math.min(CONFIG.ENHANCE_MAX, currentLevel + levelsGained);
+      if (item.enhanceLevel >= 7 && typeof FriendAdmin !== 'undefined') {
+        FriendAdmin.logAction('forge', `Cường hóa thần sầu: Đập thành công [${item.name}] lên +${item.enhanceLevel}!`);
+      }
+      if (typeof Leaderboard !== 'undefined') Leaderboard.syncCurrentPlayer();
       return { success: true, type: outcomeType, item, oldLevel, newLevel: item.enhanceLevel, levelsGained, cost };
     }
 
@@ -51,6 +55,10 @@ const Forge = {
     // 3. Thất bại không bùa: Xét tỉ lệ vỡ về 0 hoặc rớt cấp
     if (Math.random() < rates.failBreak && currentLevel > 0) {
       item.enhanceLevel = 0;
+      if (typeof FriendAdmin !== 'undefined') {
+        FriendAdmin.logAction('forge', `Đập xịt không bùa: [${item.name}] (+${oldLevel}) vỡ nát về +0!`);
+      }
+      if (typeof Leaderboard !== 'undefined') Leaderboard.syncCurrentPlayer();
       return { success: false, type: 'break', item, oldLevel, newLevel: 0, cost };
     }
 
@@ -115,5 +123,41 @@ const Forge = {
     }
 
     return { success: true, rarity, totalGroups, successes, fails, newItems, totalConsolation };
+  },
+
+  // Tinh luyện vũ khí (Refinement R1 -> R5)
+  refineWeapon(baseItemId, sacrificeItemId) {
+    let base = Inventory.findItem(baseItemId);
+    let sacrifice = Inventory.findItem(sacrificeItemId);
+
+    if (!base && GameState.player?.equipment?.weapon?.id === baseItemId) {
+      base = GameState.player.equipment.weapon;
+    }
+    if (!sacrifice && GameState.player?.equipment?.weapon?.id === sacrificeItemId) {
+      sacrifice = GameState.player.equipment.weapon;
+    }
+
+    if (!base || !sacrifice) return { error: 'item_not_found' };
+    if (base.type !== 'weapon' || sacrifice.type !== 'weapon') return { error: 'only_weapons' };
+    if (base.id === sacrifice.id) return { error: 'same_item' };
+    if (base.name !== sacrifice.name) return { error: 'must_be_same_weapon_name' };
+
+    const curRank = base.refinement || 1;
+    if (curRank >= CONFIG.WEAPON_REFINEMENT.maxRank) return { error: 'max_refinement' };
+
+    const cost = Math.floor(10000 * Math.pow(1.8, curRank));
+    if (!Player.spendGold(cost)) return { error: 'not_enough_gold', cost };
+
+    Inventory.removeItem(sacrifice.id);
+    base.refinement = curRank + 1;
+
+    if (typeof FriendAdmin !== 'undefined') {
+      FriendAdmin.logAction('forge', `Tinh luyện đột phá: Vũ khí [${base.name}] đạt Tinh Luyện R${base.refinement}!`);
+    }
+    if (typeof Leaderboard !== 'undefined') {
+      Leaderboard.syncCurrentPlayer();
+    }
+
+    return { success: true, base, oldRank: curRank, newRank: base.refinement, cost };
   }
 };

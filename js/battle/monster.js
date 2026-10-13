@@ -2,9 +2,9 @@ const Monster = {
   current: null,
 
   spawn() {
-    const pLevel = GameState.player.level;
-    const template = CONFIG.getMonsterForLevel(pLevel);
-    const factor = pLevel - 1;
+    const stage = GameState.stage?.current || 1;
+    const template = CONFIG.getMonsterForLevel(stage);
+    const factor = Math.max(0, stage - 1);
 
     const hp = Math.floor(CONFIG.MONSTER_HP_BASE * Math.pow(CONFIG.MONSTER_HP_GROWTH, factor) * (template.hpMod || 1.0));
     const attack = Math.floor(CONFIG.MONSTER_ATK_BASE * Math.pow(CONFIG.MONSTER_ATK_GROWTH, factor) * (template.atkMod || 1.0));
@@ -16,7 +16,8 @@ const Monster = {
     this.current = {
       name: template.name,
       emoji: template.emoji,
-      level: pLevel,
+      level: stage,
+      stage: stage,
       hp: hp,
       maxHp: hp,
       attack: Math.max(3, attack),

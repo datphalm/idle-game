@@ -1,5 +1,6 @@
 const Boss = {
   _timerInterval: null,
+  _actionInterval: null,
 
   buyKey() {
     const cost = this.getKeyPrice();
@@ -20,13 +21,16 @@ const Boss = {
     const keys = GameState.player?.bossKeys || 0;
     if (keys < boss.keyCost) return { success: false, error: 'not_enough_keys', needed: boss.keyCost };
 
+    // Trừ key và hồi đầy máu người chơi chuẩn bị chiến Boss
     GameState.player.bossKeys -= boss.keyCost;
     Player.heal(Player.getEffectiveMaxHp());
 
     GameState.boss = {
       active: true,
       bossIndex,
+      id: boss.id,
       name: boss.name,
+      title: boss.title || 'Đại Boss Huyền Thoại',
       emoji: boss.emoji,
       hp: boss.hp,
       maxHp: boss.hp,
@@ -35,29 +39,53 @@ const Boss = {
       speed: boss.speed,
       timer: boss.timer,
       timerMax: boss.timer,
+      rage: 0,
+      rageMax: 100,
+      skills: boss.skills || [],
       config: boss
     };
 
-    if (this._timerInterval) clearInterval(this._timerInterval);
-    this._timerInterval = setInterval(() => {
-      if (GameState.boss?.active) {
-        GameState.boss.timer -= 0.5;
-        if (GameState.boss.timer <= 0) {
-          GameState.boss.timer = 0;
-          this.endFight(false, 'Hết thời gian! Boss đã đẩy lùi bạn!');
-        }
-        if (typeof UI !== 'undefined') UI.updateBossChamber();
-      }
-    }, 500);
+    // Tạm dừng vòng lặp quái thường để tập trung đánh Boss
+    if (typeof Combat !== 'undefined') Combat.stop();
 
     if (typeof UI !== 'undefined') {
+      UI.switchTab('boss');
       UI.updateBossChamber();
-      UI.addCombatLog(`🔥 <strong>BẮT ĐẦU KHIÊU CHIẾN:</strong> ${boss.name}!`, 'log-danger');
+      UI.addCombatLog(`🔥 <strong>BẮT ĐẦU ĐẠI CHIẾN SOLO BOSS:</strong> ${boss.name}!`, 'log-danger');
+      UI.showToast(`🔥 Solo Boss: ${boss.name}!`);
     }
+
+    this._startBattleLoop();
     return { success: true, boss };
   },
 
-  step() {
+  _startBattleLoop() {
+    this._stopAllIntervals();
+
+    // 1. Đồng hồ đếm ngược (mỗi 1 giây trừ 1s)
+    this._timerInterval = setInterval(() => {
+      if (!GameState.boss?.active) {
+        this._stopAllIntervals();
+        return;
+      }
+
+      GameState.boss.timer -= 1;
+      if (GameState.boss.timer <= 0) {
+        GameState.boss.timer = 0;
+        this.endFight(false, 'Hết thời gian khiêu chiến! Boss đã đẩy lùi bạn!');
+        return;
+      }
+
+      if (typeof UI !== 'undefined') UI.updateBossChamber();
+    }, 1000);
+
+    // 2. Nhịp giao tranh đánh theo lượt độc lập (mỗi 750ms)
+    this._actionInterval = setInterval(() => {
+      this._stepFight();
+    }, 750);
+  },
+
+  _stepFight() {
     if (!GameState.boss?.active) return;
     const b = GameState.boss;
     const p = GameState.player;
@@ -65,64 +93,139 @@ const Boss = {
     if (b.hp <= 0) { this.endFight(true); return; }
     if (p.currentHp <= 0) { this.endFight(false, 'Bạn đã bị Boss đánh bại!'); return; }
 
-    // 1. Người chơi đánh Boss
-    const pDamage = Math.max(1, Math.floor(Player.getEffectiveAttack() * (0.9 + Math.random() * 0.2)) - b.defense);
-    b.hp -= pDamage;
-    UI.showDamageNumber(pDamage, false, 'boss');
-    UI.animatePlayerAttack();
-    UI.animateBossHit();
+    // --- LƯỢT NGƯỜI CHƠI TẤN CÔNG BOSS (KỸ NĂNG ANH HÙNG HOẶC ĐÁNH THƯỜNG) ---
+    const skillRes = Player.checkTriggerHeroSkill();
+    let pDmg = 0;
 
-    if (b.hp <= 0) { b.hp = 0; this.endFight(true); return; }
+    if (skillRes.triggered) {
+      pDmg = skillRes.damage;
+      if (skillRes.type === 'burst' && typeof UI !== 'undefined' && UI.playBurstCinematic) {
+        UI.playBurstCinematic(skillRes);
+      }
+      b.hp = Math.max(0, b.hp - pDmg);
+      if (typeof UI !== 'undefined') {
+        UI.showDamageNumber(pDmg, true, 'boss');
+        UI.animatePlayerAttack();
+        UI.animateBossHit();
+        UI.updateBossChamber();
+        const badgeName = skillRes.type === 'burst' ? '🌟 TUYỆT KỸ NỘ' : '⚡ KỸ NĂNG';
+        UI.addCombatLog(
+          `<strong>${badgeName} [${skillRes.hero.name}]:</strong> ` +
+          `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.skill.name}</span> ` +
+          `gây <strong style="color:#ff0055;">-${pDmg}</strong> lên Boss!`,
+          'log-extra'
+        );
+      }
+    } else {
+      const pAtk = Player.getEffectiveAttack();
+      pDmg = Math.max(1, Math.floor(pAtk * (0.9 + Math.random() * 0.2)) - b.defense);
+      b.hp = Math.max(0, b.hp - pDmg);
 
-    // Kiểm tra đòn bồi
+      if (typeof UI !== 'undefined') {
+        UI.showDamageNumber(pDmg, false, 'boss');
+        UI.animatePlayerAttack();
+        UI.animateBossHit();
+        UI.updateBossChamber();
+      }
+    }
+
+    if (b.hp <= 0) {
+      this.endFight(true);
+      return;
+    }
+
+    // --- ĐÒN BỒI EXTRA TURN NẾU TỐC ĐỘ CAO ---
     const extraChance = Player.getExtraTurnChance(b.speed);
     if (Math.random() < extraChance) {
-      UI.showExtraTurnIndicator();
-      UI.addCombatLog(`⚡ <strong>EXTRA TURN!</strong> Đánh liên kích lên ${b.name}!`, 'log-extra');
-      const extraDamage = Math.max(1, Math.floor(pDamage * 0.9));
-      b.hp -= extraDamage;
+      const extraDmg = Math.max(1, Math.floor(pDmg * 0.85));
+      b.hp = Math.max(0, b.hp - extraDmg);
 
       setTimeout(() => {
-        UI.showDamageNumber(extraDamage, true, 'boss');
-        UI.animateBossHit();
-        if (b.hp <= 0) { b.hp = 0; this.endFight(true); }
+        if (!GameState.boss?.active) return;
+        if (typeof UI !== 'undefined') {
+          UI.showExtraTurnIndicator();
+          UI.showDamageNumber(extraDmg, true, 'boss');
+          UI.animateBossHit();
+          UI.updateBossChamber();
+        }
+        if (b.hp <= 0) this.endFight(true);
       }, 200);
 
       if (b.hp <= 0) return;
     }
 
-    // 2. Boss phản công
+    // --- LƯỢT ĐẠI BOSS PHẢN CÔNG ---
     setTimeout(() => {
       if (!GameState.boss?.active) return;
-      const bDamage = Math.max(1, Math.floor(b.attack * (0.85 + Math.random() * 0.3)) - Player.getEffectiveDefense());
-      const pTakeDmg = Player.takeDamage(bDamage);
+      b.rage = Math.min(100, (b.rage || 0) + 25);
 
-      UI.showDamageNumber(bDamage, false, 'player');
-      UI.animateBossAttack();
-      UI.animatePlayerHit();
+      let bDmg = 0;
+      let usedSkill = null;
 
-      if (pTakeDmg.isDead) {
-        this.endFight(false, 'Bạn đã ngã xuống trước sức mạnh của Boss!');
+      if (b.rage >= 100 && b.skills && b.skills.length > 0) {
+        // Boss kích hoạt kỹ năng đặc biệt
+        usedSkill = b.skills[Math.floor(Math.random() * b.skills.length)];
+        bDmg = Math.max(1, Math.floor(b.attack * (usedSkill.dmgMult || 2.2)) - Player.getEffectiveDefense());
+        b.rage = 0;
       } else {
-        const regen = Player.getEffectiveHpRegen();
-        if (regen > 0) Player.heal(regen);
+        // Đòn đánh thường
+        bDmg = Math.max(1, Math.floor(b.attack * (0.85 + Math.random() * 0.3)) - Player.getEffectiveDefense());
       }
-      UI.updateBossChamber();
-      UI.updateStatusBar();
-    }, 250);
 
-    UI.updateBossChamber();
+      const pResult = Player.takeDamage(bDmg);
+
+      if (typeof UI !== 'undefined') {
+        if (usedSkill) {
+          UI.showBossSkillWarning(b, usedSkill);
+          UI.showDamageNumber(bDmg, true, 'player');
+          if (UI.screenShake) UI.screenShake();
+          UI.addCombatLog(
+            `⚠️ <strong style="color:#ff1744;">[BOSS TUYỆT KỸ]:</strong> ` +
+            `<span style="color:#ffd700; font-weight:800;">${b.name}</span> tung ` +
+            `<span style="color:#ff3d00; font-weight:800;">【${usedSkill.name}】</span> ` +
+            `gây bạo kích <strong style="color:#ff0055;">-${bDmg}</strong>!`,
+            'log-danger'
+          );
+        } else {
+          UI.showDamageNumber(bDmg, false, 'player');
+        }
+
+        UI.animateBossAttack();
+        UI.animatePlayerHit();
+
+        const regen = Player.getEffectiveHpRegen();
+        if (regen > 0 && !pResult.isDead) Player.heal(regen);
+
+        UI.updateBossChamber();
+        UI.updateStatusBar();
+      }
+
+      if (pResult.isDead) {
+        this.endFight(false, 'Bạn đã ngã xuống trước sức mạnh của Boss!');
+      }
+    }, 280);
   },
 
-  endFight(isVictory, reason) {
-    if (!GameState.boss?.active) return;
+  _stopAllIntervals() {
     if (this._timerInterval) {
       clearInterval(this._timerInterval);
       this._timerInterval = null;
     }
+    if (this._actionInterval) {
+      clearInterval(this._actionInterval);
+      this._actionInterval = null;
+    }
+  },
 
-    const boss = GameState.boss.config;
+  endFight(isVictory, reason) {
+    if (!GameState.boss?.active) return;
+    this._stopAllIntervals();
+
+    const boss = GameState.boss.config || CONFIG.BOSS_LIST[GameState.boss.bossIndex];
     GameState.boss.active = false;
+    if (typeof UI !== 'undefined' && UI.hideBossSkillWarning) {
+      UI.hideBossSkillWarning();
+    }
 
     if (isVictory) {
       const goldEarned = Player.gainGold(boss.goldReward);
@@ -140,16 +243,36 @@ const Boss = {
         if (pool?.length) droppedItem = Inventory.addItem(pool[Math.floor(Math.random() * pool.length)]);
       }
 
-      UI.showBossVictoryPopup({ boss, gold: goldEarned, exp: boss.expReward, protectionStone: gotProtectionStone, item: droppedItem });
-      UI.addCombatLog(`👑 <strong>CHIẾN THẮNG BOSS:</strong> ${boss.name}!`, 'level-up');
+      if (typeof UI !== 'undefined') {
+        UI.showBossVictoryPopup({ boss, gold: goldEarned, exp: boss.expReward, protectionStone: gotProtectionStone, item: droppedItem });
+        UI.addCombatLog(`👑 <strong>CHIẾN THẮNG BOSS:</strong> ${boss.name}!`, 'level-up');
+      }
+
+      if (typeof FriendAdmin !== 'undefined') {
+        FriendAdmin.logAction('boss', `Đại chiến thắng lợi: Trảm sát Boss [${boss.name}] nhận +${goldEarned.toLocaleString()} Vàng!`);
+      }
+      if (typeof Leaderboard !== 'undefined') {
+        Leaderboard.syncCurrentPlayer();
+      }
     } else {
       Player.revive();
-      UI.showToast(`💀 Thất bại: ${reason || 'Không thể tiêu diệt Boss!'}`);
-      UI.addCombatLog(`💀 Khiêu chiến thất bại: ${boss.name}`, 'log-danger');
+      if (typeof UI !== 'undefined') {
+        UI.showToast(`💀 Thất bại: ${reason || 'Không thể tiêu diệt Boss!'}`);
+        UI.addCombatLog(`💀 Khiêu chiến thất bại: ${boss.name}`, 'log-danger');
+      }
     }
 
-    UI.updateBossChamber();
-    UI.updateStatusBar();
+    // Khởi động lại vòng lặp quái thường sau khi trận Boss kết thúc
+    if (typeof Combat !== 'undefined') {
+      setTimeout(() => Combat.start(), 300);
+    }
+
+    if (typeof UI !== 'undefined') {
+      UI._bossListRendered = false;
+      UI.updateBossChamber();
+      UI.updateStatusBar();
+      UI.updateBattle();
+    }
   },
 
   forfeit() {

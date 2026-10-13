@@ -1,0 +1,28 @@
+# ==========================================
+# IDLE RPG - GIT IGNORE CONFIGURATION
+# ==========================================
+
+# 1. Thư mục phân phối và file thực thi nhị phân
+# (Tạo tự động bằng 'python tools/obfuscator.py', không đưa lên Git)
+dist/
+*.exe
+*.dll
+*.pdb
+
+# 2. Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 3. Dữ liệu máy chủ và tệp tạm
+server/data/*.json
+scratch/
+temp/
+*.log
+
+# 4. Tệp hệ điều hành và IDE
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

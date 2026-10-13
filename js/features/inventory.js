@@ -25,6 +25,7 @@ const Inventory = {
       type: template.type,
       rarity: template.rarity,
       enhanceLevel: template.enhanceLevel || 0,
+      refinement: template.type === 'weapon' ? (template.refinement || 1) : undefined,
       stats: { ...template.stats }
     };
     GameState.inventory.push(item);
@@ -73,9 +74,31 @@ const Inventory = {
     return price;
   },
 
-  isFull() { return GameState.inventory.length >= CONFIG.INVENTORY_MAX; },
+  getMaxSlots() {
+    return GameState.inventoryMax || CONFIG.INVENTORY_MAX || 80;
+  },
+
+  getExpandCost() {
+    return CONFIG.getInventoryExpandCost(GameState.inventoryExpands || 0);
+  },
+
+  expand() {
+    const curMax = this.getMaxSlots();
+    if (curMax >= CONFIG.INVENTORY_MAX_LIMIT) return { success: false, error: 'limit_reached' };
+
+    const cost = this.getExpandCost();
+    if (!Player.spendGold(cost)) return { success: false, error: 'not_enough_gold', cost };
+
+    GameState.inventoryExpands = (GameState.inventoryExpands || 0) + 1;
+    GameState.inventoryMax = curMax + CONFIG.INVENTORY_EXPAND_STEP;
+    CONFIG.INVENTORY_MAX = GameState.inventoryMax;
+
+    return { success: true, newMax: GameState.inventoryMax, cost };
+  },
+
+  isFull() { return GameState.inventory.length >= this.getMaxSlots(); },
   getCount() { return GameState.inventory.length; },
-  getFreeSlots() { return Math.max(0, CONFIG.INVENTORY_MAX - GameState.inventory.length); },
+  getFreeSlots() { return Math.max(0, this.getMaxSlots() - GameState.inventory.length); },
   getItemsByRarity(rarity) { return GameState.inventory.filter(i => i.rarity === rarity); },
 
   sort() {
@@ -104,8 +127,9 @@ const Inventory = {
   getItemTooltip(item) {
     if (!item) return '';
     const enh = item.enhanceLevel > 0 ? ` +${item.enhanceLevel}` : '';
+    const ref = item.type === 'weapon' ? ` [Tinh Luyện R${item.refinement || 1}]` : '';
     const lines = [
-      `${item.name}${enh}`,
+      `${item.name}${enh}${ref}`,
       `[${CONFIG.RARITY_NAMES[item.rarity] || item.rarity}]`,
       `Loại: ${item.type === 'weapon' ? 'Vũ khí' : item.type === 'armor' ? 'Giáp' : 'Phụ kiện'}`
     ];
