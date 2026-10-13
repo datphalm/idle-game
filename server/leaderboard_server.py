@@ -111,11 +111,13 @@ class RequestHandler(BaseHTTPRequestHandler):
         if path == "/api/player/sync":
             if data and data.get("name"):
                 players = db.get("players", [])
-                p_id = data.get("id") or ("player_" + str(len(players) + 1))
-                
-                # Tìm và cập nhật hoặc thêm mới
-                idx = next((i for i, p in enumerate(players) if p.get("id") == p_id or p.get("name") == data.get("name")), -1)
+                p_id = data.get("id") or ("player_" + str(int(time.time() * 1000)))
+                data["id"] = p_id
                 data["lastActive"] = int(time.time() * 1000)
+                data["isMe"] = False
+                
+                # Tìm và cập nhật hoặc thêm mới theo id duy nhất
+                idx = next((i for i, p in enumerate(players) if p.get("id") == p_id), -1)
                 if idx != -1:
                     players[idx] = data
                 else:

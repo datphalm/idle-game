@@ -57,15 +57,25 @@ const Leaderboard = {
     return Math.floor(atk * 4.5 + hp * 0.8 + def * 3.0 + spd * 15);
   },
 
+  _getOrCreatePlayerId() {
+    let pid = localStorage.getItem('idle_rpg_unique_uid');
+    if (!pid) {
+      pid = 'player_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 8);
+      localStorage.setItem('idle_rpg_unique_uid', pid);
+    }
+    return pid;
+  },
+
   syncCurrentPlayer() {
     if (!GameState.player) return;
     const meta = SaveManager.getProfilesMeta();
     const activeSlot = meta.slots.find(s => s.id === SaveManager.getActiveSlotId());
     const playerName = activeSlot?.name || 'Chiến Binh Của Bạn';
     const activeHero = GameState.heroes?.find(h => h.id === GameState.activeHeroId) || { constellation: 0 };
+    const myUid = this._getOrCreatePlayerId();
 
     const myProfile = {
-      id: 'local_player_' + SaveManager.getActiveSlotId(),
+      id: myUid,
       name: playerName,
       heroId: GameState.activeHeroId || 'hero_traveler',
       constellation: activeHero.constellation || 0,
@@ -73,16 +83,15 @@ const Leaderboard = {
       stage: GameState.stage?.current || 1,
       towerFloor: GameState.dungeon?.towerHighestFloor || GameState.dungeon?.abyssFloor || 1,
       power: this.calculateCurrentPower(),
-      lastActive: Date.now(),
-      isMe: true
+      lastActive: Date.now()
     };
 
     // Cập nhật vào danh sách cục bộ
-    const idx = this._cachedPlayers.findIndex(p => p.id === myProfile.id || p.isMe);
+    const idx = this._cachedPlayers.findIndex(p => p.id === myUid);
     if (idx !== -1) {
-      this._cachedPlayers[idx] = myProfile;
+      this._cachedPlayers[idx] = Object.assign({}, myProfile, { isMe: true });
     } else {
-      this._cachedPlayers.push(myProfile);
+      this._cachedPlayers.push(Object.assign({}, myProfile, { isMe: true }));
     }
     this._saveCache();
 
@@ -92,9 +101,10 @@ const Leaderboard = {
 
   async _syncToServer(playerData) {
     try {
+      const url = (typeof CONFIG !== 'undefined' && CONFIG.SERVER_URL) ? CONFIG.SERVER_URL : this._serverUrl;
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
-      const res = await fetch(`${this._serverUrl}/player/sync`, {
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
+      const res = await fetch(`${url}/player/sync`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(playerData),
@@ -105,8 +115,28 @@ const Leaderboard = {
       if (res && res.ok) {
         const remoteList = await res.json();
         if (Array.isArray(remoteList) && remoteList.length > 0) {
-          this._cachedPlayers = remoteList;
+          const myUid = this._getOrCreatePlayerId();
+          this._cachedPlayers = remoteList.map(p => Object.assign({}, p, { isMe: p.id === myUid }));
           this._saveCache();
+          if (document.getElementById('leaderboard-modal') && !document.getElementById('leaderboard-modal').classList.contains('hidden')) {
+            this.render();
+          }
+        }
+      }
+    } catch (e) {}
+  },
+
+  async fetchRemoteLeaderboard() {
+    try {
+      const url = (typeof CONFIG !== 'undefined' && CONFIG.SERVER_URL) ? CONFIG.SERVER_URL : this._serverUrl;
+      const res = await fetch(`${url}/leaderboard`).catch(() => null);
+      if (res && res.ok) {
+        const remoteList = await res.json();
+        if (Array.isArray(remoteList) && remoteList.length > 0) {
+          const myUid = this._getOrCreatePlayerId();
+          this._cachedPlayers = remoteList.map(p => Object.assign({}, p, { isMe: p.id === myUid }));
+          this._saveCache();
+          this.render();
         }
       }
     } catch (e) {}
@@ -126,6 +156,7 @@ const Leaderboard = {
 
   openModal() {
     this.syncCurrentPlayer();
+    this.fetchRemoteLeaderboard();
     const modal = document.getElementById('leaderboard-modal');
     if (!modal) return;
     this.render();
@@ -146,7 +177,7 @@ const Leaderboard = {
     let html = '';
     sorted.forEach((p, index) => {
       const rank = index + 1;
-      const isMe = p.isMe || p.id.startsWith('local_player');
+      const isMe = p.isMe || p.id === this._getOrCreatePlayerId();
       const hero = CONFIG.getHeroById(p.heroId || 'hero_traveler');
 
       let rankBadge = `<span style="font-weight:bold; font-size:14px; color:#94a3b8;">#${rank}</span>`;
