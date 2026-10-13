@@ -18,11 +18,9 @@ const Boss = {
     const boss = CONFIG.BOSS_LIST[bossIndex];
     if (!boss) return { success: false, error: 'invalid_boss' };
 
-    const keys = GameState.player?.bossKeys || 0;
-    if (keys < boss.keyCost) return { success: false, error: 'not_enough_keys', needed: boss.keyCost };
-
-    // Trừ key và hồi đầy máu người chơi chuẩn bị chiến Boss
-    GameState.player.bossKeys -= boss.keyCost;
+    if (!Player.spendBossKeys(boss.keyCost)) {
+      return { success: false, error: 'not_enough_keys', needed: boss.keyCost };
+    }
     Player.heal(Player.getEffectiveMaxHp());
 
     GameState.boss = {
@@ -130,7 +128,9 @@ const Boss = {
     }
 
     if (b.hp <= 0) {
-      this.endFight(true);
+      b.hp = 0;
+      if (typeof UI !== 'undefined') UI.updateBossChamber();
+      setTimeout(() => this.endFight(true), 450);
       return;
     }
 
@@ -148,7 +148,11 @@ const Boss = {
           UI.animateBossHit();
           UI.updateBossChamber();
         }
-        if (b.hp <= 0) this.endFight(true);
+        if (b.hp <= 0) {
+          b.hp = 0;
+          if (typeof UI !== 'undefined') UI.updateBossChamber();
+          setTimeout(() => this.endFight(true), 450);
+        }
       }, 200);
 
       if (b.hp <= 0) return;

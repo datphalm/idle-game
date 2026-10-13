@@ -1,13 +1,15 @@
 {
-  "version": "2.1.0",
-  "title": "Bản Cập Nhật v2.1.0 - Cân Bằng & Sửa Lỗi Khởi Động",
+  "version": "2.2.0",
+  "title": "Bản Cập Nhật v2.2.0 - Vá Lỗi Gacha, Bán Nhanh & Tối Ưu Hồi Chiêu",
   "releaseDate": "2026-10-14",
   "changelog": [
-    "Sửa triệt để lỗi đứng hình khi khởi chạy game",
-    "Cân bằng lại độ khó Ải 1 (tân thủ đánh 3 phát là qua ải)",
-    "Bổ sung nút Bật/Tắt hiệu ứng FX siêu mượt & nhẹ máy",
-    "Cung Mệnh E0 đến E6 và Tinh Luyện Vũ Khí R1 đến R5",
-    "Bảng Xếp Hạng Toàn Cầu & Nhật Ký Quản Trị Bạn Bè"
+    "Khắc phục triệt để lỗi hoàn trả vàng vô tận khi gacha E6 trùng",
+    "Bổ sung thanh Bán Nhanh trang bị theo phẩm chất và tối ưu giá bán",
+    "Mở tính năng Gacha x1000 và sửa lỗi Auto Gacha dừng đúng phẩm chất ???",
+    "Trừ chìa khóa Boss ngay khi vào trận, không hoàn lại dù thắng hay thua",
+    "Cải tiến hiệu ứng kết liễu: thanh máu về 0 hoàn chỉnh trước khi chuyển quái",
+    "Tối ưu hồi chiêu kỹ năng chạy ngầm mượt mà 60fps và tự động nâng skill",
+    "Đồng bộ chuẩn quốc tế Cung Mệnh E0 đến E6 toàn diện"
   ],
   "downloadUrl": "https://github.com/datphalm/idle-game/releases/latest"
 }

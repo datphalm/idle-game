@@ -102,19 +102,39 @@ const UI = {
     document.getElementById('btn-gacha-100')?.addEventListener('click', () => this._handleGachaPull(100));
     document.getElementById('btn-gacha-1000')?.addEventListener('click', () => this._handleGachaPull(1000));
 
+    // Quick Sell by Rarity
+    document.getElementById('btn-quick-sell-rarity')?.addEventListener('click', () => {
+      const sel = document.getElementById('sel-quick-sell-rarity');
+      const val = sel ? sel.value : 'common,rare';
+      const rarities = val.split(',').map(s => s.trim()).filter(Boolean);
+      const res = Inventory.sellAllByRarities(rarities);
+      if (res.count > 0) {
+        this.showToast(`💰 Đã bán nhanh ${res.count} trang bị, thu về +${this._formatNumber(res.totalGold)} Vàng!`);
+      } else {
+        this.showToast('🎒 Không có trang bị nào thuộc phẩm chất này để bán!');
+      }
+      this.updateInventory();
+      this.updateStatusBar();
+      this.updateForge();
+    });
+
     // Auto Gacha Controls
     document.getElementById('chk-auto-gacha')?.addEventListener('change', (e) => {
       if (!GameState.autoGacha) GameState.autoGacha = { enabled: false, stopAtRarity: 'chaos', batchSize: 10 };
       GameState.autoGacha.enabled = e.target.checked;
+      this._syncAutoGachaControls();
       this.updateGacha();
     });
     document.getElementById('sel-auto-gacha-stop')?.addEventListener('change', (e) => {
       if (!GameState.autoGacha) GameState.autoGacha = { enabled: false, stopAtRarity: 'chaos', batchSize: 10 };
       GameState.autoGacha.stopAtRarity = e.target.value;
+      GameState.autoGacha.stopOnRarity = e.target.value;
     });
     document.getElementById('sel-auto-gacha-batch')?.addEventListener('change', (e) => {
       if (!GameState.autoGacha) GameState.autoGacha = { enabled: false, stopAtRarity: 'chaos', batchSize: 10 };
-      GameState.autoGacha.batchSize = parseInt(e.target.value, 10) || 10;
+      const bSize = parseInt(e.target.value, 10) || 10;
+      GameState.autoGacha.batchSize = bSize;
+      GameState.autoGacha.tier = bSize;
     });
 
     // Auto Hero Skill Upgrade
@@ -122,7 +142,7 @@ const UI = {
       GameState.autoHeroSkill = e.target.checked;
     });
 
-    // Reset Heroes C0 Debug Button
+    // Reset Heroes E0 Debug Button
     document.getElementById('btn-reset-heroes-debug')?.addEventListener('click', () => {
       this.resetHeroesDebug();
     });
@@ -265,6 +285,35 @@ const UI = {
     this._renderUpgradeCards();
     this._syncAutoControls();
     this.updateVfxToggleDisplay();
+    this._startSkillCooldownTicker();
+  },
+
+  _startSkillCooldownTicker() {
+    if (this._skillTickerInterval) clearInterval(this._skillTickerInterval);
+    this._skillTickerInterval = setInterval(() => {
+      this.updateSkillCooldowns();
+    }, 60);
+  },
+
+  _syncAutoGachaControls() {
+    const chk = document.getElementById('chk-auto-gacha');
+    if (chk && GameState.autoGacha) {
+      chk.checked = !!GameState.autoGacha.enabled;
+    }
+    const badge = document.getElementById('auto-gacha-status');
+    if (badge) {
+      const on = GameState.autoGacha?.enabled;
+      badge.textContent = on ? 'Đang tự quay...' : 'Đang tắt';
+      badge.style.color = on ? '#00e5ff' : '#aaa';
+    }
+    const selStop = document.getElementById('sel-auto-gacha-stop');
+    if (selStop && (GameState.autoGacha?.stopAtRarity || GameState.autoGacha?.stopOnRarity)) {
+      selStop.value = GameState.autoGacha.stopAtRarity || GameState.autoGacha.stopOnRarity;
+    }
+    const selBatch = document.getElementById('sel-auto-gacha-batch');
+    if (selBatch && (GameState.autoGacha?.batchSize || GameState.autoGacha?.tier)) {
+      selBatch.value = String(GameState.autoGacha.batchSize || GameState.autoGacha.tier);
+    }
   },
 
   toggleVfx(forceState = null) {
@@ -391,37 +440,42 @@ const UI = {
 
   updateSkillCooldowns() {
     const heroCfg = CONFIG.getHeroById(GameState.activeHeroId);
-    const s2IconEl = document.getElementById('hud-s2-icon');
-    const s3IconEl = document.getElementById('hud-s3-icon');
-    if (s2IconEl && heroCfg.skills?.[1]) s2IconEl.textContent = heroCfg.skills[1].icon;
-    if (s3IconEl && heroCfg.skills?.[2]) s3IconEl.textContent = heroCfg.skills[2].icon;
-
+    if (!heroCfg) return;
     const progress = Player.getSkillCooldownProgress();
-    const s2Fill = document.getElementById('hud-s2-fill');
-    const s2Timer = document.getElementById('hud-s2-timer');
-    if (s2Fill) s2Fill.style.height = `${100 - progress.s2.pct}%`;
-    if (s2Timer) {
-      if (progress.s2.ready) {
-        s2Timer.textContent = 'Sẵn sàng';
-        s2Timer.className = 'skill-hud-timer skill-ready';
-      } else {
-        s2Timer.textContent = `${progress.s2.remainingSec}s`;
-        s2Timer.className = 'skill-hud-timer';
-      }
-    }
 
-    const s3Fill = document.getElementById('hud-s3-fill');
-    const s3Timer = document.getElementById('hud-s3-timer');
-    if (s3Fill) s3Fill.style.height = `${100 - progress.s3.pct}%`;
-    if (s3Timer) {
-      if (progress.s3.ready) {
-        s3Timer.textContent = 'Sẵn sàng';
-        s3Timer.className = 'skill-hud-timer skill-ready';
-      } else {
-        s3Timer.textContent = `${progress.s3.remainingSec}s`;
-        s3Timer.className = 'skill-hud-timer';
+    const prefixes = ['hud', 'boss-hud', 'dungeon-hud', 'tower-hud'];
+    prefixes.forEach(pfx => {
+      const s2IconEl = document.getElementById(`${pfx}-s2-icon`);
+      const s3IconEl = document.getElementById(`${pfx}-s3-icon`);
+      if (s2IconEl && heroCfg.skills?.[1]) s2IconEl.textContent = heroCfg.skills[1].icon;
+      if (s3IconEl && heroCfg.skills?.[2]) s3IconEl.textContent = heroCfg.skills[2].icon;
+
+      const s2Fill = document.getElementById(`${pfx}-s2-fill`);
+      const s2Timer = document.getElementById(`${pfx}-s2-timer`);
+      if (s2Fill) s2Fill.style.height = `${100 - progress.s2.pct}%`;
+      if (s2Timer) {
+        if (progress.s2.ready) {
+          s2Timer.textContent = 'Sẵn sàng';
+          s2Timer.className = 'skill-hud-timer skill-ready';
+        } else {
+          s2Timer.textContent = `${progress.s2.remainingSec}s`;
+          s2Timer.className = 'skill-hud-timer';
+        }
       }
-    }
+
+      const s3Fill = document.getElementById(`${pfx}-s3-fill`);
+      const s3Timer = document.getElementById(`${pfx}-s3-timer`);
+      if (s3Fill) s3Fill.style.height = `${100 - progress.s3.pct}%`;
+      if (s3Timer) {
+        if (progress.s3.ready) {
+          s3Timer.textContent = 'Sẵn sàng';
+          s3Timer.className = 'skill-hud-timer skill-ready';
+        } else {
+          s3Timer.textContent = `${progress.s3.remainingSec}s`;
+          s3Timer.className = 'skill-hud-timer';
+        }
+      }
+    });
   },
 
   _handleExpandInventory() {
@@ -1623,7 +1677,7 @@ const UI = {
     let badgeText = r.isNew
       ? `<span style="background:#10b981; color:#fff; font-size:0.58rem; font-weight:800; padding:1px 5px; border-radius:4px;">✨ MỚI (E0)</span>`
       : (r.refundGold 
-          ? `<span style="background:#ef4444; color:#fff; font-size:0.58rem; font-weight:800; padding:1px 5px; border-radius:4px;">MAX E6 (+50K💰)</span>`
+          ? `<span style="background:#ef4444; color:#fff; font-size:0.58rem; font-weight:800; padding:1px 5px; border-radius:4px;">MAX E6 (+${this._formatNumber(r.refundGold)}💰)</span>`
           : `<span style="background:#f59e0b; color:#fff; font-size:0.58rem; font-weight:800; padding:1px 5px; border-radius:4px;">⭐ Cung Mệnh E${r.constellation}</span>`);
 
     card.innerHTML = `
@@ -1651,7 +1705,7 @@ const UI = {
     const skills = heroCfg.skills || [];
 
     const avatarSvg = typeof Sprites !== 'undefined' ? Sprites.getPlayerSvg('idle', activeId) : '👑';
-    const cBadge = userHero.constellation > 0 ? `Cung Mệnh C${userHero.constellation}` : 'Cung Mệnh C0';
+    const cBadge = userHero.constellation > 0 ? `Cung Mệnh E${userHero.constellation}` : 'Cung Mệnh E0';
     const constellationBonus = (userHero.constellation || 0) * 20;
 
     const skillsHtml = skills.map((sk, idx) => {
@@ -1806,7 +1860,7 @@ const UI = {
         : `<div class="hero-card-avatar" style="font-size:1.8rem;">👑</div>`;
 
       const activeTag = isActive ? `<span class="hero-active-tag">XUẤT CHIẾN</span>` : '';
-      const cBadge = isOwned ? `<span class="hero-card-c-badge">C${userHero.constellation || 0}</span>` : `<span style="font-size:0.62rem; color:var(--text-muted);">🔒 Chưa mở</span>`;
+      const cBadge = isOwned ? `<span class="hero-card-c-badge">E${userHero.constellation || 0}</span>` : `<span style="font-size:0.62rem; color:var(--text-muted);">🔒 Chưa mở</span>`;
 
       card.innerHTML = `
         ${activeTag}
@@ -2253,26 +2307,27 @@ const UI = {
     ['s1', 's2', 's3'].forEach((skKey, idx) => {
       const skLevel = userHero.skillLevels?.[skKey] || 1;
       const cost = skKey === 's1' ? skLevel * 3000 : skKey === 's2' ? skLevel * 5000 : skLevel * 10000;
-      if (GameState.player && GameState.player.gold >= cost && skLevel < 50) {
-        GameState.player.gold -= cost;
-        userHero.skillLevels[skKey] = skLevel + 1;
-        if (this._currentTab === 'heroes') {
-          this.updateHeroesTab();
+      if (GameState.player && (GameState.player.gold || 0) >= cost && skLevel < 50) {
+        if (Player.spendGold(cost)) {
+          userHero.skillLevels[skKey] = skLevel + 1;
+          if (this._currentTab === 'heroes') {
+            this.updateHeroesTab();
+          }
+          this.updateStatusBar();
         }
-        this.updateStatusBar();
       }
     });
   },
 
   resetHeroesDebug() {
-    if (!confirm('Bạn có chắc chắn muốn Reset toàn bộ Anh Hùng về C0 Lv.1 để khắc phục lỗi Full C6 không? (Nhân vật đã sở hữu vẫn được giữ lại)')) return;
+    if (!confirm('Bạn có chắc chắn muốn Reset toàn bộ Anh Hùng về E0 Lv.1 để khắc phục lỗi từ phiên bản cũ không? (Nhân vật đã sở hữu vẫn được giữ lại)')) return;
     if (GameState.heroes) {
       GameState.heroes.forEach(h => {
         h.constellation = 0;
         h.skillLevels = { s1: 1, s2: 1, s3: 1 };
       });
       SaveManager.save();
-      this.showToast('✅ Đã Reset thành công toàn bộ Nhân vật về Cung Mệnh 0 (C0)!');
+      this.showToast('✅ Đã Reset thành công toàn bộ Nhân vật về Cung Mệnh 0 (E0)!');
       this.updateHeroesTab();
     }
   },

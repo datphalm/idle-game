@@ -317,6 +317,15 @@ const Player = {
     if (typeof AntiCheat !== 'undefined') AntiCheat.refreshSignatures();
   },
 
+  spendBossKeys(count) {
+    if ((GameState.player?.bossKeys || 0) >= count) {
+      GameState.player.bossKeys -= count;
+      if (typeof AntiCheat !== 'undefined') AntiCheat.refreshSignatures();
+      return true;
+    }
+    return false;
+  },
+
   spendGold(amount) {
     if (GameState.player.gold >= amount) {
       GameState.player.gold -= amount;

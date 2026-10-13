@@ -179,7 +179,9 @@ const Dungeon = {
         }
       }
       if (m.hp <= 0) {
-        this.handleRoomWaveClear();
+        m.hp = 0;
+        if (typeof UI !== 'undefined') UI.updateDungeonRoomMonster(m);
+        setTimeout(() => this.handleRoomWaveClear(), 400);
         return;
       }
     } else {
@@ -192,7 +194,9 @@ const Dungeon = {
         UI.animateMonsterHit('dungeon');
       }
       if (m.hp <= 0) {
-        this.handleRoomWaveClear();
+        m.hp = 0;
+        if (typeof UI !== 'undefined') UI.updateDungeonRoomMonster(m);
+        setTimeout(() => this.handleRoomWaveClear(), 400);
         return;
       }
     }
@@ -408,7 +412,9 @@ const Dungeon = {
         }
       }
       if (m.hp <= 0) {
-        this.handleTowerFloorClear();
+        m.hp = 0;
+        if (typeof UI !== 'undefined') UI.updateTowerStageEnemy(m);
+        setTimeout(() => this.handleTowerFloorClear(), 400);
         return;
       }
     } else {
@@ -421,7 +427,9 @@ const Dungeon = {
         UI.animateMonsterHit('tower');
       }
       if (m.hp <= 0) {
-        this.handleTowerFloorClear();
+        m.hp = 0;
+        if (typeof UI !== 'undefined') UI.updateTowerStageEnemy(m);
+        setTimeout(() => this.handleTowerFloorClear(), 400);
         return;
       }
     }

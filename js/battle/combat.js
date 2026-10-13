@@ -95,8 +95,10 @@ const Combat = {
       );
 
       if (hitResult.isDead) {
+        m.hp = 0;
+        UI.updateBattleStatsOnly();
         this._onMonsterKill(m);
-        this._scheduleNextTurn(500);
+        this._scheduleNextTurn(550);
         return;
       }
     } else {
@@ -110,8 +112,10 @@ const Combat = {
       UI.animateMonsterHit();
 
       if (hitResult.isDead) {
+        m.hp = 0;
+        UI.updateBattleStatsOnly();
         this._onMonsterKill(m);
-        this._scheduleNextTurn(500);
+        this._scheduleNextTurn(550);
         return;
       }
 

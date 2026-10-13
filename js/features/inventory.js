@@ -68,10 +68,26 @@ const Inventory = {
   sellItem(itemId) {
     const item = this.findItem(itemId);
     if (!item) return 0;
-    const price = (CONFIG.SELL_PRICES[item.rarity] || 10) + (item.enhanceLevel || 0) * 50;
-    GameState.player.gold += price;
+    const price = (CONFIG.SELL_PRICES[item.rarity] || 15) + (item.enhanceLevel || 0) * 50;
+    Player.gainGold(price);
     this.removeItem(itemId);
     return price;
+  },
+
+  sellAllByRarities(rarities) {
+    if (!Array.isArray(rarities)) rarities = [rarities];
+    const toSell = GameState.inventory.filter(i => rarities.includes(i.rarity));
+    if (toSell.length === 0) return { count: 0, totalGold: 0 };
+
+    let totalGold = 0;
+    toSell.forEach(item => {
+      const price = (CONFIG.SELL_PRICES[item.rarity] || 15) + (item.enhanceLevel || 0) * 50;
+      totalGold += price;
+    });
+
+    Player.gainGold(totalGold);
+    GameState.inventory = GameState.inventory.filter(i => !rarities.includes(i.rarity));
+    return { count: toSell.length, totalGold };
   },
 
   getMaxSlots() {

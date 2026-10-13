@@ -653,7 +653,16 @@
               <h2 class="panel-title" style="margin-bottom:0;">🎒 Kho đồ</h2>
               <span id="inv-count" class="inv-count-badge">0 / 80</span>
             </div>
-            <div id="inventory-controls">
+            <div id="inventory-controls" style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+              <div class="quick-sell-wrapper" style="display:inline-flex; align-items:center; gap:4px; background:rgba(0,0,0,0.3); padding:2px 6px; border-radius:6px; border:1px solid rgba(255,255,255,0.1);">
+                <span style="font-size:11px; color:#94a3b8;">Bán nhanh:</span>
+                <select id="sel-quick-sell-rarity" class="custom-select" style="font-size:11px; padding:2px 4px; height:26px;">
+                  <option value="common">Chỉ Đồ Thường (Trắng)</option>
+                  <option value="common,rare" selected>Thường + Hiếm (Trắng & Lam)</option>
+                  <option value="common,rare,epic">Sử Thi trở xuống (Tím/Lam/Trắng)</option>
+                </select>
+                <button id="btn-quick-sell-rarity" class="btn btn-small btn-danger" style="padding:2px 8px; font-size:11px;" title="Bán tất cả trang bị theo phẩm chất đã chọn">💰 Bán</button>
+              </div>
               <button id="btn-expand-inv" class="btn btn-small btn-success-glow" title="Mở rộng thêm 5 ô chứa đồ">➕ Mua 5 Ô (💰 <span id="expand-inv-cost">15,000</span>)</button>
               <button id="btn-sort-inv" class="btn btn-small">Sắp xếp</button>
             </div>
@@ -895,6 +904,7 @@
                 <option value="1">Quay ×1</option>
                 <option value="10" selected>Quay ×10 (Tiết kiệm 10%)</option>
                 <option value="100">Quay ×100 (Tiết kiệm 15%)</option>
+                <option value="1000">Quay ×1000 (Tiết kiệm 20%)</option>
               </select>
             </div>
           </div>

@@ -150,8 +150,8 @@ const CONFIG = {
   },
 
   SELL_PRICES: {
-    common: 3, rare: 12, epic: 50, legendary: 200,
-    mythic: 1000, chaos: 5000, unknown: 100000
+    common: 15, rare: 50, epic: 180, legendary: 600,
+    mythic: 3000, chaos: 15000, unknown: 100000
   },
 
   // Ghép đồ 3 món cùng bậc
@@ -604,7 +604,7 @@ const CONFIG = {
     }
   ],
 
-  GAME_VERSION: '2.1.0',
+  GAME_VERSION: '2.2.0',
   UPDATE_URL: 'https://idle-game-ms6o.onrender.com/api/version',
   SERVER_URL: 'https://idle-game-ms6o.onrender.com/api',
   AUTO_SAVE_INTERVAL: 20000,

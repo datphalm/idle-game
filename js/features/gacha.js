@@ -105,12 +105,22 @@ const Gacha = {
         if (typeof Leaderboard !== 'undefined') Leaderboard.syncCurrentPlayer();
         return { hero: template, isNew: false, constellation: existing.constellation, action: 'constellation_up' };
       } else {
-        // E6 max -> Đổi thành 50000 Vàng an ủi
-        Player.gainGold(50000);
+        // E6 max -> Đổi thành Vàng an ủi theo phẩm chất (khắc phục hoàn toàn lỗi lặp vô tận vàng)
+        const refundByRarity = {
+          common: 50,
+          rare: 150,
+          epic: 500,
+          legendary: 2000,
+          mythic: 8000,
+          chaos: 25000,
+          unknown: 50000
+        };
+        const refundGold = refundByRarity[template.rarity] || 100;
+        Player.gainGold(refundGold);
         if (typeof FriendAdmin !== 'undefined') {
-          FriendAdmin.logAction('gacha', `Quay trùng tướng [${template.name}] (Đã đạt E6 MAX), chuyển thành 50,000 Vàng!`);
+          FriendAdmin.logAction('gacha', `Quay trùng tướng [${template.name}] (Đã đạt E6 MAX), hoàn trả ${refundGold.toLocaleString()} Vàng.`);
         }
-        return { hero: template, isNew: false, constellation: 6, action: 'max_shards_gold', refundGold: 50000 };
+        return { hero: template, isNew: false, constellation: 6, action: 'max_shards_gold', refundGold };
       }
     } else {
       // Nhân vật mới (E0)
@@ -160,15 +170,15 @@ const Gacha = {
 
   runAutoGacha() {
     if (!GameState.autoGacha?.enabled) return;
-    const isHero = GameState.autoGacha.banner === 'hero';
-    const tier = GameState.autoGacha.tier || 10;
-    const stopRarity = GameState.autoGacha.stopOnRarity || 'legendary';
+    const isHero = (GameState.gacha?.bannerTab === 'hero') || (GameState.autoGacha.banner === 'hero');
+    const tier = GameState.autoGacha.batchSize || GameState.autoGacha.tier || 10;
+    const stopRarity = GameState.autoGacha.stopAtRarity || GameState.autoGacha.stopOnRarity || 'none';
 
     if (!this.canAfford(tier, isHero)) {
       GameState.autoGacha.enabled = false;
       if (typeof UI !== 'undefined') {
         UI.showToast('💰 Tự động Gacha đã dừng: Không đủ Vàng!');
-        UI._syncAutoGachaControls();
+        if (UI._syncAutoGachaControls) UI._syncAutoGachaControls();
       }
       return;
     }
@@ -177,7 +187,7 @@ const Gacha = {
       GameState.autoGacha.enabled = false;
       if (typeof UI !== 'undefined') {
         UI.showToast('🎒 Tự động Gacha đã dừng: Kho đồ đã đầy!');
-        UI._syncAutoGachaControls();
+        if (UI._syncAutoGachaControls) UI._syncAutoGachaControls();
       }
       return;
     }
@@ -185,30 +195,32 @@ const Gacha = {
     const res = isHero ? this.pullHero(tier) : this.pullWeapon(tier);
     if (!res || res.error) {
       GameState.autoGacha.enabled = false;
-      if (typeof UI !== 'undefined') UI._syncAutoGachaControls();
+      if (typeof UI !== 'undefined' && UI._syncAutoGachaControls) UI._syncAutoGachaControls();
       return;
     }
 
     // Kiểm tra xem có trúng phẩm chất cần dừng hay không
     if (stopRarity && stopRarity !== 'none') {
       const stopOrderIdx = CONFIG.RARITY_ORDER.indexOf(stopRarity);
-      let hitTarget = false;
-      let highestHit = '';
+      if (stopOrderIdx !== -1) {
+        let hitTarget = false;
+        let highestHit = '';
 
-      for (let i = CONFIG.RARITY_ORDER.length - 1; i >= stopOrderIdx; i--) {
-        const r = CONFIG.RARITY_ORDER[i];
-        if (res.statsSummary && res.statsSummary[r] > 0) {
-          hitTarget = true;
-          highestHit = CONFIG.RARITY_NAMES[r];
-          break;
+        for (let i = CONFIG.RARITY_ORDER.length - 1; i >= stopOrderIdx; i--) {
+          const r = CONFIG.RARITY_ORDER[i];
+          if (res.statsSummary && res.statsSummary[r] > 0) {
+            hitTarget = true;
+            highestHit = CONFIG.RARITY_NAMES[r];
+            break;
+          }
         }
-      }
 
-      if (hitTarget) {
-        GameState.autoGacha.enabled = false;
-        if (typeof UI !== 'undefined') {
-          UI.showToast(`🎉 Tự động Gacha dừng lại: Đã trúng phẩm chất [${highestHit}]!`);
-          UI._syncAutoGachaControls();
+        if (hitTarget) {
+          GameState.autoGacha.enabled = false;
+          if (typeof UI !== 'undefined') {
+            UI.showToast(`🎉 Tự động Gacha dừng lại: Đã trúng phẩm chất [${highestHit}]!`);
+            if (UI._syncAutoGachaControls) UI._syncAutoGachaControls();
+          }
         }
       }
     }
