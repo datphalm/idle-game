@@ -26,13 +26,16 @@ os.makedirs(DATA_DIR, exist_ok=True)
 def load_db():
     if not os.path.exists(DB_FILE):
         default_db = {
-            "version": "2.1.0",
+            "version": "2.2.0",
             "downloadUrl": "https://github.com/idlerpg/release/releases/latest",
             "changelog": [
-                "Tăng độ khó toàn game x10 lần",
-                "Hệ thống Cung Mệnh E0 - E6 và Tinh Luyện Vũ Khí R1 - R5",
-                "Bảng xếp hạng toàn cầu & Nhật ký bạn bè",
-                "Chống gian lận 4 lớp siêu bảo mật"
+                "Khắc phục triệt để lỗi hoàn trả vàng vô tận khi gacha E6 trùng",
+                "Bổ sung thanh Bán Nhanh trang bị theo phẩm chất và tối ưu giá bán",
+                "Mở tính năng Gacha x1000 và sửa lỗi Auto Gacha dừng đúng phẩm chất ???",
+                "Trừ chìa khóa Boss ngay khi vào trận, không hoàn lại dù thắng hay thua",
+                "Cải tiến hiệu ứng kết liễu: thanh máu về 0 hoàn chỉnh trước khi chuyển quái",
+                "Tối ưu hồi chiêu kỹ năng chạy ngầm mượt mà 60fps và tự động nâng skill",
+                "Đồng bộ chuẩn quốc tế Cung Mệnh E0 đến E6 toàn diện"
             ],
             "players": [
                 {"id": "p_1", "name": "Độc Cô Cầu Bại", "heroId": "hero_raiden", "constellation": 6, "level": 88, "stage": 52, "towerFloor": 65, "power": 852000, "lastActive": int(time.time()*1000)},
@@ -89,10 +92,18 @@ class RequestHandler(BaseHTTPRequestHandler):
         elif path == "/api/version":
             self._set_headers(200)
             v_data = {
-                "version": db.get("version", "2.1.0"),
+                "version": "2.2.0",
                 "releaseDate": "2026-10-14",
-                "title": f"Bản Cập Nhật v{db.get('version', '2.1.0')} - Thần Khí & Trùm Tháp",
-                "changelog": db.get("changelog", []),
+                "title": "Bản Cập Nhật v2.2.0 - Khắc Phục Toàn Diện & Cân Bằng",
+                "changelog": [
+                    "Khắc phục triệt để lỗi hoàn trả vàng vô tận khi gacha E6 trùng",
+                    "Bổ sung thanh Bán Nhanh trang bị theo phẩm chất và tối ưu giá bán",
+                    "Mở tính năng Gacha x1000 và sửa lỗi Auto Gacha dừng đúng phẩm chất ???",
+                    "Trừ chìa khóa Boss ngay khi vào trận, không hoàn lại dù thắng hay thua",
+                    "Cải tiến hiệu ứng kết liễu: thanh máu về 0 hoàn chỉnh trước khi chuyển quái",
+                    "Tối ưu hồi chiêu kỹ năng chạy ngầm mượt mà 60fps và tự động nâng skill",
+                    "Đồng bộ chuẩn quốc tế Cung Mệnh E0 đến E6 toàn diện"
+                ],
                 "bundleUrl": "/api/patch/bundle",
                 "cssUrl": "/api/patch/css",
                 "downloadUrl": db.get("downloadUrl", "https://github.com/idlerpg/release/releases/latest")
