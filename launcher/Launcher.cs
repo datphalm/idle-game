@@ -334,6 +334,21 @@ namespace IdleRPGLauncher
                         }
                         catch { }
 
+                        // Tải bổ sung HTML nếu có cập nhật cấu trúc trang
+                        try
+                        {
+                            string htmlUrl = "https://idle-game-ms6o.onrender.com/api/patch/html";
+                            string targetHtml = Path.Combine(_baseDir, "index.html");
+                            string tempHtml = targetHtml + ".tmp";
+                            wc.DownloadFile(htmlUrl, tempHtml);
+                            if (File.Exists(tempHtml) && new FileInfo(tempHtml).Length > 500)
+                            {
+                                if (File.Exists(targetHtml)) File.Delete(targetHtml);
+                                File.Move(tempHtml, targetHtml);
+                            }
+                        }
+                        catch { }
+
                         // Ghi lại version mới cục bộ để không lặp lại cập nhật
                         File.WriteAllText(localVersionPath, remoteJson, System.Text.Encoding.UTF8);
                     }

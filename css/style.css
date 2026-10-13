@@ -1601,13 +1601,30 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px;
+  padding: 12px 16px;
+  background: linear-gradient(145deg, rgba(22, 28, 48, 0.8), rgba(14, 18, 34, 0.9)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: var(--radius-md, 10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.upgrade-card:hover {
+  border-color: rgba(245, 158, 11, 0.4) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), 0 0 12px rgba(245, 158, 11, 0.15);
 }
 
 .upgrade-icon {
-  font-size: 2rem;
-  min-width: 44px;
-  text-align: center;
+  font-size: 2.2rem;
+  min-width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .upgrade-info {
@@ -1616,20 +1633,21 @@ body {
 
 .upgrade-info h3 {
   font-family: var(--font-heading);
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.96rem;
+  font-weight: 800;
   color: #fff;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
+  letter-spacing: 0.2px;
 }
 
 .upgrade-level, .upgrade-effect {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   color: var(--text-secondary);
 }
 
 .upgrade-effect {
-  color: var(--accent-green);
-  font-weight: 600;
+  color: #10b981;
+  font-weight: 700;
 }
 
 .btn-upgrade {
@@ -1637,13 +1655,24 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 3px;
-  padding: 8px 14px;
-  min-width: 95px;
+  padding: 8px 16px;
+  min-width: 105px;
+  font-weight: 800;
+  font-size: 0.82rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  transition: all 0.2s;
+}
+
+.btn-upgrade:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);
 }
 
 .upgrade-cost {
-  font-size: 0.7rem;
-  opacity: 0.85;
+  font-size: 0.72rem;
+  color: #ffd700;
+  font-weight: 700;
 }
 
 /* ============================================================
@@ -2355,69 +2384,168 @@ body {
 .hero-skills-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 14px;
 }
 .skill-card {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: rgba(16, 20, 32, 0.75);
+  background: linear-gradient(165deg, rgba(20, 26, 44, 0.9), rgba(12, 16, 30, 0.95));
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--radius-md);
-  padding: 10px;
+  border-radius: var(--radius-lg, 12px);
+  padding: 14px;
   position: relative;
-  transition: all 0.2s;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .skill-card:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
+  border-color: rgba(0, 255, 204, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 255, 204, 0.15);
+}
+.skill-card.burst-card {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: linear-gradient(165deg, rgba(38, 16, 28, 0.9), rgba(16, 10, 24, 0.95));
+}
+.skill-card.burst-card:hover {
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 18px rgba(245, 158, 11, 0.25);
+}
+.skill-card-glow-bg {
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.18), transparent 70%);
+  pointer-events: none;
+}
+.burst-card .skill-card-glow-bg {
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.25), transparent 70%);
+}
+.skill-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.skill-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.skill-icon-big {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+.skill-title-block {
+  flex: 1;
+  min-width: 0;
+}
+.skill-name-txt {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.2px;
+}
+.skill-meta-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 3px;
 }
 .skill-type-tag {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   font-weight: 800;
-  padding: 1px 5px;
+  padding: 1px 6px;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-secondary);
+  letter-spacing: 0.3px;
 }
-.skill-card-top {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
+.skill-type-tag.passive-badge {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
-.skill-icon-big {
-  font-size: 1.5rem;
+.skill-type-tag.active-badge {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
-.skill-name-txt {
-  font-size: 0.82rem;
-  font-weight: 800;
-  color: #fff;
-  line-height: 1.2;
+.skill-type-tag.burst-badge {
+  background: rgba(239, 68, 68, 0.25);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+.skill-elem-tag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.3);
 }
 .skill-desc-txt {
-  font-size: 0.7rem;
-  color: var(--text-secondary);
-  line-height: 1.35;
-  margin-bottom: 8px;
+  font-size: 0.72rem;
+  color: rgba(226, 232, 240, 0.82);
+  line-height: 1.45;
+  margin-bottom: 10px;
+  min-height: 38px;
+}
+.skill-card-footer {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 8px;
 }
 .skill-level-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 6px;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 700;
+}
+.skill-lvl-badge {
+  background: rgba(255, 215, 0, 0.15);
   color: #ffd700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+.skill-cost-txt {
+  color: #ffd700;
+  font-weight: 800;
+  font-family: var(--font-heading);
 }
 .btn-skill-upgrade {
   width: 100%;
-  padding: 5px;
-  font-size: 0.72rem;
-  font-weight: 700;
+  padding: 7px 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s;
+}
+.btn-skill-upgrade:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
 }
 
 /* Hero Collection Roster */
@@ -3282,24 +3410,31 @@ body {
 
 .auto-gacha-panel {
   margin-bottom: 14px;
-  padding: 12px 16px;
+  padding: 14px 18px;
+  background: linear-gradient(145deg, rgba(22, 28, 48, 0.85), rgba(14, 18, 34, 0.95)) !important;
+  border: 1px solid rgba(0, 229, 255, 0.25) !important;
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .auto-gacha-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .auto-gacha-badge {
-  font-size: 0.75rem;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 2px 8px;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.76rem;
+  font-weight: 800;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: #aaa;
+  transition: all 0.3s;
 }
 
 .auto-gacha-options-row {
@@ -3313,16 +3448,33 @@ body {
 .auto-opt-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+}
+
+.auto-opt-group label {
+  color: rgba(226, 232, 240, 0.9);
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .auto-opt-group select {
-  background: #181828;
+  background: rgba(15, 23, 42, 0.95);
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 0.8rem;
+  border: 1.5px solid rgba(0, 229, 255, 0.3);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.auto-opt-group select:hover,
+.auto-opt-group select:focus {
+  border-color: #00e5ff;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
 }
 
 .auto-hero-skill-bar {
@@ -3330,9 +3482,13 @@ body {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
-  padding: 10px 16px;
+  gap: 12px;
+  padding: 12px 18px;
   margin-bottom: 14px;
+  background: linear-gradient(145deg, rgba(26, 32, 54, 0.85), rgba(15, 20, 36, 0.95)) !important;
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .hidden { display: none !important; }

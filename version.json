@@ -1,15 +1,13 @@
 {
-  "version": "2.2.0",
-  "title": "Bản Cập Nhật v2.2.0 - Vá Lỗi Gacha, Bán Nhanh & Tối Ưu Hồi Chiêu",
+  "version": "2.2.1",
+  "title": "Bản Cập Nhật v2.2.1 - Tự Động Kỹ Năng & Giao Diện RPG Thần Thoại",
   "releaseDate": "2026-10-14",
   "changelog": [
-    "Khắc phục triệt để lỗi hoàn trả vàng vô tận khi gacha E6 trùng",
-    "Bổ sung thanh Bán Nhanh trang bị theo phẩm chất và tối ưu giá bán",
-    "Mở tính năng Gacha x1000 và sửa lỗi Auto Gacha dừng đúng phẩm chất ???",
-    "Trừ chìa khóa Boss ngay khi vào trận, không hoàn lại dù thắng hay thua",
-    "Cải tiến hiệu ứng kết liễu: thanh máu về 0 hoàn chỉnh trước khi chuyển quái",
-    "Tối ưu hồi chiêu kỹ năng chạy ngầm mượt mà 60fps và tự động nâng skill",
-    "Đồng bộ chuẩn quốc tế Cung Mệnh E0 đến E6 toàn diện"
+    "Bổ sung tùy chọn Quay x1000 trong Tự Động Gacha",
+    "Hoàn thiện Tự Động Nâng Kỹ Năng Anh Hùng (Auto Skill Upgrade)",
+    "Thiết kế lại toàn bộ thẻ kỹ năng và thanh điều khiển RPG siêu đẹp & mượt mà",
+    "Hỗ trợ đồng bộ tự động cả index.html, css và bundle",
+    "Cân bằng kinh tế và trải nghiệm gacha tối ưu"
   ],
   "downloadUrl": "https://github.com/datphalm/idle-game/releases/latest"
 }

@@ -136,7 +136,7 @@ def build_dist_release(base_dir: str):
     bundle_target = os.path.join(dist_dir, "js", "game.bundle.js")
     build_obfuscated_bundle(base_dir, bundle_target)
 
-    # Đưa bản bundle và css lên server/static để server Render tự phục vụ Hot-Patch
+    # Đưa bản bundle, css và index.html lên server/static để server Render tự phục vụ Hot-Patch
     server_static = os.path.join(base_dir, "server", "static")
     os.makedirs(server_static, exist_ok=True)
     shutil.copy2(bundle_target, os.path.join(server_static, "game.bundle.js"))
@@ -172,7 +172,7 @@ def build_dist_release(base_dir: str):
     css_src = os.path.join(base_dir, "css")
     css_dst = os.path.join(dist_dir, "css")
     if os.path.exists(css_src):
-        shutil.copytree(css_src, css_dst)
+        shutil.copytree(css_src, css_dst, dirs_exist_ok=True)
 
     # 4. Tạo index.html cho bản phân phối (chỉ nạp bundle.js)
     src_html = os.path.join(base_dir, "index.html")
@@ -186,8 +186,10 @@ def build_dist_release(base_dir: str):
 </body>"""
     dist_html = re.sub(script_block_pattern, replacement, html)
 
-    with open(os.path.join(dist_dir, "index.html"), "w", encoding="utf-8") as f:
+    dist_html_file = os.path.join(dist_dir, "index.html")
+    with open(dist_html_file, "w", encoding="utf-8") as f:
         f.write(dist_html)
+    shutil.copy2(dist_html_file, os.path.join(server_static, "index.html"))
 
     # 5. Biên dịch bản IdleRPG.exe trực tiếp vào dist/
     print("🔨 [4/4] Đang biên dịch bản thực thi IdleRPG.exe cho thư mục phân phối...")

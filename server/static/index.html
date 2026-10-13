@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Idle RPG - Game nhập vai treo máy đánh theo lượt, rèn đồ +100, ghép đồ, săn boss">
+  <title>⚔️ Idle RPG — Huyền Thoại Treo Máy (Turn-Based)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- ====== GLOBAL SVG ASSETS & SHADERS ====== -->
+  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
+    <defs>
+      <!-- Gradient Cầu Vồng Thần Khí ??? (Prismatic Rainbow Hologram) -->
+      <linearGradient id="prism-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#ff0055" />
+        <stop offset="20%" stop-color="#ff7700" />
+        <stop offset="40%" stop-color="#ffff00" />
+        <stop offset="60%" stop-color="#00ff66" />
+        <stop offset="80%" stop-color="#00ffff" />
+        <stop offset="90%" stop-color="#7700ff" />
+        <stop offset="100%" stop-color="#ff00bb" />
+      </linearGradient>
+
+      <!-- Gradient Vệt Chém Vũ Khí (Sword Slash FX) -->
+      <linearGradient id="slash-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#00ffff" stop-opacity="0" />
+        <stop offset="40%" stop-color="#00e5ff" stop-opacity="0.8" />
+        <stop offset="70%" stop-color="#ffd54f" stop-opacity="0.95" />
+        <stop offset="100%" stop-color="#ffffff" stop-opacity="1" />
+      </linearGradient>
+
+      <!-- Gradient Hỏa Ngục Thần Thoại -->
+      <linearGradient id="fire-grad" x1="0%" y1="100%" x2="0%" y2="0%">
+        <stop offset="0%" stop-color="#b71c1c" />
+        <stop offset="50%" stop-color="#ff5722" />
+        <stop offset="100%" stop-color="#ffeb3b" />
+      </linearGradient>
+
+      <!-- Gradient Hư Không Hỗn Mang -->
+      <linearGradient id="void-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#212121" />
+        <stop offset="60%" stop-color="#6a1b9a" />
+        <stop offset="100%" stop-color="#d500f9" />
+      </linearGradient>
+
+      <!-- Glow Filter chung -->
+      <filter id="aura-glow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+  </svg>
+
+  <div id="app">
+
+    <!-- ====== NAVIGATION TABS (7 TABS) ====== -->
+    <nav id="nav-tabs">
+      <button class="tab-btn active" data-tab="battle" id="btn-tab-battle">
+        <span class="tab-icon">⚔️</span>
+        <span class="tab-label">Chiến đấu</span>
+      </button>
+      <button class="tab-btn" data-tab="heroes" id="btn-tab-heroes">
+        <span class="tab-icon">👑</span>
+        <span class="tab-label">Đội hình</span>
+      </button>
+      <button class="tab-btn" data-tab="boss" id="btn-tab-boss">
+        <span class="tab-icon">👹</span>
+        <span class="tab-label">Phòng Boss</span>
+      </button>
+      <button class="tab-btn" data-tab="dungeon" id="btn-tab-dungeon">
+        <span class="tab-icon">🏰</span>
+        <span class="tab-label">Phó bản</span>
+      </button>
+      <button class="tab-btn" data-tab="inventory" id="btn-tab-inventory">
+        <span class="tab-icon">🎒</span>
+        <span class="tab-label">Kho đồ</span>
+      </button>
+      <button class="tab-btn" data-tab="forge" id="btn-tab-forge">
+        <span class="tab-icon">🔨</span>
+        <span class="tab-label">Rèn & Ghép</span>
+      </button>
+      <button class="tab-btn" data-tab="upgrades" id="btn-tab-upgrades">
+        <span class="tab-icon">⬆️</span>
+        <span class="tab-label">Nâng cấp</span>
+      </button>
+      <button class="tab-btn" data-tab="gacha" id="btn-tab-gacha">
+        <span class="tab-icon">🎰</span>
+        <span class="tab-label">Gacha</span>
+      </button>
+    </nav>
+
+    <!-- ====== MAIN CONTENT ====== -->
+    <main id="main-content">
+
+      <!-- ========================================== -->
+      <!-- TAB 1: BATTLE (TURN-BASED DUEL) -->
+      <!-- ========================================== -->
+      <section id="tab-battle" class="tab-content active">
+        <!-- Stage Navigation Bar -->
+        <div class="stage-nav-bar glass-panel">
+          <button id="btn-stage-prev" class="btn btn-small btn-stage">◀ Ải trước</button>
+          <div class="stage-indicator">
+            <span class="stage-badge">ẢI <span id="battle-stage-curr">1</span></span>
+            <span class="stage-max-text">Tối đa: Ải <span id="battle-stage-max">1</span></span>
+          </div>
+          <button id="btn-stage-next" class="btn btn-small btn-stage">Ải sau ▶</button>
+          <label class="auto-stage-toggle" title="Tự động leo ải khi hạ gục quái">
+            <input type="checkbox" id="chk-auto-stage" checked>
+            <span>Tự động leo ải</span>
+          </label>
+          <label class="auto-stage-toggle" title="Bật/Tắt hiệu ứng kỹ năng, hoạt ảnh & nộ 3D" style="margin-left: 8px;">
+            <input type="checkbox" id="chk-toggle-vfx" checked>
+            <span>Hiệu ứng FX</span>
+          </label>
+        </div>
+
+        <!-- Turn-based Arena Scene -->
+        <div id="battle-scene" class="glass-panel">
+          <div id="dungeon-active-banner" class="dungeon-active-banner hidden">
+            <div class="dungeon-banner-info">
+              <span id="dungeon-banner-title">🏰 Phó Bản: Mỏ Vàng Yêu Tinh</span>
+              <span id="dungeon-banner-wave" class="dungeon-wave-badge">Đợt 1/5</span>
+            </div>
+            <button id="btn-forfeit-dungeon" class="btn btn-small btn-danger">Rút lui</button>
+          </div>
+          <div id="extra-turn-banner" class="hidden">⚡ EXTRA TURN! ĐÒN BỒI LIÊN HOÀN ⚡</div>
+
+          <div id="arena-stage">
+            <!-- Player Side -->
+            <div id="fighter-player" class="fighter-side">
+              <div class="fighter-header">
+                <span id="player-battle-name" class="fighter-name">Hiệp Sĩ</span>
+                <span id="player-battle-level" class="fighter-level">Lv. 1</span>
+              </div>
+              <div class="fighter-sprite-wrapper">
+                <div id="player-sprite" class="fighter-avatar"></div>
+                <div id="player-damage-container" class="damage-container"></div>
+                <div id="slash-fx-player" class="slash-fx-container hidden"></div>
+              </div>
+              <!-- Player HP Bar -->
+              <div class="hp-bar-wrapper">
+                <div class="hp-bar player-hp-bar">
+                  <div id="player-hp-fill" class="hp-fill"></div>
+                </div>
+                <span id="player-hp-text" class="hp-text">120 / 120</span>
+              </div>
+
+              <!-- Hero Skill Cooldown HUD in Arena -->
+              <div id="player-hero-skills-hud" class="hero-skills-arena-hud">
+                <div class="skill-hud-item" id="hud-skill-2" title="Kỹ năng Chiến Kỹ (Skill 2)">
+                  <div class="skill-hud-circle">
+                    <div class="skill-hud-fill" id="hud-s2-fill"></div>
+                    <span class="skill-hud-icon" id="hud-s2-icon">⚡</span>
+                  </div>
+                  <span class="skill-hud-timer" id="hud-s2-timer">Sẵn sàng</span>
+                </div>
+                <div class="skill-hud-item" id="hud-skill-3" title="Tuyệt Kỹ Nộ (Burst Ultimate)">
+                  <div class="skill-hud-circle burst-circle">
+                    <div class="skill-hud-fill" id="hud-s3-fill"></div>
+                    <span class="skill-hud-icon" id="hud-s3-icon">🌟</span>
+                  </div>
+                  <span class="skill-hud-timer" id="hud-s3-timer">Sẵn sàng</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- VS Badge -->
+            <div id="battle-vs-badge">
+              <span class="vs-text">VS</span>
+              <div id="turn-indicator">Lượt đánh</div>
+            </div>
+
+            <!-- Monster Side -->
+            <div id="fighter-monster" class="fighter-side">
+              <div class="fighter-header">
+                <span id="monster-name" class="fighter-name">Slime</span>
+                <span id="monster-level" class="fighter-level">Lv. 1</span>
+              </div>
+              <div class="fighter-sprite-wrapper">
+                <div id="monster-sprite" class="fighter-avatar"></div>
+                <div id="monster-damage-container" class="damage-container"></div>
+                <div id="slash-fx-monster" class="slash-fx-container hidden"></div>
+              </div>
+              <!-- Monster HP Bar -->
+              <div class="hp-bar-wrapper">
+                <div class="hp-bar monster-hp-bar">
+                  <div id="monster-hp-fill" class="hp-fill"></div>
+                </div>
+                <span id="monster-hp-text" class="hp-text">50 / 50</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kill Counter -->
+          <div id="kill-counter">
+            <span>Tiêu diệt: </span>
+            <span id="kill-count">0</span> quái vật
+          </div>
+        </div>
+
+        <!-- Player Full Stats Panel -->
+        <div id="player-stats-panel" class="glass-panel">
+          <h2 class="panel-title">📊 Thuộc tính chiến đấu</h2>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-label">❤️ Máu tối đa</span>
+              <span class="stat-value" id="stat-hp">120</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">⚔️ Sát thương</span>
+              <span class="stat-value" id="stat-attack">15</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">🛡️ Phòng thủ</span>
+              <span class="stat-value" id="stat-defense">3</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">⚡ Tốc độ (SPD)</span>
+              <span class="stat-value" id="stat-speed">12</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">🧪 Hồi phục/Lượt</span>
+              <span class="stat-value" id="stat-regen">+2 HP</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">💨 Tỉ lệ Đòn bồi</span>
+              <span class="stat-value" id="stat-extra-turn">15%</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">💰 Tỉ lệ vàng</span>
+              <span class="stat-value" id="stat-gold-rate">x1.00</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">📈 EXP cần</span>
+              <span class="stat-value" id="stat-exp-needed">80</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Combat Log -->
+        <div id="combat-log-panel" class="glass-panel">
+          <h2 class="panel-title">📜 Nhật ký chiến đấu</h2>
+          <div id="combat-log"></div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 2: BOSS CHAMBER -->
+      <!-- ========================================== -->
+      <section id="tab-boss" class="tab-content">
+        <div class="section-header-box glass-panel">
+          <div class="boss-header-info">
+            <div>
+              <h2 class="section-title-sm">👹 Phòng Khiêu Chiến Boss</h2>
+              <p class="section-desc">Hạ gục Boss huyền thoại để nhận Bùa Bảo Hiểm & Trang Bị Cực Hiếm!</p>
+            </div>
+            <div class="key-counter-box">
+              <span class="key-icon">🗝️</span>
+              <span id="boss-key-count">0</span>
+              <button id="btn-buy-boss-key" class="btn btn-small btn-primary">Mua Key (💰 <span id="boss-key-price">2,000</span>)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Boss Battle Area (Solo Boss Arena) -->
+        <div id="boss-active-arena" class="glass-panel solo-boss-arena hidden">
+          <!-- Boss Skill Alert Banner -->
+          <div id="boss-skill-alert" class="boss-skill-alert hidden">
+            <span class="skill-alert-icon">⚠️</span>
+            <span id="boss-skill-alert-text">BOSS ĐANG TỤ CHIÊU: 【AXIT HỦY DIỆT】!</span>
+            <span class="skill-alert-icon">⚠️</span>
+          </div>
+
+          <div class="boss-arena-header">
+            <div class="boss-header-title-box">
+              <span class="boss-flame-icon">🔥</span>
+              <span class="boss-arena-label" id="boss-arena-stage-title">SOLO BOSS SHOWDOWN</span>
+            </div>
+            <div class="boss-header-actions">
+              <span id="boss-timer" class="boss-timer-badge">⏱️ 45s</span>
+              <button id="btn-forfeit-boss" class="btn btn-small btn-danger-small">Rút lui</button>
+            </div>
+          </div>
+
+          <div id="boss-duel-stage">
+            <!-- Bên trái: Hiệp Sĩ -->
+            <div class="boss-fighter-side fighter-player">
+              <div class="fighter-header">
+                <span id="boss-player-name" class="fighter-name">Hiệp Sĩ</span>
+                <span id="boss-player-level" class="fighter-level">Lv. 1</span>
+              </div>
+              <div class="fighter-sprite-wrapper">
+                <div id="boss-player-sprite" class="fighter-avatar player-idle"></div>
+                <div id="boss-player-damage-container" class="damage-container"></div>
+                <div id="boss-player-slash-fx" class="slash-fx-container hidden"></div>
+              </div>
+              <div class="hp-bar-wrapper">
+                <div class="hp-bar player-hp-bar">
+                  <div id="boss-player-hp-fill" class="hp-fill"></div>
+                </div>
+                <span id="boss-player-hp-text" class="hp-text">0 / 0</span>
+              </div>
+
+              <!-- Hero Skills Cooldown HUD trong Solo Boss -->
+              <div id="boss-player-skills-hud" class="hero-skills-arena-hud">
+                <div class="skill-hud-item" id="boss-hud-skill-2" title="Chiến Kỹ">
+                  <div class="skill-hud-circle">
+                    <div class="skill-hud-fill" id="boss-hud-s2-fill"></div>
+                    <span class="skill-hud-icon" id="boss-hud-s2-icon">⚡</span>
+                  </div>
+                  <span class="skill-hud-timer" id="boss-hud-s2-timer">Sẵn sàng</span>
+                </div>
+                <div class="skill-hud-item" id="boss-hud-skill-3" title="Tuyệt Kỹ Nộ 3D">
+                  <div class="skill-hud-circle burst-circle">
+                    <div class="skill-hud-fill" id="boss-hud-s3-fill"></div>
+                    <span class="skill-hud-icon" id="boss-hud-s3-icon">🌟</span>
+                  </div>
+                  <span class="skill-hud-timer" id="boss-hud-s3-timer">Sẵn sàng</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ở giữa: VS Center -->
+            <div class="boss-vs-center">
+              <div class="vs-text">VS</div>
+              <div id="boss-extra-turn-banner" class="boss-extra-turn hidden">⚡ EXTRA TURN ⚡</div>
+            </div>
+
+            <!-- Bên phải: Đại Boss -->
+            <div class="boss-fighter-side fighter-boss">
+              <div class="fighter-header">
+                <span id="boss-active-name" class="fighter-name">Vua Slime Khổng Lồ</span>
+                <span class="fighter-level boss-badge" id="boss-active-badge">BOSS</span>
+              </div>
+              <div class="fighter-sprite-wrapper boss-sprite-box">
+                <div id="boss-active-sprite" class="fighter-avatar boss-sprite boss-idle"></div>
+                <div id="boss-damage-container" class="damage-container"></div>
+                <div id="slash-fx-boss" class="slash-fx-container hidden"></div>
+              </div>
+              <!-- Boss HP Bar -->
+              <div class="hp-bar-wrapper">
+                <div class="hp-bar monster-hp-bar">
+                  <div id="boss-hp-fill" class="hp-fill boss-hp-fill"></div>
+                </div>
+                <span id="boss-hp-text" class="hp-text">0 / 0</span>
+              </div>
+              <!-- Boss Rage / Nộ Khí Bar -->
+              <div class="boss-rage-bar-wrapper" title="Nộ khí Boss - Đầy 100% kích hoạt kỹ năng đặc biệt">
+                <div class="boss-rage-bar">
+                  <div id="boss-rage-fill" class="boss-rage-fill"></div>
+                </div>
+                <span id="boss-rage-text" class="boss-rage-text">Nộ Khí Boss: 0%</span>
+              </div>
+              <!-- Boss Skills Preview Tags -->
+              <div id="boss-skills-tag-list" class="boss-skills-tag-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Boss Selection List -->
+        <div id="boss-list-container">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 3: DUNGEON / PHÓ BẢN -->
+      <!-- ========================================== -->
+      <section id="tab-dungeon" class="tab-content">
+        <!-- 1. Selection View (Bí cảnh & Leo tháp) -->
+        <div id="dungeon-selection-view">
+          <div class="section-header-box glass-panel">
+            <div class="boss-header-info">
+              <div>
+                <h2 class="section-title-sm">🏰 Bí Cảnh Phó Bản & Tháp Thí Luyện</h2>
+                <p class="section-desc">Khiêu chiến ải tài nguyên chuyên biệt: Mỏ Vàng, Bí Cảnh EXP, Thánh Địa Bùa & Lò Rèn Thần Khí, cùng Tháp Vô Tận!</p>
+              </div>
+              <div class="key-counter-box" style="font-size:0.85rem; color:#88ccff; border:1px solid rgba(0,229,255,0.3); padding:6px 14px; border-radius:8px; background:rgba(0,30,60,0.5);">
+                <span>3 lượt/ngày mỗi bí cảnh • Tháp leo ải không giới hạn</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="dungeon-cards-list" class="dungeon-cards-grid">
+            <!-- Populated dynamically by UI.js -->
+          </div>
+        </div>
+
+        <!-- 2. Dedicated In-Dungeon Active Room (Mỏ Vàng, Bí Cảnh EXP, Thánh Địa Bùa, Lò Rèn) -->
+        <div id="dungeon-active-room" class="glass-panel dungeon-room-container hidden">
+          <!-- Room Header -->
+          <div class="dungeon-room-header">
+            <div class="dungeon-room-title-box">
+              <span id="dungeon-room-icon" class="dungeon-room-icon">🪙</span>
+              <div>
+                <h2 id="dungeon-room-title" class="dungeon-room-title">Mỏ Vàng Hoàng Kim</h2>
+                <span id="dungeon-room-subtitle" class="dungeon-room-subtitle">Hang Động Sâu • Tầng Quặng Thần Bí</span>
+              </div>
+            </div>
+            <div class="dungeon-room-meta">
+              <span id="dungeon-room-wave" class="dungeon-wave-pill">ĐỢT 1 / 5</span>
+              <button id="btn-leave-dungeon-room" class="btn btn-small btn-danger">🚪 Rút lui</button>
+            </div>
+          </div>
+
+          <!-- Live Dungeon Loot Tracker Bar -->
+          <div id="dungeon-loot-tracker" class="dungeon-loot-bar">
+            <div class="loot-track-item">
+              <span>💰 Vàng đã đào:</span>
+              <strong id="track-loot-gold">0</strong>
+            </div>
+            <div class="loot-track-item">
+              <span>✨ EXP tích lũy:</span>
+              <strong id="track-loot-exp">0</strong>
+            </div>
+            <div class="loot-track-item" id="track-item-rune">
+              <span>🛡️ Bùa Bảo Hiểm:</span>
+              <strong id="track-loot-rune">0</strong>
+            </div>
+            <div class="loot-track-item" id="track-item-forge">
+              <span>🔨 Thần Khí / Rèn:</span>
+              <strong id="track-loot-forge">0</strong>
+            </div>
+          </div>
+
+          <!-- Room Arena Duel Stage -->
+          <div id="dungeon-room-stage" class="dungeon-room-stage">
+            <!-- Player Side -->
+            <div class="dungeon-fighter-side fighter-player">
+              <div class="fighter-header">
+                <span id="dungeon-player-name" class="fighter-name">Hiệp Sĩ</span>
+                <span id="dungeon-player-level" class="fighter-level">Lv. 1</span>
+              </div>
+              <div class="fighter-sprite-wrapper">
+                <div id="dungeon-player-sprite" class="fighter-avatar player-idle"></div>
+                <div id="dungeon-player-damage-container" class="damage-container"></div>
+                <div id="dungeon-player-slash-fx" class="slash-fx-container hidden"></div>
+              </div>
+              <div class="hp-bar-wrapper">
+                <div class="hp-bar player-hp-bar">
+                  <div id="dungeon-player-hp-fill" class="hp-fill"></div>
+                </div>
+                <span id="dungeon-player-hp-text" class="hp-text">0 / 0</span>
+              </div>
+
+              <!-- Hero Skills HUD trong Dungeon -->
+              <div id="dungeon-player-skills-hud" class="hero-skills-arena-hud">
+                <div class="skill-hud-item" id="dungeon-hud-skill-2">
+                  <div class="skill-hud-circle">
+                    <div class="skill-hud-fill" id="dungeon-hud-s2-fill"></div>
+                    <span class="skill-hud-icon" id="dungeon-hud-s2-icon">⚡</span>
+                  </div>
+                  <span class="skill-hud-timer" id="dungeon-hud-s2-timer">Sẵn sàng</span>
+                </div>
+                <div class="skill-hud-item" id="dungeon-hud-skill-3">
+                  <div class="skill-hud-circle burst-circle">
+                    <div class="skill-hud-fill" id="dungeon-hud-s3-fill"></div>
+                    <span class="skill-hud-icon" id="dungeon-hud-s3-icon">🌟</span>
+                  </div>
+                  <span class="skill-hud-timer" id="dungeon-hud-s3-timer">Sẵn sàng</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- VS Center -->
+            <div class="dungeon-vs-center">
+              <div class="vs-text">VS</div>
+              <div id="dungeon-wave-cleared-banner" class="wave-cleared-banner hidden">✨ QUÉT SẠCH ĐỢT! ✨</div>
+            </div>
+
+            <!-- Monster Side -->
+            <div class="dungeon-fighter-side fighter-monster">
+              <div class="fighter-header">
+                <span id="dungeon-monster-name" class="fighter-name">Yêu Tinh Đào Mỏ</span>
+                <span id="dungeon-monster-level" class="fighter-level">Lv. 1</span>
+              </div>
+              <div class="fighter-sprite-wrapper">
+                <div id="dungeon-monster-sprite" class="fighter-avatar monster-idle"></div>
+                <div id="dungeon-monster-damage-container" class="damage-container"></div>
+                <div id="dungeon-monster-slash-fx" class="slash-fx-container hidden"></div>
+              </div>
+              <div class="hp-bar-wrapper">
+                <div class="hp-bar monster-hp-bar">
+                  <div id="dungeon-monster-hp-fill" class="hp-fill"></div>
+                </div>
+                <span id="dungeon-monster-hp-text" class="hp-text">0 / 0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Dedicated Tower of Ascension (Hư Không Tháp - Leo Tháp Vô Tận) -->
+        <div id="tower-view" class="glass-panel tower-view-container hidden">
+          <!-- Tower Top Header -->
+          <div class="tower-header">
+            <div class="tower-header-title-box">
+              <span class="tower-spire-icon">🌌</span>
+              <div>
+                <h2 class="tower-title">HƯ KHÔNG THÁP • LEO THÁP VÔ TẬN</h2>
+                <p class="tower-subtitle">Vượt qua các tầng thử thách vô tận • Cứ mỗi 10 tầng nghênh chiến 1 ĐẠI TRÙM THÁP!</p>
+              </div>
+            </div>
+            <div class="tower-header-actions">
+              <button id="btn-back-to-dungeons" class="btn btn-small btn-secondary">🔙 Về sảnh phó bản</button>
+            </div>
+          </div>
+
+          <!-- Tower Status & Progression Spire -->
+          <div class="tower-spire-dashboard">
+            <div class="tower-current-box">
+              <div class="tower-floor-display">
+                <span class="floor-label">TẦNG HIỆN TẠI</span>
+                <span id="tower-current-floor-num" class="floor-number-huge">1</span>
+                <span id="tower-next-boss-alert" class="floor-boss-warning">⚠️ Trùm Tháp tiếp theo: Tầng 10</span>
+              </div>
+              <div class="tower-record-badge">
+                <span>🏆 Kỷ lục: Tầng <strong id="tower-highest-record">1</strong></span>
+              </div>
+              <div class="tower-auto-climb-toggle">
+                <label>
+                  <input type="checkbox" id="chk-tower-auto-climb" checked>
+                  <span>Tự động leo tầng tiếp theo khi chiến thắng</span>
+                </label>
+              </div>
+              <button id="btn-start-tower-fight" class="btn btn-primary btn-large btn-tower-action">
+                ⚔️ Khiêu Chiến Tầng <span id="tower-btn-floor-num">1</span>
+              </button>
+            </div>
+
+            <!-- Tower Visual Ladder (Recent & Next Floors) -->
+            <div class="tower-ladder-container">
+              <h4 class="ladder-title">🗼 Cột Mốc Tháp Hư Không</h4>
+              <div id="tower-ladder-list" class="tower-ladder-list">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Tower Active Battle Stage (when in battle) -->
+          <div id="tower-active-stage" class="tower-battle-arena hidden">
+            <div class="tower-arena-header">
+              <span id="tower-arena-floor-badge" class="tower-arena-floor-badge">🗼 TẦNG 1</span>
+              <button id="btn-forfeit-tower" class="btn btn-small btn-danger">Rút lui</button>
+            </div>
+
+            <div class="dungeon-room-stage tower-room-stage">
+              <!-- Player Side -->
+              <div class="dungeon-fighter-side fighter-player">
+                <div class="fighter-header">
+                  <span id="tower-player-name" class="fighter-name">Hiệp Sĩ</span>
+                  <span id="tower-player-level" class="fighter-level">Lv. 1</span>
+                </div>
+                <div class="fighter-sprite-wrapper">
+                  <div id="tower-player-sprite" class="fighter-avatar player-idle"></div>
+                  <div id="tower-player-damage-container" class="damage-container"></div>
+                  <div id="tower-player-slash-fx" class="slash-fx-container hidden"></div>
+                </div>
+                <div class="hp-bar-wrapper">
+                  <div class="hp-bar player-hp-bar">
+                    <div id="tower-player-hp-fill" class="hp-fill"></div>
+                  </div>
+                  <span id="tower-player-hp-text" class="hp-text">0 / 0</span>
+                </div>
+                <!-- Hero Skills HUD trong Tower -->
+                <div id="tower-player-skills-hud" class="hero-skills-arena-hud">
+                  <div class="skill-hud-item" id="tower-hud-skill-2">
+                    <div class="skill-hud-circle">
+                      <div class="skill-hud-fill" id="tower-hud-s2-fill"></div>
+                      <span class="skill-hud-icon" id="tower-hud-s2-icon">⚡</span>
+                    </div>
+                    <span class="skill-hud-timer" id="tower-hud-s2-timer">Sẵn sàng</span>
+                  </div>
+                  <div class="skill-hud-item" id="tower-hud-skill-3">
+                    <div class="skill-hud-circle burst-circle">
+                      <div class="skill-hud-fill" id="tower-hud-s3-fill"></div>
+                      <span class="skill-hud-icon" id="tower-hud-s3-icon">🌟</span>
+                    </div>
+                    <span class="skill-hud-timer" id="tower-hud-s3-timer">Sẵn sàng</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- VS Center -->
+              <div class="dungeon-vs-center">
+                <div class="vs-text">VS</div>
+                <div id="tower-floor-clear-banner" class="wave-cleared-banner hidden">🎉 VƯỢT TẦNG THÀNH CÔNG! 🎉</div>
+              </div>
+
+              <!-- Monster/Boss Side -->
+              <div class="dungeon-fighter-side fighter-monster">
+                <div class="fighter-header">
+                  <span id="tower-enemy-name" class="fighter-name">Vệ Binh Hư Không</span>
+                  <span id="tower-enemy-level" class="fighter-level">Lv. 1</span>
+                </div>
+                <div class="fighter-sprite-wrapper">
+                  <div id="tower-enemy-sprite" class="fighter-avatar monster-idle"></div>
+                  <div id="tower-enemy-damage-container" class="damage-container"></div>
+                  <div id="tower-enemy-slash-fx" class="slash-fx-container hidden"></div>
+                </div>
+                <div class="hp-bar-wrapper">
+                  <div class="hp-bar monster-hp-bar">
+                    <div id="tower-enemy-hp-fill" class="hp-fill"></div>
+                  </div>
+                  <span id="tower-enemy-hp-text" class="hp-text">0 / 0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 4: INVENTORY -->
+      <!-- ========================================== -->
+      <section id="tab-inventory" class="tab-content">
+        <!-- Equipped Items -->
+        <div id="equipped-section" class="glass-panel">
+          <h2 class="panel-title">🛡️ Trang bị đang mang</h2>
+          <div id="equipped-slots">
+            <div class="equip-slot" id="slot-weapon" data-slot="weapon">
+              <div class="slot-icon">⚔️</div>
+              <div class="slot-label">Vũ khí</div>
+              <div class="slot-item-name" id="equipped-weapon-name">Trống</div>
+            </div>
+            <div class="equip-slot" id="slot-armor" data-slot="armor">
+              <div class="slot-icon">🛡️</div>
+              <div class="slot-label">Giáp</div>
+              <div class="slot-item-name" id="equipped-armor-name">Trống</div>
+            </div>
+            <div class="equip-slot" id="slot-accessory" data-slot="accessory">
+              <div class="slot-icon">💍</div>
+              <div class="slot-label">Phụ kiện</div>
+              <div class="slot-item-name" id="equipped-accessory-name">Trống</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inventory Grid -->
+        <div id="inventory-section" class="glass-panel">
+          <div id="inventory-header">
+            <div class="inv-header-left">
+              <h2 class="panel-title" style="margin-bottom:0;">🎒 Kho đồ</h2>
+              <span id="inv-count" class="inv-count-badge">0 / 80</span>
+            </div>
+            <div id="inventory-controls" style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+              <div class="quick-sell-wrapper" style="display:inline-flex; align-items:center; gap:4px; background:rgba(0,0,0,0.3); padding:2px 6px; border-radius:6px; border:1px solid rgba(255,255,255,0.1);">
+                <span style="font-size:11px; color:#94a3b8;">Bán nhanh:</span>
+                <select id="sel-quick-sell-rarity" class="custom-select" style="font-size:11px; padding:2px 4px; height:26px;">
+                  <option value="common">Chỉ Đồ Thường (Trắng)</option>
+                  <option value="common,rare" selected>Thường + Hiếm (Trắng & Lam)</option>
+                  <option value="common,rare,epic">Sử Thi trở xuống (Tím/Lam/Trắng)</option>
+                </select>
+                <button id="btn-quick-sell-rarity" class="btn btn-small btn-danger" style="padding:2px 8px; font-size:11px;" title="Bán tất cả trang bị theo phẩm chất đã chọn">💰 Bán</button>
+              </div>
+              <button id="btn-expand-inv" class="btn btn-small btn-success-glow" title="Mở rộng thêm 5 ô chứa đồ">➕ Mua 5 Ô (💰 <span id="expand-inv-cost">15,000</span>)</button>
+              <button id="btn-sort-inv" class="btn btn-small">Sắp xếp</button>
+            </div>
+          </div>
+          <div id="inventory-grid"></div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 4: FORGE & FUSION (RÈN & GHÉP) -->
+      <!-- ========================================== -->
+      <section id="tab-forge" class="tab-content">
+        <!-- Sub Tabs: Cường Hóa vs Ghép Đồ -->
+        <div class="forge-nav-sub">
+          <button class="sub-tab-btn active" id="btn-sub-enhance" data-sub="enhance">🔨 Cường Hóa (+1..+100)</button>
+          <button class="sub-tab-btn" id="btn-sub-fusion" data-sub="fusion">✨ Ghép Đồ (3 Món)</button>
+        </div>
+
+        <!-- --- SECTION: ENHANCEMENT --- -->
+        <div id="forge-sub-enhance" class="forge-sub-content active">
+          <div class="glass-panel enhance-station">
+            <h3 class="panel-title text-center">🔥 Lò Rèn Thần Khí (+0 đến +100)</h3>
+
+            <!-- Selected Item Slot -->
+            <div class="enhance-target-wrapper">
+              <div id="enhance-item-slot" class="enhance-slot-box">
+                <span class="slot-placeholder">Nhấp chọn trang bị bên dưới để rèn</span>
+              </div>
+            </div>
+
+            <!-- Enhancement Stats & Rates Preview -->
+            <div id="enhance-preview" class="enhance-rates-box hidden">
+              <div class="enhance-level-flow">
+                <span id="enhance-current-lvl" class="lvl-badge">+0</span>
+                <span class="lvl-arrow">➔</span>
+                <span id="enhance-next-lvl" class="lvl-badge next-lvl">+1</span>
+              </div>
+              <div class="enhance-rates-grid">
+                <div class="rate-box success-box">
+                  <span class="r-label">Thành công</span>
+                  <span id="rate-success" class="r-val">80%</span>
+                </div>
+                <div class="rate-box crit-box">
+                  <span class="r-label">Bạo kích (+2/+3)</span>
+                  <span id="rate-crit" class="r-val">8%</span>
+                </div>
+                <div class="rate-box drop-box">
+                  <span class="r-label">Rớt cấp (-1)</span>
+                  <span id="rate-drop" class="r-val">0%</span>
+                </div>
+                <div class="rate-box break-box">
+                  <span class="r-label">Vỡ về 0</span>
+                  <span id="rate-break" class="r-val">0%</span>
+                </div>
+              </div>
+
+              <!-- Protection Stone Checkbox -->
+              <div class="protection-toggle-box">
+                <label class="protection-label">
+                  <input type="checkbox" id="chk-use-protection">
+                  <span class="protection-text">
+                    🛡️ Sử dụng <strong>Bùa Bảo Hiểm</strong> (Còn: <span id="forge-protection-count">0</span>)
+                  </span>
+                </label>
+                <p class="protection-hint">Bảo toàn 100% cấp độ, không bị rớt cấp hay vỡ về 0 nếu đập thất bại!</p>
+              </div>
+
+              <!-- Action Button -->
+              <div class="enhance-btn-wrapper">
+                <button id="btn-do-enhance" class="btn btn-primary btn-enhance-large">
+                  <span class="btn-icon">🔨</span>
+                  <span>TIẾN HÀNH RÈN</span>
+                  <span id="enhance-cost-tag" class="cost-tag">💰 150</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Inventory Selector for Enhancing -->
+            <div class="forge-inv-selector">
+              <h4 class="selector-title">Chọn trang bị trong kho:</h4>
+              <div id="forge-inv-grid" class="forge-grid-mini"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- --- SECTION: FUSION (GHÉP ĐỒ) --- -->
+        <div id="forge-sub-fusion" class="forge-sub-content">
+          <div class="glass-panel fusion-station">
+            <h3 class="panel-title text-center">✨ Đài Dung Hợp Trang Bị</h3>
+            <p class="section-desc text-center">Dung hợp 3 trang bị cùng bậc để tạo ra 1 trang bị bậc cao hơn!</p>
+
+            <!-- 3 Input Slots -->
+            <div class="fusion-slots-container">
+              <div class="fusion-slot" id="fusion-slot-0" data-idx="0"><span>Trống</span></div>
+              <span class="fusion-plus">+</span>
+              <div class="fusion-slot" id="fusion-slot-1" data-idx="1"><span>Trống</span></div>
+              <span class="fusion-plus">+</span>
+              <div class="fusion-slot" id="fusion-slot-2" data-idx="2"><span>Trống</span></div>
+            </div>
+
+            <!-- Fusion Result Preview -->
+            <div id="fusion-preview" class="fusion-preview-box hidden">
+              <div class="fusion-arrow-down">⬇️</div>
+              <div class="fusion-target-info">
+                <span>Dung hợp lên: <strong id="fusion-target-rarity">Hiếm</strong></span>
+                <span class="fusion-rate-badge">Tỉ lệ thành công: <strong id="fusion-success-rate">85%</strong></span>
+              </div>
+              <button id="btn-do-fusion" class="btn btn-primary btn-fusion-large">✨ BẮT ĐẦU DUNG HỢP</button>
+            </div>
+
+            <!-- Auto Fusion Control Bar -->
+            <div class="auto-fusion-bar glass-panel">
+              <div class="auto-bar-header">
+                <label class="toggle-switch-label">
+                  <input type="checkbox" id="chk-auto-fusion">
+                  <span class="toggle-title">✨ <strong>Tự động Dung Hợp</strong> (Khi đủ 3 món cùng phẩm)</span>
+                </label>
+              </div>
+              <div class="auto-checkboxes-row">
+                <label class="chk-item"><input type="checkbox" id="chk-fuse-common" checked> <span>Thường ➔ Hiếm</span></label>
+                <label class="chk-item"><input type="checkbox" id="chk-fuse-rare"> <span>Hiếm ➔ Sử Thi</span></label>
+                <label class="chk-item"><input type="checkbox" id="chk-fuse-epic"> <span>Sử Thi ➔ Huyền Thoại</span></label>
+                <label class="chk-item"><input type="checkbox" id="chk-fuse-legendary"> <span>Huyền Thoại ➔ Thần Thoại</span></label>
+              </div>
+            </div>
+
+            <!-- Quick Auto-Combine Bar -->
+            <div class="quick-combine-bar glass-panel">
+              <h4 class="selector-title">Ghép Nhanh Hàng Loạt:</h4>
+              <div class="quick-combine-btns">
+                <button class="btn btn-small btn-secondary btn-quick-combine" data-rarity="common">Ghép Thường ➔ Hiếm</button>
+                <button class="btn btn-small btn-secondary btn-quick-combine" data-rarity="rare">Ghép Hiếm ➔ Sử Thi</button>
+                <button class="btn btn-small btn-secondary btn-quick-combine" data-rarity="epic">Ghép Sử Thi ➔ Huyền Thoại</button>
+              </div>
+            </div>
+
+            <!-- Selectable Items for Fusion -->
+            <div class="forge-inv-selector">
+              <h4 class="selector-title">Chọn đồ đưa vào đài ghép:</h4>
+              <div id="fusion-inv-grid" class="forge-grid-mini"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 5: UPGRADES -->
+      <!-- ========================================== -->
+      <section id="tab-upgrades" class="tab-content">
+        <div class="upgrade-header-box glass-panel">
+          <h2 class="section-title">⬆️ Nâng Cấp Chỉ Số Nhân Vật</h2>
+          <div class="auto-upgrade-bar">
+            <div class="auto-bar-header">
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="chk-auto-upgrade">
+                <span class="toggle-title">⚡ <strong>Tự động Nâng Cấp</strong> (Tự tiêu vàng khi đủ điều kiện)</span>
+              </label>
+            </div>
+            <div class="auto-checkboxes-row">
+              <label class="chk-item"><input type="checkbox" id="chk-up-attack" checked> <span>⚔️ Tấn công</span></label>
+              <label class="chk-item"><input type="checkbox" id="chk-up-maxHp" checked> <span>❤️ Máu</span></label>
+              <label class="chk-item"><input type="checkbox" id="chk-up-defense"> <span>🛡️ Giáp</span></label>
+              <label class="chk-item"><input type="checkbox" id="chk-up-speed"> <span>⚡ Tốc độ</span></label>
+              <label class="chk-item"><input type="checkbox" id="chk-up-goldRate"> <span>💰 Vàng</span></label>
+              <label class="chk-item"><input type="checkbox" id="chk-up-hpRegen"> <span>🧪 Hồi phục</span></label>
+            </div>
+          </div>
+        </div>
+        <div id="upgrade-cards-list" class="upgrade-cards">
+          <!-- Rendered dynamically by UI.js -->
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 6: GACHA -->
+      <!-- ========================================== -->
+      <section id="tab-gacha" class="tab-content">
+        <!-- Banner Switcher Tabs -->
+        <div class="gacha-banner-tabs">
+          <button class="banner-tab-btn active" id="btn-banner-weapon" data-banner="weapon">
+            <span class="banner-tab-icon">⚔️</span>
+            <span class="banner-tab-title">Vũ Khí & Thần Binh</span>
+          </button>
+          <button class="banner-tab-btn" id="btn-banner-hero" data-banner="hero">
+            <span class="banner-tab-icon">👑</span>
+            <span class="banner-tab-title">Anh Hùng & Thần Ma</span>
+          </button>
+        </div>
+
+        <!-- Banner Artwork & Rates -->
+        <div id="gacha-banner" class="glass-panel">
+          <div id="banner-visual-art" class="banner-visual-art"></div>
+          <div id="banner-art">
+            <div id="banner-glow"></div>
+            <div id="banner-title">✨ Vận Mệnh Thần Giới ✨</div>
+            <div id="banner-subtitle">Quay tìm trang bị quý hiếm — Khám phá thần khí bí ẩn ???</div>
+          </div>
+
+          <!-- Bag space alert indicator right on gacha screen -->
+          <div id="gacha-inv-status" class="gacha-bag-status">
+            🎒 Kho đồ: <span id="gacha-inv-count">0 / 80</span> (<span id="gacha-inv-free">còn 80 chỗ trống</span>)
+          </div>
+
+          <!-- Rates Info with 7 tiers -->
+          <div id="gacha-rates-info">
+            <span class="rate-badge rate-common">Thường 55%</span>
+            <span class="rate-badge rate-rare">Hiếm 30%</span>
+            <span class="rate-badge rate-epic">Sử Thi 12%</span>
+            <span class="rate-badge rate-legendary">Huyền Thoại 2.9%</span>
+            <span class="rate-badge rate-mythic">Thần Thoại 0.1%</span>
+            <span class="rate-badge rate-chaos">Hỗn Mang 0.005%</span>
+            <span class="rate-badge rate-unknown">??? 0.000001%</span>
+          </div>
+        </div>
+
+        <!-- Auto-Gacha Controller Panel -->
+        <div class="glass-panel auto-gacha-panel">
+          <div class="auto-gacha-header-row">
+            <label class="toggle-switch-label">
+              <input type="checkbox" id="chk-auto-gacha">
+              <span class="toggle-title">🎰 <strong>Tự Động Gacha</strong></span>
+            </label>
+            <span id="auto-gacha-status" class="auto-gacha-badge">Đang tắt</span>
+          </div>
+          <div class="auto-gacha-options-row">
+            <div class="auto-opt-group">
+              <label for="sel-auto-gacha-stop">Dừng khi ra phẩm chất:</label>
+              <select id="sel-auto-gacha-stop" class="custom-select">
+                <option value="none">Không dừng (Quay đến hết tiền/chỗ)</option>
+                <option value="legendary">Huyền Thoại (Cam) trở lên</option>
+                <option value="mythic">Thần Thoại (Đỏ) trở lên</option>
+                <option value="chaos" selected>Hỗn Mang (Tím Đậm) trở lên</option>
+                <option value="unknown">??? (Vô Cực)</option>
+              </select>
+            </div>
+            <div class="auto-opt-group">
+              <label for="sel-auto-gacha-batch">Số lượt mỗi lần:</label>
+              <select id="sel-auto-gacha-batch" class="custom-select">
+                <option value="1">Quay ×1</option>
+                <option value="10" selected>Quay ×10 (Tiết kiệm 10%)</option>
+                <option value="100">Quay ×100 (Tiết kiệm 15%)</option>
+                <option value="1000">Quay ×1000 (Tiết kiệm 20%)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pull Buttons Grid (x1, x10, x100, x1000) -->
+        <div id="gacha-buttons" class="gacha-buttons-grid">
+          <button class="btn btn-gacha" id="btn-gacha-1">
+            <span class="gacha-btn-label">Quay ×1</span>
+            <span class="gacha-btn-cost" id="gacha-cost-1">💰 100</span>
+          </button>
+          <button class="btn btn-gacha btn-gacha-multi" id="btn-gacha-10">
+            <span class="gacha-btn-label">Quay ×10</span>
+            <span class="gacha-btn-cost" id="gacha-cost-10">💰 900</span>
+            <span class="gacha-discount">-10% Tiết kiệm</span>
+          </button>
+          <button class="btn btn-gacha btn-gacha-100" id="btn-gacha-100">
+            <span class="gacha-btn-label">Quay ×100</span>
+            <span class="gacha-btn-cost" id="gacha-cost-100">💰 8,500</span>
+            <span class="gacha-discount">-15% Siêu tốc</span>
+          </button>
+          <button class="btn btn-gacha btn-gacha-1000" id="btn-gacha-1000">
+            <span class="gacha-btn-label">Quay ×1000</span>
+            <span class="gacha-btn-cost" id="gacha-cost-1000">💰 80,000</span>
+            <span class="gacha-discount">-20% Đại Gia</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 7: HEROES & TEAM (ĐỘI HÌNH & ANH HÙNG) -->
+      <!-- ========================================== -->
+      <section id="tab-heroes" class="tab-content">
+        <!-- Auto Upgrade Skills & Roster Controls -->
+        <div class="glass-panel auto-hero-skill-bar">
+          <label class="toggle-switch-label">
+            <input type="checkbox" id="chk-auto-hero-skill">
+            <span class="toggle-title">⚡ <strong>Tự Động Nâng Kỹ Năng</strong> (Tự tiêu vàng nâng skill khi đủ điều kiện)</span>
+          </label>
+          <button id="btn-reset-heroes-debug" class="btn btn-small btn-danger" title="Khắc phục nhân vật bị lỗi max C6 từ phiên bản cũ">🔄 Reset Cung Mệnh Nhân Vật</button>
+        </div>
+
+        <!-- Active Hero Feature Card & Skills -->
+        <div id="active-hero-showcase" class="glass-panel">
+          <!-- Populated dynamically by UI.js -->
+        </div>
+
+        <!-- Hero Collection / Roster -->
+        <div class="glass-panel hero-roster-panel">
+          <div class="roster-header">
+            <h2 class="panel-title" style="margin-bottom:0;">👥 Bộ Sưu Tập Nhân Vật</h2>
+            <span class="roster-hint">Nhấp vào nhân vật đã sở hữu để Đổi Xuất Chiến</span>
+          </div>
+          <div id="heroes-collection-grid" class="heroes-grid">
+            <!-- Populated dynamically by UI.js -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ====== STATUS BAR (ALWAYS VISIBLE) ====== -->
+    <footer id="status-bar">
+      <div class="status-item" id="status-level-section" title="Cấp độ nhân vật">
+        <span class="status-icon">⭐</span>
+        <span id="status-level">Lv. 1</span>
+      </div>
+      <div class="status-item" id="status-exp-section" title="Kinh nghiệm">
+        <div id="exp-bar">
+          <div id="exp-fill"></div>
+        </div>
+        <span id="exp-text">0 / 80</span>
+      </div>
+      <div class="status-item" id="status-gold-section" title="Vàng">
+        <span class="status-icon">💰</span>
+        <span id="status-gold">0</span>
+      </div>
+      <div class="status-item" id="status-diamond-section" title="Kim Cương">
+        <span class="status-icon">💎</span>
+        <span id="status-diamond">100</span>
+      </div>
+      <div class="status-item" id="status-keys-section" title="Chìa Khóa Boss">
+        <span class="status-icon">🗝️</span>
+        <span id="status-keys">0</span>
+      </div>
+      <div class="status-item" id="status-stones-section" title="Bùa Bảo Hiểm">
+        <span class="status-icon">🛡️</span>
+        <span id="status-stones">0</span>
+      </div>
+      <div class="status-item" id="status-save-section">
+        <button id="btn-leaderboard" class="btn btn-small" title="Bảng xếp hạng toàn cầu" style="background: rgba(245,158,11,0.25); border-color: #f59e0b;">🏆 BXH</button>
+        <button id="btn-admin-logs" class="btn btn-small" title="Quản lý bạn bè & Nhật ký hoạt động" style="background: rgba(168,85,247,0.25); border-color: #a855f7;">📋 Nhật Ký</button>
+        <button id="btn-toggle-vfx" class="btn btn-small" title="Bật/Tắt hiệu ứng kỹ năng & nộ 3D" style="background: rgba(236,72,153,0.25); border-color: #ec4899; color: #f472b6;">✨ FX: BẬT</button>
+        <button id="btn-profiles" class="btn btn-small" title="Hồ sơ nhân vật & Đổi slot" style="background: rgba(59,130,246,0.25); border-color: #3b82f6;">👤 Hồ Sơ</button>
+        <button id="btn-check-update" class="btn btn-small" title="Kiểm tra bản cập nhật mới" style="background: rgba(0,255,204,0.2); border-color: #00ffcc;">🚀 Update</button>
+        <button id="btn-save" class="btn btn-small" title="Lưu game">💾</button>
+        <button id="btn-reset" class="btn btn-small btn-danger-small" title="Xóa dữ liệu">🗑️</button>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ====== POPUPS & MODALS ====== -->
+
+  <!-- Item Detail Popup -->
+  <div id="item-detail-popup" class="popup-overlay hidden">
+    <div class="popup-box glass-panel">
+      <button class="popup-close-btn" id="btn-close-item-detail-popup" aria-label="Đóng popup">✕</button>
+      <div id="detail-item-icon" style="width:52px; height:52px; margin: 0 auto 10px; display:flex; align-items:center; justify-content:center;"></div>
+      <div id="detail-item-name" class="detail-name"></div>
+      <div id="detail-item-rarity" class="detail-rarity"></div>
+      <div id="detail-item-type" class="detail-type"></div>
+      <div id="detail-item-stats" class="detail-stats"></div>
+      <div id="detail-item-actions" class="detail-actions">
+        <button id="btn-equip-item" class="btn btn-primary">Trang bị</button>
+        <button id="btn-to-forge-item" class="btn btn-secondary">Đem Rèn</button>
+        <button id="btn-sell-item" class="btn btn-danger">Bán</button>
+        <button id="btn-close-detail" class="btn btn-secondary">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offline Popup -->
+  <div id="offline-popup" class="popup-overlay hidden">
+    <div class="popup-box glass-panel">
+      <button class="popup-close-btn" id="btn-close-offline-popup" aria-label="Đóng popup">✕</button>
+      <h2>🌙 Chào mừng trở lại!</h2>
+      <p id="offline-time-text">Bạn đã offline ...</p>
+      <div id="offline-rewards">
+        <div class="offline-reward">
+          <span class="offline-icon">💰</span>
+          <span id="offline-gold">+0 Vàng</span>
+        </div>
+        <div class="offline-reward">
+          <span class="offline-icon">✨</span>
+          <span id="offline-exp">+0 EXP</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-offline-ok">Nhận thưởng!</button>
+    </div>
+  </div>
+
+  <!-- Gacha Result Popup -->
+  <div id="gacha-result-popup" class="popup-overlay hidden">
+    <div class="popup-box glass-panel gacha-result-box">
+      <button class="popup-close-btn" id="btn-close-gacha-popup" aria-label="Đóng popup">✕</button>
+      <h2>🎉 Kết quả Gacha</h2>
+      <div id="gacha-result-items"></div>
+      <button class="btn btn-primary" id="btn-gacha-ok">Tuyệt vời!</button>
+    </div>
+  </div>
+
+  <!-- Boss Victory Popup -->
+  <div id="boss-victory-popup" class="popup-overlay hidden">
+    <div class="popup-box glass-panel boss-victory-box">
+      <button class="popup-close-btn" id="btn-close-boss-victory-popup" aria-label="Đóng popup">✕</button>
+      <h2 class="victory-title">👑 CHIẾN THẮNG BOSS!</h2>
+      <p id="victory-boss-name" class="victory-name">Vua Slime Khổng Lồ</p>
+      <div class="victory-rewards-list">
+        <div class="reward-row">
+          <span>Vàng kiếm được:</span>
+          <strong id="victory-gold" class="text-gold">+0 💰</strong>
+        </div>
+        <div class="reward-row">
+          <span>Kinh nghiệm:</span>
+          <strong id="victory-exp" class="text-exp">+0 ✨</strong>
+        </div>
+        <div id="victory-stone-row" class="reward-row hidden">
+          <span>Phần thưởng quý hiếm:</span>
+          <strong class="text-stone">🛡️ +1 Bùa Bảo Hiểm!</strong>
+        </div>
+        <div id="victory-item-row" class="reward-row hidden">
+          <span>Trang bị rơi:</span>
+          <strong id="victory-item-name" class="text-item">Kiếm</strong>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-boss-victory-ok">Nhận thưởng!</button>
+    </div>
+  </div>
+
+  <!-- Dungeon Victory Popup -->
+  <div id="dungeon-victory-popup" class="popup-overlay hidden">
+    <div class="popup-box glass-panel boss-victory-box">
+      <button class="popup-close-btn" id="btn-close-dungeon-victory-popup" aria-label="Đóng popup">✕</button>
+      <h2 class="victory-title">🏰 HOÀN THÀNH PHÓ BẢN!</h2>
+      <p id="dungeon-victory-name" class="victory-name">Mỏ Vàng Yêu Tinh</p>
+      <div class="victory-rewards-list">
+        <div class="reward-row">
+          <span>Tổng Vàng:</span>
+          <strong id="dungeon-victory-gold" class="text-gold">+0 💰</strong>
+        </div>
+        <div class="reward-row">
+          <span>Tổng Kinh nghiệm:</span>
+          <strong id="dungeon-victory-exp" class="text-exp">+0 ✨</strong>
+        </div>
+        <div id="dungeon-victory-stones-row" class="reward-row hidden">
+          <span>Bùa Bảo Hiểm:</span>
+          <strong id="dungeon-victory-stones" class="text-stone">+0 🛡️</strong>
+        </div>
+        <div id="dungeon-victory-diamonds-row" class="reward-row hidden">
+          <span>Kim Cương Tháp:</span>
+          <strong id="dungeon-victory-diamonds" class="text-diamond">+0 💎</strong>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-dungeon-victory-ok">Nhận Thưởng & Tiếp Tục</button>
+    </div>
+  </div>
+
+  <!-- Forge Result Popup -->
+  <div id="forge-result-popup" class="popup-overlay hidden">
+    <div class="popup-box glass-panel forge-result-box">
+      <button class="popup-close-btn" id="btn-close-forge-result-popup" aria-label="Đóng popup">✕</button>
+      <div id="forge-result-icon" class="forge-result-icon">🔨</div>
+      <h2 id="forge-result-title" class="forge-result-title">Rèn Thành Công!</h2>
+      <p id="forge-result-desc" class="forge-result-desc">+1 cấp</p>
+      <button class="btn btn-primary" id="btn-forge-result-ok">Xác nhận</button>
+    </div>
+  </div>
+
+  <!-- Multi-Profile Account Modal -->
+  <div id="profile-modal" class="popup-overlay hidden">
+    <div class="popup-box glass-panel" style="max-width: 650px; width: 95%;">
+      <button class="popup-close-btn" id="btn-close-profile-modal" aria-label="Đóng popup">✕</button>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+        <h2 style="font-size: 20px; color: #60a5fa; margin: 0; display: flex; align-items: center; gap: 8px;">
+          👤 HỒ SƠ NGƯỜI CHƠI & LƯU TRỮ
+        </h2>
+        <span id="current-slot-badge" class="badge" style="background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid #10b981;">
+          Slot 1
+        </span>
+      </div>
+      <p style="color: #94a3b8; font-size: 13px; margin-bottom: 16px;">
+        Lưu riêng biệt cho từng người chơi. Dễ dàng đổi nhân vật, tạo mới hoặc sao lưu mã lưu trữ.
+      </p>
+
+      <!-- Profiles Slot Cards List -->
+      <div id="profile-slots-list" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; max-height: 380px; overflow-y: auto;">
+        <!-- Populated via UI.updateProfilesModal() -->
+      </div>
+
+      <!-- Import/Export & Actions Bar -->
+      <div style="display: flex; gap: 10px; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 8px;">
+          <button id="btn-export-profile" class="btn btn-secondary btn-small" title="Sao chép chuỗi mã lưu trữ">
+            📤 Xuất Mã Lưu
+          </button>
+          <button id="btn-import-profile" class="btn btn-secondary btn-small" title="Dán mã lưu trữ để nạp">
+            📥 Nhập Mã Lưu
+          </button>
+        </div>
+        <button id="btn-close-profile-btn" class="btn btn-primary btn-small">
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Dynamic Leaderboard Modal -->
+  <div id="leaderboard-modal" class="popup-overlay hidden">
+    <div class="popup-box glass-panel" style="max-width: 720px; width: 95%;">
+      <button class="popup-close-btn" id="btn-close-leaderboard-modal" aria-label="Đóng popup">✕</button>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <h2 style="font-size: 20px; color: #f59e0b; margin: 0; display: flex; align-items: center; gap: 8px;">
+          🏆 BẢNG XẾP HẠNG TOÀN CẦU
+        </h2>
+        <span style="background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid #f59e0b; padding: 2px 8px; border-radius: 6px; font-weight: bold; font-size: 11px;">
+          LIVE SYNC
+        </span>
+      </div>
+      <p style="color: #94a3b8; font-size: 13px; margin-bottom: 14px;">
+        Xếp hạng năng động toàn bộ người chơi. Thử thách tài năng leo ải và thăng tiến sức mạnh!
+      </p>
+
+      <!-- Filter Tabs -->
+      <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+        <button class="btn btn-small btn-lb-tab active" data-filter="level" onclick="Leaderboard.render('level')">
+          ⭐ Top Cấp Độ
+        </button>
+        <button class="btn btn-small btn-lb-tab" data-filter="tower" onclick="Leaderboard.render('tower')">
+          🌌 Top Leo Tháp
+        </button>
+        <button class="btn btn-small btn-lb-tab" data-filter="power" onclick="Leaderboard.render('power')">
+          ⚡ Top Lực Chiến
+        </button>
+      </div>
+
+      <!-- Leaderboard Table Container -->
+      <div style="max-height: 400px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; background: rgba(15,23,42,0.6);">
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+          <thead>
+            <tr style="background: rgba(255,255,255,0.05); color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 12px;">
+              <th style="padding: 10px 8px; width: 50px;">Hạng</th>
+              <th style="padding: 10px 8px; text-align: left;">Người Chơi & Tướng</th>
+              <th style="padding: 10px 8px; width: 70px;">Cấp</th>
+              <th style="padding: 10px 8px; width: 70px;">Ải</th>
+              <th style="padding: 10px 8px; width: 70px;">Tháp</th>
+              <th style="padding: 10px 8px; width: 90px;">Lực Chiến</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-table-body">
+            <!-- Rendered via Leaderboard.render() -->
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 14px;">
+        <button class="btn btn-primary btn-small" id="btn-close-lb-btn">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Friend Admin & Activity Logs Modal -->
+  <div id="admin-modal" class="popup-overlay hidden">
+    <div class="popup-box glass-panel" style="max-width: 750px; width: 95%;">
+      <button class="popup-close-btn" id="btn-close-admin-modal" aria-label="Đóng popup">✕</button>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <h2 style="font-size: 20px; color: #a855f7; margin: 0; display: flex; align-items: center; gap: 8px;">
+          📋 QUẢN TRỊ BẠN BÈ & NHẬT KÝ HOẠT ĐỘNG
+        </h2>
+        <span style="background: rgba(168,85,247,0.15); color: #a855f7; border: 1px solid #a855f7; padding: 2px 8px; border-radius: 6px; font-weight: bold; font-size: 11px;">
+          ADMIN MONITOR
+        </span>
+      </div>
+      <p style="color: #94a3b8; font-size: 13px; margin-bottom: 14px;">
+        Theo dõi thông tin tài khoản của bạn bè và các hoạt động Gacha, Rèn đồ, Săn Boss, Cảnh báo gian lận.
+      </p>
+
+      <!-- Accounts Section -->
+      <h3 style="font-size: 14px; color: #60a5fa; margin-bottom: 8px;">👥 Danh Sách Tài Khoản / Người Chơi:</h3>
+      <div id="admin-accounts-list" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; max-height: 150px; overflow-y: auto;">
+        <!-- Populated via FriendAdmin.render() -->
+      </div>
+
+      <!-- Logs Section with Filter -->
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+        <h3 style="font-size: 14px; color: #34d399; margin: 0;">📜 Nhật Ký Hoạt Động (Live Logs):</h3>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-small" onclick="FriendAdmin.render('all')" style="padding: 2px 8px; font-size: 11px;">Tất cả</button>
+          <button class="btn btn-small" onclick="FriendAdmin.render('gacha')" style="padding: 2px 8px; font-size: 11px;">Gacha</button>
+          <button class="btn btn-small" onclick="FriendAdmin.render('forge')" style="padding: 2px 8px; font-size: 11px;">Rèn</button>
+          <button class="btn btn-small" onclick="FriendAdmin.render('boss')" style="padding: 2px 8px; font-size: 11px;">Boss</button>
+          <button class="btn btn-small" onclick="FriendAdmin.render('anticheat')" style="padding: 2px 8px; font-size: 11px; color: #ef4444;">Bảo Mật</button>
+        </div>
+      </div>
+      <div id="admin-logs-list" style="max-height: 220px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; background: rgba(15,23,42,0.6);">
+        <!-- Populated via FriendAdmin.render() -->
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 14px;">
+        <button class="btn btn-primary btn-small" id="btn-close-admin-btn">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Genshin-Style Burst Ultimate Cinematic Cutscene Overlay -->
+  <div id="burst-cinematic-overlay" class="burst-overlay hidden">
+    <!-- WebGL 3D GPU Canvas for AAA 3D Cutscenes -->
+    <canvas id="burst-three-canvas" class="burst-three-canvas"></canvas>
+    <!-- 2D Particle & Speedline Canvas Overlay -->
+    <canvas id="burst-canvas" class="burst-canvas"></canvas>
+    <div class="letterbox letterbox-top"></div>
+    <div class="letterbox letterbox-bottom"></div>
+    <div class="burst-bg-flash" id="burst-bg-flash"></div>
+    <div class="burst-impact-flash" id="burst-impact-flash"></div>
+    
+    <!-- Phase 0: Close-Up Eye Slash Cut-In Banner -->
+    <div class="burst-eye-cutin" id="burst-eye-cutin"></div>
+
+    <!-- Climax Impact: Reality Shatter Glass Shards -->
+    <div class="burst-shatter-container" id="burst-shatter-container"></div>
+
+    <!-- Phase 1: Character Dynamic Stage (Sword Dance & Martial Stance Actor) -->
+    <div class="burst-actor-stage" id="burst-actor-stage"></div>
+
+    <!-- Cinematic Lower-Third HUD -->
+    <div class="burst-content">
+      <div class="burst-text-container">
+        <div class="burst-kanji-stamp" id="burst-kanji-stamp">⟦ 夢 想 ⟧</div>
+        <div class="burst-hero-title" id="burst-hero-title">LÔI ĐÌNH TỊCH DIỆT VĨNH CỬU</div>
+        <div class="burst-hero-name" id="burst-hero-name">Raiden Shogun</div>
+        <div class="burst-skill-name" id="burst-skill-name">⚔️ Mộng Tưởng Nhất Đao ⚔️</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3D WebGL Library -->
+  <script src="js/libs/three.min.js"></script>
+
+  <!-- Protected Production Bundle -->
+  <script src="js/game.bundle.js"></script>
+</body>
+</html>

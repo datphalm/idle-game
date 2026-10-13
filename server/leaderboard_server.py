@@ -92,20 +92,19 @@ class RequestHandler(BaseHTTPRequestHandler):
         elif path == "/api/version":
             self._set_headers(200)
             v_data = {
-                "version": "2.2.0",
+                "version": "2.2.1",
                 "releaseDate": "2026-10-14",
-                "title": "Bản Cập Nhật v2.2.0 - Khắc Phục Toàn Diện & Cân Bằng",
+                "title": "Bản Cập Nhật v2.2.1 - Tự Động Kỹ Năng & Giao Diện RPG Thần Thoại",
                 "changelog": [
-                    "Khắc phục triệt để lỗi hoàn trả vàng vô tận khi gacha E6 trùng",
-                    "Bổ sung thanh Bán Nhanh trang bị theo phẩm chất và tối ưu giá bán",
-                    "Mở tính năng Gacha x1000 và sửa lỗi Auto Gacha dừng đúng phẩm chất ???",
-                    "Trừ chìa khóa Boss ngay khi vào trận, không hoàn lại dù thắng hay thua",
-                    "Cải tiến hiệu ứng kết liễu: thanh máu về 0 hoàn chỉnh trước khi chuyển quái",
-                    "Tối ưu hồi chiêu kỹ năng chạy ngầm mượt mà 60fps và tự động nâng skill",
-                    "Đồng bộ chuẩn quốc tế Cung Mệnh E0 đến E6 toàn diện"
+                    "Bổ sung tùy chọn Quay x1000 trong Tự Động Gacha",
+                    "Hoàn thiện Tự Động Nâng Kỹ Năng Anh Hùng (Auto Skill Upgrade)",
+                    "Thiết kế lại toàn bộ thẻ kỹ năng và thanh điều khiển RPG siêu đẹp & mượt mà",
+                    "Hỗ trợ đồng bộ tự động cả index.html, css và bundle",
+                    "Cân bằng kinh tế và trải nghiệm gacha tối ưu"
                 ],
                 "bundleUrl": "/api/patch/bundle",
                 "cssUrl": "/api/patch/css",
+                "htmlUrl": "/api/patch/html",
                 "downloadUrl": db.get("downloadUrl", "https://github.com/idlerpg/release/releases/latest")
             }
             self.wfile.write(json.dumps(v_data, ensure_ascii=False).encode("utf-8"))
@@ -131,6 +130,20 @@ class RequestHandler(BaseHTTPRequestHandler):
             else:
                 self._set_headers(404, "text/plain; charset=utf-8")
                 self.wfile.write(b"CSS not found on server")
+
+        elif path == "/api/patch/html":
+            html_file = os.path.join(STATIC_DIR, "index.html")
+            if not os.path.exists(html_file):
+                html_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), "dist", "index.html")
+            if not os.path.exists(html_file):
+                html_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), "index.html")
+            if os.path.exists(html_file):
+                self._set_headers(200, "text/html; charset=utf-8")
+                with open(html_file, "rb") as f:
+                    self.wfile.write(f.read())
+            else:
+                self._set_headers(404, "text/plain; charset=utf-8")
+                self.wfile.write(b"HTML not found on server")
 
         else:
             self._set_headers(200)

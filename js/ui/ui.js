@@ -1719,26 +1719,32 @@ const UI = {
       const cdTag = sk.cd ? `<span style="font-size:0.65rem; color:#00ffcc; margin-left:4px;">⏱️ ${sk.cd}s</span>` : '';
 
       return `
-        <div class="skill-card">
-          <span class="skill-type-tag ${typeClass}">${typeLabel}</span>
-          <div class="skill-card-top">
-            <span class="skill-icon-big">${sk.icon}</span>
-            <div>
-              <div class="skill-name-txt">${sk.name} ${cdTag}</div>
-              <div style="font-size:0.65rem; color:${heroCfg.elementColor}; font-weight:700;">${heroCfg.elementName}</div>
+        <div class="skill-card skill-card-enhanced ${sk.type}-card">
+          <div class="skill-card-glow-bg"></div>
+          <div class="skill-card-header">
+            <div class="skill-icon-wrapper" style="border-color:${heroCfg.elementColor || '#a855f7'}; box-shadow:0 0 10px ${heroCfg.elementColor || '#a855f7'}40;">
+              <span class="skill-icon-big">${sk.icon}</span>
+            </div>
+            <div class="skill-title-block">
+              <div class="skill-name-txt">${sk.name}</div>
+              <div class="skill-meta-tags">
+                <span class="skill-type-tag ${typeClass}">${typeLabel}</span>
+                <span class="skill-elem-tag" style="color:${heroCfg.elementColor}; border-color:${heroCfg.elementColor}60;">${heroCfg.elementName}</span>
+                ${cdTag}
+              </div>
             </div>
           </div>
           <div class="skill-desc-txt">${sk.desc}</div>
-          <div>
+          <div class="skill-card-footer">
             <div class="skill-level-row">
-              <span>Cấp ${skLevel}</span>
-              <span>💰 ${this._formatNumber(upgradeCost)}</span>
+              <span class="skill-lvl-badge">Cấp ${skLevel}</span>
+              <span class="skill-cost-txt">💰 ${this._formatNumber(upgradeCost)}</span>
             </div>
             <button class="btn btn-primary btn-skill-upgrade" data-skill="${skKey}" ${!canAfford ? 'disabled' : ''}>
-              Nâng Cấp
+              ✨ Nâng Cấp
             </button>
             ${sk.type === 'burst' ? `
-            <button class="btn btn-preview-burst" style="margin-top: 6px; width: 100%; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; font-weight: 700; font-size: 0.72rem; padding: 5px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+            <button class="btn btn-preview-burst" style="margin-top: 6px; width: 100%; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; font-weight: 800; font-size: 0.75rem; padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.25); cursor: pointer; text-shadow: 0 1px 3px rgba(0,0,0,0.6); box-shadow: 0 2px 8px rgba(239,68,68,0.35);">
               🎬 Thử Nghiệm Nộ 3D x1000
             </button>
             ` : ''}
