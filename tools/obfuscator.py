@@ -81,16 +81,7 @@ def build_obfuscated_bundle(base_dir: str, output_path: str):
 (function(_0xroot) {
     'use strict';
 
-    // Bẫy 1: Anti-Beautify & Anti-Formatting Self Defense
-    var _0xdef = function() {
-        var _0xreg = new RegExp('\\w+ *\\(\\) *{\\w+ *[\'|"].+[\'|"]}');
-        return !_0xreg.test(_0xdef.toString());
-    };
-    if (_0xdef()) {
-        try { while (false) {} } catch(e) {}
-    }
-
-    // Bẫy 2: Chống mở DevTools / Gỡ lỗi
+    // Bẫy Anti-Debug / Chống mở DevTools
     var _0xdbg = function() {
         try {
             var _0xcons = (function() { return false; })['constructor']('debugger');
@@ -99,7 +90,7 @@ def build_obfuscated_bundle(base_dir: str, output_path: str):
     };
     setInterval(_0xdbg, 4000);
 
-    // Bẫy 3: Giải mã khối chương trình với XOR Key bí mật
+    // Giải mã khối chương trình với XOR Key bí mật
     var _0xkey = __XOR_KEY__;
     var _0xpayload = "__PAYLOAD__";
 
@@ -116,9 +107,12 @@ def build_obfuscated_bundle(base_dir: str, output_path: str):
 
     try {
         var _0xcode = _0xdecode(_0xpayload, _0xkey);
-        // Thực thi chương trình trong phạm vi toàn cục an toàn
-        var _0xrun = new Function(_0xcode);
-        _0xrun.call(_0xroot);
+        // Thực thi chương trình trong phạm vi toàn cục thực sự
+        var _0xsc = document.createElement('script');
+        _0xsc.type = 'text/javascript';
+        _0xsc.text = _0xcode;
+        (document.head || document.documentElement).appendChild(_0xsc);
+        _0xsc.parentNode.removeChild(_0xsc);
     } catch(_0xerr) {
         console.error("Critical integrity violation:", _0xerr);
     }

@@ -138,7 +138,11 @@ function runAutoFusion() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', initGame);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initGame);
+} else {
+  initGame();
+}
 
 // Lệnh debug cho console F12
 window.debug = {
