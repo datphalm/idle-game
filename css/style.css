@@ -3930,4 +3930,66 @@ body {
   color: #ffd700;
 }
 
+/* Modal Overlay & Box for Updater */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(4, 6, 14, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 16px;
+  box-sizing: border-box;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+.modal-box {
+  background: linear-gradient(155deg, #13192e, #0b0f1d);
+  border-radius: 14px;
+  padding: 24px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Toast Notification Enhancement */
+.toast-notification {
+  position: fixed;
+  top: 12% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: rgba(15, 23, 42, 0.95) !important;
+  color: #fff !important;
+  border: 1.5px solid #00ffcc !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 255, 204, 0.4) !important;
+  padding: 10px 24px !important;
+  border-radius: 30px !important;
+  font-family: var(--font-body) !important;
+  font-size: 0.92rem !important;
+  font-weight: 800 !important;
+  z-index: 999999 !important;
+  pointer-events: none !important;
+  white-space: nowrap !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
+  animation: toastPop 1.8s ease forwards !important;
+}
+
+@keyframes toastPop {
+  0%   { opacity: 0; transform: translateX(-50%) scale(0.8); }
+  15%  { opacity: 1; transform: translateX(-50%) scale(1.05); }
+  25%  { opacity: 1; transform: translateX(-50%) scale(1); }
+  80%  { opacity: 1; transform: translateX(-50%) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-25px); }
+}
+
 

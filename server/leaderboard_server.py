@@ -92,15 +92,15 @@ class RequestHandler(BaseHTTPRequestHandler):
         elif path == "/api/version":
             self._set_headers(200)
             v_data = {
-                "version": "2.2.1",
+                "version": "2.2.2",
                 "releaseDate": "2026-10-14",
-                "title": "Bản Cập Nhật v2.2.1 - Tự Động Kỹ Năng & Giao Diện RPG Thần Thoại",
+                "title": "Bản Cập Nhật v2.2.2 - Đài Dung Hợp Thần Thoại & Hỗn Mang",
                 "changelog": [
-                    "Bổ sung tùy chọn Quay x1000 trong Tự Động Gacha",
-                    "Hoàn thiện Tự Động Nâng Kỹ Năng Anh Hùng (Auto Skill Upgrade)",
-                    "Thiết kế lại toàn bộ thẻ kỹ năng và thanh điều khiển RPG siêu đẹp & mượt mà",
-                    "Hỗ trợ đồng bộ tự động cả index.html, css và bundle",
-                    "Cân bằng kinh tế và trải nghiệm gacha tối ưu"
+                    "Mở khóa Dung hợp Thần Thoại ➔ Hỗn Mang và Hỗn Mang ➔ ??? (Vô Cực)",
+                    "Bổ sung nút Ghép Nhanh và Tự Động Dung Hợp đầy đủ mọi phẩm chất",
+                    "Khắc phục nút Update hiển thị thông báo popup rõ ràng",
+                    "Cải thiện thông báo trạng thái nổi (Toast Notification) rực rỡ và dễ nhìn",
+                    "Tối ưu toàn diện hiệu năng và giao diện RPG"
                 ],
                 "bundleUrl": "/api/patch/bundle",
                 "cssUrl": "/api/patch/css",

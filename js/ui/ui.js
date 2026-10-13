@@ -37,7 +37,7 @@ const UI = {
     document.getElementById('chk-auto-fusion')?.addEventListener('change', (e) => {
       if (GameState.autoFusion) GameState.autoFusion.enabled = e.target.checked;
     });
-    ['common', 'rare', 'epic', 'legendary'].forEach(r => {
+    ['common', 'rare', 'epic', 'legendary', 'mythic', 'chaos'].forEach(r => {
       document.getElementById(`chk-fuse-${r}`)?.addEventListener('change', (e) => {
         if (!GameState.autoFusion) GameState.autoFusion = { enabled: false, rarities: {} };
         GameState.autoFusion.rarities[r] = e.target.checked;
@@ -1926,12 +1926,10 @@ const UI = {
   showToast(message) {
     document.querySelectorAll('.toast-notification').forEach(t => t.remove());
     const toast = document.createElement('div');
-    toast.className = 'level-up-toast toast-notification';
-    toast.style.fontSize = '0.9rem';
-    toast.style.top = '10%';
+    toast.className = 'toast-notification';
     toast.textContent = message;
     document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 1500);
+    setTimeout(() => toast.remove(), 2000);
   },
 
   _formatNumber(num) {

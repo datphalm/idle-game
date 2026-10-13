@@ -8,7 +8,7 @@ const GameState = {
   },
   autoFusion: {
     enabled: false,
-    rarities: { common: true, rare: false, epic: false, legendary: false }
+    rarities: { common: true, rare: false, epic: false, legendary: false, mythic: false, chaos: false }
   },
   stage: { current: 1, max: 1, autoAdvance: true },
   inventory: [],
@@ -158,7 +158,7 @@ const CONFIG = {
   FUSION_COUNT: 3,
   FUSION_RATES: {
     common: 0.85, rare: 0.70, epic: 0.50,
-    legendary: 0.30, mythic: 0.10, chaos: 0.015 // 1.5% lên ???
+    legendary: 0.30, mythic: 0.15, chaos: 0.05 // 15% lên Hỗn Mang, 5% lên ???
   },
 
   ENHANCE_MAX: 100,
@@ -604,7 +604,7 @@ const CONFIG = {
     }
   ],
 
-  GAME_VERSION: '2.2.0',
+  GAME_VERSION: '2.2.2',
   UPDATE_URL: 'https://idle-game-ms6o.onrender.com/api/version',
   SERVER_URL: 'https://idle-game-ms6o.onrender.com/api',
   AUTO_SAVE_INTERVAL: 20000,
