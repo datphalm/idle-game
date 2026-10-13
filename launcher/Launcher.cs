@@ -45,7 +45,10 @@ namespace IdleRPGLauncher
                         }
                     }
 
-                    // 2. Tìm cổng mạng khả dụng
+                    // 2. Tự động kiểm tra và cập nhật bản vá Hot-Patch từ Cloud Server Render
+                    CheckAndApplyUpdates();
+
+                    // 3. Tìm cổng mạng khả dụng
                     _port = FindFreePort(39180, 39250);
 
                     // 3. Khởi chạy HTTP Server cục bộ bảo mật
@@ -252,6 +255,125 @@ namespace IdleRPGLauncher
             catch { }
 
             return null;
+        }
+
+        private static void CheckAndApplyUpdates()
+        {
+            try
+            {
+                // Cho phép giao thức bảo mật TLS 1.2
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | SecurityProtocolType.Tls;
+                string versionUrl = "https://idle-game-ms6o.onrender.com/api/version";
+
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(versionUrl);
+                req.Timeout = 2500;
+                req.ReadWriteTimeout = 2500;
+                req.UserAgent = "IdleRPG-Launcher";
+
+                string remoteJson = null;
+                using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
+                {
+                    if (resp.StatusCode == HttpStatusCode.OK)
+                    {
+                        using (StreamReader sr = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.UTF8))
+                        {
+                            remoteJson = sr.ReadToEnd();
+                        }
+                    }
+                }
+
+                if (string.IsNullOrEmpty(remoteJson)) return;
+
+                string remoteVersion = ExtractJsonValue(remoteJson, "version");
+                if (string.IsNullOrEmpty(remoteVersion)) return;
+
+                string localVersionPath = Path.Combine(_baseDir, "version.json");
+                string localVersion = "2.1.0";
+                if (File.Exists(localVersionPath))
+                {
+                    string localJson = File.ReadAllText(localVersionPath);
+                    string parsed = ExtractJsonValue(localJson, "version");
+                    if (!string.IsNullOrEmpty(parsed)) localVersion = parsed;
+                }
+
+                // Nếu máy chủ có phiên bản mới hơn, tự động kéo bản vá Hot-Patch về đè ngay
+                if (IsNewerVersion(remoteVersion, localVersion))
+                {
+                    string bundleUrl = "https://idle-game-ms6o.onrender.com/api/patch/bundle";
+                    string targetBundle = Path.Combine(_baseDir, "js", "game.bundle.js");
+                    string tempBundle = targetBundle + ".tmp";
+
+                    using (WebClient wc = new WebClient())
+                    {
+                        wc.Headers.Add("User-Agent", "IdleRPG-Launcher");
+                        wc.DownloadFile(bundleUrl, tempBundle);
+
+                        FileInfo fi = new FileInfo(tempBundle);
+                        if (fi.Exists && fi.Length > 1000)
+                        {
+                            if (File.Exists(targetBundle)) File.Delete(targetBundle);
+                            File.Move(tempBundle, targetBundle);
+                        }
+                        else if (File.Exists(tempBundle))
+                        {
+                            File.Delete(tempBundle);
+                        }
+
+                        // Tải bổ sung CSS nếu có cập nhật giao diện
+                        try
+                        {
+                            string cssUrl = "https://idle-game-ms6o.onrender.com/api/patch/css";
+                            string targetCss = Path.Combine(_baseDir, "css", "style.css");
+                            string tempCss = targetCss + ".tmp";
+                            wc.DownloadFile(cssUrl, tempCss);
+                            if (File.Exists(tempCss) && new FileInfo(tempCss).Length > 500)
+                            {
+                                if (File.Exists(targetCss)) File.Delete(targetCss);
+                                File.Move(tempCss, targetCss);
+                            }
+                        }
+                        catch { }
+
+                        // Ghi lại version mới cục bộ để không lặp lại cập nhật
+                        File.WriteAllText(localVersionPath, remoteJson, System.Text.Encoding.UTF8);
+                    }
+                }
+            }
+            catch
+            {
+                // Bỏ qua ngoại lệ ngầm: đảm bảo game vẫn khởi động mượt mà khi ngoại tuyến
+            }
+        }
+
+        private static string ExtractJsonValue(string json, string key)
+        {
+            try
+            {
+                string pattern = "\"" + key + "\"\\s*:\\s*\"([^\"]+)\"";
+                System.Text.RegularExpressions.Match m = System.Text.RegularExpressions.Regex.Match(json, pattern);
+                if (m.Success) return m.Groups[1].Value;
+            }
+            catch { }
+            return null;
+        }
+
+        private static bool IsNewerVersion(string remote, string current)
+        {
+            try
+            {
+                string[] rParts = remote.Split('.');
+                string[] cParts = current.Split('.');
+                int len = Math.Max(rParts.Length, cParts.Length);
+                for (int i = 0; i < len; i++)
+                {
+                    int r = i < rParts.Length ? int.Parse(rParts[i]) : 0;
+                    int c = i < cParts.Length ? int.Parse(cParts[i]) : 0;
+                    if (r > c) return true;
+                    if (r < c) return false;
+                }
+            }
+            catch { }
+            return false;
         }
     }
 }

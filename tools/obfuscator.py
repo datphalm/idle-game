@@ -7,6 +7,7 @@ IDLE RPG - CODE OBFUSCATION & PRODUCTION BUILD PIPELINE
 import os
 import re
 import sys
+import json
 import shutil
 import base64
 import random
@@ -136,6 +137,31 @@ def build_dist_release(base_dir: str):
     # 1. Tạo bundle obfuscated
     bundle_target = os.path.join(dist_dir, "js", "game.bundle.js")
     build_obfuscated_bundle(base_dir, bundle_target)
+
+    # Đưa bản bundle và css lên server/static để server Render tự phục vụ Hot-Patch
+    server_static = os.path.join(base_dir, "server", "static")
+    os.makedirs(server_static, exist_ok=True)
+    shutil.copy2(bundle_target, os.path.join(server_static, "game.bundle.js"))
+    if os.path.exists(os.path.join(base_dir, "css", "style.css")):
+        shutil.copy2(os.path.join(base_dir, "css", "style.css"), os.path.join(server_static, "style.css"))
+
+    # Đồng bộ version.json
+    version_file = os.path.join(base_dir, "version.json")
+    if os.path.exists(version_file):
+        shutil.copy2(version_file, os.path.join(dist_dir, "version.json"))
+        try:
+            with open(version_file, "r", encoding="utf-8") as vf:
+                v_data = json.load(vf)
+            db_path = os.path.join(base_dir, "server", "data", "database.json")
+            if os.path.exists(db_path):
+                with open(db_path, "r", encoding="utf-8") as dbf:
+                    db_obj = json.load(dbf)
+                db_obj["version"] = v_data.get("version", "2.1.0")
+                db_obj["changelog"] = v_data.get("changelog", [])
+                with open(db_path, "w", encoding="utf-8") as dbf:
+                    json.dump(db_obj, dbf, ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f"⚠️ Đồng bộ database.json version: {e}")
 
     # 2. Copy libs (three.min.js)
     three_src = os.path.join(base_dir, "js", "libs", "three.min.js")

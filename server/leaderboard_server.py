@@ -56,10 +56,14 @@ def save_db(db):
     with open(DB_FILE, "w", encoding="utf-8") as f:
         json.dump(db, f, ensure_ascii=False, indent=2)
 
+STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+CSS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "css")
+os.makedirs(STATIC_DIR, exist_ok=True)
+
 class RequestHandler(BaseHTTPRequestHandler):
-    def _set_headers(self, status=200):
+    def _set_headers(self, status=200, content_type="application/json; charset=utf-8"):
         self.send_response(status)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Type", content_type)
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
@@ -89,9 +93,33 @@ class RequestHandler(BaseHTTPRequestHandler):
                 "releaseDate": "2026-10-14",
                 "title": f"Bản Cập Nhật v{db.get('version', '2.1.0')} - Thần Khí & Trùm Tháp",
                 "changelog": db.get("changelog", []),
+                "bundleUrl": "/api/patch/bundle",
+                "cssUrl": "/api/patch/css",
                 "downloadUrl": db.get("downloadUrl", "https://github.com/idlerpg/release/releases/latest")
             }
             self.wfile.write(json.dumps(v_data, ensure_ascii=False).encode("utf-8"))
+
+        elif path == "/api/patch/bundle":
+            bundle_file = os.path.join(STATIC_DIR, "game.bundle.js")
+            if os.path.exists(bundle_file):
+                self._set_headers(200, "application/javascript; charset=utf-8")
+                with open(bundle_file, "rb") as f:
+                    self.wfile.write(f.read())
+            else:
+                self._set_headers(404, "text/plain; charset=utf-8")
+                self.wfile.write(b"Bundle not found on server")
+
+        elif path == "/api/patch/css":
+            css_file = os.path.join(CSS_DIR, "style.css")
+            if not os.path.exists(css_file):
+                css_file = os.path.join(STATIC_DIR, "style.css")
+            if os.path.exists(css_file):
+                self._set_headers(200, "text/css; charset=utf-8")
+                with open(css_file, "rb") as f:
+                    self.wfile.write(f.read())
+            else:
+                self._set_headers(404, "text/plain; charset=utf-8")
+                self.wfile.write(b"CSS not found on server")
 
         else:
             self._set_headers(200)

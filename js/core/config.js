@@ -605,7 +605,7 @@ const CONFIG = {
   ],
 
   GAME_VERSION: '2.1.0',
-  UPDATE_URL: 'https://raw.githubusercontent.com/datphalm/idle-game/main/version.json',
+  UPDATE_URL: 'https://idle-game-ms6o.onrender.com/api/version',
   SERVER_URL: 'https://idle-game-ms6o.onrender.com/api',
   AUTO_SAVE_INTERVAL: 20000,
   MAX_OFFLINE_SECONDS: 86400,

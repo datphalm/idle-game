@@ -96,13 +96,14 @@ const Updater = {
           </ul>
         </div>
 
-        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center;">
+          <span style="font-size: 11px; color: #64748b; margin-right: auto;">Mẹo: Đóng và mở lại IdleRPG.exe để tự động cập nhật bản vá.</span>
           <button class="btn btn-secondary" onclick="document.getElementById('update-modal').remove()">
             Để Sau
           </button>
-          <a class="btn btn-primary" href="${updateData.downloadUrl || '#'}" target="_blank" style="background: #00ffcc; color: #0f172a; font-weight: bold; border-color: #00ffcc; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;" onclick="document.getElementById('update-modal').remove()">
-            📥 Tải Bản Cập Nhật Ngay
-          </a>
+          <button class="btn btn-primary" onclick="location.reload()" style="background: #00ffcc; color: #0f172a; font-weight: bold; border-color: #00ffcc; display: inline-flex; align-items: center; gap: 6px;">
+            🔄 Tải Lại Game
+          </button>
         </div>
       </div>
     `;
