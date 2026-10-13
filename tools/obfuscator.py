@@ -130,8 +130,6 @@ def build_dist_release(base_dir: str):
     dist_dir = os.path.join(base_dir, "dist")
     print(f"🚀 [3/4] Đang đóng gói bản phát hành vào thư mục: {dist_dir}...")
 
-    if os.path.exists(dist_dir):
-        shutil.rmtree(dist_dir)
     os.makedirs(dist_dir, exist_ok=True)
 
     # 1. Tạo bundle obfuscated
@@ -210,7 +208,10 @@ def build_dist_release(base_dir: str):
         if res.returncode == 0:
             print(f"✨ Biên dịch thành công IdleRPG.exe trong dist/!")
         else:
-            print(f"⚠️ Cảnh báo lỗi csc: {res.stderr}")
+            if "used by another process" in res.stderr:
+                print("ℹ️ File IdleRPG.exe đang chạy, đã giữ nguyên bản exe hiện tại và cập nhật toàn bộ bundle mã nguồn.")
+            else:
+                print(f"⚠️ Cảnh báo lỗi csc: {res.stderr}")
 
     print("\n🎉 HOÀN TẤT ĐÓNG GÓI! Bản cài đặt phân phối đã sẵn sàng tại:")
     print(f"👉 {dist_dir}")
