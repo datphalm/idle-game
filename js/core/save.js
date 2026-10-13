@@ -207,7 +207,7 @@ const SaveManager = {
     };
     GameState.autoFusion = {
       enabled: false,
-      rarities: { common: true, rare: false, epic: false, legendary: false }
+      rarities: { common: true, rare: false, epic: false, legendary: false, mythic: false, chaos: false }
     };
     GameState.stage = { current: 1, max: 1, autoAdvance: true };
     GameState.inventory = [];

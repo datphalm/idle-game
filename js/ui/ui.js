@@ -8,6 +8,8 @@ const UI = {
   _bossListRendered: false,
 
   init() {
+    this._ensureDynamicUiElements();
+
     // Tab switching
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => this.switchTab(btn.dataset.tab));
@@ -20,7 +22,7 @@ const UI = {
     document.getElementById('btn-do-fusion')?.addEventListener('click', () => this._handleFusionAction());
 
     document.querySelectorAll('.btn-quick-combine').forEach(btn => {
-      btn.addEventListener('click', () => this._handleQuickCombine(btn.dataset.rarity));
+      btn.onclick = () => this._handleQuickCombine(btn.dataset.rarity);
     });
 
     // Stage navigation
@@ -38,10 +40,13 @@ const UI = {
       if (GameState.autoFusion) GameState.autoFusion.enabled = e.target.checked;
     });
     ['common', 'rare', 'epic', 'legendary', 'mythic', 'chaos'].forEach(r => {
-      document.getElementById(`chk-fuse-${r}`)?.addEventListener('change', (e) => {
-        if (!GameState.autoFusion) GameState.autoFusion = { enabled: false, rarities: {} };
-        GameState.autoFusion.rarities[r] = e.target.checked;
-      });
+      const el = document.getElementById(`chk-fuse-${r}`);
+      if (el) {
+        el.onchange = (e) => {
+          if (!GameState.autoFusion) GameState.autoFusion = { enabled: false, rarities: {} };
+          GameState.autoFusion.rarities[r] = e.target.checked;
+        };
+      }
     });
 
     // Auto Upgrade controls
@@ -296,6 +301,7 @@ const UI = {
   },
 
   _syncAutoGachaControls() {
+    this._ensureDynamicUiElements();
     const chk = document.getElementById('chk-auto-gacha');
     if (chk && GameState.autoGacha) {
       chk.checked = !!GameState.autoGacha.enabled;
@@ -340,6 +346,174 @@ const UI = {
     const chk = document.getElementById('chk-toggle-vfx');
     if (chk) {
       chk.checked = isEnabled;
+    }
+  },
+
+  _ensureDynamicUiElements() {
+    // 1. Tùy chọn Quay x1000 trong #sel-auto-gacha-batch
+    const selBatch = document.getElementById('sel-auto-gacha-batch');
+    if (selBatch && !selBatch.querySelector('option[value="1000"]')) {
+      const opt = document.createElement('option');
+      opt.value = '1000';
+      opt.textContent = 'Quay ×1000 (Tiết kiệm 20%)';
+      selBatch.appendChild(opt);
+    }
+
+    // 2. Tùy chọn dừng Gacha trong #sel-auto-gacha-stop
+    const selStop = document.getElementById('sel-auto-gacha-stop');
+    if (selStop) {
+      const stopOptions = [
+        { val: 'none', text: 'Không dừng (Quay đến hết tiền/chỗ)' },
+        { val: 'legendary', text: 'Huyền Thoại (Cam) trở lên' },
+        { val: 'mythic', text: 'Thần Thoại (Đỏ) trở lên' },
+        { val: 'chaos', text: 'Hỗn Mang (Tím Đậm) trở lên' },
+        { val: 'unknown', text: '??? (Vô Cực)' }
+      ];
+      stopOptions.forEach(item => {
+        if (!selStop.querySelector(`option[value="${item.val}"]`)) {
+          const opt = document.createElement('option');
+          opt.value = item.val;
+          opt.textContent = item.text;
+          selStop.appendChild(opt);
+        }
+      });
+    }
+
+    // 3. Nút bấm Quay x1000 trong #gacha-buttons
+    const gachaBtns = document.getElementById('gacha-buttons');
+    if (gachaBtns) {
+      let btn1000 = document.getElementById('btn-gacha-1000');
+      if (!btn1000) {
+        btn1000 = document.createElement('button');
+        btn1000.className = 'btn btn-gacha btn-gacha-1000';
+        btn1000.id = 'btn-gacha-1000';
+        btn1000.innerHTML = `
+          <span class="gacha-btn-label">Quay ×1000</span>
+          <span class="gacha-btn-cost" id="gacha-cost-1000">💰 80,000</span>
+          <span class="gacha-discount">-20% Đại Gia</span>
+        `;
+        gachaBtns.appendChild(btn1000);
+      }
+      btn1000.onclick = () => this._handleGachaPull(1000);
+    }
+
+    // 4. Các checkbox Tự Động Dung Hợp trong #forge-sub-fusion
+    const forgeFusion = document.getElementById('forge-sub-fusion');
+    const autoChkRow = forgeFusion ? forgeFusion.querySelector('.auto-checkboxes-row') : document.querySelector('.auto-checkboxes-row');
+    if (autoChkRow) {
+      const fuseTiers = [
+        { id: 'chk-fuse-common', rarity: 'common', html: '<span>Thường ➔ Hiếm</span>' },
+        { id: 'chk-fuse-rare', rarity: 'rare', html: '<span>Hiếm ➔ Sử Thi</span>' },
+        { id: 'chk-fuse-epic', rarity: 'epic', html: '<span>Sử Thi ➔ Huyền Thoại</span>' },
+        { id: 'chk-fuse-legendary', rarity: 'legendary', html: '<span>Huyền Thoại ➔ Thần Thoại</span>' },
+        { id: 'chk-fuse-mythic', rarity: 'mythic', html: '<span style="color:#f87171; font-weight:700;">Thần Thoại ➔ Hỗn Mang</span>' },
+        { id: 'chk-fuse-chaos', rarity: 'chaos', html: '<span style="color:#c084fc; font-weight:800;">Hỗn Mang ➔ ???</span>' }
+      ];
+      fuseTiers.forEach(t => {
+        let chk = document.getElementById(t.id);
+        if (!chk) {
+          const label = document.createElement('label');
+          label.className = 'chk-item';
+          label.innerHTML = `<input type="checkbox" id="${t.id}"> ${t.html}`;
+          autoChkRow.appendChild(label);
+          chk = label.querySelector('input');
+        }
+        chk.onchange = (e) => {
+          if (!GameState.autoFusion) GameState.autoFusion = { enabled: false, rarities: {} };
+          GameState.autoFusion.rarities[t.rarity] = e.target.checked;
+        };
+      });
+    }
+
+    // 5. Nút Ghép Nhanh Hàng Loạt trong .quick-combine-btns
+    const quickCombineContainer = forgeFusion ? forgeFusion.querySelector('.quick-combine-btns') : document.querySelector('.quick-combine-btns');
+    if (quickCombineContainer) {
+      const quickBtns = [
+        { rarity: 'common', text: 'Thường ➔ Hiếm' },
+        { rarity: 'rare', text: 'Hiếm ➔ Sử Thi' },
+        { rarity: 'epic', text: 'Sử Thi ➔ Huyền Thoại' },
+        { rarity: 'legendary', text: 'Huyền Thoại ➔ Thần Thoại', style: 'border-color:#f59e0b; color:#fbbf24;' },
+        { rarity: 'mythic', text: 'Thần Thoại ➔ Hỗn Mang', style: 'border-color:#ef4444; color:#f87171;' },
+        { rarity: 'chaos', text: 'Hỗn Mang ➔ ???', style: 'border-color:#a855f7; color:#c084fc;' }
+      ];
+      quickBtns.forEach(qb => {
+        let btn = quickCombineContainer.querySelector(`.btn-quick-combine[data-rarity="${qb.rarity}"]`);
+        if (!btn) {
+          btn = document.createElement('button');
+          btn.className = 'btn btn-small btn-secondary btn-quick-combine';
+          btn.dataset.rarity = qb.rarity;
+          if (qb.style) btn.style.cssText = qb.style;
+          btn.textContent = qb.text;
+          quickCombineContainer.appendChild(btn);
+        }
+        btn.onclick = () => this._handleQuickCombine(qb.rarity);
+      });
+    }
+
+    // 6. Bán Nhanh Theo Phẩm Chất trong Tab Kho Đồ
+    const invControls = document.querySelector('#tab-inventory .inventory-controls') || document.querySelector('#tab-inventory .tab-header-actions') || document.getElementById('btn-sort-inv')?.parentElement;
+    if (invControls && !document.getElementById('btn-quick-sell-rarity')) {
+      const wrap = document.createElement('div');
+      wrap.className = 'quick-sell-wrapper';
+      wrap.style.cssText = 'display:inline-flex; align-items:center; gap:4px; background:rgba(0,0,0,0.3); padding:2px 6px; border-radius:6px; border:1px solid rgba(255,255,255,0.1); margin-right:6px;';
+      wrap.innerHTML = `
+        <span style="font-size:11px; color:#94a3b8;">Bán nhanh:</span>
+        <select id="sel-quick-sell-rarity" class="custom-select" style="font-size:11px; padding:2px 4px; height:26px;">
+          <option value="common">Chỉ Đồ Thường (Trắng)</option>
+          <option value="common,rare" selected>Thường + Hiếm (Trắng & Lam)</option>
+          <option value="common,rare,epic">Sử Thi trở xuống (Tím/Lam/Trắng)</option>
+        </select>
+        <button id="btn-quick-sell-rarity" class="btn btn-small btn-danger" style="padding:2px 8px; font-size:11px;" title="Bán tất cả trang bị theo phẩm chất đã chọn">💰 Bán</button>
+      `;
+      const btnSell = wrap.querySelector('#btn-quick-sell-rarity');
+      btnSell.onclick = () => {
+        const sel = document.getElementById('sel-quick-sell-rarity');
+        const val = sel ? sel.value : 'common,rare';
+        const rarities = val.split(',').map(s => s.trim()).filter(Boolean);
+        const res = Inventory.sellAllByRarities(rarities);
+        if (res.count > 0) {
+          this.showToast(`💰 Đã bán nhanh ${res.count} trang bị, thu về +${this._formatNumber(res.totalGold)} Vàng!`);
+        } else {
+          this.showToast('🎒 Không có trang bị nào thuộc phẩm chất này để bán!');
+        }
+        this.updateInventory();
+        this.updateStatusBar();
+        this.updateForge();
+      };
+      invControls.insertBefore(wrap, invControls.firstChild);
+    }
+
+    // 7. Tự Động Nâng Kỹ Năng trong Tab Nhân Vật
+    const tabHeroes = document.getElementById('tab-heroes');
+    if (tabHeroes && !document.getElementById('chk-auto-hero-skill')) {
+      const skillBar = document.createElement('div');
+      skillBar.className = 'glass-panel auto-hero-skill-bar';
+      skillBar.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:10px 14px;';
+      skillBar.innerHTML = `
+        <label class="toggle-switch-label" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+          <input type="checkbox" id="chk-auto-hero-skill">
+          <span class="toggle-title" style="font-size:13px; color:#f1f5f9;">⚡ <strong>Tự Động Nâng Kỹ Năng</strong> (Tự tiêu vàng nâng skill khi đủ điều kiện)</span>
+        </label>
+        <button id="btn-reset-heroes-debug" class="btn btn-small btn-danger" title="Khắc phục nhân vật bị lỗi max C6 từ phiên bản cũ">🔄 Reset Cung Mệnh Nhân Vật</button>
+      `;
+      const chkSkill = skillBar.querySelector('#chk-auto-hero-skill');
+      chkSkill.onchange = (e) => {
+        GameState.autoHeroSkill = e.target.checked;
+      };
+      const btnReset = skillBar.querySelector('#btn-reset-heroes-debug');
+      btnReset.onclick = () => {
+        if (confirm('Bạn có chắc chắn muốn reset toàn bộ Cung Mệnh (E0) của nhân vật? Vàng nâng cấp sẽ không được hoàn trả.')) {
+          if (GameState.heroes) {
+            GameState.heroes.forEach(h => {
+              h.constellation = 0;
+            });
+            this.showToast('✅ Đã reset toàn bộ tướng về Cung Mệnh E0!');
+            this.updateHeroesTab();
+            SaveSystem.save();
+          }
+        }
+      };
+      tabHeroes.insertBefore(skillBar, tabHeroes.firstChild);
     }
   },
 
@@ -492,6 +666,7 @@ const UI = {
   },
 
   _syncAutoControls() {
+    this._ensureDynamicUiElements();
     const autoU = GameState.autoUpgrade;
     if (autoU) {
       const chkU = document.getElementById('chk-auto-upgrade');
@@ -986,6 +1161,7 @@ const UI = {
   },
 
   updateInventory() {
+    this._ensureDynamicUiElements();
     this._renderEquippedSlots();
     this._renderInventoryGrid();
     const cur = Inventory.getCount();
@@ -1139,6 +1315,8 @@ const UI = {
   },
 
   updateForge() {
+    this._ensureDynamicUiElements();
+    this._syncAutoControls();
     this._updateEnhanceSub();
     this._updateFusionSub();
   },
@@ -1479,6 +1657,7 @@ const UI = {
   },
 
   updateGacha() {
+    this._ensureDynamicUiElements();
     const isHero = GameState.gacha?.bannerTab === 'hero';
     const count = Inventory.getCount();
     const free = Inventory.getFreeSlots();
@@ -1689,6 +1868,7 @@ const UI = {
   },
 
   updateHeroesTab() {
+    this._ensureDynamicUiElements();
     const chk = document.getElementById('chk-auto-hero-skill');
     if (chk) chk.checked = !!GameState.autoHeroSkill;
     this._renderHeroShowcase();

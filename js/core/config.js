@@ -604,7 +604,7 @@ const CONFIG = {
     }
   ],
 
-  GAME_VERSION: '2.2.3',
+  GAME_VERSION: '2.2.4',
   UPDATE_URL: 'https://idle-game-ms6o.onrender.com/api/version',
   SERVER_URL: 'https://idle-game-ms6o.onrender.com/api',
   AUTO_SAVE_INTERVAL: 20000,

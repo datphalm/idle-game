@@ -140,6 +140,8 @@ def build_dist_release(base_dir: str):
     server_static = os.path.join(base_dir, "server", "static")
     os.makedirs(server_static, exist_ok=True)
     shutil.copy2(bundle_target, os.path.join(server_static, "game.bundle.js"))
+    os.makedirs(os.path.join(base_dir, "js"), exist_ok=True)
+    shutil.copy2(bundle_target, os.path.join(base_dir, "js", "game.bundle.js"))
     if os.path.exists(os.path.join(base_dir, "css", "style.css")):
         shutil.copy2(os.path.join(base_dir, "css", "style.css"), os.path.join(server_static, "style.css"))
 

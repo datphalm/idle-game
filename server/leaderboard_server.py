@@ -92,14 +92,14 @@ class RequestHandler(BaseHTTPRequestHandler):
         elif path == "/api/version":
             self._set_headers(200)
             v_data = {
-                "version": "2.2.3",
+                "version": "2.2.4",
                 "releaseDate": "2026-10-14",
-                "title": "Bản Cập Nhật v2.2.3 - Hoàn Thiện Dung Hợp Thần Thoại & Đồng Bộ Trực Tiếp",
+                "title": "Bản Cập Nhật v2.2.4 - Nạp Đầy Đủ Nút Mới & Giao Diện Tự Khắc Phục",
                 "changelog": [
-                    "Cố định Popup Cập Nhật ngay trung tâm màn hình, không bị trôi hay che khuất",
-                    "Mở khóa Dung Hợp Thần Thoại ➔ Hỗn Mang và Hỗn Mang ➔ ???",
-                    "Mở đầy đủ nút Ghép Nhanh Hàng Loạt & Tự Động Dung Hợp mọi phẩm chất",
-                    "Bổ sung tùy chọn Quay ×1000 trong Tự Động Gacha",
+                    "Tự động kích hoạt hiển thị đầy đủ nút Quay ×1000 và Ghép Đồ Thần Thoại / Hỗn Mang mà không cần tải lại file zip",
+                    "Bổ sung tính năng tự vá giao diện (Auto DOM Self-Healing) đồng bộ mọi phiên bản game cũ",
+                    "Mở khóa trọn vẹn Ghép Nhanh Hàng Loạt từ Thần Thoại lên Hỗn Mang và Hỗn Mang lên ???",
+                    "Tự động gacha ×1000 ổn định, tự giải phóng kho đồ",
                     "Khóa chống lưu cache (No-Cache Headers) đảm bảo cập nhật ăn ngay tức thì"
                 ],
                 "bundleUrl": "/api/patch/bundle",

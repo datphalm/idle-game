@@ -16,7 +16,7 @@ if %ERRORLEVEL% NEQ 0 (
 
 echo.
 echo [2/3] Dang nen file zip phan phoi du phong...
-powershell -Command "Compress-Archive -Path 'dist\*' -DestinationPath 'IdleRPG_Online_v2.2.0.zip' -Force"
+powershell -Command "Compress-Archive -Path 'dist\*' -DestinationPath 'IdleRPG_Online_Latest.zip' -Force; Copy-Item 'IdleRPG_Online_Latest.zip' '..\IdleRPG_Online_Latest.zip' -Force"
 
 echo.
 echo [3/3] Dang day ban cap nhat len GitHub va may chu Render...
