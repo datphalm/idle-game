@@ -5,7 +5,7 @@
 
 const FriendAdmin = {
   _logs: [],
-  _serverUrl: 'http://127.0.0.1:5000/api',
+  _serverUrl: 'https://idle-game-ms6o.onrender.com/api',
 
   init() {
     this._loadLogs();
@@ -73,9 +73,10 @@ const FriendAdmin = {
 
   async _syncLogToServer(logEntry) {
     try {
+      const url = (typeof CONFIG !== 'undefined' && CONFIG.SERVER_URL) ? CONFIG.SERVER_URL : this._serverUrl;
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
-      await fetch(`${this._serverUrl}/admin/log`, {
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
+      await fetch(`${url}/admin/log`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(logEntry),
@@ -85,7 +86,23 @@ const FriendAdmin = {
     } catch (e) {}
   },
 
+  async fetchRemoteLogs() {
+    try {
+      const url = (typeof CONFIG !== 'undefined' && CONFIG.SERVER_URL) ? CONFIG.SERVER_URL : this._serverUrl;
+      const res = await fetch(`${url}/admin/logs`).catch(() => null);
+      if (res && res.ok) {
+        const serverLogs = await res.json();
+        if (Array.isArray(serverLogs) && serverLogs.length > 0) {
+          this._logs = serverLogs;
+          this._saveLogs();
+          this.render();
+        }
+      }
+    } catch (e) {}
+  },
+
   openAdminModal() {
+    this.fetchRemoteLogs();
     const modal = document.getElementById('admin-modal');
     if (!modal) return;
     this.render();

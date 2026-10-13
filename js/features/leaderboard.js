@@ -6,7 +6,7 @@
 const Leaderboard = {
   _currentFilter: 'level', // 'level' | 'tower' | 'power'
   _cachedPlayers: [],
-  _serverUrl: 'http://127.0.0.1:5000/api',
+  _serverUrl: 'https://idle-game-ms6o.onrender.com/api',
 
   init() {
     this._loadInitialData();
