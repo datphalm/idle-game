@@ -185,13 +185,14 @@ def build_dist_release(base_dir: str):
     version_file = os.path.join(base_dir, "version.json")
     if os.path.exists(version_file):
         shutil.copy2(version_file, os.path.join(dist_dir, "version.json"))
+        shutil.copy2(version_file, os.path.join(server_static, "version.json"))
         try:
             with open(version_file, "r", encoding="utf-8") as vf:
                 v_data = json.load(vf)
             if os.path.exists(db_path):
                 with open(db_path, "r", encoding="utf-8") as dbf:
                     db_obj = json.load(dbf)
-                db_obj["version"] = v_data.get("version", "2.1.0")
+                db_obj["version"] = v_data.get("version", "2.3.0")
                 db_obj["changelog"] = v_data.get("changelog", [])
                 with open(db_path, "w", encoding="utf-8") as dbf:
                     json.dump(db_obj, dbf, ensure_ascii=False, indent=2)

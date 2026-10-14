@@ -1,13 +1,15 @@
 {
-  "version": "2.2.4",
-  "title": "Bản Cập Nhật v2.2.4 - Nạp Đầy Đủ Nút Mới & Giao Diện Tự Khắc Phục",
+  "version": "2.3.0",
+  "title": "Bản Cập Nhật v2.3.0 - Đại Tu Toàn Diện Ultimate & Nhân Vật Mới Độc Bản",
   "releaseDate": "2026-10-14",
   "changelog": [
-    "Tự động kích hoạt hiển thị đầy đủ nút Quay ×1000 và Ghép Đồ Thần Thoại / Hỗn Mang mà không cần tải lại file zip",
-    "Bổ sung tính năng tự vá giao diện (Auto DOM Self-Healing) đồng bộ mọi phiên bản game cũ",
-    "Mở khóa trọn vẹn Ghép Nhanh Hàng Loạt từ Thần Thoại lên Hỗn Mang và Hỗn Mang lên ???",
-    "Tự động gacha ×1000 ổn định, tự giải phóng kho đồ",
-    "Khóa chống lưu cache (No-Cache Headers) đảm bảo cập nhật ăn ngay tức thì"
+    "Đại tu toàn diện Ultimate (Chiêu cuối): Màn hình tối sầm Shadow Arena rọi sáng nhân vật và quái vật",
+    "Hiệu ứng độc bản tương tác trực tiếp lên quái: Hất tung bay lơ lửng, Lồng băng pha lê nổ tung, Lốc lửa Phượng Hoàng, Rồng vàng thăng thiên, Lập phương thần thánh",
+    "Tạo hình 7 nhân vật Vector Pixel SVG độc nhất từ Khởi Đầu đến Thần Thoại & Hỗn Mang",
+    "Khắc phục triệt để lỗi Hiệp Sĩ Khởi Đầu bị tàng hình / mất ảnh",
+    "Sửa lỗi tràn khung Menu Chọn Nhân Vật, hỗ trợ đổi tướng mượt mà và trực quan",
+    "Bổ sung Bảng Điều Khiển Dev Admin (chỉ kích hoạt nội bộ) hỗ trợ kiểm tra tính năng nhanh chóng"
   ],
   "downloadUrl": "https://github.com/datphalm/idle-game/releases/latest"
 }
+

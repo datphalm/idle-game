@@ -91,22 +91,31 @@ class RequestHandler(BaseHTTPRequestHandler):
 
         elif path == "/api/version":
             self._set_headers(200)
-            v_data = {
-                "version": "2.2.4",
-                "releaseDate": "2026-10-14",
-                "title": "Bản Cập Nhật v2.2.4 - Nạp Đầy Đủ Nút Mới & Giao Diện Tự Khắc Phục",
-                "changelog": [
-                    "Tự động kích hoạt hiển thị đầy đủ nút Quay ×1000 và Ghép Đồ Thần Thoại / Hỗn Mang mà không cần tải lại file zip",
-                    "Bổ sung tính năng tự vá giao diện (Auto DOM Self-Healing) đồng bộ mọi phiên bản game cũ",
-                    "Mở khóa trọn vẹn Ghép Nhanh Hàng Loạt từ Thần Thoại lên Hỗn Mang và Hỗn Mang lên ???",
-                    "Tự động gacha ×1000 ổn định, tự giải phóng kho đồ",
-                    "Khóa chống lưu cache (No-Cache Headers) đảm bảo cập nhật ăn ngay tức thì"
-                ],
-                "bundleUrl": "/api/patch/bundle",
-                "cssUrl": "/api/patch/css",
-                "htmlUrl": "/api/patch/html",
-                "downloadUrl": db.get("downloadUrl", "https://github.com/idlerpg/release/releases/latest")
-            }
+            v_data = {}
+            for possible_v in [
+                os.path.join(os.path.dirname(os.path.dirname(__file__)), "version.json"),
+                os.path.join(STATIC_DIR, "version.json"),
+                os.path.join(os.path.dirname(os.path.dirname(__file__)), "dist", "version.json")
+            ]:
+                if os.path.exists(possible_v):
+                    try:
+                        with open(possible_v, "r", encoding="utf-8") as vf:
+                            v_data = json.load(vf)
+                            break
+                    except Exception:
+                        pass
+
+            if not v_data.get("version"):
+                v_data["version"] = db.get("version", "2.3.0")
+            if not v_data.get("title"):
+                v_data["title"] = "Bản Cập Nhật v" + str(v_data["version"])
+            if not v_data.get("changelog"):
+                v_data["changelog"] = db.get("changelog", [])
+
+            v_data["bundleUrl"] = "/api/patch/bundle"
+            v_data["cssUrl"] = "/api/patch/css"
+            v_data["htmlUrl"] = "/api/patch/html"
+            v_data["downloadUrl"] = v_data.get("downloadUrl") or db.get("downloadUrl", "https://github.com/datphalm/idle-game/releases/latest")
             self.wfile.write(json.dumps(v_data, ensure_ascii=False).encode("utf-8"))
 
         elif path == "/api/patch/bundle":
