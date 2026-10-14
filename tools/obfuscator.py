@@ -145,6 +145,41 @@ def build_dist_release(base_dir: str):
     if os.path.exists(os.path.join(base_dir, "css", "style.css")):
         shutil.copy2(os.path.join(base_dir, "css", "style.css"), os.path.join(server_static, "style.css"))
 
+    # 0. Sao lưu & Đồng bộ người chơi từ máy chủ Cloud trước khi đóng gói
+    db_path = os.path.join(base_dir, "server", "data", "database.json")
+    try:
+        import urllib.request
+        req = urllib.request.Request("https://idle-game-ms6o.onrender.com/api/leaderboard", headers={"User-Agent": "IdleRPG-Build"})
+        with urllib.request.urlopen(req, timeout=4) as resp:
+            if resp.status == 200:
+                remote_players = json.loads(resp.read().decode("utf-8"))
+                if os.path.exists(db_path):
+                    with open(db_path, "r", encoding="utf-8") as f:
+                        db_obj = json.load(f)
+                else:
+                    db_obj = {"players": []}
+                
+                local_players = db_obj.get("players", [])
+                p_map = {p.get("id"): p for p in local_players if p.get("id")}
+                for rp in remote_players:
+                    rid = rp.get("id")
+                    if rid:
+                        if rid in p_map:
+                            p_map[rid]["level"] = max(p_map[rid].get("level", 0), rp.get("level", 0))
+                            p_map[rid]["power"] = max(p_map[rid].get("power", 0), rp.get("power", 0))
+                            p_map[rid]["stage"] = max(p_map[rid].get("stage", 0), rp.get("stage", 0))
+                            p_map[rid]["towerFloor"] = max(p_map[rid].get("towerFloor", 0), rp.get("towerFloor", 0))
+                            p_map[rid]["lastActive"] = max(p_map[rid].get("lastActive", 0), rp.get("lastActive", 0))
+                        else:
+                            p_map[rid] = rp
+                db_obj["players"] = list(p_map.values())
+                os.makedirs(os.path.dirname(db_path), exist_ok=True)
+                with open(db_path, "w", encoding="utf-8") as f:
+                    json.dump(db_obj, f, ensure_ascii=False, indent=2)
+                print(f"📥 Đã đồng bộ & bảo toàn {len(db_obj['players'])} người chơi từ Cloud về máy!")
+    except Exception as e:
+        pass
+
     # Đồng bộ version.json
     version_file = os.path.join(base_dir, "version.json")
     if os.path.exists(version_file):
@@ -152,7 +187,6 @@ def build_dist_release(base_dir: str):
         try:
             with open(version_file, "r", encoding="utf-8") as vf:
                 v_data = json.load(vf)
-            db_path = os.path.join(base_dir, "server", "data", "database.json")
             if os.path.exists(db_path):
                 with open(db_path, "r", encoding="utf-8") as dbf:
                     db_obj = json.load(dbf)
@@ -163,12 +197,19 @@ def build_dist_release(base_dir: str):
         except Exception as e:
             print(f"⚠️ Đồng bộ database.json version: {e}")
 
-    # 2. Copy libs (three.min.js)
-    three_src = os.path.join(base_dir, "js", "libs", "three.min.js")
-    three_dst = os.path.join(dist_dir, "js", "libs", "three.min.js")
-    os.makedirs(os.path.dirname(three_dst), exist_ok=True)
-    if os.path.exists(three_src):
-        shutil.copy2(three_src, three_dst)
+    # 2. Copy libs (three.min.js, pixi.min.js...)
+    libs_src = os.path.join(base_dir, "js", "libs")
+    libs_dst = os.path.join(dist_dir, "js", "libs")
+    os.makedirs(libs_dst, exist_ok=True)
+    if os.path.exists(libs_src):
+        for lib_file in os.listdir(libs_src):
+            src_f = os.path.join(libs_src, lib_file)
+            if os.path.isfile(src_f):
+                shutil.copy2(src_f, os.path.join(libs_dst, lib_file))
+                if os.path.exists(server_static):
+                    static_libs = os.path.join(server_static, "js", "libs")
+                    os.makedirs(static_libs, exist_ok=True)
+                    shutil.copy2(src_f, os.path.join(static_libs, lib_file))
 
     # 3. Copy css
     css_src = os.path.join(base_dir, "css")
@@ -212,10 +253,11 @@ def build_dist_release(base_dir: str):
         if res.returncode == 0:
             print(f"✨ Biên dịch thành công IdleRPG.exe trong dist/!")
         else:
-            if "used by another process" in res.stderr:
+            out_err = (res.stderr or "") + " " + (res.stdout or "")
+            if "used by another process" in out_err or "cannot access" in out_err:
                 print("ℹ️ File IdleRPG.exe đang chạy, đã giữ nguyên bản exe hiện tại và cập nhật toàn bộ bundle mã nguồn.")
             else:
-                print(f"⚠️ Cảnh báo lỗi csc: {res.stderr}")
+                print(f"⚠️ Cảnh báo lỗi csc: {out_err}")
 
     print("\n🎉 HOÀN TẤT ĐÓNG GÓI! Bản cài đặt phân phối đã sẵn sàng tại:")
     print(f"👉 {dist_dir}")

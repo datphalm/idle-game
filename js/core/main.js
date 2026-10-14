@@ -76,6 +76,13 @@ function startUILoop() {
       }
     }
 
+    // Tự động đồng bộ trạng thái Online lên Bảng Xếp Hạng mỗi 30 giây (120 ticks * 250ms)
+    if (_autoTickCounter % 120 === 0) {
+      if (typeof Leaderboard !== 'undefined' && Leaderboard.syncCurrentPlayer) {
+        Leaderboard.syncCurrentPlayer();
+      }
+    }
+
     if (UI._currentTab === 'battle') {
       UI.updateBattleStatsOnly();
       UI.updateSkillCooldowns();

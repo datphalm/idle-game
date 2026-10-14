@@ -515,6 +515,24 @@ const UI = {
       };
       tabHeroes.insertBefore(skillBar, tabHeroes.firstChild);
     }
+
+    // 8. Nút Đổi Tên & Làm Mới trong Leaderboard Modal
+    const lbModal = document.getElementById('leaderboard-modal');
+    if (lbModal && !document.getElementById('btn-lb-rename')) {
+      const filterRow = lbModal.querySelector('.btn-lb-tab')?.parentElement;
+      if (filterRow && !filterRow.querySelector('.lb-action-btns')) {
+        const actDiv = document.createElement('div');
+        actDiv.className = 'lb-action-btns';
+        actDiv.style.cssText = 'display:flex; gap:6px; margin-left:auto;';
+        actDiv.innerHTML = `
+          <button id="btn-lb-rename" class="btn btn-small btn-secondary" style="font-size:11px; padding:3px 8px;" title="Đổi tên nhân vật hiển thị trên BXH">✏️ Đổi Tên</button>
+          <button id="btn-lb-refresh" class="btn btn-small btn-secondary" style="font-size:11px; padding:3px 8px;" title="Làm mới BXH từ Cloud">🔄 Làm Mới</button>
+        `;
+        actDiv.querySelector('#btn-lb-rename').onclick = () => Leaderboard.promptRename();
+        actDiv.querySelector('#btn-lb-refresh').onclick = () => Leaderboard.refresh();
+        filterRow.appendChild(actDiv);
+      }
+    }
   },
 
   switchTab(tabName) {
@@ -2471,9 +2489,12 @@ const UI = {
     if (GameState.settings && GameState.settings.vfxEnabled === false && !skillRes?.forcePreview) {
       return;
     }
-    if (typeof Cinematics !== 'undefined' && Cinematics.playBurst) {
-      Cinematics.playBurst(skillRes);
-      return;
+    try {
+      if (typeof Cinematics !== 'undefined' && Cinematics.playBurst) {
+        Cinematics.playBurst(skillRes);
+      }
+    } catch (err) {
+      console.warn("Burst cinematic error caught safely in UI:", err);
     }
   },
 

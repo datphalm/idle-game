@@ -168,17 +168,35 @@ class RequestHandler(BaseHTTPRequestHandler):
                 data["lastActive"] = int(time.time() * 1000)
                 data["isMe"] = False
                 
-                # Tìm và cập nhật hoặc thêm mới theo id duy nhất
+                # Khôi phục các đối thủ khác từ knownPlayers nếu server vừa khởi động lại
+                known = data.get("knownPlayers", [])
+                if isinstance(known, list):
+                    for kp in known:
+                        if isinstance(kp, dict):
+                            k_id = kp.get("id")
+                            if k_id and not any(p.get("id") == k_id for p in players):
+                                kp["isMe"] = False
+                                players.append(kp)
+
+                # Tìm và cập nhật hoặc thêm mới người chơi hiện tại
                 idx = next((i for i, p in enumerate(players) if p.get("id") == p_id), -1)
                 if idx != -1:
+                    existing = players[idx]
+                    data["level"] = max(existing.get("level", 0), data.get("level", 0))
+                    data["power"] = max(existing.get("power", 0), data.get("power", 0))
+                    data["stage"] = max(existing.get("stage", 0), data.get("stage", 0))
+                    data["towerFloor"] = max(existing.get("towerFloor", 0), data.get("towerFloor", 0))
                     players[idx] = data
                 else:
                     players.append(data)
+
+                if "knownPlayers" in data:
+                    del data["knownPlayers"]
                 
                 db["players"] = players
                 save_db(db)
 
-                # Trả về bảng xếp hạng cập nhật
+                # Trả về bảng xếp hạng cập nhật (đầy đủ mọi người chơi kể cả offline)
                 players_sorted = sorted(players, key=lambda p: (p.get("level", 0), p.get("power", 0)), reverse=True)
                 self._set_headers(200)
                 self.wfile.write(json.dumps(players_sorted[:100], ensure_ascii=False).encode("utf-8"))

@@ -1,0 +1,323 @@
+{
+  "version": "2.2.4",
+  "downloadUrl": "https://github.com/idlerpg/release/releases/latest",
+  "changelog": [
+    "Tự động kích hoạt hiển thị đầy đủ nút Quay ×1000 và Ghép Đồ Thần Thoại / Hỗn Mang mà không cần tải lại file zip",
+    "Bổ sung tính năng tự vá giao diện (Auto DOM Self-Healing) đồng bộ mọi phiên bản game cũ",
+    "Mở khóa trọn vẹn Ghép Nhanh Hàng Loạt từ Thần Thoại lên Hỗn Mang và Hỗn Mang lên ???",
+    "Tự động gacha ×1000 ổn định, tự giải phóng kho đồ",
+    "Khóa chống lưu cache (No-Cache Headers) đảm bảo cập nhật ăn ngay tức thì"
+  ],
+  "players": [
+    {
+      "id": "p_1",
+      "name": "Độc Cô Cầu Bại",
+      "heroId": "hero_raiden",
+      "constellation": 6,
+      "level": 88,
+      "stage": 52,
+      "towerFloor": 65,
+      "power": 852000,
+      "lastActive": 1791945474417
+    },
+    {
+      "id": "p_2",
+      "name": "Vô Danh Kiếm Thánh",
+      "heroId": "hero_changli",
+      "constellation": 4,
+      "level": 75,
+      "stage": 45,
+      "towerFloor": 50,
+      "power": 620000,
+      "lastActive": 1791945474417
+    },
+    {
+      "id": "p_3",
+      "name": "Thần Kiếm Tiêu Dao",
+      "heroId": "hero_jiyan",
+      "constellation": 3,
+      "level": 68,
+      "stage": 38,
+      "towerFloor": 42,
+      "power": 480000,
+      "lastActive": 1791945474417
+    },
+    {
+      "id": "player_mv6tuevg_pcexz4",
+      "name": "Thành Cát Tư Hãn",
+      "heroId": "hero_unknown_god",
+      "constellation": 0,
+      "level": 999,
+      "stage": 149,
+      "towerFloor": 109,
+      "power": 807449,
+      "lastActive": 1791943628261,
+      "isMe": false
+    },
+    {
+      "id": "p_mv7i2olv_adail",
+      "name": "Chiến Binh 1",
+      "heroId": "hero_traveler",
+      "constellation": 0,
+      "level": 1,
+      "stage": 2,
+      "towerFloor": 1,
+      "power": 437,
+      "lastActive": 1791945563841,
+      "knownPlayers": [
+        {
+          "id": "bot_1",
+          "name": "Độc Cô Cầu Bại",
+          "heroId": "hero_raiden",
+          "constellation": 6,
+          "level": 88,
+          "stage": 52,
+          "towerFloor": 65,
+          "power": 852000,
+          "lastActive": 1791941882547
+        },
+        {
+          "id": "bot_2",
+          "name": "Vô Danh Kiếm Thánh",
+          "heroId": "hero_changli",
+          "constellation": 4,
+          "level": 75,
+          "stage": 45,
+          "towerFloor": 50,
+          "power": 620000,
+          "lastActive": 1791938282547
+        },
+        {
+          "id": "bot_3",
+          "name": "Thần Kiếm Tiêu Dao",
+          "heroId": "hero_jiyan",
+          "constellation": 3,
+          "level": 68,
+          "stage": 38,
+          "towerFloor": 42,
+          "power": 480000,
+          "lastActive": 1791931082547
+        },
+        {
+          "id": "bot_4",
+          "name": "Nham Vương Tông Sư",
+          "heroId": "hero_zhongli",
+          "constellation": 2,
+          "level": 60,
+          "stage": 32,
+          "towerFloor": 35,
+          "power": 360000,
+          "lastActive": 1791916682547
+        },
+        {
+          "id": "bot_5",
+          "name": "Bạch Y Hiệp Khách",
+          "heroId": "hero_kazuha",
+          "constellation": 2,
+          "level": 54,
+          "stage": 28,
+          "towerFloor": 30,
+          "power": 275000,
+          "lastActive": 1791902282547
+        },
+        {
+          "id": "bot_6",
+          "name": "Thủy Thần Ca Sĩ",
+          "heroId": "hero_furina",
+          "constellation": 1,
+          "level": 45,
+          "stage": 22,
+          "towerFloor": 24,
+          "power": 190000,
+          "lastActive": 1791859082547
+        },
+        {
+          "id": "bot_7",
+          "name": "Hỏa Cung Tân Thủ",
+          "heroId": "hero_amber",
+          "constellation": 1,
+          "level": 32,
+          "stage": 15,
+          "towerFloor": 16,
+          "power": 95000,
+          "lastActive": 1791772682547
+        },
+        {
+          "id": "bot_8",
+          "name": "Tân Binh Lữ Hành",
+          "heroId": "hero_traveler",
+          "constellation": 0,
+          "level": 18,
+          "stage": 8,
+          "towerFloor": 9,
+          "power": 32000,
+          "lastActive": 1791686282547
+        }
+      ],
+      "isMe": false
+    },
+    {
+      "id": "player_mv6thjf7_l9noqf",
+      "name": "Chiến Binh 1",
+      "heroId": "hero_traveler",
+      "constellation": 1,
+      "level": 46,
+      "stage": 45,
+      "towerFloor": 2,
+      "power": 5011,
+      "lastActive": 1791945642356,
+      "knownPlayers": [
+        {
+          "id": "p_1",
+          "name": "Độc Cô Cầu Bại",
+          "heroId": "hero_raiden",
+          "constellation": 6,
+          "level": 88,
+          "stage": 52,
+          "towerFloor": 65,
+          "power": 852000,
+          "lastActive": 1791945474417,
+          "isMe": false
+        },
+        {
+          "id": "p_2",
+          "name": "Vô Danh Kiếm Thánh",
+          "heroId": "hero_changli",
+          "constellation": 4,
+          "level": 75,
+          "stage": 45,
+          "towerFloor": 50,
+          "power": 620000,
+          "lastActive": 1791945474417,
+          "isMe": false
+        },
+        {
+          "id": "p_3",
+          "name": "Thần Kiếm Tiêu Dao",
+          "heroId": "hero_jiyan",
+          "constellation": 3,
+          "level": 68,
+          "stage": 38,
+          "towerFloor": 42,
+          "power": 480000,
+          "lastActive": 1791945474417,
+          "isMe": false
+        },
+        {
+          "id": "p_mv7i2olv_adail",
+          "name": "Chiến Binh 1",
+          "heroId": "hero_traveler",
+          "constellation": 0,
+          "level": 1,
+          "stage": 2,
+          "towerFloor": 1,
+          "power": 437,
+          "lastActive": 1791945563841,
+          "knownPlayers": [
+            {
+              "id": "bot_1",
+              "name": "Độc Cô Cầu Bại",
+              "heroId": "hero_raiden",
+              "constellation": 6,
+              "level": 88,
+              "stage": 52,
+              "towerFloor": 65,
+              "power": 852000,
+              "lastActive": 1791941882547
+            },
+            {
+              "id": "bot_2",
+              "name": "Vô Danh Kiếm Thánh",
+              "heroId": "hero_changli",
+              "constellation": 4,
+              "level": 75,
+              "stage": 45,
+              "towerFloor": 50,
+              "power": 620000,
+              "lastActive": 1791938282547
+            },
+            {
+              "id": "bot_3",
+              "name": "Thần Kiếm Tiêu Dao",
+              "heroId": "hero_jiyan",
+              "constellation": 3,
+              "level": 68,
+              "stage": 38,
+              "towerFloor": 42,
+              "power": 480000,
+              "lastActive": 1791931082547
+            },
+            {
+              "id": "bot_4",
+              "name": "Nham Vương Tông Sư",
+              "heroId": "hero_zhongli",
+              "constellation": 2,
+              "level": 60,
+              "stage": 32,
+              "towerFloor": 35,
+              "power": 360000,
+              "lastActive": 1791916682547
+            },
+            {
+              "id": "bot_5",
+              "name": "Bạch Y Hiệp Khách",
+              "heroId": "hero_kazuha",
+              "constellation": 2,
+              "level": 54,
+              "stage": 28,
+              "towerFloor": 30,
+              "power": 275000,
+              "lastActive": 1791902282547
+            },
+            {
+              "id": "bot_6",
+              "name": "Thủy Thần Ca Sĩ",
+              "heroId": "hero_furina",
+              "constellation": 1,
+              "level": 45,
+              "stage": 22,
+              "towerFloor": 24,
+              "power": 190000,
+              "lastActive": 1791859082547
+            },
+            {
+              "id": "bot_7",
+              "name": "Hỏa Cung Tân Thủ",
+              "heroId": "hero_amber",
+              "constellation": 1,
+              "level": 32,
+              "stage": 15,
+              "towerFloor": 16,
+              "power": 95000,
+              "lastActive": 1791772682547
+            },
+            {
+              "id": "bot_8",
+              "name": "Tân Binh Lữ Hành",
+              "heroId": "hero_traveler",
+              "constellation": 0,
+              "level": 18,
+              "stage": 8,
+              "towerFloor": 9,
+              "power": 32000,
+              "lastActive": 1791686282547
+            }
+          ],
+          "isMe": false
+        }
+      ],
+      "isMe": false
+    }
+  ],
+  "logs": [
+    {
+      "id": 1,
+      "time": 1791897738356,
+      "player": "Độc Cô Cầu Bại",
+      "type": "gacha",
+      "tag": "GACHA",
+      "color": "#d500f9",
+      "message": "Chiêu mộ Raiden Shogun (E6) thành công!"
+    }
+  ]
+}

@@ -18,7 +18,7 @@ __pycache__/
 *$py.class
 
 # 3. Dữ liệu máy chủ và tệp tạm
-server/data/*.json
+# server/data/*.json (Cho phép lưu giữ database.json vĩnh viễn)
 scratch/
 temp/
 *.log

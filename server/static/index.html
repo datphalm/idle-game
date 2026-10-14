@@ -1175,7 +1175,7 @@
         <h2 style="font-size: 20px; color: #f59e0b; margin: 0; display: flex; align-items: center; gap: 8px;">
           🏆 BẢNG XẾP HẠNG TOÀN CẦU
         </h2>
-        <span style="background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid #f59e0b; padding: 2px 8px; border-radius: 6px; font-weight: bold; font-size: 11px;">
+        <span id="lb-sync-badge" style="background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid #f59e0b; padding: 2px 8px; border-radius: 6px; font-weight: bold; font-size: 11px;">
           LIVE SYNC
         </span>
       </div>
@@ -1183,17 +1183,27 @@
         Xếp hạng năng động toàn bộ người chơi. Thử thách tài năng leo ải và thăng tiến sức mạnh!
       </p>
 
-      <!-- Filter Tabs -->
-      <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-        <button class="btn btn-small btn-lb-tab active" data-filter="level" onclick="Leaderboard.render('level')">
-          ⭐ Top Cấp Độ
-        </button>
-        <button class="btn btn-small btn-lb-tab" data-filter="tower" onclick="Leaderboard.render('tower')">
-          🌌 Top Leo Tháp
-        </button>
-        <button class="btn btn-small btn-lb-tab" data-filter="power" onclick="Leaderboard.render('power')">
-          ⚡ Top Lực Chiến
-        </button>
+      <!-- Filter Tabs & Actions -->
+      <div style="display: flex; gap: 8px; margin-bottom: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-small btn-lb-tab active" data-filter="level" onclick="Leaderboard.render('level')">
+            ⭐ Top Cấp Độ
+          </button>
+          <button class="btn btn-small btn-lb-tab" data-filter="tower" onclick="Leaderboard.render('tower')">
+            🌌 Top Leo Tháp
+          </button>
+          <button class="btn btn-small btn-lb-tab" data-filter="power" onclick="Leaderboard.render('power')">
+            ⚡ Top Lực Chiến
+          </button>
+        </div>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-small btn-secondary" onclick="Leaderboard.promptRename()" title="Đổi tên nhân vật hiển thị trên BXH" style="font-size: 11px; padding: 3px 8px;">
+            ✏️ Đổi Tên
+          </button>
+          <button class="btn btn-small btn-secondary" onclick="Leaderboard.refresh()" title="Làm mới BXH từ Cloud" style="font-size: 11px; padding: 3px 8px;">
+            🔄 Làm Mới
+          </button>
+        </div>
       </div>
 
       <!-- Leaderboard Table Container -->
@@ -1295,7 +1305,8 @@
     </div>
   </div>
 
-  <!-- 3D WebGL Library -->
+  <!-- WebGL Graphic Libraries (Pixi.js & Three.js) -->
+  <script src="js/libs/pixi.min.js"></script>
   <script src="js/libs/three.min.js"></script>
 
   <!-- Protected Production Bundle -->

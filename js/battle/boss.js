@@ -98,7 +98,7 @@ const Boss = {
     if (skillRes.triggered) {
       pDmg = skillRes.damage;
       if (skillRes.type === 'burst' && typeof UI !== 'undefined' && UI.playBurstCinematic) {
-        UI.playBurstCinematic(skillRes);
+        try { UI.playBurstCinematic(skillRes); } catch(e) {}
       }
       b.hp = Math.max(0, b.hp - pDmg);
       if (typeof UI !== 'undefined') {

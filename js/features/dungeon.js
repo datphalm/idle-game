@@ -175,7 +175,7 @@ const Dungeon = {
         UI.animatePlayerAttack('dungeon');
         UI.animateMonsterHit('dungeon');
         if (skillRes.type === 'burst' && UI.playBurstCinematic) {
-          UI.playBurstCinematic(skillRes);
+          try { UI.playBurstCinematic(skillRes); } catch(e) {}
         }
       }
       if (m.hp <= 0) {
@@ -408,7 +408,7 @@ const Dungeon = {
         UI.animatePlayerAttack('tower');
         UI.animateMonsterHit('tower');
         if (skillRes.type === 'burst' && UI.playBurstCinematic) {
-          UI.playBurstCinematic(skillRes);
+          try { UI.playBurstCinematic(skillRes); } catch(e) {}
         }
       }
       if (m.hp <= 0) {

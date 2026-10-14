@@ -1,19 +1,20 @@
 /**
  * IDLE RPG - DYNAMIC GLOBAL LEADERBOARD & CLOUD SYNC SYSTEM
- * Bảng xếp hạng toàn cầu năng động (Cấp độ, Leo Tháp, Lực Chiến) & Đồng bộ dữ liệu người chơi
+ * Bảng xếp hạng toàn cầu năng động (Cấp độ, Leo Tháp, Lực Chiến) & Đồng bộ vĩnh viễn mọi người chơi (kể cả Offline)
  */
 
 const Leaderboard = {
   _currentFilter: 'level', // 'level' | 'tower' | 'power'
   _cachedPlayers: [],
   _serverUrl: 'https://idle-game-ms6o.onrender.com/api',
+  _isSyncing: false,
+  _syncStatus: 'idle', // 'idle' | 'loading' | 'online' | 'offline'
 
   init() {
     this._loadInitialData();
   },
 
   _loadInitialData() {
-    // Lấy dữ liệu local hoặc tạo danh sách đối thủ sinh động
     const saved = localStorage.getItem('idle_rpg_leaderboard_cache');
     if (saved) {
       try {
@@ -25,8 +26,10 @@ const Leaderboard = {
       this._seedInitialCompetitors();
     }
 
-    // Tự động đồng bộ điểm số của người chơi hiện tại vào bảng xếp hạng
-    this.syncCurrentPlayer();
+    // Tự động đồng bộ ngầm điểm số khi khởi động
+    setTimeout(() => {
+      this.syncCurrentPlayer();
+    }, 1500);
   },
 
   _seedInitialCompetitors() {
@@ -58,15 +61,21 @@ const Leaderboard = {
   },
 
   _getOrCreatePlayerId() {
-    let pid = localStorage.getItem('idle_rpg_unique_uid');
+    const slotId = (typeof SaveManager !== 'undefined') ? SaveManager.getActiveSlotId() : 'slot_1';
+    const key = `idle_rpg_uid_${slotId}`;
+    let pid = localStorage.getItem(key);
     if (!pid) {
-      pid = 'player_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 8);
-      localStorage.setItem('idle_rpg_unique_uid', pid);
+      if (slotId === 'slot_1' && localStorage.getItem('idle_rpg_unique_uid')) {
+        pid = localStorage.getItem('idle_rpg_unique_uid');
+      } else {
+        pid = 'p_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 7);
+      }
+      localStorage.setItem(key, pid);
     }
     return pid;
   },
 
-  syncCurrentPlayer() {
+  syncCurrentPlayer(isManual = false) {
     if (!GameState.player) return;
     const meta = SaveManager.getProfilesMeta();
     const activeSlot = meta.slots.find(s => s.id === SaveManager.getActiveSlotId());
@@ -83,33 +92,43 @@ const Leaderboard = {
       stage: GameState.stage?.current || 1,
       towerFloor: GameState.dungeon?.towerHighestFloor || GameState.dungeon?.abyssFloor || 1,
       power: this.calculateCurrentPower(),
-      lastActive: Date.now()
+      lastActive: Date.now(),
+      // Truyền danh sách đối thủ đã biết để máy chủ tự động phục hồi nếu máy chủ bị restart
+      knownPlayers: this._cachedPlayers.filter(p => p.id !== myUid).slice(0, 30)
     };
 
-    // Cập nhật vào danh sách cục bộ
+    // Cập nhật ngay vào danh sách hiển thị cục bộ
     const idx = this._cachedPlayers.findIndex(p => p.id === myUid);
     if (idx !== -1) {
-      this._cachedPlayers[idx] = Object.assign({}, myProfile, { isMe: true });
+      this._cachedPlayers[idx] = Object.assign({}, this._cachedPlayers[idx], myProfile, { isMe: true });
     } else {
       this._cachedPlayers.push(Object.assign({}, myProfile, { isMe: true }));
     }
     this._saveCache();
+    this.render();
 
-    // Thử gửi cập nhật lên máy chủ từ xa nếu có
-    this._syncToServer(myProfile);
+    // Gửi đồng bộ lên máy chủ đám mây
+    this._syncToServer(myProfile, isManual);
   },
 
-  async _syncToServer(playerData) {
+  async _syncToServer(playerData, isManual = false) {
+    if (this._isSyncing) return;
+    this._isSyncing = true;
+    this._updateSyncStatusBadge('loading');
+
     try {
       const url = (typeof CONFIG !== 'undefined' && CONFIG.SERVER_URL) ? CONFIG.SERVER_URL : this._serverUrl;
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3500);
+      // Cho 15s để Render Free kịp tỉnh dậy nếu đang ngủ (Cold start)
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      
       const res = await fetch(`${url}/player/sync`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(playerData),
         signal: controller.signal
       }).catch(() => null);
+      
       clearTimeout(timeoutId);
 
       if (res && res.ok) {
@@ -118,28 +137,80 @@ const Leaderboard = {
           const myUid = this._getOrCreatePlayerId();
           this._cachedPlayers = remoteList.map(p => Object.assign({}, p, { isMe: p.id === myUid }));
           this._saveCache();
-          if (document.getElementById('leaderboard-modal') && !document.getElementById('leaderboard-modal').classList.contains('hidden')) {
-            this.render();
+          this._updateSyncStatusBadge('online');
+          this.render();
+          if (isManual && typeof UI !== 'undefined') {
+            UI.showToast('✅ Đã cập nhật Bảng Xếp Hạng mới nhất từ Cloud!');
           }
+          return;
         }
       }
-    } catch (e) {}
+      
+      this._updateSyncStatusBadge('offline');
+    } catch (e) {
+      this._updateSyncStatusBadge('offline');
+    } finally {
+      this._isSyncing = false;
+    }
   },
 
-  async fetchRemoteLeaderboard() {
+  async fetchRemoteLeaderboard(isManual = false) {
+    if (this._isSyncing) return;
+    this._isSyncing = true;
+    this._updateSyncStatusBadge('loading');
+
     try {
       const url = (typeof CONFIG !== 'undefined' && CONFIG.SERVER_URL) ? CONFIG.SERVER_URL : this._serverUrl;
-      const res = await fetch(`${url}/leaderboard`).catch(() => null);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      
+      const res = await fetch(`${url}/leaderboard`, { signal: controller.signal }).catch(() => null);
+      clearTimeout(timeoutId);
+
       if (res && res.ok) {
         const remoteList = await res.json();
         if (Array.isArray(remoteList) && remoteList.length > 0) {
           const myUid = this._getOrCreatePlayerId();
           this._cachedPlayers = remoteList.map(p => Object.assign({}, p, { isMe: p.id === myUid }));
           this._saveCache();
+          this._updateSyncStatusBadge('online');
           this.render();
+          if (isManual && typeof UI !== 'undefined') {
+            UI.showToast('✅ Bảng Xếp Hạng đã được làm mới!');
+          }
+          return;
         }
       }
-    } catch (e) {}
+      this._updateSyncStatusBadge('offline');
+    } catch (e) {
+      this._updateSyncStatusBadge('offline');
+    } finally {
+      this._isSyncing = false;
+    }
+  },
+
+  _updateSyncStatusBadge(status) {
+    this._syncStatus = status;
+    const badge = document.getElementById('lb-sync-badge');
+    if (!badge) return;
+
+    const count = this._cachedPlayers.length;
+    if (status === 'loading') {
+      badge.innerHTML = '⏳ Đang đồng bộ Cloud...';
+      badge.style.background = 'rgba(234, 179, 8, 0.15)';
+      badge.style.color = '#eab308';
+      badge.style.borderColor = '#eab308';
+    } else if (status === 'online') {
+      badge.innerHTML = `🟢 Trực Tuyến (${count} người chơi)`;
+      badge.style.background = 'rgba(16, 185, 129, 0.15)';
+      badge.style.color = '#10b981';
+      badge.style.borderColor = '#10b981';
+    } else {
+      badge.innerHTML = `⚪ Bộ Nhớ Tạm (${count} người chơi)`;
+      badge.style.background = 'rgba(148, 163, 184, 0.15)';
+      badge.style.color = '#94a3b8';
+      badge.style.borderColor = '#94a3b8';
+    }
   },
 
   getSortedPlayers(filter = 'level') {
@@ -155,12 +226,50 @@ const Leaderboard = {
   },
 
   openModal() {
-    this.syncCurrentPlayer();
-    this.fetchRemoteLeaderboard();
     const modal = document.getElementById('leaderboard-modal');
     if (!modal) return;
     this.render();
     modal.classList.remove('hidden');
+
+    // Đồng bộ và tải dữ liệu mới nhất khi mở bảng xếp hạng
+    this.syncCurrentPlayer(false);
+  },
+
+  refresh() {
+    this.syncCurrentPlayer(true);
+  },
+
+  promptRename() {
+    const meta = SaveManager.getProfilesMeta();
+    const activeSlot = meta.slots.find(s => s.id === SaveManager.getActiveSlotId());
+    const curName = activeSlot?.name || 'Chiến Binh Của Bạn';
+    const newName = prompt('Nhập tên hiển thị của bạn trên Bảng Xếp Hạng:', curName);
+    if (newName && newName.trim() && newName.trim() !== curName) {
+      SaveManager.renameProfile(SaveManager.getActiveSlotId(), newName.trim());
+      this.syncCurrentPlayer(true);
+      if (typeof UI !== 'undefined') {
+        UI.showToast(`✅ Đã đổi tên hiển thị thành: ${newName.trim()}`);
+      }
+    }
+  },
+
+  _formatLastActive(timestamp, isMe) {
+    if (isMe) return '<span style="color:#10b981; font-weight:700;">🟢 Online (Bạn)</span>';
+    if (!timestamp) return '<span style="color:#94a3b8;">⚪ Offline</span>';
+    const diff = Math.max(0, Date.now() - timestamp);
+    if (diff < 3 * 60 * 1000) {
+      return '<span style="color:#10b981; font-weight:700;">🟢 Online</span>';
+    }
+    if (diff < 60 * 60 * 1000) {
+      const m = Math.max(1, Math.floor(diff / 60000));
+      return `<span style="color:#94a3b8;">⚪ Off ${m}p trước</span>`;
+    }
+    if (diff < 24 * 3600 * 1000) {
+      const h = Math.floor(diff / 3600000);
+      return `<span style="color:#94a3b8;">⚪ Off ${h}h trước</span>`;
+    }
+    const d = Math.floor(diff / 86400000);
+    return `<span style="color:#64748b;">⚪ Off ${d} ngày trước</span>`;
   },
 
   render(filter = null) {
@@ -174,11 +283,13 @@ const Leaderboard = {
       btn.classList.toggle('active', btn.dataset.filter === this._currentFilter);
     });
 
+    const myUid = this._getOrCreatePlayerId();
     let html = '';
     sorted.forEach((p, index) => {
       const rank = index + 1;
-      const isMe = p.isMe || p.id === this._getOrCreatePlayerId();
+      const isMe = p.isMe || p.id === myUid;
       const hero = CONFIG.getHeroById(p.heroId || 'hero_traveler');
+      const statusHtml = this._formatLastActive(p.lastActive, isMe);
 
       let rankBadge = `<span style="font-weight:bold; font-size:14px; color:#94a3b8;">#${rank}</span>`;
       if (rank === 1) rankBadge = `<span style="font-size:20px;">🥇</span>`;
@@ -192,9 +303,15 @@ const Leaderboard = {
             <div style="display:flex; align-items:center; gap:8px;">
               <span style="font-size:20px;">${hero?.icon || '⚔️'}</span>
               <div>
-                <strong style="color:${isMe ? '#34d399' : '#f8fafc'}; font-size:13px;">${p.name}</strong>
-                ${isMe ? '<span style="background:#10b981; color:#022c22; font-size:9px; font-weight:800; padding:1px 4px; border-radius:4px; margin-left:4px;">BẠN</span>' : ''}
-                <div style="font-size:11px; color:#94a3b8;">${hero?.name} (E${p.constellation || 0})</div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <strong style="color:${isMe ? '#34d399' : '#f8fafc'}; font-size:13.5px;">${p.name}</strong>
+                  ${isMe ? '<span style="background:#10b981; color:#022c22; font-size:9px; font-weight:800; padding:1px 5px; border-radius:4px;">BẠN</span>' : ''}
+                </div>
+                <div style="font-size:11px; color:#94a3b8; display:flex; align-items:center; gap:6px; margin-top:2px;">
+                  <span>${hero?.name} (E${p.constellation || 0})</span>
+                  <span>•</span>
+                  ${statusHtml}
+                </div>
               </div>
             </div>
           </td>
@@ -207,5 +324,6 @@ const Leaderboard = {
     });
 
     container.innerHTML = html;
+    this._updateSyncStatusBadge(this._syncStatus);
   }
 };
