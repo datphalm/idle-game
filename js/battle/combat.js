@@ -37,6 +37,11 @@ const Combat = {
       return;
     }
 
+    if (typeof Cinematics !== 'undefined' && Cinematics.active) {
+      this._scheduleNextTurn(500);
+      return;
+    }
+
     try {
       const p = GameState.player;
 
@@ -88,7 +93,7 @@ const Combat = {
         // Tung kỹ năng đặc biệt của Hero
         const hitResult = Monster.takeDamage(skillRes.damage);
         UI.showDamageNumber(skillRes.damage, true, 'monster');
-        UI.animatePlayerAttack();
+        UI.animatePlayerSkill(null, skillRes.type);
         UI.animateMonsterHit();
 
         const badgeName = skillRes.type === 'burst' ? '🌟 TUYỆT KỸ NỘ' : '⚡ KỸ NĂNG NGUYÊN TỐ';
@@ -102,8 +107,15 @@ const Combat = {
         if (hitResult.isDead) {
           m.hp = 0;
           UI.updateBattleStatsOnly();
-          this._onMonsterKill(m);
-          this._scheduleNextTurn(550);
+          const deathDelay = (skillRes.type === 'burst') ? 2100 : 180;
+          const nextTurnDelay = (skillRes.type === 'burst') ? 2550 : 650;
+          setTimeout(() => {
+            UI.animateMonsterDeath(() => {
+              UI.animatePlayerWalk(null, 500);
+              this._onMonsterKill(m);
+            });
+          }, deathDelay);
+          this._scheduleNextTurn(nextTurnDelay);
           return;
         }
       } else {
@@ -119,8 +131,13 @@ const Combat = {
         if (hitResult.isDead) {
           m.hp = 0;
           UI.updateBattleStatsOnly();
-          this._onMonsterKill(m);
-          this._scheduleNextTurn(550);
+          setTimeout(() => {
+            UI.animateMonsterDeath(() => {
+              UI.animatePlayerWalk(null, 500);
+              this._onMonsterKill(m);
+            });
+          }, 180);
+          this._scheduleNextTurn(650);
           return;
         }
 
@@ -136,11 +153,16 @@ const Combat = {
           setTimeout(() => {
             UI.showDamageNumber(extraDamage, true, 'monster');
             UI.animateMonsterHit();
-            if (extraResult.isDead) this._onMonsterKill(m);
+            if (extraResult.isDead) {
+              UI.animateMonsterDeath(() => {
+                UI.animatePlayerWalk(null, 500);
+                this._onMonsterKill(m);
+              });
+            }
           }, 200);
 
           if (extraResult.isDead) {
-            this._scheduleNextTurn(650);
+            this._scheduleNextTurn(700);
             return;
           }
         }
@@ -149,6 +171,7 @@ const Combat = {
       // --- 2. LƯỢT PHẢN CÔNG CỦA QUÁI ---
       const mDamage = Math.max(1, Math.floor(m.attack * (0.85 + Math.random() * 0.3)) - Player.getEffectiveDefense());
       const pTakeDmg = Player.takeDamage(mDamage);
+      const counterDelay = (skillRes.triggered && skillRes.type === 'burst') ? 2200 : 350;
 
       setTimeout(() => {
         UI.showDamageNumber(mDamage, false, 'player');
@@ -156,16 +179,18 @@ const Combat = {
         UI.animatePlayerHit();
 
         if (pTakeDmg.isDead) {
+          UI.animatePlayerDeath();
           UI.addCombatLog(`💥 ${m.name} tung đòn chí mạng gây <strong>-${mDamage}</strong>! Bạn đã tử trận!`, 'log-danger');
         } else {
           const regen = Player.getEffectiveHpRegen();
           if (regen > 0) Player.heal(regen);
         }
         UI.updateBattle();
-      }, 250);
+      }, counterDelay);
 
-      UI.updateBattle();
-      this._scheduleNextTurn();
+      UI.updateBattleStatsOnly();
+      UI.updateMonsterDisplay();
+      this._scheduleNextTurn(skillRes.triggered && skillRes.type === 'burst' ? 2550 : undefined);
     } catch (err) {
       console.error("Combat step recovered from error:", err);
       this._scheduleNextTurn(600);

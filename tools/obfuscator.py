@@ -24,6 +24,7 @@ SCRIPT_ORDER = [
     "js/core/updater.js",
     "js/features/leaderboard.js",
     "js/features/friend_admin.js",
+    "js/core/dev_admin.js",
     "js/battle/player.js",
     "js/battle/monster.js",
     "js/features/inventory.js",
@@ -211,11 +212,22 @@ def build_dist_release(base_dir: str):
                     os.makedirs(static_libs, exist_ok=True)
                     shutil.copy2(src_f, os.path.join(static_libs, lib_file))
 
-    # 3. Copy css
+    # 3. Copy css & assets
     css_src = os.path.join(base_dir, "css")
     css_dst = os.path.join(dist_dir, "css")
     if os.path.exists(css_src):
         shutil.copytree(css_src, css_dst, dirs_exist_ok=True)
+        if os.path.exists(server_static):
+            static_css = os.path.join(server_static, "css")
+            shutil.copytree(css_src, static_css, dirs_exist_ok=True)
+
+    assets_src = os.path.join(base_dir, "assets")
+    assets_dst = os.path.join(dist_dir, "assets")
+    if os.path.exists(assets_src):
+        shutil.copytree(assets_src, assets_dst, dirs_exist_ok=True)
+        if os.path.exists(server_static):
+            static_assets = os.path.join(server_static, "assets")
+            shutil.copytree(assets_src, static_assets, dirs_exist_ok=True)
 
     # 4. Tạo index.html cho bản phân phối (chỉ nạp bundle.js)
     src_html = os.path.join(base_dir, "index.html")

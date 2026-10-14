@@ -41,7 +41,7 @@ const Cinematics = {
   // High-Performance Particle System (> 500 Particles)
   particles: [],
   particleSprites: [],
-  MAX_PARTICLES: 650,
+  MAX_PARTICLES: 120,
 
   // Reality Shatter WebGL Shards
   shatterShards: [],
@@ -352,8 +352,8 @@ const Cinematics = {
 
     // Preload Hero Stance Textures
     const HERO_LIST = [
-      'hero_traveler', 'hero_amber', 'hero_kazuha', 'hero_zhongli',
-      'hero_jiyan', 'hero_furina', 'hero_changli', 'hero_raiden', 'hero_unknown_god'
+      'hero_starter', 'hero_shadow_rogue', 'hero_frost_knight',
+      'hero_spear_lancer', 'hero_flame_knight', 'hero_arcane_mage', 'hero_unknown_god'
     ];
 
     HERO_LIST.forEach(heroId => {
@@ -477,23 +477,32 @@ const Cinematics = {
   },
 
   _getHeroColorPalette(heroId) {
-    switch (heroId) {
-      case 'hero_raiden':
-        return [0xd500f9, 0x00e5ff, 0xfff59d, 0x7c4dff, 0xffffff];
-      case 'hero_zhongli':
-        return [0xffb300, 0xffd54f, 0xff6f00, 0xffe082, 0xffffff];
-      case 'hero_changli':
-        return [0xff1744, 0xff6d00, 0xffd600, 0xff8a80, 0xffffff];
+    const idMap = {
+      hero_traveler: 'hero_starter',
+      hero_kazuha: 'hero_shadow_rogue',
+      hero_furina: 'hero_frost_knight',
+      hero_zhongli: 'hero_spear_lancer',
+      hero_jiyan: 'hero_spear_lancer',
+      hero_amber: 'hero_flame_knight',
+      hero_changli: 'hero_flame_knight',
+      hero_raiden: 'hero_arcane_mage'
+    };
+    const targetId = idMap[heroId] || heroId;
+    switch (targetId) {
+      case 'hero_starter':
+        return [0xffd700, 0xb0bec5, 0x78909c, 0xffeb3b, 0xffffff];
+      case 'hero_shadow_rogue':
+        return [0x00e5ff, 0x0284c7, 0x38bdf8, 0x0f172a, 0xffffff];
+      case 'hero_frost_knight':
+        return [0x00e5ff, 0x80d8ff, 0x0288d1, 0x01579b, 0xffffff];
+      case 'hero_spear_lancer':
+        return [0xffd700, 0xffb300, 0xff8f00, 0x00e5ff, 0xffffff];
+      case 'hero_flame_knight':
+        return [0xff3d00, 0xff9100, 0xd50000, 0xffd600, 0xffffff];
+      case 'hero_arcane_mage':
+        return [0xb026ff, 0xd500f9, 0x4a148c, 0x00e5ff, 0xffffff];
       case 'hero_unknown_god':
-        return [0xd50000, 0xaa00ff, 0xff0055, 0x4a148c, 0xffffff];
-      case 'hero_furina':
-        return [0x00b0ff, 0x2979ff, 0x80d8ff, 0x00e5ff, 0xffffff];
-      case 'hero_kazuha':
-        return [0x00e676, 0x1de9b6, 0x69f0ae, 0xb9f6ca, 0xffffff];
-      case 'hero_jiyan':
-        return [0x00bfa5, 0x00e676, 0x64ffda, 0x1de9b6, 0xffffff];
-      case 'hero_amber':
-        return [0xff3d00, 0xff9100, 0xffea00, 0xff6e40, 0xffffff];
+        return [0x00ffcc, 0xff0055, 0xaa00ff, 0x880e4f, 0xffffff];
       default:
         return [0xffd700, 0x00e5ff, 0xff007f, 0x76ff03, 0xffffff];
     }
@@ -655,10 +664,21 @@ const Cinematics = {
     const ctx = this._getAudioCtx();
     if (!ctx) return;
     const now = ctx.currentTime;
+    const idMap = {
+      hero_traveler: 'hero_starter',
+      hero_kazuha: 'hero_shadow_rogue',
+      hero_furina: 'hero_frost_knight',
+      hero_zhongli: 'hero_spear_lancer',
+      hero_jiyan: 'hero_spear_lancer',
+      hero_amber: 'hero_flame_knight',
+      hero_changli: 'hero_flame_knight',
+      hero_raiden: 'hero_arcane_mage'
+    };
+    const targetId = idMap[heroId] || heroId;
 
     try {
       if (phase === 'intro') {
-        if (heroId === 'hero_furina') {
+        if (targetId === 'hero_frost_knight') {
           [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((freq, idx) => {
             const osc = ctx.createOscillator();
             const g = ctx.createGain();
@@ -671,7 +691,7 @@ const Cinematics = {
             osc.start(now + idx * 0.07);
             osc.stop(now + idx * 0.07 + 0.35);
           });
-        } else if (heroId === 'hero_kazuha') {
+        } else if (targetId === 'hero_shadow_rogue') {
           const click = ctx.createOscillator();
           const clickG = ctx.createGain();
           click.type = 'triangle';
@@ -682,19 +702,31 @@ const Cinematics = {
           clickG.connect(ctx.destination);
           click.start(now + 0.22);
           click.stop(now + 0.35);
-        } else if (heroId === 'hero_amber') {
-          [880, 1760, 2640].forEach((freq, idx) => {
+        } else if (targetId === 'hero_flame_knight') {
+          [440, 880, 1760].forEach((freq, idx) => {
             const osc = ctx.createOscillator();
             const g = ctx.createGain();
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(freq, now + idx * 0.1);
-            g.gain.setValueAtTime(0.14, now + idx * 0.1);
-            g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.08);
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+            g.gain.setValueAtTime(0.18, now + idx * 0.08);
+            g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.12);
             osc.connect(g);
             g.connect(ctx.destination);
-            osc.start(now + idx * 0.1);
-            osc.stop(now + idx * 0.1 + 0.1);
+            osc.start(now + idx * 0.08);
+            osc.stop(now + idx * 0.08 + 0.12);
           });
+        } else if (targetId === 'hero_arcane_mage') {
+          const osc1 = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc1.type = 'sawtooth';
+          osc1.frequency.setValueAtTime(800, now);
+          osc1.frequency.exponentialRampToValueAtTime(2400, now + 0.35);
+          g.gain.setValueAtTime(0.25, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+          osc1.connect(g);
+          g.connect(ctx.destination);
+          osc1.start(now);
+          osc1.stop(now + 0.38);
         } else {
           const osc1 = ctx.createOscillator();
           const g = ctx.createGain();
@@ -721,7 +753,7 @@ const Cinematics = {
         subOsc.start(now);
         subOsc.stop(now + 0.8);
 
-        if (heroId === 'hero_zhongli') {
+        if (targetId === 'hero_spear_lancer') {
           const bell = ctx.createOscillator();
           const bellG = ctx.createGain();
           bell.type = 'sine';
@@ -732,7 +764,7 @@ const Cinematics = {
           bellG.connect(ctx.destination);
           bell.start(now);
           bell.stop(now + 1.3);
-        } else if (heroId === 'hero_raiden') {
+        } else if (targetId === 'hero_arcane_mage') {
           const zap = ctx.createOscillator();
           const zapG = ctx.createGain();
           zap.type = 'sawtooth';
@@ -744,7 +776,7 @@ const Cinematics = {
           zapG.connect(ctx.destination);
           zap.start(now);
           zap.stop(now + 0.42);
-        } else if (heroId === 'hero_furina') {
+        } else if (targetId === 'hero_frost_knight') {
           const water = ctx.createOscillator();
           const waterG = ctx.createGain();
           water.type = 'triangle';
@@ -768,15 +800,18 @@ const Cinematics = {
           filter.frequency.setValueAtTime(1500, now);
           filter.frequency.exponentialRampToValueAtTime(70, now + 0.48);
           const expGain = ctx.createGain();
-          expGain.gain.setValueAtTime(0.55, now);
-          expGain.gain.exponentialRampToValueAtTime(0.001, now + 0.48);
+          expGain.gain.setValueAtTime(0.5, now);
+          expGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
           noise.connect(filter);
           filter.connect(expGain);
           expGain.connect(ctx.destination);
           noise.start(now);
+          noise.stop(now + 0.5);
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      // AudioCtx protected
+    }
   },
 
   // ============================================================
@@ -863,7 +898,7 @@ const Cinematics = {
     const H = this.height || 720;
     const cx = W / 2;
     const cy = H / 2;
-    const shardCount = 28;
+    const shardCount = 10;
     const palette = this._getHeroColorPalette(heroId);
 
     for (let i = 0; i < shardCount; i++) {
@@ -935,10 +970,10 @@ const Cinematics = {
 
     // 1. 3D Sacred Geometry Celestial Seal (Midground Parallax)
     const seal = new PIXI.Graphics();
-    seal.lineStyle(2.5, palette[0], 0.75);
-    seal.drawEllipse(0, 110, 240, 75);
-    seal.lineStyle(1.5, palette[1], 0.5);
-    seal.drawEllipse(0, 110, 170, 52);
+    seal.lineStyle(1.8, palette[0], 0.35);
+    seal.drawEllipse(0, 95, 170, 48);
+    seal.lineStyle(1.2, palette[1], 0.22);
+    seal.drawEllipse(0, 95, 120, 34);
     seal.blendMode = PIXI.BLEND_MODES.ADD;
     this.space3DLayer.removeChildren();
     this.space3DLayer.addChild(seal);
@@ -1030,6 +1065,201 @@ const Cinematics = {
   // ============================================================
   // MAIN ENTRY POINT FOR BURST ULTIMATE CINEMATIC
   // ============================================================
+  showBurstCinematic(skillRes) {
+    return this.playBurst(skillRes);
+  },
+
+  stopBurstCinematic() {
+    this._finishBurst();
+  },
+
+  _getHeroBurstImpactSvg(heroId) {
+    const idMap = {
+      hero_traveler: 'hero_starter',
+      hero_kazuha: 'hero_shadow_rogue',
+      hero_furina: 'hero_frost_knight',
+      hero_zhongli: 'hero_spear_lancer',
+      hero_jiyan: 'hero_spear_lancer',
+      hero_amber: 'hero_flame_knight',
+      hero_changli: 'hero_flame_knight',
+      hero_raiden: 'hero_arcane_mage'
+    };
+    const targetId = idMap[heroId] || heroId;
+
+    switch (targetId) {
+      case 'hero_starter':
+        return `
+        <svg viewBox="0 0 300 300" class="impact-svg impact-starter" width="100%" height="100%">
+          <defs>
+            <linearGradient id="st-arc-grad" x1="0" y1="1" x2="1" y2="0">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="60%" stop-color="#ffd700"/>
+              <stop offset="100%" stop-color="#ff9100"/>
+            </linearGradient>
+            <filter id="st-spark-glow"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ffd700" flood-opacity="1"/></filter>
+          </defs>
+          <!-- Upward Greatsword Launcher Arc (Knocks monster flying up!) -->
+          <path class="slash-upward-arc" d="M 50,260 Q 150,150 250,30" stroke="url(#st-arc-grad)" stroke-width="14" fill="none" stroke-linecap="round" filter="url(#st-spark-glow)"/>
+          <path class="slash-upward-arc-core" d="M 50,260 Q 150,150 250,30" stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <!-- 4 Rapid Airborne Cross Slashes -->
+          <g class="airborne-cross-slashes" filter="url(#st-spark-glow)">
+            <line class="cross-sl-1" x1="40" y1="70" x2="260" y2="150" stroke="#ffffff" stroke-width="6"/>
+            <line class="cross-sl-2" x1="260" y1="80" x2="40" y2="160" stroke="#ffd700" stroke-width="7"/>
+            <line class="cross-sl-3" x1="70" y1="30" x2="230" y2="200" stroke="#ffffff" stroke-width="8"/>
+            <line class="cross-sl-4" x1="230" y1="30" x2="70" y2="200" stroke="#ffeb3b" stroke-width="8"/>
+          </g>
+          <!-- Downward Ground Hammer Crash Impact -->
+          <g class="ground-smash-burst">
+            <ellipse cx="150" cy="275" rx="100" ry="24" stroke="#ffd700" stroke-width="4" fill="none" class="ground-ring-exp"/>
+            <path d="M 150,275 L 80,240 M 150,275 L 220,240 M 150,275 L 60,280 M 150,275 L 240,280" stroke="#cfd8dc" stroke-width="3.5"/>
+            <circle cx="150" cy="275" r="16" fill="#ffd700" filter="url(#st-spark-glow)"/>
+          </g>
+        </svg>`;
+
+      case 'hero_shadow_rogue':
+        return `
+        <svg viewBox="0 0 300 300" class="impact-svg impact-shadow_rogue" width="100%" height="100%">
+          <defs>
+            <filter id="rg-cyan-glow"><feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#00e5ff" flood-opacity="1"/></filter>
+          </defs>
+          <!-- Cyan Shadow Mist Vortex -->
+          <ellipse cx="150" cy="150" rx="115" ry="75" stroke="#00e5ff" stroke-width="3.5" stroke-dasharray="24,12" fill="none" class="shadow-vortex-spin" filter="url(#rg-cyan-glow)"/>
+          <!-- 6 Rapid Clone Flurry Slices -->
+          <g class="clone-flurry-slashes" filter="url(#rg-cyan-glow)">
+            <path class="flurry-1" d="M 20,110 L 280,150" stroke="#00e5ff" stroke-width="5"/>
+            <path class="flurry-2" d="M 270,100 L 30,190" stroke="#ffffff" stroke-width="4"/>
+            <path class="flurry-3" d="M 40,50 L 260,240" stroke="#38bdf8" stroke-width="6"/>
+            <path class="flurry-4" d="M 260,50 L 40,240" stroke="#00e5ff" stroke-width="6"/>
+            <path class="flurry-5" d="M 150,20 L 150,280" stroke="#ffffff" stroke-width="5"/>
+            <path class="flurry-6" d="M 20,160 L 280,130" stroke="#0284c7" stroke-width="5"/>
+          </g>
+          <!-- Delayed Massive X Execution Cut -->
+          <g class="delayed-execution-x" filter="url(#rg-cyan-glow)">
+            <line x1="30" y1="30" x2="270" y2="270" stroke="#00e5ff" stroke-width="12"/>
+            <line x1="30" y1="30" x2="270" y2="270" stroke="#ffffff" stroke-width="5"/>
+            <line x1="270" y1="30" x2="30" y2="270" stroke="#00e5ff" stroke-width="12"/>
+            <line x1="270" y1="30" x2="30" y2="270" stroke="#ffffff" stroke-width="5"/>
+          </g>
+        </svg>`;
+
+      case 'hero_frost_knight':
+        return `
+        <svg viewBox="0 0 300 300" class="impact-svg impact-frost_knight" width="100%" height="100%">
+          <defs>
+            <filter id="fk-ice-glow"><feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#00e5ff" flood-opacity="1"/></filter>
+          </defs>
+          <!-- Rising Glacial Stalagmites beneath monster -->
+          <g class="rising-glacier-spikes" filter="url(#fk-ice-glow)">
+            <polygon points="120,290 150,90 180,290" fill="rgba(0,229,255,0.7)" stroke="#ffffff" stroke-width="2.5"/>
+            <polygon points="60,290 95,150 130,290" fill="rgba(128,216,255,0.6)" stroke="#00e5ff" stroke-width="2"/>
+            <polygon points="170,290 205,140 240,290" fill="rgba(128,216,255,0.6)" stroke="#00e5ff" stroke-width="2"/>
+          </g>
+          <!-- Ice Block Crystalline Prison Encasing Monster -->
+          <g class="ice-prison-block" filter="url(#fk-ice-glow)">
+            <polygon points="80,50 220,50 250,190 50,190" fill="rgba(0,229,255,0.35)" stroke="#ffffff" stroke-width="3.5"/>
+            <line x1="80" y1="50" x2="165" y2="125" stroke="#ffffff" stroke-width="2.5"/>
+            <line x1="220" y1="50" x2="165" y2="125" stroke="#ffffff" stroke-width="2.5"/>
+            <line x1="50" y1="190" x2="165" y2="125" stroke="#ffffff" stroke-width="2.5"/>
+            <line x1="250" y1="190" x2="165" y2="125" stroke="#ffffff" stroke-width="2.5"/>
+          </g>
+          <!-- Frostmourne Shatter Slash Line -->
+          <path class="frostmourne-cleave" d="M 20,135 Q 150,65 280,125" stroke="#ffffff" stroke-width="12" fill="none" stroke-linecap="round" filter="url(#fk-ice-glow)"/>
+        </svg>`;
+
+      case 'hero_spear_lancer':
+        return `
+        <svg viewBox="0 0 300 300" class="impact-svg impact-spear_lancer" width="100%" height="100%">
+          <defs>
+            <filter id="sl-light-glow"><feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#ffd700" flood-opacity="1"/></filter>
+          </defs>
+          <!-- Rapid 8-Strike Lightning Spear Piercing Rush -->
+          <g class="lightning-thrust-barrage" filter="url(#sl-light-glow)">
+            <line class="thrust-1" x1="10" y1="110" x2="250" y2="110" stroke="#ffd700" stroke-width="6"/>
+            <line class="thrust-2" x1="10" y1="130" x2="270" y2="130" stroke="#ffffff" stroke-width="7"/>
+            <line class="thrust-3" x1="10" y1="150" x2="260" y2="150" stroke="#ffb300" stroke-width="6"/>
+            <line class="thrust-4" x1="20" y1="90" x2="240" y2="100" stroke="#00e5ff" stroke-width="5"/>
+            <line class="thrust-5" x1="20" y1="170" x2="250" y2="160" stroke="#ffd700" stroke-width="5"/>
+          </g>
+          <!-- Soaring Golden Lightning Dragon -->
+          <g class="ascending-golden-dragon" filter="url(#sl-light-glow)">
+            <path d="M 150,300 Q 60,200 150,120 Q 240,40 150,-30" stroke="#ffd700" stroke-width="20" fill="none" stroke-linecap="round"/>
+            <path d="M 150,300 Q 60,200 150,120 Q 240,40 150,-30" stroke="#ffffff" stroke-width="8" fill="none" stroke-linecap="round"/>
+            <!-- Dragon Roaring Jaws -->
+            <polygon points="150,-40 185,0 160,18 140,18 115,0" fill="#ffd700" stroke="#ffffff" stroke-width="3"/>
+            <circle cx="135" cy="-8" r="4.5" fill="#00e5ff"/>
+            <circle cx="165" cy="-8" r="4.5" fill="#00e5ff"/>
+          </g>
+        </svg>`;
+
+      case 'hero_flame_knight':
+        return `
+        <svg viewBox="0 0 300 300" class="impact-svg impact-flame_knight" width="100%" height="100%">
+          <defs>
+            <filter id="fk-fire-glow-2"><feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#ff3d00" flood-opacity="1"/></filter>
+          </defs>
+          <!-- Blazing Flame Tornado Cyclone -->
+          <g class="flame-cyclone-vortex" filter="url(#fk-fire-glow-2)">
+            <ellipse cx="150" cy="210" rx="95" ry="26" stroke="#bf360c" stroke-width="8" fill="none" stroke-dasharray="20,10" class="spin-cyclone"/>
+            <ellipse cx="150" cy="150" rx="115" ry="32" stroke="#ff3d00" stroke-width="8" fill="none" stroke-dasharray="20,10" class="spin-cyclone" style="animation-direction:reverse;"/>
+            <ellipse cx="150" cy="90" rx="130" ry="38" stroke="#ffd600" stroke-width="8" fill="none" stroke-dasharray="20,10" class="spin-cyclone"/>
+          </g>
+          <!-- Heavenly Blazing Phoenix Dive Strike -->
+          <g class="diving-phoenix" filter="url(#fk-fire-glow-2)">
+            <path d="M 150,260 L 150,10" stroke="#ff3d00" stroke-width="12"/>
+            <path d="M 50,70 Q 150,160 250,70 Q 150,110 50,70 Z" fill="#ff1744" stroke="#ffd600" stroke-width="3"/>
+            <polygon points="150,180 175,130 125,130" fill="#ffd600"/>
+          </g>
+        </svg>`;
+
+      case 'hero_arcane_mage':
+        return `
+        <svg viewBox="0 0 300 300" class="impact-svg impact-arcane_mage" width="100%" height="100%">
+          <defs>
+            <filter id="am-void-glow-2"><feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#d500f9" flood-opacity="1"/></filter>
+          </defs>
+          <!-- Cosmic Black Hole Singularity Core -->
+          <g class="black-hole-singularity" filter="url(#am-void-glow-2)">
+            <circle cx="150" cy="130" r="50" fill="#050014" stroke="#d500f9" stroke-width="5"/>
+            <circle cx="150" cy="130" r="35" fill="#000000"/>
+            <ellipse cx="150" cy="130" rx="100" ry="38" stroke="#e040fb" stroke-width="4" fill="none" stroke-dasharray="16,8" class="spin-singularity"/>
+            <ellipse cx="150" cy="130" rx="130" ry="48" stroke="#00e5ff" stroke-width="3" fill="none" stroke-dasharray="20,10" class="spin-singularity" style="animation-direction:reverse;"/>
+          </g>
+          <!-- Gravitational Inward Lensing Rays -->
+          <g class="gravitational-rays" filter="url(#am-void-glow-2)">
+            <line x1="40" y1="40" x2="125" y2="115" stroke="#d500f9" stroke-width="3"/>
+            <line x1="260" y1="40" x2="175" y2="115" stroke="#00e5ff" stroke-width="3"/>
+            <line x1="40" y1="220" x2="125" y2="145" stroke="#e040fb" stroke-width="3"/>
+            <line x1="260" y1="220" x2="175" y2="145" stroke="#d500f9" stroke-width="3"/>
+          </g>
+          <!-- Supernova Blast Ring Wave -->
+          <circle class="supernova-blast-ring" cx="150" cy="130" r="140" stroke="#ffffff" stroke-width="8" fill="none" filter="url(#am-void-glow-2)"/>
+        </svg>`;
+
+      case 'hero_unknown_god':
+        return `
+        <svg viewBox="0 0 300 300" class="impact-svg impact-unknown_god" width="100%" height="100%">
+          <defs>
+            <filter id="ug-cube-glow"><feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#00ffcc" flood-opacity="1"/></filter>
+          </defs>
+          <!-- 6 Divine Geometric Containment Cubes Trapping Monster -->
+          <g class="divine-cube-cage" filter="url(#ug-cube-glow)">
+            <rect x="70" y="60" width="34" height="34" fill="#b71c1c" stroke="#00ffcc" stroke-width="2.5" class="cube-spin-1"/>
+            <rect x="195" y="60" width="34" height="34" fill="#b71c1c" stroke="#00ffcc" stroke-width="2.5" class="cube-spin-2"/>
+            <rect x="45" y="135" width="34" height="34" fill="#b71c1c" stroke="#ff0055" stroke-width="2.5" class="cube-spin-3"/>
+            <rect x="220" y="135" width="34" height="34" fill="#b71c1c" stroke="#ff0055" stroke-width="2.5" class="cube-spin-4"/>
+            <rect x="80" y="210" width="34" height="34" fill="#b71c1c" stroke="#ffd700" stroke-width="2.5" class="cube-spin-5"/>
+            <rect x="185" y="210" width="34" height="34" fill="#b71c1c" stroke="#ffd700" stroke-width="2.5" class="cube-spin-6"/>
+            <polygon points="87,77 212,77 237,152 202,227 97,227 62,152" fill="rgba(0,255,204,0.12)" stroke="#00ffcc" stroke-width="2.5" stroke-dasharray="12,6"/>
+          </g>
+          <!-- Screen-wide Razor-sharp Spatial Severance Line -->
+          <line class="dimensional-cut-line" x1="-60" y1="150" x2="360" y2="150" stroke="#ffffff" stroke-width="8" filter="url(#ug-cube-glow)"/>
+        </svg>`;
+
+      default:
+        return '';
+    }
+  },
+
   playBurst(skillRes) {
     if (!skillRes) return;
 
@@ -1046,8 +1276,8 @@ const Cinematics = {
       this.active = true;
       this.resize();
 
-      const hero = skillRes.hero || (typeof CONFIG !== 'undefined' ? CONFIG.getHeroById(GameState.activeHeroId || 'hero_traveler') : null);
-      const heroId = hero?.id || 'hero_traveler';
+      const hero = skillRes.hero || (typeof CONFIG !== 'undefined' ? CONFIG.getHeroById(GameState?.activeHeroId || 'hero_starter') : null);
+      const heroId = hero?.id || (GameState?.activeHeroId) || 'hero_starter';
       this.currentHeroId = heroId;
       this.impactFired = false;
 
@@ -1066,15 +1296,22 @@ const Cinematics = {
       if (shatterContainer) shatterContainer.innerHTML = '';
 
       const KANJI_MAP = {
-        hero_zhongli: '⟦ 天 動 万 象 ⟧',
-        hero_raiden: '⟦ 夢 想 一 刀 ⟧',
-        hero_unknown_god: '⟦ 天 理 創 生 ⟧',
-        hero_changli: '⟦ 離 火 燎 天 ⟧',
-        hero_furina: '⟦ 審 判 終 幕 ⟧',
-        hero_kazuha: '⟦ 万 葉 一 刀 ⟧',
-        hero_jiyan: '⟦ 青 龍 破 空 ⟧',
-        hero_amber: '⟦ 烈 火 燎 原 ⟧',
-        hero_traveler: '⟦ 星 海 旅 人 ⟧',
+        hero_starter: '⟦ 開 山 破 石 ⟧',
+        hero_shadow_rogue: '⟦ 幻 影 絶 殺 ⟧',
+        hero_frost_knight: '⟦ 氷 封 絶 域 ⟧',
+        hero_spear_lancer: '⟦ 金 龍 破 天 ⟧',
+        hero_flame_knight: '⟦ 燎 原 烈 火 ⟧',
+        hero_arcane_mage: '⟦ 黒 洞 寂 滅 ⟧',
+        hero_unknown_god: '⟦ 無 極 創 生 ⟧',
+        // Fallbacks for legacy saves
+        hero_traveler: '⟦ 開 山 破 石 ⟧',
+        hero_kazuha: '⟦ 幻 影 絶 殺 ⟧',
+        hero_furina: '⟦ 氷 封 絶 域 ⟧',
+        hero_zhongli: '⟦ 金 龍 破 天 ⟧',
+        hero_jiyan: '⟦ 金 龍 破 天 ⟧',
+        hero_amber: '⟦ 燎 原 烈 火 ⟧',
+        hero_changli: '⟦ 燎 原 烈 火 ⟧',
+        hero_raiden: '⟦ 黒 洞 寂 滅 ⟧',
       };
 
       // 1. Setup Kanji Stamp & Titles in Lower-Third HUD
@@ -1098,13 +1335,13 @@ const Cinematics = {
       if (this.shockwaveFilter && this.shockwaveFilter.uniforms) {
         this.shockwaveFilter.uniforms.uProgress = 0.01;
         this.shockwaveFilter.uniforms.uCenter = [0.5, 0.5];
-        this.shockwaveFilter.uniforms.uAmplitude = 0.045;
+        this.shockwaveFilter.uniforms.uAmplitude = 0.035;
       }
       if (this.chromaticFilter && this.chromaticFilter.uniforms) {
-        this.chromaticFilter.uniforms.uIntensity = 1.0;
+        this.chromaticFilter.uniforms.uIntensity = 0.35;
       }
       if (this.bloomFilter && this.bloomFilter.uniforms) {
-        this.bloomFilter.uniforms.uGlowIntensity = 1.2;
+        this.bloomFilter.uniforms.uGlowIntensity = 0.55;
       }
 
       // Play Phase 0 Audio
@@ -1118,10 +1355,43 @@ const Cinematics = {
       // 5. Build Genuine 3D Three.js Scene
       this._buildHero3DScene(heroId);
 
-      // 6. Dynamic 3D Camera Tilt on 2D Arena
+      // 6. Dynamic 3D Camera Tilt on 2D Arena & Staging
       if (arenaStage) {
-        arenaStage.classList.add('camera-3d-active');
+        arenaStage.classList.add('camera-3d-active', 'arena-burst-active', `theme-${heroId}`);
         this._apply3DCameraAngle(arenaStage, heroId);
+      }
+
+      // 6.5. Activate Dark Spotlight & Arena Monster Impact
+      const pSprite = document.getElementById('player-sprite');
+      const mSprite = document.getElementById('monster-sprite');
+      const blackoutEl = document.getElementById('arena-burst-blackout');
+      const impactFxEl = document.getElementById('arena-burst-impact-fx');
+
+      if (blackoutEl) blackoutEl.classList.remove('hidden');
+      if (impactFxEl) {
+        impactFxEl.innerHTML = this._getHeroBurstImpactSvg(heroId);
+        impactFxEl.className = `arena-burst-impact-fx theme-${heroId}`;
+        impactFxEl.classList.remove('hidden');
+      }
+
+      if (pSprite) {
+        pSprite.className = `fighter-avatar hero-burst-acting action-burst hero-burst-${heroId}`;
+      }
+      if (mSprite) {
+        mSprite.className = `fighter-avatar monster-burst-target monster-burst-${heroId}`;
+      }
+
+      // Preview Duel Stage (when testing from Heroes Tab or Dev Menu)
+      if (actorStage && (skillRes.forcePreview || (typeof UI !== 'undefined' && UI.isBattleViewActive && !UI.isBattleViewActive()))) {
+        const dummySvg = typeof Sprites !== 'undefined' ? Sprites.getMonsterSvg('Bộ Xương Kiếm Sĩ', false) : '💀';
+        const heroSvg = typeof Sprites !== 'undefined' ? Sprites.getPlayerSvg('attack', heroId) : '⚔️';
+        actorStage.innerHTML = `
+          <div class="preview-duel-stage theme-${heroId}">
+            <div class="preview-hero-actor hero-burst-${heroId}">${heroSvg}</div>
+            <div class="preview-monster-actor monster-burst-${heroId}">${dummySvg}</div>
+            <div class="preview-impact-overlay theme-${heroId}">${this._getHeroBurstImpactSvg(heroId)}</div>
+          </div>
+        `;
       }
 
       // 7. Delta-Time 60-144 FPS Rendering Loop
@@ -1149,13 +1419,13 @@ const Cinematics = {
 
           if (this.shockwaveFilter && this.shockwaveFilter.uniforms) {
             this.shockwaveFilter.uniforms.uProgress = 0.01;
-            this.shockwaveFilter.uniforms.uAmplitude = 0.075;
+            this.shockwaveFilter.uniforms.uAmplitude = 0.05;
           }
           if (this.chromaticFilter && this.chromaticFilter.uniforms) {
-            this.chromaticFilter.uniforms.uIntensity = 1.0;
+            this.chromaticFilter.uniforms.uIntensity = 0.45;
           }
           if (this.bloomFilter && this.bloomFilter.uniforms) {
-            this.bloomFilter.uniforms.uGlowIntensity = 2.4;
+            this.bloomFilter.uniforms.uGlowIntensity = 0.85;
           }
 
           this.playBurstAudio(heroId, 'climax');
@@ -1196,10 +1466,10 @@ const Cinematics = {
 
         if (this.bloomFilter && this.bloomFilter.uniforms) {
           if (!this.impactFired) {
-            this.bloomFilter.uniforms.uGlowIntensity = 0.8 + Math.sin(elapsed * 0.015) * 0.4;
+            this.bloomFilter.uniforms.uGlowIntensity = 0.45 + Math.sin(elapsed * 0.015) * 0.2;
           } else {
             const climElapsed = elapsed - 750;
-            this.bloomFilter.uniforms.uGlowIntensity = Math.max(0.2, 2.4 - (climElapsed / 600) * 2.0);
+            this.bloomFilter.uniforms.uGlowIntensity = Math.max(0.15, 0.85 - (climElapsed / 600) * 0.7);
           }
         }
 
@@ -1265,37 +1535,69 @@ const Cinematics = {
       }, 250);
     }
 
+    const pSprite = document.getElementById('player-sprite');
+    const mSprite = document.getElementById('monster-sprite');
+    const blackoutEl = document.getElementById('arena-burst-blackout');
+    const impactFxEl = document.getElementById('arena-burst-impact-fx');
+    const actorStage = document.getElementById('burst-actor-stage');
+
+    if (blackoutEl) blackoutEl.classList.add('hidden');
+    if (impactFxEl) {
+      impactFxEl.innerHTML = '';
+      impactFxEl.classList.add('hidden');
+    }
+    if (actorStage) actorStage.innerHTML = '';
+
     if (arenaStage) {
       arenaStage.style.transform = '';
+      arenaStage.classList.remove('arena-burst-active', 'theme-hero_starter', 'theme-hero_shadow_rogue',
+        'theme-hero_frost_knight', 'theme-hero_spear_lancer', 'theme-hero_flame_knight',
+        'theme-hero_arcane_mage', 'theme-hero_unknown_god');
       setTimeout(() => arenaStage.classList.remove('camera-3d-active'), 300);
+    }
+
+    if (pSprite && typeof Sprites !== 'undefined') {
+      pSprite.className = 'fighter-avatar';
+      pSprite.innerHTML = Sprites.getPlayerSvg('idle', this.currentHeroId || GameState.activeHeroId);
+    }
+    if (mSprite) {
+      mSprite.className = 'fighter-avatar';
     }
   },
 
   _apply3DCameraAngle(stage, heroId) {
-    switch (heroId) {
-      case 'hero_raiden':
-        stage.style.transform = 'perspective(900px) rotateX(24deg) rotateY(-18deg) scale(1.35) translateZ(45px)';
+    const idMap = {
+      hero_traveler: 'hero_starter',
+      hero_kazuha: 'hero_shadow_rogue',
+      hero_furina: 'hero_frost_knight',
+      hero_zhongli: 'hero_spear_lancer',
+      hero_jiyan: 'hero_spear_lancer',
+      hero_amber: 'hero_flame_knight',
+      hero_changli: 'hero_flame_knight',
+      hero_raiden: 'hero_arcane_mage'
+    };
+    const targetId = idMap[heroId] || heroId;
+    switch (targetId) {
+      case 'hero_starter':
+        stage.style.transform = 'perspective(900px) rotateX(18deg) rotateZ(3deg) scale(1.32)';
         break;
-      case 'hero_changli':
-        stage.style.transform = 'perspective(900px) rotateX(18deg) rotateY(22deg) rotateZ(-4deg) scale(1.32)';
+      case 'hero_shadow_rogue':
+        stage.style.transform = 'perspective(850px) rotateX(26deg) rotateY(16deg) scale(1.36)';
+        break;
+      case 'hero_frost_knight':
+        stage.style.transform = 'perspective(900px) rotateX(14deg) rotateY(-20deg) scale(1.3)';
+        break;
+      case 'hero_spear_lancer':
+        stage.style.transform = 'perspective(850px) rotateX(-22deg) translateY(-25px) scale(1.38)';
+        break;
+      case 'hero_flame_knight':
+        stage.style.transform = 'perspective(900px) rotateX(20deg) rotateY(22deg) rotateZ(-4deg) scale(1.35)';
+        break;
+      case 'hero_arcane_mage':
+        stage.style.transform = 'perspective(900px) rotateX(24deg) rotateY(-18deg) scale(1.35) translateZ(45px)';
         break;
       case 'hero_unknown_god':
         stage.style.transform = 'perspective(800px) rotateX(32deg) rotateY(-12deg) rotateZ(8deg) scale(1.42)';
-        break;
-      case 'hero_zhongli':
-        stage.style.transform = 'perspective(850px) rotateX(-22deg) translateY(-25px) scale(1.38)';
-        break;
-      case 'hero_furina':
-        stage.style.transform = 'perspective(900px) rotateX(14deg) rotateY(-20deg) scale(1.3)';
-        break;
-      case 'hero_kazuha':
-        stage.style.transform = 'perspective(850px) rotateX(26deg) rotateY(16deg) scale(1.36)';
-        break;
-      case 'hero_jiyan':
-        stage.style.transform = 'perspective(900px) rotateX(15deg) rotateY(-18deg) rotateZ(6deg) scale(1.38)';
-        break;
-      case 'hero_amber':
-        stage.style.transform = 'perspective(850px) rotateX(28deg) scale(1.32)';
         break;
       default:
         stage.style.transform = 'perspective(900px) rotateX(18deg) rotateZ(4deg) scale(1.34)';
@@ -1312,6 +1614,18 @@ const Cinematics = {
 
     const scene = this.threeScene;
     this.threeObjects = {};
+
+    const idMap = {
+      hero_traveler: 'hero_starter',
+      hero_kazuha: 'hero_shadow_rogue',
+      hero_furina: 'hero_frost_knight',
+      hero_zhongli: 'hero_spear_lancer',
+      hero_jiyan: 'hero_spear_lancer',
+      hero_amber: 'hero_flame_knight',
+      hero_changli: 'hero_flame_knight',
+      hero_raiden: 'hero_arcane_mage'
+    };
+    const targetId = idMap[heroId] || heroId;
 
     // 1. Universal Cosmic Starfield Backdrop (2000 3D Star Points)
     const starCount = 2000;
@@ -1338,79 +1652,148 @@ const Cinematics = {
     scene.add(dirLight);
     this.threeObjects.dirLight = dirLight;
 
-    switch (heroId) {
-      case 'hero_zhongli': {
-        const steleGeo = new THREE.BoxGeometry(2.6, 8.5, 0.9);
-        const steleMat = new THREE.MeshStandardMaterial({
-          color: 0x3e2723,
-          roughness: 0.45,
-          emissive: 0xffb300,
-          emissiveIntensity: 0.9
-        });
-        const steleMesh = new THREE.Mesh(steleGeo, steleMat);
-        steleMesh.position.set(0, -0.2, -4.5);
-        scene.add(steleMesh);
-        this.threeObjects.stele = steleMesh;
+    switch (targetId) {
+      case 'hero_starter': {
+        const ringGeo = new THREE.RingGeometry(3.5, 6.5, 32);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0xb0bec5, side: THREE.DoubleSide, wireframe: true });
+        const groundRing = new THREE.Mesh(ringGeo, ringMat);
+        groundRing.rotation.x = Math.PI / 2;
+        groundRing.position.set(0, -3.8, -6);
+        scene.add(groundRing);
+        this.threeObjects.groundRing = groundRing;
 
-        const ringGeo = new THREE.RingGeometry(3.8, 7.2, 6);
-        const ringMat = new THREE.MeshBasicMaterial({ color: 0xffd54f, side: THREE.DoubleSide });
-        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-        ringMesh.rotation.x = Math.PI / 2;
-        ringMesh.position.set(0, -4.5, 0);
-        scene.add(ringMesh);
-        this.threeObjects.groundRing = ringMesh;
-
-        const meteorGeo = new THREE.DodecahedronGeometry(4.2, 1);
-        const meteorMat = new THREE.MeshStandardMaterial({
-          color: 0xf57f17,
-          roughness: 0.35,
-          flatShading: true,
-          emissive: 0xff8f00,
-          emissiveIntensity: 2.4
-        });
-        const meteorMesh = new THREE.Mesh(meteorGeo, meteorMat);
-        meteorMesh.position.set(14, 42, -14);
-        scene.add(meteorMesh);
-        this.threeObjects.meteor = meteorMesh;
-
-        const satellites = [];
-        for (let sat = 0; sat < 4; sat++) {
-          const satGeo = new THREE.DodecahedronGeometry(0.8, 0);
-          const satMat = new THREE.MeshStandardMaterial({ color: 0xffb300, emissive: 0xff6f00, emissiveIntensity: 2.0, flatShading: true });
-          const satMesh = new THREE.Mesh(satGeo, satMat);
-          meteorMesh.add(satMesh);
-          satellites.push(satMesh);
+        const swords = [];
+        const swordMat = new THREE.MeshStandardMaterial({ color: 0x90a4ae, emissive: 0xffd700, emissiveIntensity: 1.2 });
+        for (let sw = 0; sw < 6; sw++) {
+          const swMesh = new THREE.Mesh(new THREE.ConeGeometry(0.2, 3.2, 5), swordMat);
+          const angle = (sw / 6) * Math.PI * 2;
+          swMesh.position.set(Math.cos(angle) * 6.5, Math.sin(angle) * 3.5, -8);
+          swMesh.rotation.z = angle + Math.PI / 2;
+          scene.add(swMesh);
+          swords.push(swMesh);
         }
-        this.threeObjects.satellites = satellites;
+        this.threeObjects.swords = swords;
+        break;
+      }
+
+      case 'hero_shadow_rogue': {
+        const blades = [];
+        const bladeMat = new THREE.MeshStandardMaterial({ color: 0x00e5ff, emissive: 0x0284c7, emissiveIntensity: 2.2, side: THREE.DoubleSide });
+        for (let b = 0; b < 2; b++) {
+          const bladeGeo = new THREE.TorusGeometry(3.5, 0.22, 8, 32, Math.PI);
+          const bladeMesh = new THREE.Mesh(bladeGeo, bladeMat);
+          bladeMesh.position.set(b === 0 ? -2.5 : 2.5, 0, -4);
+          bladeMesh.rotation.z = b === 0 ? 0.6 : -0.6;
+          scene.add(bladeMesh);
+          blades.push(bladeMesh);
+        }
+        this.threeObjects.blades = blades;
+
+        const vortexGeo = new THREE.RingGeometry(2.5, 5.5, 32);
+        const vortexMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, wireframe: true });
+        const vortex = new THREE.Mesh(vortexGeo, vortexMat);
+        vortex.position.set(0, 0, -5);
+        scene.add(vortex);
+        this.threeObjects.vortex = vortex;
+        break;
+      }
+
+      case 'hero_frost_knight': {
+        const domeGeo = new THREE.SphereGeometry(7.5, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+        const domeMat = new THREE.MeshBasicMaterial({ color: 0x00b0ff, wireframe: true, transparent: true, opacity: 0.45 });
+        const dome = new THREE.Mesh(domeGeo, domeMat);
+        dome.position.set(0, -4, -6);
+        scene.add(dome);
+        this.threeObjects.dome = dome;
+
+        const spikes = [];
+        const spkMat = new THREE.MeshStandardMaterial({ color: 0x80d8ff, emissive: 0x00e5ff, emissiveIntensity: 1.8, flatShading: true });
+        for (let i = 0; i < 14; i++) {
+          const angle = (i / 14) * Math.PI * 2;
+          const r = 4.5 + (i % 2) * 2;
+          const spkGeo = new THREE.ConeGeometry(0.55, 6.5, 5);
+          const spkMesh = new THREE.Mesh(spkGeo, spkMat);
+          spkMesh.position.set(Math.cos(angle) * r, -14, Math.sin(angle) * r);
+          scene.add(spkMesh);
+          spikes.push(spkMesh);
+        }
+        this.threeObjects.spikes = spikes;
+
+        const rippleGeo = new THREE.RingGeometry(1.2, 8.5, 32);
+        const rippleMat = new THREE.MeshBasicMaterial({ color: 0x80d8ff, side: THREE.DoubleSide });
+        const ripple = new THREE.Mesh(rippleGeo, rippleMat);
+        ripple.rotation.x = Math.PI / 2;
+        ripple.position.set(0, -3.8, -4);
+        scene.add(ripple);
+        this.threeObjects.ripple = ripple;
+        break;
+      }
+
+      case 'hero_spear_lancer': {
+        const dragon = [];
+        const segMat = new THREE.MeshStandardMaterial({ color: 0xff8f00, emissive: 0xffd700, emissiveIntensity: 2.0 });
+        for (let i = 0; i < 36; i++) {
+          const segGeo = new THREE.DodecahedronGeometry(0.6 + (i === 0 ? 0.9 : 0), 0);
+          const seg = new THREE.Mesh(segGeo, segMat);
+          seg.position.set(0, 0, -6);
+          scene.add(seg);
+          dragon.push(seg);
+        }
+        this.threeObjects.dragon = dragon;
+
+        const spears = [];
+        const spMat = new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xffab00, emissiveIntensity: 2.2 });
+        for (let sp = 0; sp < 8; sp++) {
+          const spMesh = new THREE.Mesh(new THREE.ConeGeometry(0.25, 4.2, 6), spMat);
+          spMesh.rotation.z = -Math.PI / 2;
+          spMesh.position.set(-10 + sp * 2.5, (Math.random() - 0.5) * 6, -5);
+          scene.add(spMesh);
+          spears.push(spMesh);
+        }
+        this.threeObjects.spears = spears;
+        break;
+      }
+
+      case 'hero_flame_knight': {
+        const phoenixGroup = new THREE.Group();
+        const bodyGeo = new THREE.ConeGeometry(0.8, 4.5, 8);
+        const fireMat = new THREE.MeshStandardMaterial({ color: 0xff1744, emissive: 0xff6d00, emissiveIntensity: 2.2 });
+        const body = new THREE.Mesh(bodyGeo, fireMat);
+        body.rotation.x = Math.PI / 2;
+        phoenixGroup.add(body);
+
+        const wingGeo = new THREE.PlaneGeometry(5.5, 2.2, 4, 4);
+        const lWing = new THREE.Mesh(wingGeo, fireMat);
+        lWing.position.set(-3.2, 0.5, 0);
+        phoenixGroup.add(lWing);
+        const rWing = new THREE.Mesh(wingGeo, fireMat);
+        rWing.position.set(3.2, 0.5, 0);
+        phoenixGroup.add(rWing);
+
+        phoenixGroup.position.set(0, 18, -6);
+        scene.add(phoenixGroup);
+        this.threeObjects.phoenix = phoenixGroup;
+        this.threeObjects.lWing = lWing;
+        this.threeObjects.rWing = rWing;
 
         const pillars = [];
-        for (let i = 0; i < 12; i++) {
-          const angle = (i / 12) * Math.PI * 2;
-          const r = 6.5 + (i % 2) * 2;
-          const pGeo = new THREE.CylinderGeometry(0.65, 0.95, 8.5, 6);
-          const pMat = new THREE.MeshStandardMaterial({
-            color: 0x4e342e,
-            emissive: 0xffb300,
-            emissiveIntensity: 1.1,
-            flatShading: true
-          });
+        for (let i = 0; i < 8; i++) {
+          const angle = (i / 8) * Math.PI * 2;
+          const r = 5.5;
+          const pGeo = new THREE.CylinderGeometry(0.5, 0.8, 9, 6);
+          const pMat = new THREE.MeshStandardMaterial({ color: 0xd50000, emissive: 0xff3d00, emissiveIntensity: 2.0 });
           const pMesh = new THREE.Mesh(pGeo, pMat);
           pMesh.position.set(Math.cos(angle) * r, -14, Math.sin(angle) * r);
           scene.add(pMesh);
           pillars.push(pMesh);
         }
         this.threeObjects.pillars = pillars;
-
-        const impactLight = new THREE.PointLight(0xffd54f, 0, 60);
-        impactLight.position.set(0, -3.5, 0);
-        scene.add(impactLight);
-        this.threeObjects.impactLight = impactLight;
         break;
       }
 
-      case 'hero_raiden': {
+      case 'hero_arcane_mage': {
         const toriiGroup = new THREE.Group();
-        const beamMat = new THREE.MeshStandardMaterial({ color: 0x120824, emissive: 0xd500f9, emissiveIntensity: 1.2 });
+        const beamMat = new THREE.MeshStandardMaterial({ color: 0x120824, emissive: 0xd500f9, emissiveIntensity: 1.4 });
         const leftPost = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 12, 16), beamMat);
         leftPost.position.set(-6, 0, -6);
         toriiGroup.add(leftPost);
@@ -1439,34 +1822,10 @@ const Cinematics = {
         break;
       }
 
-      case 'hero_changli': {
-        const phoenixGroup = new THREE.Group();
-        const bodyGeo = new THREE.ConeGeometry(0.8, 4.5, 8);
-        const fireMat = new THREE.MeshStandardMaterial({ color: 0xff1744, emissive: 0xff6d00, emissiveIntensity: 2.2 });
-        const body = new THREE.Mesh(bodyGeo, fireMat);
-        body.rotation.x = Math.PI / 2;
-        phoenixGroup.add(body);
-
-        const wingGeo = new THREE.PlaneGeometry(5.5, 2.2, 4, 4);
-        const lWing = new THREE.Mesh(wingGeo, fireMat);
-        lWing.position.set(-3.2, 0.5, 0);
-        phoenixGroup.add(lWing);
-        const rWing = new THREE.Mesh(wingGeo, fireMat);
-        rWing.position.set(3.2, 0.5, 0);
-        phoenixGroup.add(rWing);
-
-        phoenixGroup.position.set(0, 18, -6);
-        scene.add(phoenixGroup);
-        this.threeObjects.phoenix = phoenixGroup;
-        this.threeObjects.lWing = lWing;
-        this.threeObjects.rWing = rWing;
-        break;
-      }
-
       case 'hero_unknown_god': {
         const cubes = [];
-        const cubeMat = new THREE.MeshStandardMaterial({ color: 0x212121, emissive: 0xd50000, emissiveIntensity: 1.8 });
-        for (let c = 0; c < 12; c++) {
+        const cubeMat = new THREE.MeshStandardMaterial({ color: 0x212121, emissive: 0x00ffcc, emissiveIntensity: 2.2 });
+        for (let c = 0; c < 14; c++) {
           const sz = 0.8 + (c % 3) * 0.4;
           const cubeMesh = new THREE.Mesh(new THREE.BoxGeometry(sz, sz, sz), cubeMat);
           cubeMesh.position.set((Math.random() - 0.5) * 14, (Math.random() - 0.5) * 10, -5 - Math.random() * 5);
@@ -1476,95 +1835,11 @@ const Cinematics = {
         this.threeObjects.cubes = cubes;
 
         const diskGeo = new THREE.RingGeometry(4.5, 6.2, 6);
-        const diskMat = new THREE.MeshBasicMaterial({ color: 0xaa00ff, side: THREE.DoubleSide, wireframe: true });
+        const diskMat = new THREE.MeshBasicMaterial({ color: 0xff0055, side: THREE.DoubleSide, wireframe: true });
         const disk = new THREE.Mesh(diskGeo, diskMat);
         disk.position.set(0, 0, -8);
         scene.add(disk);
         this.threeObjects.disk = disk;
-        break;
-      }
-
-      case 'hero_furina': {
-        const domeGeo = new THREE.SphereGeometry(7.5, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-        const domeMat = new THREE.MeshBasicMaterial({ color: 0x00b0ff, wireframe: true, transparent: true, opacity: 0.45 });
-        const dome = new THREE.Mesh(domeGeo, domeMat);
-        dome.position.set(0, -4, -6);
-        scene.add(dome);
-        this.threeObjects.dome = dome;
-
-        const rippleGeo = new THREE.RingGeometry(1.2, 8.5, 32);
-        const rippleMat = new THREE.MeshBasicMaterial({ color: 0x80d8ff, side: THREE.DoubleSide });
-        const ripple = new THREE.Mesh(rippleGeo, rippleMat);
-        ripple.rotation.x = Math.PI / 2;
-        ripple.position.set(0, -3.8, -4);
-        scene.add(ripple);
-        this.threeObjects.ripple = ripple;
-        break;
-      }
-
-      case 'hero_kazuha': {
-        const leaves = [];
-        const leafMat = new THREE.MeshStandardMaterial({ color: 0x00e676, emissive: 0x1de9b6, emissiveIntensity: 1.2, side: THREE.DoubleSide });
-        for (let l = 0; l < 24; l++) {
-          const leafMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), leafMat);
-          leafMesh.position.set((Math.random() - 0.5) * 12, (Math.random() - 0.5) * 10, -3 - Math.random() * 5);
-          scene.add(leafMesh);
-          leaves.push(leafMesh);
-        }
-        this.threeObjects.leaves = leaves;
-
-        const tornadoGeo = new THREE.CylinderGeometry(0.8, 4.2, 14, 16, 8, true);
-        const tornadoMat = new THREE.MeshBasicMaterial({ color: 0x69f0ae, wireframe: true, transparent: true, opacity: 0.5 });
-        const tornado = new THREE.Mesh(tornadoGeo, tornadoMat);
-        tornado.position.set(0, 0, -6);
-        scene.add(tornado);
-        this.threeObjects.tornado = tornado;
-        break;
-      }
-
-      case 'hero_jiyan': {
-        const dragon = [];
-        const segMat = new THREE.MeshStandardMaterial({ color: 0x004d40, emissive: 0x00e676, emissiveIntensity: 1.6 });
-        for (let i = 0; i < 36; i++) {
-          const segGeo = new THREE.DodecahedronGeometry(0.6 + (i === 0 ? 0.9 : 0), 0);
-          const seg = new THREE.Mesh(segGeo, segMat);
-          seg.position.set(0, 0, -6);
-          scene.add(seg);
-          dragon.push(seg);
-        }
-        this.threeObjects.dragon = dragon;
-
-        const spears = [];
-        const spMat = new THREE.MeshStandardMaterial({ color: 0x00e676, emissive: 0x64ffda, emissiveIntensity: 2.0 });
-        for (let sp = 0; sp < 8; sp++) {
-          const spMesh = new THREE.Mesh(new THREE.ConeGeometry(0.25, 4.2, 6), spMat);
-          spMesh.rotation.z = -Math.PI / 2;
-          spMesh.position.set(-10 + sp * 2.5, (Math.random() - 0.5) * 6, -5);
-          scene.add(spMesh);
-          spears.push(spMesh);
-        }
-        this.threeObjects.spears = spears;
-        break;
-      }
-
-      case 'hero_amber': {
-        const radarGeo = new THREE.RingGeometry(3.5, 4.2, 32);
-        const radarMat = new THREE.MeshBasicMaterial({ color: 0xff3d00, side: THREE.DoubleSide, wireframe: true });
-        const radar = new THREE.Mesh(radarGeo, radarMat);
-        radar.position.set(0, -1, -5);
-        scene.add(radar);
-        this.threeObjects.radar = radar;
-
-        const rockets = [];
-        const rMat = new THREE.MeshStandardMaterial({ color: 0xff9100, emissive: 0xff3d00, emissiveIntensity: 2.0 });
-        for (let r = 0; r < 14; r++) {
-          const rk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 1.8, 8), rMat);
-          rk.position.set((Math.random() - 0.5) * 10, 14 + Math.random() * 8, -4 - Math.random() * 3);
-          rk.rotation.x = Math.PI;
-          scene.add(rk);
-          rockets.push(rk);
-        }
-        this.threeObjects.rockets = rockets;
         break;
       }
 
@@ -1599,28 +1874,57 @@ const Cinematics = {
       obj.starfield.rotation.z += dt * 0.04;
     }
 
-    switch (heroId) {
-      case 'hero_zhongli': {
-        camera.position.set(Math.sin(elapsed * 0.001) * 2.5, 3.5 - progress * 4.5, 9.5);
-        camera.lookAt(0, -1.2, 0);
+    const idMap = {
+      hero_traveler: 'hero_starter',
+      hero_kazuha: 'hero_shadow_rogue',
+      hero_furina: 'hero_frost_knight',
+      hero_zhongli: 'hero_spear_lancer',
+      hero_jiyan: 'hero_spear_lancer',
+      hero_amber: 'hero_flame_knight',
+      hero_changli: 'hero_flame_knight',
+      hero_raiden: 'hero_arcane_mage'
+    };
+    const targetId = idMap[heroId] || heroId;
 
-        if (obj.meteor) {
-          if (progress < 0.357) {
-            const p = progress / 0.357;
-            const easeP = p * p;
-            obj.meteor.position.set(14 - easeP * 14, 42 - easeP * 44.5, -14 + easeP * 14);
-            obj.meteor.rotation.x += dt * 4.5;
-            obj.meteor.rotation.y += dt * 3.5;
-          } else {
-            obj.meteor.position.set(0, -2.5, 0);
-            obj.meteor.scale.setScalar(Math.max(0.1, 1.0 - (progress - 0.357) * 2.8));
-          }
+    switch (targetId) {
+      case 'hero_starter': {
+        camera.position.set(Math.sin(elapsed * 0.002) * 1.5, 1.2, 9.0);
+        camera.lookAt(0, 0, -6);
+        if (obj.groundRing) obj.groundRing.rotation.z += dt * 0.8;
+        if (obj.swords) {
+          obj.swords.forEach((sw, idx) => {
+            sw.rotation.y += dt * 2.0;
+            sw.position.y += Math.sin(elapsed * 0.004 + idx) * 0.01;
+          });
         }
+        break;
+      }
 
-        if (obj.pillars && progress >= 0.357) {
+      case 'hero_shadow_rogue': {
+        camera.position.set(Math.sin(elapsed * 0.004) * 2.5, 1.5, 8.5);
+        camera.lookAt(0, 0, -4);
+        if (obj.blades) {
+          obj.blades.forEach((b, idx) => {
+            b.rotation.z += (idx === 0 ? 1 : -1) * dt * 8.0;
+            b.rotation.x += dt * 4.0;
+          });
+        }
+        if (obj.vortex) obj.vortex.rotation.z -= dt * 5.0;
+        break;
+      }
+
+      case 'hero_frost_knight': {
+        camera.position.set(0, 1.8, 9.5);
+        camera.lookAt(0, 0, 0);
+        if (obj.dome) obj.dome.rotation.y += dt * 0.6;
+        if (obj.ripple) {
+          const s = 1.0 + Math.sin(elapsed * 0.008) * 0.25;
+          obj.ripple.scale.set(s, s, 1);
+        }
+        if (obj.spikes && progress >= 0.357) {
           const erupt = (progress - 0.357) / 0.643;
-          obj.pillars.forEach((p, idx) => {
-            const delay = (idx % 3) * 0.08;
+          obj.spikes.forEach((p, idx) => {
+            const delay = (idx % 3) * 0.06;
             const h = Math.min(1, Math.max(0, (erupt - delay) / 0.35));
             p.position.y = -14 + h * 13.5;
           });
@@ -1628,47 +1932,7 @@ const Cinematics = {
         break;
       }
 
-      case 'hero_raiden': {
-        camera.position.set(Math.sin(elapsed * 0.003) * 2.2, 1.8, 8.5);
-        camera.lookAt(0, 0.8, -4);
-
-        if (obj.musouRing) obj.musouRing.rotation.z += dt * 3.5;
-        if (obj.lightningRing) obj.lightningRing.rotation.z -= dt * 4.8;
-        break;
-      }
-
-      case 'hero_changli': {
-        camera.position.set(0, 4.5 - progress * 4.5, 11);
-        camera.lookAt(0, 0, 0);
-
-        if (obj.phoenix) {
-          obj.phoenix.position.y = 18 - progress * 20;
-          obj.phoenix.rotation.z = Math.sin(elapsed * 0.005) * 0.18;
-        }
-        if (obj.lWing) obj.lWing.rotation.z = Math.sin(elapsed * 0.016) * 0.35;
-        if (obj.rWing) obj.rWing.rotation.z = -Math.sin(elapsed * 0.016) * 0.35;
-        break;
-      }
-
-      case 'hero_unknown_god': {
-        camera.position.set(Math.sin(elapsed * 0.002) * 2.2, Math.cos(elapsed * 0.002) * 2.2, 8.5);
-        camera.lookAt(0, 0, 0);
-
-        if (obj.cubes) {
-          const converge = progress > 0.35 ? (progress - 0.35) / 0.65 : 0;
-          const dist = Math.max(0.6, (1 - converge * 1.25) * 7);
-          obj.cubes.forEach((c, i) => {
-            const angle = (i / 12) * Math.PI * 2 + elapsed * 0.003;
-            c.position.set(Math.cos(angle) * dist, Math.sin(angle * 2) * (dist * 0.5), Math.sin(angle) * dist);
-            c.rotation.x += dt * 3.2;
-            c.rotation.y += dt * 3.2;
-          });
-        }
-        if (obj.disk) obj.disk.rotation.z += dt * 2.8;
-        break;
-      }
-
-      case 'hero_jiyan': {
+      case 'hero_spear_lancer': {
         camera.position.set(-3.5 + progress * 7, 0, 8.5);
         camera.lookAt(0, 0, 0);
 
@@ -1690,41 +1954,51 @@ const Cinematics = {
         break;
       }
 
-      case 'hero_furina': {
-        camera.position.set(0, 1.8, 9.5);
+      case 'hero_flame_knight': {
+        camera.position.set(0, 4.5 - progress * 4.5, 11);
         camera.lookAt(0, 0, 0);
-        if (obj.dome) obj.dome.rotation.y += dt * 0.6;
-        if (obj.ripple) {
-          const s = 1.0 + Math.sin(elapsed * 0.008) * 0.25;
-          obj.ripple.scale.set(s, s, 1);
-        }
-        break;
-      }
 
-      case 'hero_kazuha': {
-        camera.position.set(0, 2.2, 9.5);
-        camera.lookAt(0, 0, 0);
-        if (obj.tornado) obj.tornado.rotation.y += dt * 4.2;
-        if (obj.leaves) {
-          obj.leaves.forEach((l, idx) => {
-            l.rotation.z += dt * 2.5;
-            l.position.y += Math.sin(elapsed * 0.005 + idx) * 0.05;
+        if (obj.phoenix) {
+          obj.phoenix.position.y = 18 - progress * 20;
+          obj.phoenix.rotation.z = Math.sin(elapsed * 0.005) * 0.18;
+        }
+        if (obj.lWing) obj.lWing.rotation.z = Math.sin(elapsed * 0.016) * 0.35;
+        if (obj.rWing) obj.rWing.rotation.z = -Math.sin(elapsed * 0.016) * 0.35;
+        if (obj.pillars && progress >= 0.357) {
+          const erupt = (progress - 0.357) / 0.643;
+          obj.pillars.forEach((p, idx) => {
+            const delay = (idx % 2) * 0.08;
+            const h = Math.min(1, Math.max(0, (erupt - delay) / 0.35));
+            p.position.y = -14 + h * 13.5;
           });
         }
         break;
       }
 
-      case 'hero_amber': {
-        camera.position.set(0, 3.2, 10.5);
-        camera.lookAt(0, -1, 0);
+      case 'hero_arcane_mage': {
+        camera.position.set(Math.sin(elapsed * 0.003) * 2.2, 1.8, 8.5);
+        camera.lookAt(0, 0.8, -4);
 
-        if (obj.radar) obj.radar.rotation.z += dt * 1.6;
-        if (obj.rockets && progress > 0.35) {
-          obj.rockets.forEach(r => {
-            r.position.y -= dt * 25;
-            if (r.position.y < -3.8) r.position.y = 18;
+        if (obj.musouRing) obj.musouRing.rotation.z += dt * 3.5;
+        if (obj.lightningRing) obj.lightningRing.rotation.z -= dt * 4.8;
+        break;
+      }
+
+      case 'hero_unknown_god': {
+        camera.position.set(Math.sin(elapsed * 0.002) * 2.2, Math.cos(elapsed * 0.002) * 2.2, 8.5);
+        camera.lookAt(0, 0, 0);
+
+        if (obj.cubes) {
+          const converge = progress > 0.35 ? (progress - 0.35) / 0.65 : 0;
+          const dist = Math.max(0.6, (1 - converge * 1.25) * 7);
+          obj.cubes.forEach((c, i) => {
+            const angle = (i / 14) * Math.PI * 2 + elapsed * 0.003;
+            c.position.set(Math.cos(angle) * dist, Math.sin(angle * 2) * (dist * 0.5), Math.sin(angle) * dist);
+            c.rotation.x += dt * 3.2;
+            c.rotation.y += dt * 3.2;
           });
         }
+        if (obj.disk) obj.disk.rotation.z += dt * 2.8;
         break;
       }
 

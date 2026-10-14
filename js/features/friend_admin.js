@@ -116,7 +116,7 @@ const FriendAdmin = {
     if (accountsContainer) {
       let accHtml = '';
       meta.slots.forEach(slot => {
-        const hero = CONFIG.getHeroById(slot.heroId || 'hero_traveler');
+        const hero = CONFIG.getHeroById(slot.heroId || 'hero_starter');
         const timeStr = slot.timestamp ? new Date(slot.timestamp).toLocaleString('vi-VN') : 'Chưa đăng nhập';
         accHtml += `
           <div class="glass-panel" style="padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:space-between; gap:10px;">

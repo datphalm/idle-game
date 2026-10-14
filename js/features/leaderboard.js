@@ -34,14 +34,14 @@ const Leaderboard = {
 
   _seedInitialCompetitors() {
     this._cachedPlayers = [
-      { id: 'bot_1', name: 'Độc Cô Cầu Bại', heroId: 'hero_raiden', constellation: 6, level: 88, stage: 52, towerFloor: 65, power: 852000, lastActive: Date.now() - 3600000 },
-      { id: 'bot_2', name: 'Vô Danh Kiếm Thánh', heroId: 'hero_changli', constellation: 4, level: 75, stage: 45, towerFloor: 50, power: 620000, lastActive: Date.now() - 7200000 },
-      { id: 'bot_3', name: 'Thần Kiếm Tiêu Dao', heroId: 'hero_jiyan', constellation: 3, level: 68, stage: 38, towerFloor: 42, power: 480000, lastActive: Date.now() - 14400000 },
-      { id: 'bot_4', name: 'Nham Vương Tông Sư', heroId: 'hero_zhongli', constellation: 2, level: 60, stage: 32, towerFloor: 35, power: 360000, lastActive: Date.now() - 28800000 },
-      { id: 'bot_5', name: 'Bạch Y Hiệp Khách', heroId: 'hero_kazuha', constellation: 2, level: 54, stage: 28, towerFloor: 30, power: 275000, lastActive: Date.now() - 43200000 },
-      { id: 'bot_6', name: 'Thủy Thần Ca Sĩ', heroId: 'hero_furina', constellation: 1, level: 45, stage: 22, towerFloor: 24, power: 190000, lastActive: Date.now() - 86400000 },
-      { id: 'bot_7', name: 'Hỏa Cung Tân Thủ', heroId: 'hero_amber', constellation: 1, level: 32, stage: 15, towerFloor: 16, power: 95000, lastActive: Date.now() - 172800000 },
-      { id: 'bot_8', name: 'Tân Binh Lữ Hành', heroId: 'hero_traveler', constellation: 0, level: 18, stage: 8, towerFloor: 9, power: 32000, lastActive: Date.now() - 259200000 }
+      { id: 'bot_1', name: 'Độc Cô Cầu Bại', heroId: 'hero_unknown_god', constellation: 6, level: 88, stage: 52, towerFloor: 65, power: 852000, lastActive: Date.now() - 3600000 },
+      { id: 'bot_2', name: 'Pháp Vương Hư Không', heroId: 'hero_arcane_mage', constellation: 4, level: 75, stage: 45, towerFloor: 50, power: 620000, lastActive: Date.now() - 7200000 },
+      { id: 'bot_3', name: 'Hỏa Kiếm Thần Sầu', heroId: 'hero_flame_knight', constellation: 3, level: 68, stage: 38, towerFloor: 42, power: 480000, lastActive: Date.now() - 14400000 },
+      { id: 'bot_4', name: 'Hoàng Kim Thương Bá', heroId: 'hero_spear_lancer', constellation: 2, level: 60, stage: 32, towerFloor: 35, power: 360000, lastActive: Date.now() - 28800000 },
+      { id: 'bot_5', name: 'Băng Kiếm Thánh Nữ', heroId: 'hero_frost_knight', constellation: 2, level: 54, stage: 28, towerFloor: 30, power: 275000, lastActive: Date.now() - 43200000 },
+      { id: 'bot_6', name: 'Ám Dạ Thích Khách', heroId: 'hero_shadow_rogue', constellation: 1, level: 45, stage: 22, towerFloor: 24, power: 190000, lastActive: Date.now() - 86400000 },
+      { id: 'bot_7', name: 'Hiệp Sĩ Khởi Đầu', heroId: 'hero_starter', constellation: 1, level: 32, stage: 15, towerFloor: 16, power: 95000, lastActive: Date.now() - 172800000 },
+      { id: 'bot_8', name: 'Tân Binh Luyện Kiếm', heroId: 'hero_starter', constellation: 0, level: 18, stage: 8, towerFloor: 9, power: 32000, lastActive: Date.now() - 259200000 }
     ];
     this._saveCache();
   },
@@ -86,7 +86,7 @@ const Leaderboard = {
     const myProfile = {
       id: myUid,
       name: playerName,
-      heroId: GameState.activeHeroId || 'hero_traveler',
+      heroId: GameState.activeHeroId || 'hero_starter',
       constellation: activeHero.constellation || 0,
       level: GameState.player.level || 1,
       stage: GameState.stage?.current || 1,
@@ -288,7 +288,7 @@ const Leaderboard = {
     sorted.forEach((p, index) => {
       const rank = index + 1;
       const isMe = p.isMe || p.id === myUid;
-      const hero = CONFIG.getHeroById(p.heroId || 'hero_traveler');
+      const hero = CONFIG.getHeroById(p.heroId || 'hero_starter');
       const statusHtml = this._formatLastActive(p.lastActive, isMe);
 
       let rankBadge = `<span style="font-weight:bold; font-size:14px; color:#94a3b8;">#${rank}</span>`;

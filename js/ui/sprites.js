@@ -93,764 +93,629 @@ const Sprites = {
   },
 
   // ============================================================
-  // 2. PIXEL HEROES & CHARACTERS (ALL 9 HEROES WITH BLINKING EYES & EQUIPPED WEAPON)
+  // 7 DISTINCT AUTHENTIC VECTOR PIXEL HEROES & AURAS
   // ============================================================
+  _getHeroStarterSvg(action) {
+    const isAtk = action === 'attack';
+    const isHit = action === 'hit';
+    const isWalk = action === 'walk';
+    const swordRot = isAtk ? 75 : isHit ? -25 : 12;
+    const swordTx = isAtk ? 34 : 28;
+    const swordTy = isAtk ? 28 : 22;
+    return `
+    <svg class="pixel-sprite hero-pixel-svg hero-starter action-${action}" viewBox="0 0 54 54" width="100%" height="100%" shape-rendering="crispEdges">
+      <defs>
+        <filter id="st-glow"><feDropShadow dx="0" dy="0" stdDeviation="1.5" flood-color="#ffd700" flood-opacity="0.8"/></filter>
+      </defs>
+      <!-- Shadow -->
+      <ellipse cx="27" cy="50" rx="14" ry="4" fill="rgba(0,0,0,0.35)"/>
+      <!-- Trainee Red Cape -->
+      <path d="M 19,25 Q ${14 - (isWalk ? 4 : 0)},38 ${16 - (isWalk ? 6 : 0)},47 Q 26,45 27,47 Q 28,38 27,25 Z" fill="#c62828"/>
+      <!-- Legs & Steel Greaves -->
+      <rect x="21" y="38" width="4" height="10" fill="#37474f"/>
+      <rect x="27" y="38" width="4" height="10" fill="#37474f"/>
+      <rect x="20" y="44" width="5" height="5" fill="#78909c"/>
+      <rect x="27" y="44" width="5" height="5" fill="#78909c"/>
+      <!-- Steel Breastplate -->
+      <rect x="20" y="24" width="12" height="15" rx="1" fill="#90a4ae"/>
+      <rect x="22" y="26" width="8" height="11" fill="#546e7a"/>
+      <rect x="24" y="28" width="4" height="7" fill="#cfd8dc"/>
+      <rect x="20" y="36" width="12" height="3" fill="#5d4037"/>
+      <!-- Steel Helm & Blue Slit Eyes -->
+      <rect x="20" y="11" width="12" height="13" rx="2" fill="#78909c"/>
+      <rect x="22" y="9" width="8" height="3" fill="#b0bec5"/>
+      <rect x="25" y="6" width="2" height="4" fill="#ffd700"/>
+      <rect x="21" y="16" width="10" height="3" fill="#1e293b"/>
+      <rect class="pixel-eye" x="23" y="16.5" width="2.5" height="2" fill="#00e5ff"/>
+      <rect class="pixel-eye" x="27" y="16.5" width="2.5" height="2" fill="#00e5ff"/>
+      <!-- Iron Heater Shield on Left Arm -->
+      <g transform="translate(14, 24)">
+        <polygon points="0,0 8,0 7,12 4,16 1,12" fill="#455a64" stroke="#b0bec5" stroke-width="1"/>
+        <polygon points="2,2 6,2 5,10 4,13 3,10" fill="#78909c"/>
+        <rect x="3.5" y="4" width="1" height="6" fill="#ffd700"/>
+      </g>
+      <!-- Steel Sword on Right Arm -->
+      <g transform="translate(${swordTx}, ${swordTy}) rotate(${swordRot})">
+        <rect x="-1" y="5" width="2" height="5" fill="#5d4037"/>
+        <rect x="-3.5" y="4" width="7" height="1.8" fill="#ffd700" rx="0.5"/>
+        <polygon points="-1.5,4 1.5,4 1,-16 0,-18 -1,-16" fill="#cfd8dc" stroke="#ffffff" stroke-width="0.5"/>
+        <line x1="0" y1="3" x2="0" y2="-15" stroke="#78909c" stroke-width="0.6"/>
+      </g>
+    </svg>`;
+  },
+
+  _getHeroShadowRogueSvg(action) {
+    const isAtk = action === 'attack';
+    const isHit = action === 'hit';
+    const isWalk = action === 'walk';
+    const d1Rot = isAtk ? 85 : 20;
+    const d2Rot = isAtk ? -75 : -140; // Reverse grip!
+    return `
+    <svg class="pixel-sprite hero-pixel-svg hero-shadow_rogue action-${action}" viewBox="0 0 54 54" width="100%" height="100%" shape-rendering="crispEdges">
+      <defs>
+        <filter id="rg-glow"><feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#00e5ff" flood-opacity="0.95"/></filter>
+      </defs>
+      <!-- Shadow & Cyan Ground Wisps -->
+      <ellipse cx="27" cy="50" rx="14" ry="4" fill="rgba(0,0,0,0.4)"/>
+      <path d="M 12,49 Q 20,46 27,51 Q 38,47 44,50" stroke="#00e5ff" stroke-width="1.2" fill="none" opacity="0.6" class="spin-aura"/>
+      <!-- Fluttering Midnight Cloak -->
+      <path d="M 18,22 Q ${10 - (isWalk ? 8 : 0)},36 ${12 - (isWalk ? 10 : 0)},48 Q 22,46 27,48 Q 32,46 ${38 + (isWalk ? 10 : 0)},48 Q ${40 + (isWalk ? 8 : 0)},36 32,22 Z" fill="#090d16" stroke="#0f172a" stroke-width="1"/>
+      <!-- Legs in Dark Tabi Ninja Wraps -->
+      <rect x="21" y="38" width="4" height="10" fill="#020617"/>
+      <rect x="27" y="38" width="4" height="10" fill="#020617"/>
+      <rect x="20" y="44" width="5" height="5" fill="#0f172a"/>
+      <rect x="27" y="44" width="5" height="5" fill="#0f172a"/>
+      <!-- Shinobi Vest with Throwing Kunai Strapped -->
+      <rect x="20" y="23" width="12" height="15" fill="#1e293b" rx="1"/>
+      <rect x="22" y="25" width="8" height="11" fill="#0f172a"/>
+      <line x1="21" y1="26" x2="31" y2="34" stroke="#00e5ff" stroke-width="1.2" opacity="0.8"/>
+      <!-- Midnight Cowl / Hood & Cyan Glowing Eyes -->
+      <polygon points="18,22 34,22 32,10 27,7 20,10" fill="#0f172a"/>
+      <rect x="21" y="13" width="10" height="7" fill="#020617"/>
+      <rect class="pixel-eye" x="22" y="15" width="3" height="2" fill="#00e5ff" filter="url(#rg-glow)"/>
+      <rect class="pixel-eye" x="27" y="15" width="3" height="2" fill="#00e5ff" filter="url(#rg-glow)"/>
+      <line x1="22" y1="14" x2="17" y2="12" stroke="#00e5ff" stroke-width="0.8" opacity="0.8"/>
+      <line x1="30" y1="14" x2="35" y2="12" stroke="#00e5ff" stroke-width="0.8" opacity="0.8"/>
+      <!-- Dual Glowing Cyan Poison Daggers (Right + Left Reverse-Grip) -->
+      <g transform="translate(${isAtk ? 34 : 29}, ${isAtk ? 26 : 22}) rotate(${d1Rot})">
+        <rect x="-1" y="2" width="2" height="4" fill="#1e293b"/>
+        <rect x="-2.5" y="1.5" width="5" height="1" fill="#00e5ff"/>
+        <polygon points="-1,1.5 1,1.5 1.5,-10 0,-13 -1.5,-10" fill="#38bdf8" stroke="#ffffff" stroke-width="0.5" filter="url(#rg-glow)"/>
+      </g>
+      <g transform="translate(18, ${isAtk ? 24 : 26}) rotate(${d2Rot})">
+        <rect x="-1" y="2" width="2" height="4" fill="#1e293b"/>
+        <rect x="-2.5" y="1.5" width="5" height="1" fill="#00e5ff"/>
+        <polygon points="-1,1.5 1,1.5 1.5,-10 0,-13 -1.5,-10" fill="#00e5ff" stroke="#ffffff" stroke-width="0.5" filter="url(#rg-glow)"/>
+      </g>
+    </svg>`;
+  },
+
+  _getHeroFrostKnightSvg(action) {
+    const isAtk = action === 'attack';
+    const isHit = action === 'hit';
+    const swordRot = isAtk ? 70 : 15;
+    const swordTx = isAtk ? 35 : 29;
+    const swordTy = isAtk ? 26 : 20;
+    return `
+    <svg class="pixel-sprite hero-pixel-svg hero-frost_knight action-${action}" viewBox="0 0 54 54" width="100%" height="100%" shape-rendering="crispEdges">
+      <defs>
+        <filter id="fk-glow"><feDropShadow dx="0" dy="0" stdDeviation="2.5" flood-color="#80d8ff" flood-opacity="1"/></filter>
+      </defs>
+      <!-- Shadow & Freezing Ground Frost Ring -->
+      <ellipse cx="27" cy="50" rx="15" ry="4" fill="rgba(0,0,0,0.45)"/>
+      <ellipse cx="27" cy="50" rx="18" ry="4.5" fill="none" stroke="#80d8ff" stroke-width="1.2" stroke-dasharray="4,3" class="spin-aura"/>
+      <!-- Orbiting Snowflake Crystals -->
+      <g class="spin-aura" style="transform-origin: 27px 27px;">
+        <polygon points="6,27 8,25 10,27 8,29" fill="#e0f7fa" filter="url(#fk-glow)"/>
+        <polygon points="46,25 48,23 50,25 48,27" fill="#80d8ff" filter="url(#fk-glow)"/>
+      </g>
+      <!-- Heavy Frosted Cape -->
+      <path d="M 17,23 Q 11,36 13,48 Q 27,45 37,48 Q 39,36 33,23 Z" fill="#01579b" stroke="#0288d1" stroke-width="1"/>
+      <rect x="18" y="21" width="16" height="4" rx="2" fill="#e0f7fa"/>
+      <!-- Spiked Ice Greaves & Boots -->
+      <rect x="20" y="38" width="5" height="10" fill="#01579b"/>
+      <rect x="27" y="38" width="5" height="10" fill="#01579b"/>
+      <polygon points="19,45 25,45 25,48 20,48 18,46" fill="#80d8ff"/>
+      <polygon points="27,45 33,45 34,46 32,48 27,48" fill="#80d8ff"/>
+      <!-- Glacial Plate Armor & Glowing Frost Runes -->
+      <rect x="19" y="23" width="14" height="15" fill="#0288d1" rx="1"/>
+      <polygon points="21,25 31,25 29,36 23,36" fill="#03a9f4"/>
+      <polygon points="26,26 27,25 28,26 27,33" fill="#ffffff" filter="url(#fk-glow)"/>
+      <!-- Frosted Winged Pauldrons -->
+      <polygon points="14,21 19,20 18,28 13,24" fill="#80d8ff" stroke="#ffffff" stroke-width="0.5"/>
+      <polygon points="38,21 33,20 34,28 39,24" fill="#80d8ff" stroke="#ffffff" stroke-width="0.5"/>
+      <!-- Crystal Crown Helm with Cyan Visor -->
+      <polygon points="18,15 20,8 24,11 27,5 30,11 34,8 36,15 34,22 20,22" fill="#01579b" stroke="#80d8ff" stroke-width="0.8"/>
+      <rect class="pixel-eye" x="22" y="15" width="10" height="3" rx="1" fill="#00e5ff" filter="url(#fk-glow)"/>
+      <rect x="25" y="15.5" width="4" height="2" fill="#ffffff"/>
+      <!-- Giant Two-Handed Frostmourne Greatsword -->
+      <g transform="translate(${swordTx}, ${swordTy}) rotate(${swordRot})">
+        <rect x="-1" y="6" width="2" height="7" fill="#01579b"/>
+        <rect x="-4.5" y="5" width="9" height="2" fill="#80d8ff" rx="0.5"/>
+        <polygon points="-2.5,5 2.5,5 2,-20 0,-24 -2,-20" fill="#80d8ff" stroke="#ffffff" stroke-width="0.8" filter="url(#fk-glow)"/>
+        <line x1="0" y1="4" x2="0" y2="-19" stroke="#ffffff" stroke-width="0.8"/>
+      </g>
+    </svg>`;
+  },
+
+  _getHeroSpearLancerSvg(action) {
+    const isAtk = action === 'attack';
+    const isHit = action === 'hit';
+    const spearRot = isAtk ? 75 : 25;
+    const spearTx = isAtk ? 36 : 30;
+    const spearTy = isAtk ? 26 : 22;
+    return `
+    <svg class="pixel-sprite hero-pixel-svg hero-spear_lancer action-${action}" viewBox="0 0 54 54" width="100%" height="100%" shape-rendering="crispEdges">
+      <defs>
+        <filter id="sl-glow"><feDropShadow dx="0" dy="0" stdDeviation="2.5" flood-color="#ffd700" flood-opacity="1"/></filter>
+      </defs>
+      <!-- Shadow -->
+      <ellipse cx="27" cy="50" rx="15" ry="4" fill="rgba(0,0,0,0.45)"/>
+      <!-- Spinning Golden Lightning Ring behind back with 4 Tomoe -->
+      <g class="spin-aura" style="transform-origin: 27px 25px;">
+        <circle cx="27" cy="25" r="16" fill="none" stroke="#ffd700" stroke-width="1.8" stroke-dasharray="6,4" opacity="0.85"/>
+        <circle cx="27" cy="9" r="2.2" fill="#ff6f00" stroke="#ffd700" stroke-width="0.8"/>
+        <circle cx="43" cy="25" r="2.2" fill="#ff6f00" stroke="#ffd700" stroke-width="0.8"/>
+        <circle cx="27" cy="41" r="2.2" fill="#ff6f00" stroke="#ffd700" stroke-width="0.8"/>
+        <circle cx="11" cy="25" r="2.2" fill="#ff6f00" stroke="#ffd700" stroke-width="0.8"/>
+      </g>
+      <!-- Imperial Crimson & Gold Cape -->
+      <path d="M 18,22 Q 10,36 12,48 Q 27,45 38,48 Q 40,36 32,22 Z" fill="#b71c1c" stroke="#ffd700" stroke-width="1"/>
+      <!-- Dragon Scale Greaves -->
+      <rect x="20" y="38" width="5" height="10" fill="#4e342e"/>
+      <rect x="27" y="38" width="5" height="10" fill="#4e342e"/>
+      <rect x="19" y="43" width="6" height="5" fill="#ffd700"/>
+      <rect x="27" y="43" width="6" height="5" fill="#ffd700"/>
+      <!-- Imperial Golden Dragon Armor -->
+      <rect x="19" y="23" width="14" height="15" fill="#ffd700" rx="1" filter="url(#sl-glow)"/>
+      <polygon points="21,25 31,25 29,36 23,36" fill="#ff8f00"/>
+      <polygon points="24,27 28,27 27,33 25,33" fill="#b71c1c"/>
+      <!-- Dragon Crest Horn Helm -->
+      <polygon points="19,16 16,8 21,11 27,6 31,11 36,8 33,16 32,22 20,22" fill="#ffb300" stroke="#ffd700" stroke-width="1"/>
+      <rect x="21" y="14" width="10" height="4" fill="#212121"/>
+      <rect class="pixel-eye" x="22" y="15" width="3" height="2" fill="#ffd700" filter="url(#sl-glow)"/>
+      <rect class="pixel-eye" x="27" y="15" width="3" height="2" fill="#ffd700" filter="url(#sl-glow)"/>
+      <!-- Magnificent Golden Long Thương (Dragon Spear) -->
+      <g transform="translate(${spearTx}, ${spearTy}) rotate(${spearRot})">
+        <rect x="-0.8" y="-12" width="1.6" height="34" fill="#ffd700" stroke="#ff8f00" stroke-width="0.4"/>
+        <polygon points="-2,-12 2,-12 0,-15" fill="#b71c1c"/>
+        <polygon points="-2.5,-15 2.5,-15 1.5,-26 0,-29 -1.5,-26" fill="#ffd700" stroke="#ffffff" stroke-width="0.8" filter="url(#sl-glow)"/>
+        <line x1="0" y1="-14" x2="0" y2="-27" stroke="#ffffff" stroke-width="0.8"/>
+      </g>
+    </svg>`;
+  },
+
+  _getHeroFlameKnightSvg(action) {
+    const isAtk = action === 'attack';
+    const swordRot = isAtk ? 75 : 18;
+    const swordTx = isAtk ? 35 : 29;
+    const swordTy = isAtk ? 26 : 20;
+    return `
+    <svg class="pixel-sprite hero-pixel-svg hero-flame_knight action-${action}" viewBox="0 0 54 54" width="100%" height="100%" shape-rendering="crispEdges">
+      <defs>
+        <filter id="fl-glow"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#ff3d00" flood-opacity="1"/></filter>
+      </defs>
+      <!-- Shadow & Heat Distortion Ring -->
+      <ellipse cx="27" cy="50" rx="15" ry="4" fill="rgba(0,0,0,0.5)"/>
+      <ellipse cx="27" cy="50" rx="17" ry="4" fill="none" stroke="#ff3d00" stroke-width="1.5" stroke-dasharray="5,3" class="spin-aura"/>
+      <!-- TWO GIANT ANIMATED FLAMING PHOENIX WINGS -->
+      <g class="pulse-aura" style="transform-origin: 27px 24px;">
+        <path d="M 18,26 Q 2,12 5,4 Q 16,10 17,20 Z" fill="#d50000" filter="url(#fl-glow)"/>
+        <path d="M 17,24 Q 6,13 8,7 Q 15,12 16,19 Z" fill="#ff3d00"/>
+        <path d="M 16,22 Q 9,14 10,9 Q 14,13 15,18 Z" fill="#ffd600"/>
+        <path d="M 34,26 Q 50,12 47,4 Q 36,10 35,20 Z" fill="#d50000" filter="url(#fl-glow)"/>
+        <path d="M 35,24 Q 46,13 44,7 Q 37,12 36,19 Z" fill="#ff3d00"/>
+        <path d="M 36,22 Q 43,14 42,9 Q 38,13 37,18 Z" fill="#ffd600"/>
+      </g>
+      <!-- Volcanic Magma Greaves -->
+      <rect x="20" y="38" width="5" height="10" fill="#1b0000"/>
+      <rect x="27" y="38" width="5" height="10" fill="#1b0000"/>
+      <polygon points="19,44 25,44 25,48 19,48" fill="#d50000"/>
+      <polygon points="27,44 33,44 33,48 27,48" fill="#d50000"/>
+      <!-- Volcanic Magma Plate Armor with Glowing Veins -->
+      <rect x="19" y="23" width="14" height="15" fill="#212121" rx="1" stroke="#d50000" stroke-width="1"/>
+      <polygon points="21,25 31,25 29,36 23,36" fill="#b71c1c"/>
+      <path d="M 23,27 L 27,33 L 29,26" stroke="#ffd600" stroke-width="1.2" fill="none" filter="url(#fl-glow)"/>
+      <!-- Horned Battle Helm with Blazing Horns -->
+      <polygon points="18,17 15,6 20,11 27,8 32,11 37,6 34,17 32,22 20,22" fill="#1b0000" stroke="#d50000" stroke-width="1"/>
+      <polygon points="15,6 17,2 20,8" fill="#ffd600" filter="url(#fl-glow)"/>
+      <polygon points="37,6 35,2 32,8" fill="#ffd600" filter="url(#fl-glow)"/>
+      <rect class="pixel-eye" x="22" y="15" width="3" height="2" fill="#ff3d00" filter="url(#fl-glow)"/>
+      <rect class="pixel-eye" x="27" y="15" width="3" height="2" fill="#ff3d00" filter="url(#fl-glow)"/>
+      <!-- Colossal Solar Greatsword Engulfed in Fire -->
+      <g transform="translate(${swordTx}, ${swordTy}) rotate(${swordRot})">
+        <rect x="-1" y="6" width="2" height="7" fill="#1b0000"/>
+        <rect x="-5" y="5" width="10" height="2" fill="#ff3d00" rx="0.5"/>
+        <polygon points="-3,5 3,5 2.5,-22 0,-26 -2.5,-22" fill="#d50000" stroke="#ffd600" stroke-width="1" filter="url(#fl-glow)"/>
+        <line x1="0" y1="4" x2="0" y2="-23" stroke="#ffd600" stroke-width="1.2"/>
+        <polygon points="-3,-5 0,-15 3,-8" fill="#ffd600" opacity="0.8"/>
+      </g>
+    </svg>`;
+  },
+
+  _getHeroArcaneMageSvg(action) {
+    const isAtk = action === 'attack';
+    return `
+    <svg class="pixel-sprite hero-pixel-svg hero-arcane_mage action-${action}" viewBox="0 0 54 54" width="100%" height="100%" shape-rendering="crispEdges">
+      <defs>
+        <filter id="am-glow"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#d500f9" flood-opacity="1"/></filter>
+      </defs>
+      <!-- Shadow on Ground (Small because levitating!) -->
+      <ellipse cx="27" cy="51" rx="10" ry="3" fill="rgba(0,0,0,0.3)"/>
+      <!-- Levitating Entire Character Body in Mid-Air! -->
+      <g class="pulse-aura" style="transform-origin: 27px 22px;">
+        <!-- Pulsating Void Singularity Event Horizon Ring -->
+        <circle cx="27" cy="24" r="19" fill="none" stroke="#d500f9" stroke-width="1.8" stroke-dasharray="5,5" class="spin-aura"/>
+        <!-- Orbiting Twin Dark Matter Spheres with Cyan Electric Arcs -->
+        <g class="spin-aura" style="transform-origin: 27px 24px;">
+          <circle cx="9" cy="24" r="3.2" fill="#120522" stroke="#00e5ff" stroke-width="1" filter="url(#am-glow)"/>
+          <circle cx="45" cy="24" r="3.2" fill="#120522" stroke="#d500f9" stroke-width="1" filter="url(#am-glow)"/>
+          <line x1="9" y1="24" x2="16" y2="22" stroke="#00e5ff" stroke-width="0.8" opacity="0.8"/>
+          <line x1="45" y1="24" x2="38" y2="22" stroke="#d500f9" stroke-width="0.8" opacity="0.8"/>
+        </g>
+        <!-- Flowing Celestial Starry Robes with Magenta Runes -->
+        <path d="M 18,22 Q 12,34 13,44 Q 27,47 40,44 Q 41,34 34,22 Z" fill="#120522" stroke="#4a148c" stroke-width="1"/>
+        <path d="M 21,24 L 27,42 L 32,24" stroke="#d500f9" stroke-width="1.2" fill="none" filter="url(#am-glow)"/>
+        <!-- Mystic Archmage Cowl & Silver Star Hair -->
+        <path d="M 16,14 Q 13,24 16,30" stroke="#cfd8dc" stroke-width="2" fill="none"/>
+        <path d="M 36,14 Q 39,24 36,30" stroke="#cfd8dc" stroke-width="2" fill="none"/>
+        <polygon points="18,18 34,18 32,7 27,3 20,7" fill="#311b92" stroke="#d500f9" stroke-width="1"/>
+        <rect x="21" y="11" width="10" height="7" fill="#120522"/>
+        <rect class="pixel-eye" x="22" y="13" width="2.5" height="2" fill="#d500f9" filter="url(#am-glow)"/>
+        <rect class="pixel-eye" x="27" y="13" width="2.5" height="2" fill="#d500f9" filter="url(#am-glow)"/>
+        <!-- Third Eye on Forehead -->
+        <circle cx="26" cy="9.5" r="1.2" fill="#00e5ff" filter="url(#am-glow)"/>
+        <!-- Floating Open Ancient Grimoire of the Abyss -->
+        <g transform="translate(${isAtk ? 34 : 32}, ${isAtk ? 18 : 22}) rotate(${isAtk ? -15 : 12})">
+          <polygon points="0,0 8,-3 8,8 0,11" fill="#4a148c" stroke="#ffd700" stroke-width="0.5"/>
+          <polygon points="0,0 -8,-3 -8,8 0,11" fill="#4a148c" stroke="#ffd700" stroke-width="0.5"/>
+          <polygon points="0,1 6,-2 6,7 0,9.5" fill="#f5f5f5"/>
+          <polygon points="0,1 -6,-2 -6,7 0,9.5" fill="#f5f5f5"/>
+          <line x1="1" y1="3" x2="5" y2="1" stroke="#d500f9" stroke-width="0.8"/>
+          <line x1="-1" y1="3" x2="-5" y2="1" stroke="#00e5ff" stroke-width="0.8"/>
+        </g>
+      </g>
+    </svg>`;
+  },
+
+  _getHeroUnknownGodSvg(action) {
+    const isAtk = action === 'attack';
+    return `
+    <svg class="pixel-sprite hero-pixel-svg hero-unknown_god action-${action}" viewBox="0 0 54 54" width="100%" height="100%" shape-rendering="crispEdges">
+      <defs>
+        <filter id="ug-glow"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#00ffcc" flood-opacity="1"/></filter>
+        <filter id="ug-red-glow"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#ff0055" flood-opacity="1"/></filter>
+      </defs>
+      <!-- Celestial Ground Shimmer -->
+      <ellipse cx="27" cy="51" rx="12" ry="3" fill="rgba(0,255,204,0.35)"/>
+      <g class="pulse-aura" style="transform-origin: 27px 22px;">
+        <!-- SUPREME PRISMATIC RAINBOW HALO -->
+        <circle cx="27" cy="22" r="21" fill="none" stroke="url(#prism-grad)" stroke-width="2.5" class="spin-aura"/>
+        <!-- 6 FLOATING RED & GOLD GEOMETRIC CUBES IN ORBIT (Sustainer of Heavenly Principles) -->
+        <g class="spin-aura" style="transform-origin: 27px 22px;">
+          <rect x="25" y="0" width="4" height="4" fill="#ff0055" stroke="#ffd700" stroke-width="0.8" filter="url(#ug-red-glow)"/>
+          <rect x="44" y="11" width="4" height="4" fill="#ff0055" stroke="#00ffcc" stroke-width="0.8" filter="url(#ug-glow)"/>
+          <rect x="44" y="29" width="4" height="4" fill="#ff0055" stroke="#ffd700" stroke-width="0.8" filter="url(#ug-red-glow)"/>
+          <rect x="25" y="40" width="4" height="4" fill="#ff0055" stroke="#00ffcc" stroke-width="0.8" filter="url(#ug-glow)"/>
+          <rect x="6" y="29" width="4" height="4" fill="#ff0055" stroke="#ffd700" stroke-width="0.8" filter="url(#ug-red-glow)"/>
+          <rect x="6" y="11" width="4" height="4" fill="#ff0055" stroke="#00ffcc" stroke-width="0.8" filter="url(#ug-glow)"/>
+        </g>
+        <!-- Flowing Celestial Starlight Robes (Pure White + Gold Border + Crimson Sash) -->
+        <path d="M 18,20 Q 9,34 11,46 Q 27,48 41,46 Q 43,34 34,20 Z" fill="#ffffff" stroke="#ffd700" stroke-width="1.2"/>
+        <polygon points="22,23 30,23 28,45 24,45" fill="#ff0055" opacity="0.9"/>
+        <!-- Long Radiant Silver Hair Flowing -->
+        <path d="M 15,10 Q 8,24 10,34 Q 14,32 16,22 Z" fill="#e2e8f0" filter="url(#ug-glow)"/>
+        <path d="M 37,10 Q 44,24 42,34 Q 38,32 36,22 Z" fill="#e2e8f0" filter="url(#ug-glow)"/>
+        <!-- Divine Face & Crown Tiara -->
+        <rect x="20" y="8" width="12" height="12" fill="#ffe0b2" rx="2"/>
+        <polygon points="19,8 23,4 27,7 31,4 34,8" fill="#ffd700" stroke="#ffffff" stroke-width="0.6"/>
+        <!-- Omniscient Heterochromatic Cosmic Eyes (Cyan & Crimson!) -->
+        <rect class="pixel-eye" x="22" y="12" width="2.8" height="2.2" fill="#00ffcc" filter="url(#ug-glow)"/>
+        <rect class="pixel-eye" x="27" y="12" width="2.8" height="2.2" fill="#ff0055" filter="url(#ug-red-glow)"/>
+        <!-- Floating Sacred Celestial Broadsword Radiating Prismatic Light -->
+        <g transform="translate(${isAtk ? 35 : 32}, ${isAtk ? 18 : 22}) rotate(${isAtk ? 65 : 20})">
+          <rect x="-1" y="6" width="2" height="6" fill="#ffd700"/>
+          <polygon points="-4,6 4,6 0,4" fill="#ff0055"/>
+          <polygon points="-2.5,4 2.5,4 2,-24 0,-28 -2,-24" fill="url(#prism-grad)" stroke="#ffffff" stroke-width="0.8" filter="url(#ug-glow)"/>
+          <line x1="0" y1="3" x2="0" y2="-25" stroke="#ffffff" stroke-width="0.8"/>
+        </g>
+      </g>
+    </svg>`;
+  },
+
   getPlayerSvg(action = 'idle', targetHeroId = null) {
-    const heroId = targetHeroId || GameState.activeHeroId || 'hero_traveler';
-    const equippedWeaponSvg = this.renderEquippedWeapon(action);
+    const rawId = targetHeroId || (typeof GameState !== 'undefined' && GameState.activeHeroId) || 'hero_starter';
+    const idMap = {
+      hero_traveler: 'hero_starter',
+      hero_kazuha: 'hero_shadow_rogue',
+      hero_furina: 'hero_frost_knight',
+      hero_zhongli: 'hero_spear_lancer',
+      hero_jiyan: 'hero_spear_lancer',
+      hero_amber: 'hero_flame_knight',
+      hero_changli: 'hero_flame_knight',
+      hero_raiden: 'hero_arcane_mage'
+    };
+    const heroId = idMap[rawId] || rawId;
 
-    // 1. RAIDEN SHOGUN (LÔI THẦN EI — 6★ HỖN MANG)
-    if (heroId === 'hero_raiden') {
-      return `
-      <svg class="pixel-sprite hero-pixel-svg hero-raiden action-${action}" viewBox="0 0 48 48" width="100%" height="100%" shape-rendering="crispEdges">
-        <filter id="raiden-glow"><feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#d500f9" flood-opacity="0.95"/></filter>
-        <!-- Hào quang Vòng Lôi Đình Thần Ma & Tomoe sau lưng -->
-        <g class="hero-ambient-aura raiden-aura">
-          <circle cx="24" cy="20" r="19" fill="none" stroke="#d500f9" stroke-width="1.8" stroke-dasharray="4,4" class="spin-aura"/>
-          <circle cx="24" cy="2" r="2.5" fill="#e040fb" class="pulse-aura"/>
-          <circle cx="8" cy="26" r="2.5" fill="#e040fb" class="pulse-aura"/>
-          <circle cx="40" cy="26" r="2.5" fill="#e040fb" class="pulse-aura"/>
-          <polygon points="23,0 25,0 23.5,2.5 25.5,2.5 22.5,6 23.5,3.5 22,3.5" fill="#ffd600" class="spark-fx"/>
-        </g>
-        <!-- Tóc tím dài buông xõa & bím tóc -->
-        <rect x="14" y="8" width="20" height="26" rx="4" fill="#4a148c"/>
-        <rect x="12" y="14" width="6" height="24" fill="#7b1fa2"/>
-        <rect x="30" y="14" width="6" height="24" fill="#7b1fa2"/>
-        <!-- Khuôn mặt anime & Mắt chớp Lôi tím -->
-        <rect x="17" y="12" width="14" height="11" fill="#ffe0b2"/>
-        <rect class="pixel-eye" x="19" y="16" width="3" height="3" fill="#d500f9"/>
-        <rect class="pixel-eye" x="26" y="16" width="3" height="3" fill="#d500f9"/>
-        <rect x="20" y="16" width="1" height="1" fill="#ffffff"/>
-        <rect x="27" y="16" width="1" height="1" fill="#ffffff"/>
-        <!-- Kimono Đen Tím Mitsudomoe Hoàng Gia -->
-        <rect x="16" y="23" width="16" height="18" fill="#311b92"/>
-        <rect x="18" y="25" width="12" height="14" fill="#ba68c8"/>
-        <rect x="20" y="29" width="8" height="4" fill="#ffd600"/>
-        <!-- Vũ khí đang trang bị -->
-        ${equippedWeaponSvg}
-      </svg>`;
+    switch (heroId) {
+      case 'hero_starter':
+        return this._getHeroStarterSvg(action);
+      case 'hero_shadow_rogue':
+        return this._getHeroShadowRogueSvg(action);
+      case 'hero_frost_knight':
+        return this._getHeroFrostKnightSvg(action);
+      case 'hero_spear_lancer':
+        return this._getHeroSpearLancerSvg(action);
+      case 'hero_flame_knight':
+        return this._getHeroFlameKnightSvg(action);
+      case 'hero_arcane_mage':
+        return this._getHeroArcaneMageSvg(action);
+      case 'hero_unknown_god':
+        return this._getHeroUnknownGodSvg(action);
+      default:
+        return this._getHeroStarterSvg(action);
     }
-
-    // 2. CHANGLI (TRƯỜNG LY — 6★ HỖN MANG HỎA PHƯỢNG)
-    if (heroId === 'hero_changli') {
-      return `
-      <svg class="pixel-sprite hero-pixel-svg hero-changli action-${action}" viewBox="0 0 48 48" width="100%" height="100%" shape-rendering="crispEdges">
-        <filter id="changli-glow"><feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#ff1744" flood-opacity="0.95"/></filter>
-        <!-- Hào quang Cánh Phượng Hoàng & Đốm Lửa Bập Bùng -->
-        <g class="hero-ambient-aura changli-aura">
-          <path d="M 12,24 Q 2,14 6,8 Q 14,14 15,22 Z" fill="#ff1744" opacity="0.7" class="changli-wing-l"/>
-          <path d="M 36,24 Q 46,14 42,8 Q 34,14 33,22 Z" fill="#ff1744" opacity="0.7" class="changli-wing-r"/>
-          <circle cx="11" cy="10" r="1.5" fill="#ffd600" class="ember-float-1"/>
-          <circle cx="37" cy="12" r="1.8" fill="#ff9100" class="ember-float-2"/>
-          <circle cx="24" cy="3" r="1.5" fill="#ff3d00" class="ember-float-3"/>
-        </g>
-        <!-- Tóc đỏ rực lửa & lông vũ phượng hoàng -->
-        <rect x="14" y="7" width="20" height="27" rx="4" fill="#c62828"/>
-        <rect x="10" y="13" width="6" height="25" fill="#ff5252"/>
-        <rect x="32" y="13" width="6" height="25" fill="#ff5252"/>
-        <!-- Mặt & Mắt Hỏa hồng ngọc chớp -->
-        <rect x="17" y="11" width="14" height="11" fill="#ffecb3"/>
-        <rect class="pixel-eye" x="19" y="15" width="3" height="3" fill="#ff1744"/>
-        <rect class="pixel-eye" x="26" y="15" width="3" height="3" fill="#ff1744"/>
-        <rect x="20" y="15" width="1" height="1" fill="#ffffff"/>
-        <rect x="27" y="15" width="1" height="1" fill="#ffffff"/>
-        <!-- Trang phục Hỏa Vũ Trắng Đỏ Hoàng Kim -->
-        <rect x="16" y="22" width="16" height="18" fill="#ffffff"/>
-        <rect x="18" y="24" width="12" height="15" fill="#d32f2f"/>
-        <rect x="20" y="28" width="8" height="4" fill="#ffd600"/>
-        <!-- Vũ khí đang trang bị -->
-        ${equippedWeaponSvg}
-      </svg>`;
-    }
-
-    // 3. FURINA (THỦY THẦN — 5★ THẦN THOẠI)
-    if (heroId === 'hero_furina') {
-      return `
-      <svg class="pixel-sprite hero-pixel-svg hero-furina action-${action}" viewBox="0 0 48 48" width="100%" height="100%" shape-rendering="crispEdges">
-        <filter id="furina-glow"><feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#29b6f6" flood-opacity="0.9"/></filter>
-        <!-- Hào quang Giọt Nước Tinh Thể & Vương Miện Thủy Triều -->
-        <g class="hero-ambient-aura furina-aura">
-          <circle cx="8" cy="16" r="3" fill="#e1f5fe" stroke="#00e5ff" stroke-width="1" opacity="0.8" class="bubble-float-1"/>
-          <circle cx="40" cy="14" r="2.5" fill="#e1f5fe" stroke="#00e5ff" stroke-width="1" opacity="0.8" class="bubble-float-2"/>
-          <circle cx="10" cy="36" r="2" fill="#e1f5fe" stroke="#00e5ff" stroke-width="0.8" opacity="0.7" class="bubble-float-3"/>
-          <path d="M 20,4 L 24,1 L 28,4 L 26,6 L 22,6 Z" fill="#ffd600" opacity="0.95" class="pulse-aura"/>
-        </g>
-        <!-- Mũ chóp quý tộc Pháp màu xanh biển -->
-        <rect x="18" y="2" width="12" height="8" fill="#01579b"/>
-        <rect x="14" y="9" width="20" height="3" fill="#0288d1"/>
-        <!-- Tóc trắng ngả xanh nước -->
-        <rect x="14" y="11" width="20" height="22" rx="3" fill="#e1f5fe"/>
-        <rect x="11" y="17" width="5" height="18" fill="#81d4fa"/>
-        <rect x="32" y="17" width="5" height="18" fill="#81d4fa"/>
-        <!-- Mắt Thủy Lam chớp -->
-        <rect x="17" y="13" width="14" height="11" fill="#ffe0b2"/>
-        <rect class="pixel-eye" x="19" y="17" width="3" height="3" fill="#0288d1"/>
-        <rect class="pixel-eye" x="26" y="17" width="3" height="3" fill="#00bcd4"/>
-        <rect x="20" y="17" width="1" height="1" fill="#ffffff"/>
-        <rect x="27" y="17" width="1" height="1" fill="#ffffff"/>
-        <!-- Áo vest đuôi tôm xanh biển quý phái -->
-        <rect x="16" y="24" width="16" height="17" fill="#0277bd"/>
-        <rect x="20" y="26" width="8" height="10" fill="#ffffff"/>
-        <!-- Vũ khí đang trang bị -->
-        ${equippedWeaponSvg}
-      </svg>`;
-    }
-
-    // 4. JIYAN (KỴ SĨ LONG NGÂM — 4★ HUYỀN THOẠI WUTHERING WAVES)
-    if (heroId === 'hero_jiyan') {
-      return `
-      <svg class="pixel-sprite hero-pixel-svg hero-jiyan action-${action}" viewBox="0 0 48 48" width="100%" height="100%" shape-rendering="crispEdges">
-        <filter id="jiyan-glow"><feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#00e5ff" flood-opacity="0.9"/></filter>
-        <!-- Hào quang Thanh Long Khí & Ngọn Giáo Gió -->
-        <g class="hero-ambient-aura jiyan-aura">
-          <circle cx="24" cy="24" r="20" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-dasharray="6,4" class="spin-aura-reverse"/>
-          <path d="M 4,22 Q 10,6 24,5 Q 38,6 44,22" fill="none" stroke="#00bfa5" stroke-width="2.2" opacity="0.85" class="dragon-coil"/>
-          <polygon points="42,18 46,22 42,26 43,22" fill="#69f0ae" class="pulse-aura"/>
-        </g>
-        <!-- Tóc xanh ngọc đuôi ngựa chiến tướng -->
-        <rect x="15" y="8" width="18" height="24" rx="3" fill="#004d40"/>
-        <rect x="12" y="14" width="5" height="22" fill="#00897b"/>
-        <rect x="31" y="14" width="5" height="22" fill="#00897b"/>
-        <!-- Mặt & Mắt Rồng Phong Ngọc chớp -->
-        <rect x="17" y="12" width="14" height="11" fill="#ffe0b2"/>
-        <rect class="pixel-eye" x="19" y="16" width="3" height="3" fill="#00e5ff"/>
-        <rect class="pixel-eye" x="26" y="16" width="3" height="3" fill="#00e5ff"/>
-        <rect x="20" y="16" width="1" height="1" fill="#ffffff"/>
-        <rect x="27" y="16" width="1" height="1" fill="#ffffff"/>
-        <!-- Giáp vảy Thanh Long đen ngọc -->
-        <rect x="16" y="23" width="16" height="18" fill="#1b5e20"/>
-        <rect x="19" y="25" width="10" height="14" fill="#00bfa5"/>
-        <rect x="21" y="28" width="6" height="4" fill="#ffd600"/>
-        <!-- Vũ khí đang trang bị -->
-        ${equippedWeaponSvg}
-      </svg>`;
-    }
-
-    // 5. ZHONGLI (NHAM VƯƠNG ĐẾ QUÂN — 4★ HUYỀN THOẠI)
-    if (heroId === 'hero_zhongli') {
-      return `
-      <svg class="pixel-sprite hero-pixel-svg hero-zhongli action-${action}" viewBox="0 0 48 48" width="100%" height="100%" shape-rendering="crispEdges">
-        <filter id="zhongli-glow"><feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#ffb300" flood-opacity="0.9"/></filter>
-        <!-- Hào quang Khiên Kim Nham Hộ Thể & Vòng Ấn Nham Cổ -->
-        <g class="hero-ambient-aura zhongli-aura">
-          <circle cx="24" cy="24" r="21" fill="none" stroke="#ffb300" stroke-width="1.2" stroke-dasharray="8,4" opacity="0.8" class="spin-aura"/>
-          <rect x="4" y="16" width="6" height="6" fill="#f57f17" stroke="#ffd54f" stroke-width="1" rx="1" transform="rotate(45 7 19)" class="geo-shield-l"/>
-          <rect x="37" y="16" width="6" height="6" fill="#f57f17" stroke="#ffd54f" stroke-width="1" rx="1" transform="rotate(45 40 19)" class="geo-shield-r"/>
-        </g>
-        <!-- Tóc nâu umber đuôi sam chấm vàng -->
-        <rect x="15" y="8" width="18" height="25" rx="3" fill="#2d1d13"/>
-        <rect x="12" y="14" width="5" height="22" fill="#3e2723"/>
-        <rect x="31" y="14" width="5" height="22" fill="#3e2723"/>
-        <rect x="22" y="32" width="4" height="8" fill="#ffb300"/> <!-- Đuôi tóc hổ phách -->
-        <!-- Mặt & Mắt Hổ Phách Đế Quân chớp -->
-        <rect x="17" y="12" width="14" height="11" fill="#ffe0b2"/>
-        <rect class="pixel-eye" x="19" y="16" width="3" height="3" fill="#ff8f00"/>
-        <rect class="pixel-eye" x="26" y="16" width="3" height="3" fill="#ff8f00"/>
-        <rect x="20" y="16" width="1" height="1" fill="#ffffff"/>
-        <rect x="27" y="16" width="1" height="1" fill="#ffffff"/>
-        <!-- Áo dạ tiệc Nham Vương đen vàng sang trọng -->
-        <rect x="16" y="23" width="16" height="18" fill="#212121"/>
-        <rect x="19" y="25" width="10" height="14" fill="#424242"/>
-        <rect x="21" y="26" width="6" height="8" fill="#ffd54f"/>
-        <!-- Vũ khí đang trang bị -->
-        ${equippedWeaponSvg}
-      </svg>`;
-    }
-
-    // 6. KAZUHA (KAEDEHARA KAZUHA — 3★ SỬ THI)
-    if (heroId === 'hero_kazuha') {
-      return `
-      <svg class="pixel-sprite hero-pixel-svg hero-kazuha action-${action}" viewBox="0 0 48 48" width="100%" height="100%" shape-rendering="crispEdges">
-        <filter id="kazuha-glow"><feDropShadow dx="0" dy="0" stdDeviation="1.5" flood-color="#a855f7" flood-opacity="0.85"/></filter>
-        <!-- Hào quang Lá Phong Đỏ Xoáy Bay & Vòng Phong Thần -->
-        <g class="hero-ambient-aura kazuha-aura">
-          <circle cx="24" cy="24" r="19" fill="none" stroke="#80cbc4" stroke-width="1.2" stroke-dasharray="5,6" opacity="0.65" class="spin-aura"/>
-          <path d="M 8,14 Q 14,8 10,6 Q 6,10 8,14 Z" fill="#d32f2f" class="leaf-swirl-1"/>
-          <path d="M 38,18 Q 42,12 38,10 Q 34,14 38,18 Z" fill="#ff7043" class="leaf-swirl-2"/>
-          <path d="M 22,3 Q 26,1 28,4 Q 24,6 22,3 Z" fill="#f44336" class="leaf-swirl-3"/>
-        </g>
-        <!-- Tóc bạch kim với lọn tóc đỏ lá phong -->
-        <rect x="15" y="8" width="18" height="24" rx="3" fill="#eceff1"/>
-        <rect x="12" y="14" width="5" height="20" fill="#cfd8dc"/>
-        <rect x="31" y="14" width="5" height="20" fill="#cfd8dc"/>
-        <rect x="26" y="10" width="3" height="14" fill="#d32f2f"/> <!-- Lọn tóc đỏ phong -->
-        <!-- Khăn quàng lá phong đỏ -->
-        <polygon points="14,24 34,24 24,30" fill="#d32f2f"/>
-        <!-- Mặt & Mắt Phong Lãng Khách chớp -->
-        <rect x="17" y="12" width="14" height="11" fill="#ffe0b2"/>
-        <rect class="pixel-eye" x="19" y="16" width="3" height="3" fill="#c62828"/>
-        <rect class="pixel-eye" x="26" y="16" width="3" height="3" fill="#c62828"/>
-        <rect x="20" y="16" width="1" height="1" fill="#ffffff"/>
-        <rect x="27" y="16" width="1" height="1" fill="#ffffff"/>
-        <!-- Trang phục Samurai Lãng Khách xám đen xanh -->
-        <rect x="16" y="25" width="16" height="16" fill="#37474f"/>
-        <rect x="18" y="27" width="12" height="12" fill="#00897b"/>
-        <!-- Vũ khí đang trang bị -->
-        ${equippedWeaponSvg}
-      </svg>`;
-    }
-
-    // 7. AMBER (QUÁN QUÂN LƯỚT GIÓ — 2★ HIẾM)
-    if (heroId === 'hero_amber') {
-      return `
-      <svg class="pixel-sprite hero-pixel-svg hero-amber action-${action}" viewBox="0 0 48 48" width="100%" height="100%" shape-rendering="crispEdges">
-        <filter id="amber-glow"><feDropShadow dx="0" dy="0" stdDeviation="1.5" flood-color="#ff9800" flood-opacity="0.85"/></filter>
-        <!-- Hào quang Tia Lửa Bắn Pháo Hoa & Ngôi Sao Quán Quân -->
-        <g class="hero-ambient-aura amber-aura">
-          <circle cx="8" cy="16" r="2" fill="#ffd600" class="sparkle-pop-1"/>
-          <circle cx="40" cy="14" r="2.5" fill="#ff5722" class="sparkle-pop-2"/>
-          <polygon points="24,2 25,4 27,4 25.5,5.5 26,7.5 24,6 22,7.5 22.5,5.5 21,4 23,4" fill="#ffd600" class="pulse-aura"/>
-        </g>
-        <!-- Băng đô tai thỏ đỏ đặc trưng -->
-        <polygon points="18,3 21,9 15,9" fill="#d32f2f"/>
-        <polygon points="30,3 33,9 27,9" fill="#d32f2f"/>
-        <rect x="16" y="8" width="16" height="3" fill="#b71c1c"/>
-        <!-- Tóc nâu sẫm dài -->
-        <rect x="15" y="10" width="18" height="24" rx="3" fill="#4e342e"/>
-        <rect x="12" y="15" width="5" height="22" fill="#3e2723"/>
-        <rect x="31" y="15" width="5" height="22" fill="#3e2723"/>
-        <!-- Mặt & Mắt Hổ Phách tươi sáng chớp -->
-        <rect x="17" y="12" width="14" height="11" fill="#ffe0b2"/>
-        <rect class="pixel-eye" x="19" y="16" width="3" height="3" fill="#f57c00"/>
-        <rect class="pixel-eye" x="26" y="16" width="3" height="3" fill="#f57c00"/>
-        <rect x="20" y="16" width="1" height="1" fill="#ffffff"/>
-        <rect x="27" y="16" width="1" height="1" fill="#ffffff"/>
-        <!-- Đồng phục Trinh Sát Kỵ Sĩ Đỏ Trắng -->
-        <rect x="16" y="23" width="16" height="18" fill="#d32f2f"/>
-        <rect x="19" y="25" width="10" height="12" fill="#ffffff"/>
-        <rect x="21" y="28" width="6" height="4" fill="#ffd54f"/>
-        <!-- Vũ khí đang trang bị -->
-        ${equippedWeaponSvg}
-      </svg>`;
-    }
-
-    // 8. THIÊN LÝ KHỞI NGUYÊN (7★ ??? VÔ CỰC)
-    if (heroId === 'hero_unknown_god') {
-      return `
-      <svg class="pixel-sprite hero-pixel-svg hero-unknown action-${action}" viewBox="0 0 48 48" width="100%" height="100%" shape-rendering="crispEdges">
-        <filter id="void-glow"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#00ffcc" flood-opacity="1"/></filter>
-        <!-- Hào quang 4 Lập Phương Hư Vô 3D Đa Chiều Quay Quanh Thân -->
-        <g class="hero-ambient-aura void-aura">
-          <circle cx="24" cy="24" r="21" fill="none" stroke="#00ffff" stroke-width="1.5" stroke-dasharray="3,3" class="spin-aura"/>
-          <g class="void-cube-1">
-            <rect x="4" y="4" width="7" height="7" fill="#ff0055" stroke="#00ffff" stroke-width="0.8" rx="1"/>
-            <rect x="6" y="6" width="3" height="3" fill="#ffffff" opacity="0.8"/>
-          </g>
-          <g class="void-cube-2">
-            <rect x="37" y="4" width="7" height="7" fill="#00ffff" stroke="#ff0055" stroke-width="0.8" rx="1"/>
-            <rect x="39" y="6" width="3" height="3" fill="#ffffff" opacity="0.8"/>
-          </g>
-          <g class="void-cube-3">
-            <rect x="3" y="33" width="7" height="7" fill="#00ffff" stroke="#ff0055" stroke-width="0.8" rx="1"/>
-            <rect x="5" y="35" width="3" height="3" fill="#ffffff" opacity="0.8"/>
-          </g>
-          <g class="void-cube-4">
-            <rect x="38" y="33" width="7" height="7" fill="#ff0055" stroke="#00ffff" stroke-width="0.8" rx="1"/>
-            <rect x="40" y="35" width="3" height="3" fill="#ffffff" opacity="0.8"/>
-          </g>
-        </g>
-        <!-- Tóc trắng thần linh bồng bềnh -->
-        <rect x="13" y="6" width="22" height="28" rx="4" fill="#ffffff"/>
-        <rect x="10" y="12" width="6" height="26" fill="#e0f7fa"/>
-        <rect x="32" y="12" width="6" height="26" fill="#e0f7fa"/>
-        <!-- Mắt Thần Vàng Kim chớp & Viền Đỏ Thần Bí -->
-        <rect x="17" y="10" width="14" height="12" fill="#fff3e0"/>
-        <rect class="pixel-eye" x="19" y="14" width="3" height="3" fill="#ffd600"/>
-        <rect class="pixel-eye" x="26" y="14" width="3" height="3" fill="#ffd600"/>
-        <rect x="20" y="14" width="1" height="1" fill="#ffffff"/>
-        <rect x="27" y="14" width="1" height="1" fill="#ffffff"/>
-        <!-- Áo Thần Thánh Đen Đỏ Vô Cực -->
-        <rect x="16" y="22" width="16" height="19" fill="#1a1a2e"/>
-        <rect x="18" y="24" width="12" height="15" fill="#ff0055"/>
-        <!-- Vũ khí đang trang bị -->
-        ${equippedWeaponSvg}
-      </svg>`;
-    }
-
-    // 9. NHÀ LỮ HÀNH / TRAVELER (1★ THƯỜNG KHỞI ĐẦU)
-    return `
-    <svg class="pixel-sprite player-pixel-svg action-${action}" viewBox="0 0 48 48" width="100%" height="100%" shape-rendering="crispEdges">
-      <defs>
-        <filter id="sword-glow" x="-30%" y="-30%" width="160%" height="160%">
-          <feDropShadow dx="0" dy="0" stdDeviation="1.5" flood-color="#00ffff" flood-opacity="0.9"/>
-        </filter>
-      </defs>
-      <!-- Hào quang Vòng Phong Hoa & Tinh Thần Lữ Hành -->
-      <g class="hero-ambient-aura traveler-aura">
-        <circle cx="24" cy="24" r="19" fill="none" stroke="#ffca28" stroke-width="1.2" stroke-dasharray="6,4" opacity="0.75" class="spin-aura"/>
-        <polygon points="24,2 25,4 27,4 25.5,5.5 26,7.5 24,6 22,7.5 22.5,5.5 21,4 23,4" fill="#00e5ff" opacity="0.85" class="pulse-aura"/>
-      </g>
-      <!-- Khăn quàng & Áo choàng Phong bay sau lưng -->
-      <g class="player-cape">
-        <rect x="12" y="20" width="6" height="16" fill="#ffca28"/>
-        <rect x="10" y="22" width="4" height="16" fill="#f57f17"/>
-      </g>
-      <!-- Tóc vàng óng Lữ Hành -->
-      <rect x="15" y="8" width="18" height="20" rx="3" fill="#fbc02d"/>
-      <rect x="12" y="12" width="5" height="16" fill="#f57f17"/>
-      <rect x="31" y="12" width="5" height="16" fill="#f57f17"/>
-      <!-- Chân & Giáp -->
-      <rect x="18" y="38" width="4" height="6" fill="#37474f"/>
-      <rect x="26" y="38" width="4" height="6" fill="#37474f"/>
-      <rect x="18" y="22" width="12" height="16" fill="#5d4037"/>
-      <rect x="20" y="24" width="8" height="12" fill="#cfd8dc"/>
-      <!-- Khuôn mặt & Mắt vàng lữ hành chớp -->
-      <rect x="17" y="11" width="14" height="11" fill="#ffe0b2"/>
-      <rect class="pixel-eye" x="19" y="15" width="3" height="3" fill="#f57c17"/>
-      <rect class="pixel-eye" x="26" y="15" width="3" height="3" fill="#f57c17"/>
-      <rect x="20" y="15" width="1" height="1" fill="#ffffff"/>
-      <rect x="27" y="15" width="1" height="1" fill="#ffffff"/>
-      <!-- Vũ khí đang trang bị -->
-      ${equippedWeaponSvg}
-    </svg>`;
   },
-
-  getHeroAvatarSvg(heroId) {
-    return this.getPlayerSvg('idle', heroId);
-  },
-
-  // ============================================================
-  // BANNER PIXEL ART ILLUSTRATIONS
-  // ============================================================
-  getWeaponBannerSvg() {
-    return `
-    <svg class="banner-visual-svg" viewBox="0 0 540 160" width="100%" height="100%" shape-rendering="crispEdges">
-      <defs>
-        <radialGradient id="banner-sky" cx="50%" cy="30%" r="70%">
-          <stop offset="0%" stop-color="#1e1035"/>
-          <stop offset="50%" stop-color="#0d091e"/>
-          <stop offset="100%" stop-color="#05030b"/>
-        </radialGradient>
-        <linearGradient id="pedestal-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#ffd54f"/>
-          <stop offset="100%" stop-color="#795548"/>
-        </linearGradient>
-      </defs>
-      <rect x="0" y="0" width="540" height="160" fill="url(#banner-sky)"/>
-      <rect x="30" y="20" width="2" height="2" fill="#ffffff" opacity="0.8"/>
-      <rect x="90" y="45" width="3" height="3" fill="#ffe082" opacity="0.9"/>
-      <rect x="150" y="15" width="2" height="2" fill="#80d8ff" opacity="0.7"/>
-      <rect x="210" y="35" width="3" height="3" fill="#ffffff" opacity="0.85"/>
-      <rect x="330" y="25" width="2" height="2" fill="#ffe082" opacity="0.8"/>
-      <rect x="390" y="50" width="3" height="3" fill="#00e5ff" opacity="0.9"/>
-      <rect x="470" y="18" width="2" height="2" fill="#ffffff" opacity="0.8"/>
-      <rect x="510" y="40" width="2" height="2" fill="#ffd54f" opacity="0.75"/>
-      <circle cx="270" cy="80" r="60" fill="none" stroke="#6a1b9a" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5"/>
-      <circle cx="270" cy="80" r="75" fill="none" stroke="#ffd600" stroke-width="0.8" opacity="0.3"/>
-      <polygon points="210,145 330,145 350,160 190,160" fill="#212121"/>
-      <rect x="230" y="125" width="80" height="20" fill="url(#pedestal-grad)"/>
-      <rect x="245" y="122" width="50" height="3" fill="#fff9c4"/>
-      <polygon points="270,40 220,160 320,160" fill="#ffeb3b" opacity="0.12"/>
-      <polygon points="270,20 180,160 360,160" fill="#00e5ff" opacity="0.08"/>
-      <!-- Left: Huyết Kiếm (Mythic) -->
-      <g transform="translate(140, 50) rotate(-22)">
-        <rect x="0" y="35" width="4" height="12" fill="#3e2723"/>
-        <rect x="-6" y="32" width="16" height="4" fill="#ffd600"/>
-        <rect x="0" y="-30" width="4" height="62" fill="#d50000"/>
-        <polygon points="2,-36 -2,-30 6,-30" fill="#ffeb3b"/>
-      </g>
-      <!-- Center: Thần Khí ??? -->
-      <g transform="translate(268, 30)">
-        <circle cx="2" cy="15" r="30" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.85"/>
-        <circle cx="2" cy="15" r="42" fill="none" stroke="#ff007f" stroke-width="1" opacity="0.5"/>
-        <rect x="0" y="55" width="4" height="18" fill="#ffffff"/>
-        <circle cx="2" cy="74" r="4" fill="#ffd700"/>
-        <rect x="-10" y="50" width="24" height="6" fill="#00e5ff" rx="2"/>
-        <rect x="-2" y="-40" width="8" height="90" fill="#00ffcc"/>
-        <polygon points="2,-52 -5,-38 9,-38" fill="#ffffff"/>
-        <rect x="-20" y="10" width="4" height="4" fill="#00ffff"/>
-        <rect x="25" y="-10" width="4" height="4" fill="#ff007f"/>
-      </g>
-      <!-- Right: Hư Không Kiếm (Chaos) -->
-      <g transform="translate(395, 50) rotate(22)">
-        <rect x="0" y="35" width="4" height="12" fill="#212121"/>
-        <rect x="-6" y="32" width="16" height="4" fill="#aa00ff"/>
-        <rect x="0" y="-30" width="4" height="62" fill="#311b92"/>
-        <rect x="1" y="-32" width="2" height="64" fill="#e040fb"/>
-        <polygon points="2,-36 -2,-30 6,-30" fill="#ffffff"/>
-      </g>
-      <rect x="20" y="132" width="130" height="20" fill="rgba(0,0,0,0.6)" rx="4"/>
-      <text x="85" y="146" fill="#ffd700" font-size="10" font-weight="bold" font-family="'Courier New', monospace" text-anchor="middle">★ ĐỈNH CAO THẦN KHÍ ★</text>
-      <rect x="390" y="132" width="130" height="20" fill="rgba(0,0,0,0.6)" rx="4"/>
-      <text x="455" y="146" fill="#00e5ff" font-size="10" font-weight="bold" font-family="'Courier New', monospace" text-anchor="middle">★ TỈ LỆ NÂNG CAO ★</text>
-    </svg>`;
-  },
-
-  getHeroBannerSvg() {
-    return `
-    <svg class="banner-visual-svg" viewBox="0 0 540 160" width="100%" height="100%" shape-rendering="crispEdges">
-      <defs>
-        <radialGradient id="hero-banner-sky" cx="50%" cy="40%" r="70%">
-          <stop offset="0%" stop-color="#2a0845"/>
-          <stop offset="60%" stop-color="#120524"/>
-          <stop offset="100%" stop-color="#06020c"/>
-        </radialGradient>
-      </defs>
-      <rect x="0" y="0" width="540" height="160" fill="url(#hero-banner-sky)"/>
-      <circle cx="270" cy="75" r="55" fill="none" stroke="#d500f9" stroke-width="2" opacity="0.6"/>
-      <circle cx="270" cy="75" r="68" fill="none" stroke="#7c4dff" stroke-width="1" stroke-dasharray="8,6" opacity="0.5"/>
-      <path d="M 0,140 Q 150,110 270,135 T 540,115 L 540,160 L 0,160 Z" fill="rgba(106,27,154,0.3)"/>
-      <path d="M 0,148 Q 180,125 270,145 T 540,135 L 540,160 L 0,160 Z" fill="rgba(213,0,249,0.2)"/>
-      <!-- Changli -->
-      <g transform="translate(100, 20) scale(2.2)">
-        <rect x="14" y="8" width="18" height="22" rx="3" fill="#c62828"/>
-        <rect x="11" y="13" width="5" height="20" fill="#ff5252"/>
-        <rect x="30" y="13" width="5" height="20" fill="#ff5252"/>
-        <rect x="17" y="11" width="12" height="10" fill="#ffecb3"/>
-        <rect class="pixel-eye" x="19" y="14" width="3" height="3" fill="#ff1744"/>
-        <rect class="pixel-eye" x="25" y="14" width="3" height="3" fill="#ff1744"/>
-        <rect x="16" y="21" width="14" height="18" fill="#ffffff"/>
-        <rect x="18" y="23" width="10" height="14" fill="#d32f2f"/>
-        <rect x="20" y="27" width="6" height="4" fill="#ffd600"/>
-        <rect x="27" y="12" width="2" height="22" fill="#ff6d00" transform="rotate(25 27 12)"/>
-      </g>
-      <!-- Raiden Shogun -->
-      <g transform="translate(225, 10) scale(2.6)">
-        <rect x="14" y="10" width="18" height="24" rx="4" fill="#4a148c"/>
-        <rect x="12" y="15" width="5" height="22" fill="#7b1fa2"/>
-        <rect x="29" y="15" width="5" height="22" fill="#7b1fa2"/>
-        <rect x="17" y="12" width="12" height="11" fill="#ffe0b2"/>
-        <rect class="pixel-eye" x="19" y="15" width="3" height="3" fill="#d500f9"/>
-        <rect class="pixel-eye" x="25" y="15" width="3" height="3" fill="#d500f9"/>
-        <rect x="16" y="23" width="14" height="18" fill="#311b92"/>
-        <rect x="18" y="25" width="10" height="14" fill="#ba68c8"/>
-        <rect x="20" y="29" width="6" height="4" fill="#ffd600"/>
-        <rect x="30" y="2" width="2" height="36" fill="#ffd54f" transform="rotate(18 30 2)"/>
-        <polygon points="30,0 34,8 30,8" fill="#e040fb" transform="rotate(18 30 2)"/>
-      </g>
-      <!-- Furina & Traveler -->
-      <g transform="translate(370, 25) scale(2.2)">
-        <rect x="18" y="4" width="10" height="7" fill="#01579b"/>
-        <rect x="14" y="11" width="18" height="20" rx="3" fill="#e1f5fe"/>
-        <rect x="11" y="16" width="5" height="16" fill="#81d4fa"/>
-        <rect x="30" y="16" width="5" height="16" fill="#81d4fa"/>
-        <rect x="17" y="13" width="12" height="10" fill="#ffe0b2"/>
-        <rect class="pixel-eye" x="19" y="16" width="3" height="3" fill="#0288d1"/>
-        <rect class="pixel-eye" x="25" y="16" width="3" height="3" fill="#0288d1"/>
-        <rect x="16" y="23" width="14" height="16" fill="#0277bd"/>
-      </g>
-      <rect x="20" y="132" width="150" height="20" fill="rgba(0,0,0,0.6)" rx="4"/>
-      <text x="95" y="146" fill="#ff5252" font-size="10" font-weight="bold" font-family="'Courier New', monospace" text-anchor="middle">★ TRƯỜNG LY: HỎA VŨ ★</text>
-      <rect x="370" y="132" width="150" height="20" fill="rgba(0,0,0,0.6)" rx="4"/>
-      <text x="445" y="146" fill="#d500f9" font-size="10" font-weight="bold" font-family="'Courier New', monospace" text-anchor="middle">★ LÔI THẦN: VĨNH CỬU ★</text>
-    </svg>`;
-  },
-
   // ============================================================
   // GENSHIN BURST CUTSCENE ANIMATED SWORD DANCE ACTOR
   // ============================================================
+  // ============================================================
+  // AAA BURST CUTSCENE ANIMATED SWORD DANCE ACTORS (7 PIXEL HEROES)
+  // ============================================================
   getHeroSwordDanceSvg(heroId) {
-    // 1. ZHONGLI — ARCHETYPE: "THE CALM GOD & MONUMENTAL GEO STELE" (ARMS CROSSED, ZERO WEAPON DANCE)
-    if (heroId === 'hero_zhongli') {
+    const rawId = heroId || (typeof GameState !== 'undefined' && GameState.activeHeroId) || 'hero_starter';
+    const idMap = {
+      hero_traveler: 'hero_starter',
+      hero_amber: 'hero_flame_knight',
+      hero_kazuha: 'hero_shadow_rogue',
+      hero_zhongli: 'hero_spear_lancer',
+      hero_jiyan: 'hero_spear_lancer',
+      hero_furina: 'hero_frost_knight',
+      hero_changli: 'hero_flame_knight',
+      hero_raiden: 'hero_arcane_mage'
+    };
+    const targetId = idMap[rawId] || rawId;
+
+    // 1. HIỆP SĨ KHỞI ĐẦU (STARTER KNIGHT — THÉP)
+    if (targetId === 'hero_starter') {
       return `
-      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-zhongli">
+      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-starter">
         <defs>
-          <filter id="zl-gold-glow"><feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#ffd54f" flood-opacity="1"/></filter>
+          <linearGradient id="st-blade-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="50%" stop-color="#cfd8dc"/>
+            <stop offset="100%" stop-color="#78909c"/>
+          </linearGradient>
+          <filter id="st-steel-glow"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#b0bec5" flood-opacity="0.9"/></filter>
         </defs>
-        <!-- Ancient Liyue Monolith Stele (Bia Đá Nham Vương Khổng Lồ) -->
-        <g transform="translate(260, 180)" opacity="0.85">
-          <rect x="-45" y="-140" width="90" height="260" rx="6" fill="#3e2723" stroke="#ffb300" stroke-width="3" filter="url(#zl-gold-glow)"/>
-          <rect x="-35" y="-130" width="70" height="240" rx="4" fill="#2d1d13"/>
-          <!-- Runic Inscriptions on Stele -->
-          <line x1="-25" y1="-100" x2="25" y2="-100" stroke="#ffd54f" stroke-width="2"/>
-          <line x1="-20" y1="-70" x2="20" y2="-70" stroke="#ffd54f" stroke-width="2"/>
-          <polygon points="0,-50 15,-30 0,-10 -15,-30" fill="none" stroke="#ffb300" stroke-width="2"/>
-          <line x1="-25" y1="20" x2="25" y2="20" stroke="#ffd54f" stroke-width="2"/>
-          <line x1="-20" y1="50" x2="20" y2="50" stroke="#ffd54f" stroke-width="2"/>
-          <polygon points="0,70 12,90 0,110 -12,90" fill="#ffd54f"/>
-          <!-- Rotating Geo Glyph Ring in 3D perspective -->
-          <ellipse cx="0" cy="80" rx="150" ry="40" fill="none" stroke="#ffb300" stroke-width="2.5" stroke-dasharray="16,8" class="spin-aura"/>
+        <g transform="translate(260, 290)">
+          <path d="M -180,0 L 180,0 M -120,-10 L -60,20 L 0,-15 L 70,25 L 140,-10" stroke="#ffd700" stroke-width="3" opacity="0.8"/>
+          <polygon points="-80,-20 -60,-60 -40,-25" fill="#546e7a" stroke="#b0bec5" stroke-width="1.5"/>
+          <polygon points="60,-15 85,-70 105,-20" fill="#455a64" stroke="#ffd700" stroke-width="1.5"/>
+          <ellipse cx="0" cy="0" rx="140" ry="25" fill="none" stroke="#90a4ae" stroke-width="2" stroke-dasharray="10,6" opacity="0.7"/>
         </g>
-        <!-- 4 Hovering Geo Diamond Rhombus Prisms -->
-        <g class="geo-shield-l" transform="translate(80, 130)">
-          <polygon points="22,0 44,22 22,44 0,22" fill="#f57f17" stroke="#ffd54f" stroke-width="2.5" filter="url(#zl-gold-glow)"/>
+        <g transform="translate(260, 160)">
+          <path d="M -160,80 Q 0,-140 180,-40 Q 40,-40 -160,80 Z" fill="url(#st-blade-grad)" filter="url(#st-steel-glow)" opacity="0.9"/>
+          <path d="M -140,70 Q 0,-110 160,-35" stroke="#ffffff" stroke-width="4" fill="none"/>
+          <circle cx="20" cy="-60" r="4" fill="#ffd700"/>
+          <circle cx="-50" cy="-20" r="3" fill="#ffffff"/>
+          <circle cx="110" cy="-30" r="3.5" fill="#ffd700"/>
         </g>
-        <g class="geo-shield-r" transform="translate(400, 130)">
-          <polygon points="22,0 44,22 22,44 0,22" fill="#f57f17" stroke="#ffd54f" stroke-width="2.5" filter="url(#zl-gold-glow)"/>
-        </g>
-        <!-- Zhongli Majestic Stance: Arms Crossed, Divine Authority -->
-        <g transform="translate(195, 50) scale(3.4)">
-          <!-- Hair & Amber Tip Ponytail -->
-          <path d="M 12,2 Q 22,-4 34,2 Q 42,16 38,38 Q 30,34 26,36 Q 16,36 10,28 Z" fill="#2d1d13"/>
-          <path d="M 8,14 Q 4,24 8,36 Q 14,28 12,18 Z" fill="#3e2723"/>
-          <path d="M 36,12 Q 42,22 38,36 Q 34,28 34,18 Z" fill="#ffb300"/>
-          <!-- Face & Eyes -->
-          <polygon points="16,10 32,10 30,26 24,32 18,26" fill="#ffe0b2"/>
-          <rect class="pixel-eye" x="18" y="16" width="5" height="5" fill="#ff8f00"/>
-          <rect class="pixel-eye" x="25" y="16" width="5" height="5" fill="#ff8f00"/>
-          <rect x="19" y="16" width="2" height="2" fill="#ffd54f"/>
-          <rect x="26" y="16" width="2" height="2" fill="#ffd54f"/>
-          <!-- Suit & Robe -->
-          <polygon points="14,28 34,28 38,42 10,42" fill="#212121"/>
-          <!-- ARMS CROSSED POSE (Khoanh tay trước ngực uy nghiêm) -->
-          <rect x="12" y="30" width="24" height="6" rx="2" fill="#ffd54f"/>
-          <rect x="15" y="32" width="18" height="4" fill="#3e2723"/>
-          <polygon points="18,36 30,36 26,42 22,42" fill="#ffd54f"/>
+        <g transform="translate(195, 60) scale(3.2)">
+          <rect x="14" y="24" width="16" height="20" rx="2" fill="#78909c" stroke="#cfd8dc" stroke-width="1"/>
+          <rect x="16" y="26" width="12" height="16" fill="#455a64"/>
+          <path d="M 12,24 Q 4,36 8,46 Q 16,38 15,26 Z" fill="#c62828"/>
+          <rect x="15" y="8" width="14" height="16" rx="3" fill="#90a4ae" stroke="#cfd8dc" stroke-width="1"/>
+          <rect x="18" y="14" width="8" height="3" fill="#212121"/>
+          <rect x="19" y="14" width="3" height="3" fill="#00e5ff"/>
+          <rect x="23" y="14" width="3" height="3" fill="#00e5ff"/>
+          <path d="M 21,8 Q 22,0 28,-2 Q 24,4 23,8 Z" fill="#d32f2f"/>
+          <polygon points="26,18 48,-18 52,-15 29,20" fill="url(#st-blade-grad)" stroke="#ffffff" stroke-width="1"/>
+          <rect x="24" y="17" width="8" height="3" rx="1" fill="#ffd700"/>
+          <rect x="23" y="19" width="3" height="6" fill="#5d4037"/>
         </g>
       </svg>`;
     }
 
-    // 2. RAIDEN SHOGUN — ARCHETYPE: "MUSOU ISSHIN DRAWN FROM THE CHEST"
-    if (heroId === 'hero_raiden') {
+    // 2. THÍCH KHÁCH SONG ĐAO (SHADOW ROGUE — ÁM DẠ)
+    if (targetId === 'hero_shadow_rogue') {
       return `
-      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-raiden">
+      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-rogue">
         <defs>
-          <filter id="rd-burst-glow"><feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#d500f9" flood-opacity="1"/></filter>
+          <filter id="rg-shadow-glow"><feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#00e5ff" flood-opacity="0.95"/></filter>
         </defs>
-        <!-- Mitsudomoe Electro Ring of Eternity -->
-        <g transform="translate(260, 170)">
-          <circle cx="0" cy="0" r="125" fill="none" stroke="#d500f9" stroke-width="3" stroke-dasharray="14,8" class="spin-aura"/>
-          <circle cx="0" cy="-125" r="10" fill="#e040fb" filter="url(#rd-burst-glow)"/>
-          <circle cx="-108" cy="62" r="10" fill="#e040fb" filter="url(#rd-burst-glow)"/>
-          <circle cx="108" cy="62" r="10" fill="#e040fb" filter="url(#rd-burst-glow)"/>
+        <g opacity="0.35" transform="translate(120, 100) scale(0.85)">
+          <path d="M 0,0 L 50,40 L 40,80 L -10,60 Z" fill="#0f172a" stroke="#00e5ff" stroke-width="2"/>
+          <line x1="-30" y1="20" x2="80" y2="70" stroke="#00e5ff" stroke-width="3"/>
         </g>
-        <!-- Musou Isshin Sword Draw (From Chest Stance) -->
-        <g class="raiden-sword-draw" transform="translate(225, 80)">
-          <!-- Blinding Violet Tachi Blade Rising from Heart -->
-          <path d="M 24,-110 Q 34,0 24,105" stroke="#ffffff" stroke-width="7" fill="none" filter="url(#rd-burst-glow)"/>
-          <path d="M 24,-110 Q 34,0 24,105" stroke="#d500f9" stroke-width="3" fill="none"/>
-          <!-- Golden Tsuba & Purple Hilt -->
-          <rect x="16" y="95" width="16" height="5" fill="#ffd600"/>
-          <rect x="22" y="100" width="4" height="30" fill="#311b92"/>
-          <!-- Electric Arcs Radiating from Blade -->
-          <polygon points="28,-75 42,-50 30,-45 46,-20 24,-30" fill="#ffd600"/>
-          <polygon points="16,-10 4,10 16,15 2,42 22,30" fill="#00ffff"/>
+        <g opacity="0.35" transform="translate(360, 90) scale(0.85)">
+          <path d="M 0,0 L 50,40 L 40,80 L -10,60 Z" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+          <line x1="80" y1="10" x2="-20" y2="80" stroke="#38bdf8" stroke-width="3"/>
         </g>
-        <!-- Raiden Animated Figure -->
-        <g transform="translate(195, 50) scale(3.4)">
-          <path d="M 12,2 Q 22,-4 34,2 Q 42,16 38,38 Q 30,34 26,36 Q 16,36 10,28 Z" fill="#4a148c"/>
-          <path d="M 8,14 Q 4,24 8,36 Q 14,28 12,18 Z" fill="#7b1fa2"/>
-          <path d="M 36,12 Q 42,22 38,36 Q 34,28 34,18 Z" fill="#7b1fa2"/>
-          <polygon points="16,10 32,10 30,26 24,32 18,26" fill="#ffe0b2"/>
-          <rect class="pixel-eye" x="18" y="16" width="5" height="5" fill="#d500f9"/>
-          <rect class="pixel-eye" x="25" y="16" width="5" height="5" fill="#d500f9"/>
-          <rect x="19" y="16" width="2" height="2" fill="#ffffff"/>
-          <rect x="26" y="16" width="2" height="2" fill="#ffffff"/>
-          <polygon points="14,28 34,28 38,42 10,42" fill="#311b92"/>
-          <polygon points="18,28 30,28 26,42 22,42" fill="#ba68c8"/>
+        <g transform="translate(260, 175)">
+          <path d="M -180,-100 Q 0,0 180,100" stroke="#00e5ff" stroke-width="7" fill="none" filter="url(#rg-shadow-glow)"/>
+          <path d="M -180,-100 Q 0,0 180,100" stroke="#ffffff" stroke-width="2.5" fill="none"/>
+          <path d="M 180,-100 Q 0,0 -180,100" stroke="#38bdf8" stroke-width="7" fill="none" filter="url(#rg-shadow-glow)"/>
+          <path d="M 180,-100 Q 0,0 -180,100" stroke="#ffffff" stroke-width="2.5" fill="none"/>
+          <circle cx="0" cy="0" r="60" fill="none" stroke="#00e5ff" stroke-width="2" stroke-dasharray="12,8" class="spin-aura"/>
+        </g>
+        <g transform="translate(195, 65) scale(3.2)">
+          <path d="M 14,8 Q 22,2 30,8 Q 36,22 34,44 Q 22,46 10,44 Q 10,22 14,8 Z" fill="#0f172a"/>
+          <path d="M 6,26 Q 0,38 2,46 Q 12,42 12,30 Z" fill="#1e293b"/>
+          <path d="M 36,26 Q 44,38 42,46 Q 32,42 32,30 Z" fill="#1e293b"/>
+          <rect x="18" y="16" width="4" height="2" fill="#00e5ff" filter="url(#rg-shadow-glow)"/>
+          <rect x="26" y="16" width="4" height="2" fill="#00e5ff" filter="url(#rg-shadow-glow)"/>
+          <path d="M 8,14 Q 22,24 38,36" stroke="#ffffff" stroke-width="3" fill="none" filter="url(#rg-shadow-glow)"/>
+          <path d="M 36,14 Q 22,24 6,36" stroke="#00e5ff" stroke-width="3" fill="none" filter="url(#rg-shadow-glow)"/>
+          <circle cx="22" cy="25" r="4" fill="#ffffff"/>
         </g>
       </svg>`;
     }
 
-    // 3. THIÊN LÝ KHỞI NGUYÊN — ARCHETYPE: "ZERO-G LEVITATION & SINGULARITY COLLAPSE"
-    if (heroId === 'hero_unknown_god') {
+    // 3. BĂNG KIẾM SĨ (FROST KNIGHT — HÀN BĂNG)
+    if (targetId === 'hero_frost_knight') {
       return `
-      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-unknown">
+      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-frost">
         <defs>
-          <filter id="ug-cube-glow"><feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#00ffff" flood-opacity="1"/></filter>
+          <filter id="fk-ice-glow"><feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#00e5ff" flood-opacity="1"/></filter>
+          <linearGradient id="fk-crystal-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="40%" stop-color="#80d8ff"/>
+            <stop offset="100%" stop-color="#0091ea"/>
+          </linearGradient>
         </defs>
-        <!-- 6 Orbiting Void Hypercubes on Fingertips -->
-        <g class="unknown-cubes-summon" transform="translate(260, 160)">
-          <g transform="translate(-140, -100)" filter="url(#ug-cube-glow)">
-            <polygon points="22,0 44,11 22,22 0,11" fill="#00ffff"/><polygon points="0,11 22,22 22,44 0,33" fill="#00838f"/><polygon points="22,22 44,11 44,33 22,44" fill="#00acc1"/>
-          </g>
-          <g transform="translate(100, -100)">
-            <polygon points="26,0 52,13 26,26 0,13" fill="#ff0055"/><polygon points="0,13 26,26 26,52 0,39" fill="#880e4f"/><polygon points="26,26 52,13 52,39 26,52" fill="#c2185b"/>
-          </g>
-          <g transform="translate(-120, 70)">
-            <polygon points="24,0 48,12 24,24 0,12" fill="#ff0055"/><polygon points="0,12 24,24 24,48 0,36" fill="#880e4f"/><polygon points="24,24 48,12 48,36 24,48" fill="#c2185b"/>
-          </g>
-          <g transform="translate(90, 70)" filter="url(#ug-cube-glow)">
-            <polygon points="24,0 48,12 24,24 0,12" fill="#00ffff"/><polygon points="0,12 24,24 24,48 0,36" fill="#00838f"/><polygon points="24,24 48,12 48,36 24,48" fill="#00acc1"/>
-          </g>
+        <g transform="translate(260, 260)">
+          <polygon points="-160,20 -130,-140 -100,20" fill="url(#fk-crystal-grad)" stroke="#ffffff" stroke-width="2" filter="url(#fk-ice-glow)"/>
+          <polygon points="-110,20 -80,-90 -60,20" fill="url(#fk-crystal-grad)" opacity="0.85"/>
+          <polygon points="100,20 135,-155 165,20" fill="url(#fk-crystal-grad)" stroke="#ffffff" stroke-width="2" filter="url(#fk-ice-glow)"/>
+          <polygon points="60,20 85,-105 110,20" fill="url(#fk-crystal-grad)" opacity="0.85"/>
+          <polygon points="0,-180 15,-165 0,-150 -15,-165" fill="#ffffff" filter="url(#fk-ice-glow)"/>
+          <ellipse cx="0" cy="15" rx="150" ry="30" fill="none" stroke="#80d8ff" stroke-width="2" stroke-dasharray="14,6" opacity="0.75"/>
         </g>
-        <!-- Thiên Lý Zero-G Levitation Model (Bàn tay vươn ra hội tụ lỗ đen) -->
-        <g transform="translate(195, 40) scale(3.4)">
-          <path d="M 12,2 Q 22,-4 34,2 Q 42,16 38,38 Q 30,34 26,36 Q 16,36 10,28 Z" fill="#ffffff"/>
-          <path d="M 6,12 Q 2,22 8,36 Q 14,28 12,18 Z" fill="#e0f7fa"/>
-          <path d="M 36,10 Q 44,20 40,36 Q 34,28 34,18 Z" fill="#e0f7fa"/>
-          <polygon points="16,10 32,10 30,26 24,32 18,26" fill="#fff3e0"/>
-          <polygon points="24,10 26,13 24,16 22,13" fill="#ff0055"/>
-          <rect class="pixel-eye" x="18" y="16" width="5" height="5" fill="#ffd600"/>
-          <rect class="pixel-eye" x="25" y="16" width="5" height="5" fill="#ffd600"/>
-          <rect x="19" y="17" width="3" height="3" fill="#ff0055"/>
-          <rect x="26" y="17" width="3" height="3" fill="#ff0055"/>
-          <polygon points="14,28 34,28 38,42 10,42" fill="#120024"/>
-          <!-- Outstretched divine hand reaching to camera -->
-          <circle cx="34" cy="32" r="5" fill="#000000" stroke="#00ffff" stroke-width="1.5"/>
-          <polygon points="18,28 30,28 26,42 22,42" fill="#ff0055"/>
+        <g transform="translate(195, 55) scale(3.3)">
+          <rect x="14" y="22" width="16" height="22" rx="2" fill="#0091ea" stroke="#ffffff" stroke-width="1"/>
+          <rect x="17" y="25" width="10" height="16" fill="#0277bd"/>
+          <path d="M 12,22 Q 2,36 6,48 Q 16,40 14,24 Z" fill="#80d8ff" opacity="0.9"/>
+          <rect x="15" y="8" width="14" height="15" rx="3" fill="#00bcd4" stroke="#ffffff" stroke-width="1"/>
+          <rect x="18" y="14" width="8" height="3" fill="#e0f7fa" filter="url(#fk-ice-glow)"/>
+          <polygon points="21,12 23,-25 25,-25 27,12 25,48 23,48" fill="url(#fk-crystal-grad)" stroke="#ffffff" stroke-width="1.2" filter="url(#fk-ice-glow)"/>
+          <rect x="18" y="12" width="12" height="4" fill="#ffffff"/>
         </g>
       </svg>`;
     }
 
-    // 4. CHANGLI — ARCHETYPE: "AIRBORNE DIVING PHOENIX COMET"
-    if (heroId === 'hero_changli') {
+    // 4. LONG THƯƠNG THỦ (SPEAR LANCER — LÔI LONG)
+    if (targetId === 'hero_spear_lancer') {
       return `
-      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-changli">
+      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-spear">
         <defs>
-          <filter id="cl-fire-glow"><feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#ff1744" flood-opacity="1"/></filter>
+          <filter id="sl-gold-glow"><feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#ffd700" flood-opacity="1"/></filter>
         </defs>
-        <!-- Giant Flaming Phoenix Wings (Sải cánh 460px rực lửa) -->
-        <g transform="translate(260, 160)" opacity="0.95" filter="url(#cl-fire-glow)">
-          <path d="M 0,0 Q -110,-95 -220,-45 Q -140,-10 -70,25 Z" fill="#ff1744"/>
-          <path d="M 0,0 Q 110,-95 220,-45 Q 140,-10 70,25 Z" fill="#ff1744"/>
-          <path d="M 0,0 Q -80,-65 -160,-30 Q -100,-8 -50,18 Z" fill="#ffd600"/>
-          <path d="M 0,0 Q 80,-65 160,-30 Q 100,-8 50,18 Z" fill="#ffd600"/>
+        <g transform="translate(260, 160)" filter="url(#sl-gold-glow)">
+          <path d="M -180,60 Q -100,-150 0,-70 Q 100,0 180,-110 Q 140,80 0,60 Q -120,80 -180,60 Z" fill="none" stroke="#ffd700" stroke-width="14" stroke-linecap="round"/>
+          <path d="M -180,60 Q -100,-150 0,-70 Q 100,0 180,-110 Q 140,80 0,60 Q -120,80 -180,60 Z" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+          <g transform="translate(170, -100)">
+            <polygon points="0,0 35,-15 45,5 20,20 -5,10" fill="#ffd700" stroke="#ffffff" stroke-width="2"/>
+            <circle cx="22" cy="0" r="5" fill="#00e5ff" filter="url(#sl-gold-glow)"/>
+            <line x1="30" y1="5" x2="65" y2="25" stroke="#00e5ff" stroke-width="3"/>
+            <line x1="25" y1="-8" x2="55" y2="-30" stroke="#ffe082" stroke-width="3.5"/>
+          </g>
+          <polygon points="-70,-40 -50,-80 -58,-40 -40,-20" fill="#00e5ff"/>
+          <polygon points="80,20 105,-20 95,20 120,40" fill="#00e5ff"/>
         </g>
-        <!-- Changli Descending Comet Sword Angle -->
-        <g class="changli-blade-dance" transform="translate(225, 75)">
-          <path d="M -70,45 Q 20,-90 100,-20" stroke="#ffd600" stroke-width="7" fill="none" filter="url(#cl-fire-glow)"/>
-          <path d="M -60,50 Q 20,-80 90,-15" stroke="#ffffff" stroke-width="3" fill="none"/>
-          <circle cx="20" cy="25" r="8" fill="#ffd600"/>
-          <line x1="20" y1="25" x2="70" y2="-25" stroke="#ff1744" stroke-width="5"/>
-        </g>
-        <!-- Changli Airborne Model -->
-        <g transform="translate(195, 45) scale(3.4)">
-          <path d="M 12,2 Q 22,-4 34,2 Q 42,16 38,38 Q 30,34 26,36 Q 16,36 10,28 Z" fill="#c62828"/>
-          <path d="M 8,14 Q 4,24 8,36 Q 14,28 12,18 Z" fill="#ff5252"/>
-          <path d="M 36,12 Q 42,22 38,36 Q 34,28 34,18 Z" fill="#ff5252"/>
-          <polygon points="16,10 32,10 30,26 24,32 18,26" fill="#ffecb3"/>
-          <rect class="pixel-eye" x="18" y="16" width="5" height="5" fill="#ff1744"/>
-          <rect class="pixel-eye" x="25" y="16" width="5" height="5" fill="#ff1744"/>
-          <rect x="19" y="16" width="2" height="2" fill="#ffffff"/>
-          <rect x="26" y="16" width="2" height="2" fill="#ffffff"/>
-          <polygon points="14,28 34,28 38,42 10,42" fill="#ffffff"/>
-          <polygon points="18,28 30,28 26,42 22,42" fill="#d32f2f"/>
+        <g transform="translate(195, 65) scale(3.2)">
+          <rect x="14" y="24" width="16" height="20" rx="2" fill="#ffb300" stroke="#ffd700" stroke-width="1"/>
+          <rect x="17" y="26" width="10" height="16" fill="#ff8f00"/>
+          <rect x="15" y="9" width="14" height="15" rx="3" fill="#ffd54f" stroke="#ffb300" stroke-width="1"/>
+          <polygon points="22,9 25,-4 28,9" fill="#00e5ff"/>
+          <rect x="18" y="15" width="8" height="3" fill="#00e5ff" filter="url(#sl-gold-glow)"/>
+          <line x1="-30" y1="45" x2="65" y2="-15" stroke="#ffffff" stroke-width="4"/>
+          <line x1="-30" y1="45" x2="65" y2="-15" stroke="#ffd700" stroke-width="2.5"/>
+          <polygon points="62,-18 78,-26 70,-10" fill="#ffffff" stroke="#ffd700" stroke-width="1.5" filter="url(#sl-gold-glow)"/>
         </g>
       </svg>`;
     }
 
-    // 5. FURINA — ARCHETYPE: "GRAND VERSAILLES OPERA BALLET & TOP-HAT BOW"
-    if (heroId === 'hero_furina') {
+    // 5. KIẾM SĨ HỎA DIỆM (FLAME KNIGHT — HỎA DIỆM)
+    if (targetId === 'hero_flame_knight') {
       return `
-      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-furina">
-        <!-- Theatrical Spotlight Cone & Water Ripples -->
-        <g transform="translate(260, 20)">
-          <polygon points="0,0 -160,320 160,320" fill="url(#fr-spotlight-grad)" opacity="0.35"/>
-          <ellipse cx="0" cy="300" rx="140" ry="25" fill="none" stroke="#00e5ff" stroke-width="2" stroke-dasharray="10,6" class="spin-aura"/>
+      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-flame">
+        <defs>
+          <filter id="fk-fire-glow"><feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#ff3d00" flood-opacity="1"/></filter>
+          <linearGradient id="fk-fire-grad" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="#bf360c"/>
+            <stop offset="50%" stop-color="#ff3d00"/>
+            <stop offset="85%" stop-color="#ff9100"/>
+            <stop offset="100%" stop-color="#ffffff"/>
+          </linearGradient>
+        </defs>
+        <g transform="translate(260, 160)" filter="url(#fk-fire-glow)">
+          <path d="M -20,20 Q -120,-40 -190,-10 Q -140,50 -20,20 Z" fill="url(#fk-fire-grad)" opacity="0.9"/>
+          <path d="M -15,10 Q -90,-80 -160,-60 Q -110,-10 -15,10 Z" fill="url(#fk-fire-grad)"/>
+          <path d="M 20,20 Q 120,-40 190,-10 Q 140,50 20,20 Z" fill="url(#fk-fire-grad)" opacity="0.9"/>
+          <path d="M 15,10 Q 90,-80 160,-60 Q 110,-10 15,10 Z" fill="url(#fk-fire-grad)"/>
+          <ellipse cx="0" cy="80" rx="150" ry="35" fill="none" stroke="#ff3d00" stroke-width="3" stroke-dasharray="16,8" class="spin-aura"/>
+          <circle cx="-60" cy="-70" r="4" fill="#ffd700"/>
+          <circle cx="70" cy="-90" r="5" fill="#ffffff"/>
+          <circle cx="120" cy="30" r="3.5" fill="#ff9100"/>
         </g>
-        <!-- Floating Crystal Bubbles & Musical Notes -->
-        <circle cx="110" cy="150" r="16" fill="rgba(225,245,254,0.4)" stroke="#00e5ff" stroke-width="2" class="bubble-float-1"/>
-        <circle cx="410" cy="130" r="20" fill="rgba(225,245,254,0.3)" stroke="#81d4fa" stroke-width="2" class="bubble-float-2"/>
-        <!-- Silver Cane Baton Flourish -->
-        <g class="furina-rapier-dance" transform="translate(220, 85)">
-          <line x1="22" y1="-85" x2="22" y2="85" stroke="#00e5ff" stroke-width="5" stroke-linecap="round"/>
-          <line x1="22" y1="-85" x2="22" y2="85" stroke="#ffffff" stroke-width="2"/>
-          <circle cx="22" cy="75" r="9" fill="#ffd600" stroke="#01579b" stroke-width="2"/>
+        <g transform="translate(260, 150)">
+          <path d="M -150,90 Q 0,-150 170,-40 Q 30,-30 -150,90 Z" fill="url(#fk-fire-grad)" filter="url(#fk-fire-glow)"/>
+          <path d="M -130,80 Q 0,-120 150,-35" stroke="#ffffff" stroke-width="4" fill="none"/>
         </g>
-        <!-- Furina Ballet Curtsy Model with Silk Top-Hat -->
-        <g transform="translate(195, 45) scale(3.4)">
-          <polygon points="18,0 30,0 28,8 20,8" fill="#01579b"/>
-          <rect x="14" y="8" width="20" height="3" fill="#0288d1"/>
-          <path d="M 12,8 Q 22,2 34,8 Q 42,20 38,38 Q 30,34 26,36 Q 16,36 10,28 Z" fill="#e1f5fe"/>
-          <polygon points="16,12 32,12 30,26 24,32 18,26" fill="#ffe0b2"/>
-          <rect class="pixel-eye" x="18" y="17" width="5" height="5" fill="#0288d1"/>
-          <rect class="pixel-eye" x="25" y="17" width="5" height="5" fill="#00bcd4"/>
-          <rect x="19" y="17" width="2" height="2" fill="#ffffff"/>
-          <rect x="26" y="17" width="2" height="2" fill="#ffffff"/>
-          <polygon points="14,28 34,28 38,42 10,42" fill="#0277bd"/>
-          <polygon points="18,28 30,28 26,42 22,42" fill="#ffffff"/>
+        <g transform="translate(195, 60) scale(3.3)">
+          <rect x="14" y="24" width="16" height="20" rx="2" fill="#d84315" stroke="#ff6e40" stroke-width="1"/>
+          <rect x="17" y="26" width="10" height="16" fill="#bf360c"/>
+          <rect x="15" y="9" width="14" height="15" rx="3" fill="#ff5722" stroke="#ffab91" stroke-width="1"/>
+          <rect x="18" y="15" width="8" height="3" fill="#ffd600" filter="url(#fk-fire-glow)"/>
+          <polygon points="17,9 22,0 24,9 26,0 29,9" fill="#ff9100"/>
         </g>
       </svg>`;
     }
 
-    // 6. KAZUHA — ARCHETYPE: "ZEN SAMURAI IAIDO CROUCH & MAPLE WHIRLWIND"
-    if (heroId === 'hero_kazuha') {
+    // 6. ĐẠI PHÁP SƯ HƯ KHÔNG (ARCANE MAGE — HƯ VÔ)
+    if (targetId === 'hero_arcane_mage') {
       return `
-      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-kazuha">
-        <!-- Sumi-E Ink Swirl & Scarlet Maple Leaves -->
-        <g fill="#d32f2f">
-          <polygon points="90,110 98,102 96,114 104,116 94,122 96,130 88,124 80,128 84,120 76,116 86,114" class="leaf-swirl-1"/>
-          <polygon points="410,100 420,92 418,104 426,106 416,112 418,120 410,114 402,118 406,110 398,106 408,104" class="leaf-swirl-2"/>
+      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-mage">
+        <defs>
+          <filter id="am-void-glow"><feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#b026ff" flood-opacity="1"/></filter>
+        </defs>
+        <g transform="translate(260, 160)">
+          <circle cx="0" cy="0" r="75" fill="#050014" stroke="#b026ff" stroke-width="4" filter="url(#am-void-glow)"/>
+          <circle cx="0" cy="0" r="50" fill="#000000"/>
+          <circle cx="0" cy="0" r="115" fill="none" stroke="#d500f9" stroke-width="2" stroke-dasharray="14,8" class="spin-aura"/>
+          <circle cx="0" cy="0" r="145" fill="none" stroke="#7c4dff" stroke-width="1.8" stroke-dasharray="20,10" class="spin-aura" style="animation-direction:reverse;"/>
+          <line x1="-130" y1="-70" x2="-30" y2="-20" stroke="#e040fb" stroke-width="2.5"/>
+          <line x1="120" y1="80" x2="30" y2="20" stroke="#00e5ff" stroke-width="2.5"/>
         </g>
-        <!-- Iaido Katana Draw: Thumb Popped on Tsuba -->
-        <g class="kazuha-iaido-slash" transform="translate(210, 85)">
-          <path d="M -50,-65 Q 20,20 110,-20" stroke="#d32f2f" stroke-width="7" fill="none"/>
-          <path d="M -40,-55 Q 20,15 100,-15" stroke="#ffffff" stroke-width="2.5" fill="none"/>
-          <line x1="10" y1="20" x2="-25" y2="55" stroke="#cfd8dc" stroke-width="5"/>
-          <rect x="8" y="18" width="7" height="7" fill="#ffd600"/>
-        </g>
-        <!-- Kazuha Resolute Samurai Figure -->
-        <g transform="translate(195, 45) scale(3.4)">
-          <path d="M 12,2 Q 22,-4 34,2 Q 42,16 38,38 Q 30,34 26,36 Q 16,36 10,28 Z" fill="#eceff1"/>
-          <path d="M 24,2 Q 28,12 26,24 Q 22,14 24,2 Z" fill="#d32f2f"/>
-          <polygon points="16,10 32,10 30,26 24,32 18,26" fill="#ffe0b2"/>
-          <rect class="pixel-eye" x="18" y="16" width="5" height="5" fill="#c62828"/>
-          <rect class="pixel-eye" x="25" y="16" width="5" height="5" fill="#c62828"/>
-          <polygon points="14,26 34,26 30,34 18,34" fill="#d32f2f"/>
-          <polygon points="14,32 34,32 38,42 10,42" fill="#37474f"/>
-        </g>
-      </svg>`;
-    }
-
-    // 7. JIYAN — ARCHETYPE: "MOUNTED CAVALRY CHARGE ATOP QINGLOONG DRAGON"
-    if (heroId === 'hero_jiyan') {
-      return `
-      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-jiyan">
-        <!-- Dragon Body Coiling Underneath Rider -->
-        <path d="M 60,220 Q 260,80 460,220" stroke="#00e5ff" stroke-width="6" stroke-dasharray="14,8" fill="none" class="dragon-coil"/>
-        <!-- Leveling the Emerald Dragon Spear Forward like a Heavy Lance -->
-        <g class="jiyan-spear-twirl" transform="translate(220, 80)">
-          <line x1="24" y1="-95" x2="24" y2="105" stroke="#00bfa5" stroke-width="6" stroke-linecap="round"/>
-          <polygon points="24,-125 38,-90 10,-90" fill="#69f0ae" stroke="#00e5ff" stroke-width="2.5"/>
-          <circle cx="24" cy="-85" r="8" fill="#ffd600"/>
-        </g>
-        <!-- Jiyan Dragon General Figure -->
-        <g transform="translate(195, 45) scale(3.4)">
-          <path d="M 12,2 Q 22,-4 34,2 Q 42,16 38,38 Q 30,34 26,36 Q 16,36 10,28 Z" fill="#004d40"/>
-          <rect x="16" y="8" width="16" height="3" fill="#ffd600"/>
-          <polygon points="16,10 32,10 30,26 24,32 18,26" fill="#ffe0b2"/>
-          <rect class="pixel-eye" x="18" y="16" width="5" height="5" fill="#00e5ff"/>
-          <rect class="pixel-eye" x="25" y="16" width="5" height="5" fill="#00e5ff"/>
-          <polygon points="14,28 34,28 38,42 10,42" fill="#1b5e20"/>
-          <polygon points="18,28 30,28 26,42 22,42" fill="#00bfa5"/>
+        <g transform="translate(195, 60) scale(3.3)">
+          <path d="M 14,10 Q 22,4 30,10 Q 38,24 36,46 Q 22,50 8,46 Q 8,24 14,10 Z" fill="#311b92" stroke="#b026ff" stroke-width="1"/>
+          <path d="M 18,22 Q 22,20 26,22 Q 26,38 22,44 Q 18,38 18,22 Z" fill="#4a148c"/>
+          <polygon points="12,12 22,-4 32,12" fill="#1a0033" stroke="#b026ff" stroke-width="1"/>
+          <rect x="18" y="16" width="3" height="3" fill="#00e5ff" filter="url(#am-void-glow)"/>
+          <rect x="24" y="16" width="3" height="3" fill="#00e5ff" filter="url(#am-void-glow)"/>
+          <g transform="translate(22, 28)">
+            <polygon points="-12,-6 -12,8 0,4 0,-8" fill="#4a148c" stroke="#ffd700" stroke-width="1"/>
+            <polygon points="0,-8 0,4 12,8 12,-6" fill="#4a148c" stroke="#ffd700" stroke-width="1"/>
+            <line x1="0" y1="-8" x2="0" y2="4" stroke="#ffd700" stroke-width="1.5"/>
+            <circle cx="0" cy="-14" r="5" fill="#ffffff" filter="url(#am-void-glow)"/>
+          </g>
         </g>
       </svg>`;
     }
 
-    // 8. AMBER — ARCHETYPE: "TACTICAL KNEELING SNIPER & FLARE ARROW LAUNCH"
-    if (heroId === 'hero_amber') {
-      return `
-      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-amber">
-        <!-- Dancing Baron Bunny Decoy -->
-        <g transform="translate(70, 110)" fill="#d32f2f">
-          <circle cx="25" cy="25" r="22"/>
-          <polygon points="14,8 19,-12 24,8"/><polygon points="26,8 31,-12 36,8"/>
-          <circle cx="18" cy="22" r="3.5" fill="#ffffff"/>
-          <polygon points="30,22 36,20 36,24" fill="#ffffff"/>
-        </g>
-        <!-- Aiming High-Angle Flare Rocket to the Sky -->
-        <g class="amber-bow-pull" transform="translate(215, 80)">
-          <path d="M 0,-70 Q 55,0 0,70" stroke="#d32f2f" stroke-width="5" fill="none"/>
-          <line x1="0" y1="-70" x2="-22" y2="0" stroke="#ffd600" stroke-width="2.5"/>
-          <line x1="0" y1="70" x2="-22" y2="0" stroke="#ffd600" stroke-width="2.5"/>
-          <line x1="-35" y1="0" x2="70" y2="0" stroke="#ff9800" stroke-width="4"/>
-          <polygon points="75,0 62,-7 62,7" fill="#ffd600"/>
-        </g>
-        <!-- Amber Outrider Model -->
-        <g transform="translate(195, 45) scale(3.4)">
-          <polygon points="18,0 22,-8 26,0" fill="#d32f2f"/>
-          <polygon points="26,0 30,-8 34,0" fill="#d32f2f"/>
-          <path d="M 12,2 Q 22,-4 34,2 Q 42,16 38,38 Q 30,34 26,36 Q 16,36 10,28 Z" fill="#4e342e"/>
-          <polygon points="16,10 32,10 30,26 24,32 18,26" fill="#ffe0b2"/>
-          <rect class="pixel-eye" x="18" y="16" width="5" height="5" fill="#f57c00"/>
-          <rect class="pixel-eye" x="25" y="16" width="5" height="5" fill="#f57c00"/>
-          <polygon points="14,28 34,28 38,42 10,42" fill="#d32f2f"/>
-          <polygon points="18,28 30,28 26,42 22,42" fill="#ffffff"/>
-        </g>
-      </svg>`;
-    }
-
-    // 9. NHÀ LỮ HÀNH / TRAVELER — ARCHETYPE: "MID-AIR DUAL-ELEMENTAL X-STRIKE"
+    // 7. VÔ CỰC NGHỊCH MỆNH THẦN QUÂN (UNKNOWN GOD — THÁI CƠ)
     return `
-    <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-traveler">
-      <!-- 4-Pointed Primogem Celestial Constellation -->
-      <polygon points="260,30 266,48 284,54 266,60 260,78 254,60 236,54 254,48" fill="#ffd54f" class="pulse-aura"/>
-      <circle cx="260" cy="180" r="125" fill="none" stroke="#00e5ff" stroke-width="2.5" stroke-dasharray="12,8" class="spin-aura"/>
-      <!-- Dual Crossed Swords (Anemo Cyan + Geo Amber) -->
-      <g class="traveler-wind-gather" transform="translate(220, 80)">
-        <line x1="0" y1="-70" x2="50" y2="70" stroke="#00e5ff" stroke-width="5" stroke-linecap="round"/>
-        <line x1="50" y1="-70" x2="0" y2="70" stroke="#ffd54f" stroke-width="5" stroke-linecap="round"/>
-        <circle cx="25" cy="0" r="10" fill="#ffffff"/>
+    <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-god">
+      <defs>
+        <filter id="ug-god-glow"><feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#00ffcc" flood-opacity="1"/></filter>
+      </defs>
+      <g transform="translate(260, 160)" filter="url(#ug-god-glow)">
+        <polygon points="0,-130 130,0 0,130 -130,0" fill="none" stroke="#00ffcc" stroke-width="3" class="spin-aura"/>
+        <polygon points="0,-100 100,0 0,100 -100,0" fill="none" stroke="#ff0055" stroke-width="2.5" class="spin-aura" style="animation-direction:reverse;"/>
+        <circle cx="0" cy="0" r="140" fill="none" stroke="#ffd700" stroke-width="2" stroke-dasharray="10,6"/>
+        <g transform="translate(-110, -80)">
+          <rect x="-16" y="-16" width="32" height="32" fill="#b71c1c" stroke="#ff0055" stroke-width="2" class="spin-aura"/>
+        </g>
+        <g transform="translate(110, -80)">
+          <rect x="-16" y="-16" width="32" height="32" fill="#b71c1c" stroke="#ff0055" stroke-width="2" class="spin-aura"/>
+        </g>
+        <g transform="translate(-110, 80)">
+          <rect x="-16" y="-16" width="32" height="32" fill="#b71c1c" stroke="#00ffcc" stroke-width="2" class="spin-aura"/>
+        </g>
+        <g transform="translate(110, 80)">
+          <rect x="-16" y="-16" width="32" height="32" fill="#b71c1c" stroke="#00ffcc" stroke-width="2" class="spin-aura"/>
+        </g>
       </g>
-      <!-- Traveler Figure -->
-      <g transform="translate(195, 45) scale(3.4)">
-        <path d="M 12,2 Q 22,-4 34,2 Q 42,16 38,38 Q 30,34 26,36 Q 16,36 10,28 Z" fill="#fbc02d"/>
-        <polygon points="16,10 32,10 30,26 24,32 18,26" fill="#ffe0b2"/>
-        <rect class="pixel-eye" x="18" y="16" width="5" height="5" fill="#f57c17"/>
-        <rect class="pixel-eye" x="25" y="16" width="5" height="5" fill="#f57c17"/>
-        <polygon points="14,28 34,28 38,42 10,42" fill="#5d4037"/>
-        <polygon points="18,28 30,28 26,42 22,42" fill="#cfd8dc"/>
+      <g transform="translate(195, 55) scale(3.4)">
+        <path d="M 12,2 Q 22,-4 34,2 Q 42,16 38,40 Q 30,36 26,38 Q 16,38 10,30 Z" fill="#ffffff" filter="url(#ug-god-glow)"/>
+        <polygon points="14,24 32,24 36,46 10,46" fill="#ffffff" stroke="#ffd700" stroke-width="1"/>
+        <polygon points="18,24 28,24 26,44 20,44" fill="#b71c1c"/>
+        <polygon points="16,10 30,10 28,24 23,28 18,24" fill="#ffe0b2"/>
+        <rect class="pixel-eye" x="18" y="15" width="4" height="4" fill="#00ffcc" filter="url(#ug-god-glow)"/>
+        <rect class="pixel-eye" x="24" y="15" width="4" height="4" fill="#ff0055" filter="url(#ug-god-glow)"/>
+        <circle cx="20" cy="17" r="1.5" fill="#ffffff"/>
+        <circle cx="26" cy="17" r="1.5" fill="#ffffff"/>
       </g>
     </svg>`;
   },
@@ -859,7 +724,6 @@ const Sprites = {
   },
 
 
-  // ============================================================
   // 2. PIXEL MONSTERS (15 QUÁI VẬT THEO TIER)
   // ============================================================
   getMonsterSvg(name, isBoss = false) {
@@ -1376,11 +1240,50 @@ const Sprites = {
   // ============================================================
   // 5. SLASH FX (HIỆU ỨNG VỆT CHÉM VŨ KHÍ)
   // ============================================================
+  // ============================================================
+  // 5. SLASH FX (HIỆU ỨNG VỆT CHÉM VŨ KHÍ)
+  // ============================================================
   getSlashFxSvg(type = 'normal') {
+    let gradColor1 = '#00ffff';
+    let gradColor2 = '#00e5ff';
+    let gradColor3 = '#ffffff';
+    let glowColor = '#00ffff';
+
+    if (type === 'extra') {
+      gradColor1 = '#ff007f';
+      gradColor2 = '#ffd700';
+      gradColor3 = '#ffffff';
+      glowColor = '#ff007f';
+    } else if (type === 'skill') {
+      gradColor1 = '#a855f7';
+      gradColor2 = '#00e5ff';
+      gradColor3 = '#ffffff';
+      glowColor = '#a855f7';
+    } else if (type === 'burst') {
+      gradColor1 = '#ff1744';
+      gradColor2 = '#ffd700';
+      gradColor3 = '#ffffff';
+      glowColor = '#ff3d00';
+    }
+
+    const uid = 'slash_' + Math.floor(Math.random() * 100000);
     return `
-    <svg class="pixel-slash-fx fx-${type}" viewBox="0 0 64 64" width="100%" height="100%">
-      <path d="M 8,52 Q 32,8 58,12 Q 34,26 8,52 Z" fill="url(#slash-grad)"/>
-      <path d="M 14,46 Q 32,14 54,16 Q 34,22 14,46 Z" fill="#ffffff" opacity="0.9"/>
+    <svg class="pixel-slash-fx fx-${type}" viewBox="0 0 100 100" width="100%" height="100%" style="overflow:visible;">
+      <defs>
+        <linearGradient id="${uid}-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="${gradColor1}" stop-opacity="0.1"/>
+          <stop offset="50%" stop-color="${gradColor2}" stop-opacity="0.95"/>
+          <stop offset="100%" stop-color="${gradColor3}" stop-opacity="1"/>
+        </linearGradient>
+        <filter id="${uid}-glow">
+          <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="${glowColor}" flood-opacity="1"/>
+        </filter>
+      </defs>
+      <path d="M 10,88 Q 45,15 92,20 Q 55,42 10,88 Z" fill="url(#${uid}-grad)" filter="url(#${uid}-glow)"/>
+      <path d="M 22,78 Q 48,26 86,24 Q 52,36 22,78 Z" fill="#ffffff" opacity="0.95"/>
+      <circle cx="50" cy="30" r="3" fill="#ffffff" filter="url(#${uid}-glow)"/>
+      <circle cx="72" cy="22" r="2.5" fill="${gradColor2}"/>
+      <circle cx="32" cy="52" r="2" fill="${gradColor1}"/>
     </svg>`;
   },
 
@@ -1388,370 +1291,278 @@ const Sprites = {
   // 6. GENSHIN-STYLE CLOSE-UP EYE CUT-IN SLASH BANNERS (PHASE 0)
   // ============================================================
   getHeroEyeCutinSvg(heroId) {
-    switch (heroId) {
-      case 'hero_raiden':
-        return `
-        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-raiden">
-          <defs>
-            <linearGradient id="rd-cutin-bg" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="rgba(18,5,34,0)"/>
-              <stop offset="15%" stop-color="#120522"/>
-              <stop offset="50%" stop-color="#311b92"/>
-              <stop offset="85%" stop-color="#120522"/>
-              <stop offset="100%" stop-color="rgba(18,5,34,0)"/>
-            </linearGradient>
-            <filter id="rd-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#e040fb" flood-opacity="1"/></filter>
-          </defs>
-          <polygon points="20,0 640,0 620,130 0,130" fill="url(#rd-cutin-bg)"/>
-          <line x1="30" y1="0" x2="630" y2="0" stroke="#d500f9" stroke-width="3"/>
-          <line x1="10" y1="130" x2="610" y2="130" stroke="#00e5ff" stroke-width="3"/>
-          <!-- Speed Streaks -->
-          <g stroke="rgba(224,64,251,0.3)" stroke-width="1.5">
-            <line x1="40" y1="25" x2="320" y2="25"/><line x1="180" y1="50" x2="580" y2="50"/>
-            <line x1="60" y1="80" x2="420" y2="80"/><line x1="220" y1="105" x2="600" y2="105"/>
-          </g>
-          <!-- Watermark Kanji -->
-          <text x="320" y="80" font-family="'Courier New', monospace" font-size="64" font-weight="900" fill="rgba(213,0,249,0.12)" text-anchor="middle" letter-spacing="18">無 想 一 刀</text>
-          <!-- Fierce Raiden Eyes -->
-          <g transform="translate(320, 65)">
-            <!-- Left Eye -->
-            <g transform="translate(-110, 0)">
-              <path d="M -60,-8 Q 0,-24 50,-2 Q 10,18 -60,-8 Z" fill="#ffffff"/>
-              <ellipse cx="2" cy="0" rx="16" ry="12" fill="#4a148c"/>
-              <ellipse cx="2" cy="0" rx="10" ry="10" fill="#d500f9" filter="url(#rd-eye-glow)"/>
-              <circle cx="2" cy="0" r="4" fill="#ffffff"/>
-              <!-- Eyelash / Eyebrow -->
-              <path d="M -65,-12 Q 5,-32 60,-4" stroke="#e040fb" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <!-- Lightning Eye Flare Trail -->
-              <path d="M -50,-8 Q -100,-20 -180,-10" stroke="#00ffff" stroke-width="2.5" fill="none" opacity="0.9"/>
-            </g>
-            <!-- Right Eye -->
-            <g transform="translate(110, 0)">
-              <path d="M -50,-2 Q 0,-24 60,-8 Q 60,-8 10,18 Z" fill="#ffffff"/>
-              <ellipse cx="-2" cy="0" rx="16" ry="12" fill="#4a148c"/>
-              <ellipse cx="-2" cy="0" rx="10" ry="10" fill="#d500f9" filter="url(#rd-eye-glow)"/>
-              <circle cx="-2" cy="0" r="4" fill="#ffffff"/>
-              <!-- Eyelash / Eyebrow -->
-              <path d="M -60,-4 Q -5,-32 65,-12" stroke="#e040fb" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <!-- Lightning Eye Flare Trail -->
-              <path d="M 50,-8 Q 100,-20 180,-10" stroke="#00ffff" stroke-width="2.5" fill="none" opacity="0.9"/>
-            </g>
-          </g>
-        </svg>`;
+    const rawId = heroId || (typeof GameState !== 'undefined' && GameState.activeHeroId) || 'hero_starter';
+    const idMap = {
+      hero_traveler: 'hero_starter',
+      hero_amber: 'hero_flame_knight',
+      hero_kazuha: 'hero_shadow_rogue',
+      hero_zhongli: 'hero_spear_lancer',
+      hero_jiyan: 'hero_spear_lancer',
+      hero_furina: 'hero_frost_knight',
+      hero_changli: 'hero_flame_knight',
+      hero_raiden: 'hero_arcane_mage'
+    };
+    const targetId = idMap[rawId] || rawId;
 
-      case 'hero_zhongli':
+    switch (targetId) {
+      case 'hero_starter':
         return `
-        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-zhongli">
+        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-starter">
           <defs>
-            <linearGradient id="zl-cutin-bg" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="rgba(25,18,8,0)"/>
-              <stop offset="15%" stop-color="#191208"/>
-              <stop offset="50%" stop-color="#4e342e"/>
-              <stop offset="85%" stop-color="#191208"/>
-              <stop offset="100%" stop-color="rgba(25,18,8,0)"/>
+            <linearGradient id="st-cutin-bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="rgba(15,23,42,0)"/>
+              <stop offset="15%" stop-color="#0f172a"/>
+              <stop offset="50%" stop-color="#334155"/>
+              <stop offset="85%" stop-color="#0f172a"/>
+              <stop offset="100%" stop-color="rgba(15,23,42,0)"/>
             </linearGradient>
-            <filter id="zl-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ffd54f" flood-opacity="1"/></filter>
+            <filter id="st-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#ffffff" flood-opacity="0.9"/></filter>
           </defs>
-          <polygon points="20,0 640,0 620,130 0,130" fill="url(#zl-cutin-bg)"/>
-          <line x1="30" y1="0" x2="630" y2="0" stroke="#ffd54f" stroke-width="3"/>
-          <line x1="10" y1="130" x2="610" y2="130" stroke="#ff8f00" stroke-width="3"/>
-          <!-- Speed Streaks -->
-          <g stroke="rgba(255,213,79,0.3)" stroke-width="1.5">
-            <line x1="50" y1="20" x2="300" y2="20"/><line x1="150" y1="55" x2="590" y2="55"/>
-            <line x1="70" y1="85" x2="400" y2="85"/><line x1="200" y1="110" x2="610" y2="110"/>
-          </g>
-          <text x="320" y="80" font-family="'Courier New', monospace" font-size="64" font-weight="900" fill="rgba(255,213,79,0.12)" text-anchor="middle" letter-spacing="18">天 動 万 象</text>
-          <!-- Piercing Amber Eyes of the Geo Archon -->
+          <polygon points="20,0 640,0 620,130 0,130" fill="url(#st-cutin-bg)"/>
+          <line x1="30" y1="0" x2="630" y2="0" stroke="#94a3b8" stroke-width="3"/>
+          <line x1="10" y1="130" x2="610" y2="130" stroke="#ffd700" stroke-width="3"/>
+          <text x="320" y="80" font-family="'Courier New', monospace" font-size="54" font-weight="900" fill="rgba(255,255,255,0.12)" text-anchor="middle" letter-spacing="18">開 山 破 石</text>
           <g transform="translate(320, 65)">
-            <!-- Left Eye -->
             <g transform="translate(-110, 0)">
               <path d="M -55,-6 Q 0,-20 48,-2 Q 10,16 -55,-6 Z" fill="#ffffff"/>
-              <ellipse cx="2" cy="0" rx="15" ry="11" fill="#e65100"/>
-              <ellipse cx="2" cy="0" rx="9" ry="9" fill="#ffd54f" filter="url(#zl-eye-glow)"/>
-              <polygon points="2,-5 6,0 2,5 -2,0" fill="#ffffff"/>
-              <path d="M -60,-10 Q 5,-28 55,-4" stroke="#ff8f00" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <!-- Amber Eye Flare Trail -->
-              <path d="M -50,-6 Q -110,-15 -190,-5" stroke="#ffd54f" stroke-width="3" fill="none"/>
+              <ellipse cx="2" cy="0" rx="14" ry="11" fill="#334155"/>
+              <ellipse cx="2" cy="0" rx="9" ry="9" fill="#94a3b8" filter="url(#st-eye-glow)"/>
+              <circle cx="2" cy="0" r="3.5" fill="#ffffff"/>
+              <path d="M -60,-10 Q 5,-28 55,-4" stroke="#e2e8f0" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M -50,-6 Q -110,-15 -190,-5" stroke="#ffd700" stroke-width="2.5" fill="none"/>
             </g>
-            <!-- Right Eye -->
             <g transform="translate(110, 0)">
               <path d="M -48,-2 Q 0,-20 55,-6 Q 10,16 -48,-2 Z" fill="#ffffff"/>
-              <ellipse cx="-2" cy="0" rx="15" ry="11" fill="#e65100"/>
-              <ellipse cx="-2" cy="0" rx="9" ry="9" fill="#ffd54f" filter="url(#zl-eye-glow)"/>
-              <polygon points="-2,-5 2,0 -2,5 -6,0" fill="#ffffff"/>
-              <path d="M -55,-4 Q -5,-28 60,-10" stroke="#ff8f00" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <!-- Amber Eye Flare Trail -->
-              <path d="M 50,-6 Q 110,-15 190,-5" stroke="#ffd54f" stroke-width="3" fill="none"/>
+              <ellipse cx="-2" cy="0" rx="14" ry="11" fill="#334155"/>
+              <ellipse cx="-2" cy="0" rx="9" ry="9" fill="#94a3b8" filter="url(#st-eye-glow)"/>
+              <circle cx="-2" cy="0" r="3.5" fill="#ffffff"/>
+              <path d="M -55,-4 Q -5,-28 60,-10" stroke="#e2e8f0" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M 50,-6 Q 110,-15 190,-5" stroke="#ffd700" stroke-width="2.5" fill="none"/>
             </g>
           </g>
         </svg>`;
 
-      case 'hero_changli':
+      case 'hero_shadow_rogue':
         return `
-        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-changli">
+        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-rogue">
           <defs>
-            <linearGradient id="cl-cutin-bg" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="rgba(38,10,10,0)"/>
-              <stop offset="15%" stop-color="#260a0a"/>
-              <stop offset="50%" stop-color="#b71c1c"/>
-              <stop offset="85%" stop-color="#260a0a"/>
-              <stop offset="100%" stop-color="rgba(38,10,10,0)"/>
+            <linearGradient id="rg-cutin-bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="rgba(10,15,30,0)"/>
+              <stop offset="15%" stop-color="#0a0f1e"/>
+              <stop offset="50%" stop-color="#0284c7"/>
+              <stop offset="85%" stop-color="#0a0f1e"/>
+              <stop offset="100%" stop-color="rgba(10,15,30,0)"/>
             </linearGradient>
-            <filter id="cl-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#ff1744" flood-opacity="1"/></filter>
+            <filter id="rg-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#00e5ff" flood-opacity="1"/></filter>
           </defs>
-          <polygon points="20,0 640,0 620,130 0,130" fill="url(#cl-cutin-bg)"/>
-          <line x1="30" y1="0" x2="630" y2="0" stroke="#ff1744" stroke-width="3"/>
-          <line x1="10" y1="130" x2="610" y2="130" stroke="#ffd600" stroke-width="3"/>
-          <text x="320" y="80" font-family="'Courier New', monospace" font-size="64" font-weight="900" fill="rgba(255,23,68,0.15)" text-anchor="middle" letter-spacing="18">離 火 燎 天</text>
-          <!-- Changli Ruby Phoenix Eyes -->
+          <polygon points="20,0 640,0 620,130 0,130" fill="url(#rg-cutin-bg)"/>
+          <line x1="30" y1="0" x2="630" y2="0" stroke="#00e5ff" stroke-width="3"/>
+          <line x1="10" y1="130" x2="610" y2="130" stroke="#38bdf8" stroke-width="3"/>
+          <text x="320" y="80" font-family="'Courier New', monospace" font-size="54" font-weight="900" fill="rgba(0,229,255,0.12)" text-anchor="middle" letter-spacing="18">幻 影 絶 殺</text>
           <g transform="translate(320, 65)">
             <g transform="translate(-110, 0)">
               <path d="M -55,-8 Q 0,-24 50,-2 Q 10,18 -55,-8 Z" fill="#ffffff"/>
-              <ellipse cx="2" cy="0" rx="15" ry="11" fill="#b71c1c"/>
-              <ellipse cx="2" cy="0" rx="9" ry="9" fill="#ff1744" filter="url(#cl-eye-glow)"/>
-              <circle cx="2" cy="0" r="3.5" fill="#ffeb3b"/>
-              <path d="M -60,-12 Q 5,-32 55,-4" stroke="#ff1744" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <path d="M -50,-8 Q -100,-25 -190,-12" stroke="#ff9100" stroke-width="3" fill="none"/>
+              <ellipse cx="2" cy="0" rx="15" ry="11" fill="#0369a1"/>
+              <ellipse cx="2" cy="0" rx="9" ry="9" fill="#00e5ff" filter="url(#rg-eye-glow)"/>
+              <circle cx="2" cy="0" r="3.5" fill="#ffffff"/>
+              <path d="M -60,-12 Q 5,-32 55,-4" stroke="#38bdf8" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M -50,-8 Q -100,-25 -190,-12" stroke="#00e5ff" stroke-width="3" fill="none"/>
             </g>
             <g transform="translate(110, 0)">
               <path d="M -50,-2 Q 0,-24 55,-8 Q 10,18 -50,-2 Z" fill="#ffffff"/>
-              <ellipse cx="-2" cy="0" rx="15" ry="11" fill="#b71c1c"/>
-              <ellipse cx="-2" cy="0" rx="9" ry="9" fill="#ff1744" filter="url(#cl-eye-glow)"/>
-              <circle cx="-2" cy="0" r="3.5" fill="#ffeb3b"/>
-              <path d="M -55,-4 Q -5,-32 60,-12" stroke="#ff1744" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <ellipse cx="-2" cy="0" rx="15" ry="11" fill="#0369a1"/>
+              <ellipse cx="-2" cy="0" rx="9" ry="9" fill="#00e5ff" filter="url(#rg-eye-glow)"/>
+              <circle cx="-2" cy="0" r="3.5" fill="#ffffff"/>
+              <path d="M -55,-4 Q -5,-32 60,-12" stroke="#38bdf8" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M 50,-8 Q 100,-25 190,-12" stroke="#00e5ff" stroke-width="3" fill="none"/>
+            </g>
+          </g>
+        </svg>`;
+
+      case 'hero_frost_knight':
+        return `
+        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-frost">
+          <defs>
+            <linearGradient id="fk-cutin-bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="rgba(3,43,67,0)"/>
+              <stop offset="15%" stop-color="#032b43"/>
+              <stop offset="50%" stop-color="#0288d1"/>
+              <stop offset="85%" stop-color="#032b43"/>
+              <stop offset="100%" stop-color="rgba(3,43,67,0)"/>
+            </linearGradient>
+            <filter id="fk-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#80d8ff" flood-opacity="1"/></filter>
+          </defs>
+          <polygon points="20,0 640,0 620,130 0,130" fill="url(#fk-cutin-bg)"/>
+          <line x1="30" y1="0" x2="630" y2="0" stroke="#00e5ff" stroke-width="3"/>
+          <line x1="10" y1="130" x2="610" y2="130" stroke="#ffffff" stroke-width="3"/>
+          <text x="320" y="80" font-family="'Courier New', monospace" font-size="54" font-weight="900" fill="rgba(128,216,255,0.15)" text-anchor="middle" letter-spacing="18">氷 封 絶 域</text>
+          <g transform="translate(320, 65)">
+            <g transform="translate(-110, 0)">
+              <path d="M -55,-6 Q 0,-20 48,-2 Q 10,16 -55,-6 Z" fill="#ffffff"/>
+              <ellipse cx="2" cy="0" rx="14" ry="11" fill="#01579b"/>
+              <ellipse cx="2" cy="0" rx="9" ry="9" fill="#00e5ff" filter="url(#fk-eye-glow)"/>
+              <circle cx="2" cy="0" r="3.5" fill="#ffffff"/>
+              <path d="M -60,-10 Q 5,-28 55,-4" stroke="#80d8ff" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M -50,-6 Q -110,-15 -190,-5" stroke="#ffffff" stroke-width="3" fill="none"/>
+            </g>
+            <g transform="translate(110, 0)">
+              <path d="M -48,-2 Q 0,-20 55,-6 Q 10,16 -48,-2 Z" fill="#ffffff"/>
+              <ellipse cx="-2" cy="0" rx="14" ry="11" fill="#01579b"/>
+              <ellipse cx="-2" cy="0" rx="9" ry="9" fill="#00e5ff" filter="url(#fk-eye-glow)"/>
+              <circle cx="-2" cy="0" r="3.5" fill="#ffffff"/>
+              <path d="M -55,-4 Q -5,-28 60,-10" stroke="#80d8ff" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M 50,-6 Q 110,-15 190,-5" stroke="#ffffff" stroke-width="3" fill="none"/>
+            </g>
+          </g>
+        </svg>`;
+
+      case 'hero_spear_lancer':
+        return `
+        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-spear">
+          <defs>
+            <linearGradient id="sl-cutin-bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="rgba(35,25,0,0)"/>
+              <stop offset="15%" stop-color="#231900"/>
+              <stop offset="50%" stop-color="#ff8f00"/>
+              <stop offset="85%" stop-color="#231900"/>
+              <stop offset="100%" stop-color="rgba(35,25,0,0)"/>
+            </linearGradient>
+            <filter id="sl-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#ffd700" flood-opacity="1"/></filter>
+          </defs>
+          <polygon points="20,0 640,0 620,130 0,130" fill="url(#sl-cutin-bg)"/>
+          <line x1="30" y1="0" x2="630" y2="0" stroke="#ffd700" stroke-width="3"/>
+          <line x1="10" y1="130" x2="610" y2="130" stroke="#00e5ff" stroke-width="3"/>
+          <text x="320" y="80" font-family="'Courier New', monospace" font-size="54" font-weight="900" fill="rgba(255,215,0,0.15)" text-anchor="middle" letter-spacing="18">金 龍 破 天</text>
+          <g transform="translate(320, 65)">
+            <g transform="translate(-110, 0)">
+              <path d="M -55,-8 Q 0,-24 50,-2 Q 10,18 -55,-8 Z" fill="#ffffff"/>
+              <ellipse cx="2" cy="0" rx="15" ry="11" fill="#e65100"/>
+              <ellipse cx="2" cy="0" rx="9" ry="9" fill="#ffd700" filter="url(#sl-eye-glow)"/>
+              <circle cx="2" cy="0" r="3.5" fill="#00e5ff"/>
+              <path d="M -60,-12 Q 5,-32 55,-4" stroke="#ffb300" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M -50,-8 Q -100,-25 -190,-12" stroke="#00e5ff" stroke-width="3" fill="none"/>
+            </g>
+            <g transform="translate(110, 0)">
+              <path d="M -50,-2 Q 0,-24 55,-8 Q 10,18 -50,-2 Z" fill="#ffffff"/>
+              <ellipse cx="-2" cy="0" rx="15" ry="11" fill="#e65100"/>
+              <ellipse cx="-2" cy="0" rx="9" ry="9" fill="#ffd700" filter="url(#sl-eye-glow)"/>
+              <circle cx="-2" cy="0" r="3.5" fill="#00e5ff"/>
+              <path d="M -55,-4 Q -5,-32 60,-12" stroke="#ffb300" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M 50,-8 Q 100,-25 190,-12" stroke="#00e5ff" stroke-width="3" fill="none"/>
+            </g>
+          </g>
+        </svg>`;
+
+      case 'hero_flame_knight':
+        return `
+        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-flame">
+          <defs>
+            <linearGradient id="fl-cutin-bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="rgba(35,5,0,0)"/>
+              <stop offset="15%" stop-color="#230500"/>
+              <stop offset="50%" stop-color="#d50000"/>
+              <stop offset="85%" stop-color="#230500"/>
+              <stop offset="100%" stop-color="rgba(35,5,0,0)"/>
+            </linearGradient>
+            <filter id="fl-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#ff3d00" flood-opacity="1"/></filter>
+          </defs>
+          <polygon points="20,0 640,0 620,130 0,130" fill="url(#fl-cutin-bg)"/>
+          <line x1="30" y1="0" x2="630" y2="0" stroke="#ff3d00" stroke-width="3"/>
+          <line x1="10" y1="130" x2="610" y2="130" stroke="#ffd600" stroke-width="3"/>
+          <text x="320" y="80" font-family="'Courier New', monospace" font-size="54" font-weight="900" fill="rgba(255,61,0,0.15)" text-anchor="middle" letter-spacing="18">燎 原 烈 火</text>
+          <g transform="translate(320, 65)">
+            <g transform="translate(-110, 0)">
+              <path d="M -55,-8 Q 0,-22 48,-2 Q 10,18 -55,-8 Z" fill="#ffffff"/>
+              <ellipse cx="2" cy="0" rx="14" ry="11" fill="#b71c1c"/>
+              <ellipse cx="2" cy="0" rx="9" ry="9" fill="#ff3d00" filter="url(#fl-eye-glow)"/>
+              <circle cx="2" cy="0" r="3.5" fill="#ffd600"/>
+              <path d="M -60,-12 Q 5,-30 55,-4" stroke="#d50000" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M -50,-8 Q -100,-25 -190,-12" stroke="#ff9100" stroke-width="3" fill="none"/>
+            </g>
+            <g transform="translate(110, 0)">
+              <path d="M -48,-2 Q 0,-22 55,-8 Q 10,18 -48,-2 Z" fill="#ffffff"/>
+              <ellipse cx="-2" cy="0" rx="14" ry="11" fill="#b71c1c"/>
+              <ellipse cx="-2" cy="0" rx="9" ry="9" fill="#ff3d00" filter="url(#fl-eye-glow)"/>
+              <circle cx="-2" cy="0" r="3.5" fill="#ffd600"/>
+              <path d="M -55,-4 Q -5,-30 60,-12" stroke="#d50000" stroke-width="4.5" fill="none" stroke-linecap="round"/>
               <path d="M 50,-8 Q 100,-25 190,-12" stroke="#ff9100" stroke-width="3" fill="none"/>
             </g>
           </g>
         </svg>`;
 
-      case 'hero_unknown_god':
+      case 'hero_arcane_mage':
+        return `
+        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-arcane">
+          <defs>
+            <linearGradient id="am-cutin-bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="rgba(18,5,34,0)"/>
+              <stop offset="15%" stop-color="#120522"/>
+              <stop offset="50%" stop-color="#4a148c"/>
+              <stop offset="85%" stop-color="#120522"/>
+              <stop offset="100%" stop-color="rgba(18,5,34,0)"/>
+            </linearGradient>
+            <filter id="am-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#d500f9" flood-opacity="1"/></filter>
+          </defs>
+          <polygon points="20,0 640,0 620,130 0,130" fill="url(#am-cutin-bg)"/>
+          <line x1="30" y1="0" x2="630" y2="0" stroke="#b026ff" stroke-width="3"/>
+          <line x1="10" y1="130" x2="610" y2="130" stroke="#00e5ff" stroke-width="3"/>
+          <text x="320" y="80" font-family="'Courier New', monospace" font-size="54" font-weight="900" fill="rgba(176,38,255,0.15)" text-anchor="middle" letter-spacing="18">黒 洞 寂 滅</text>
+          <g transform="translate(320, 65)">
+            <g transform="translate(-110, 0)">
+              <path d="M -60,-8 Q 0,-24 50,-2 Q 10,18 -60,-8 Z" fill="#ffffff"/>
+              <ellipse cx="2" cy="0" rx="16" ry="12" fill="#311b92"/>
+              <ellipse cx="2" cy="0" rx="10" ry="10" fill="#d500f9" filter="url(#am-eye-glow)"/>
+              <circle cx="2" cy="0" r="4" fill="#00e5ff"/>
+              <path d="M -65,-12 Q 5,-32 60,-4" stroke="#e040fb" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M -50,-8 Q -100,-20 -180,-10" stroke="#00ffff" stroke-width="2.5" fill="none" opacity="0.9"/>
+            </g>
+            <g transform="translate(110, 0)">
+              <path d="M -50,-2 Q 0,-24 60,-8 Q 10,18 -50,-2 Z" fill="#ffffff"/>
+              <ellipse cx="-2" cy="0" rx="16" ry="12" fill="#311b92"/>
+              <ellipse cx="-2" cy="0" rx="10" ry="10" fill="#d500f9" filter="url(#am-eye-glow)"/>
+              <circle cx="-2" cy="0" r="4" fill="#00e5ff"/>
+              <path d="M -60,-4 Q -5,-32 65,-12" stroke="#e040fb" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M 50,-8 Q 100,-20 180,-10" stroke="#00ffff" stroke-width="2.5" fill="none" opacity="0.9"/>
+            </g>
+          </g>
+        </svg>`;
+
+      default: // hero_unknown_god
         return `
         <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-unknown">
           <defs>
             <linearGradient id="ug-cutin-bg" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="rgba(10,10,20,0)"/>
-              <stop offset="15%" stop-color="#0a0a14"/>
-              <stop offset="50%" stop-color="#240046"/>
-              <stop offset="85%" stop-color="#0a0a14"/>
-              <stop offset="100%" stop-color="rgba(10,10,20,0)"/>
+              <stop offset="0%" stop-color="rgba(0,13,26,0)"/>
+              <stop offset="15%" stop-color="#000d1a"/>
+              <stop offset="50%" stop-color="#880e4f"/>
+              <stop offset="85%" stop-color="#000d1a"/>
+              <stop offset="100%" stop-color="rgba(0,13,26,0)"/>
             </linearGradient>
-            <filter id="ug-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#00ffff" flood-opacity="1"/></filter>
+            <filter id="ug-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#00ffcc" flood-opacity="1"/></filter>
           </defs>
           <polygon points="20,0 640,0 620,130 0,130" fill="url(#ug-cutin-bg)"/>
-          <line x1="30" y1="0" x2="630" y2="0" stroke="#00ffff" stroke-width="3"/>
+          <line x1="30" y1="0" x2="630" y2="0" stroke="#00ffcc" stroke-width="3"/>
           <line x1="10" y1="130" x2="610" y2="130" stroke="#ff0055" stroke-width="3"/>
-          <text x="320" y="80" font-family="'Courier New', monospace" font-size="64" font-weight="900" fill="rgba(0,255,255,0.12)" text-anchor="middle" letter-spacing="18">天 理 創 生</text>
-          <!-- Divine Golden Eyes with Red Cross Pupils -->
-          <g transform="translate(320, 65)">
-            <polygon points="0,-25 5,-15 0,-5 -5,-15" fill="#ff0055"/>
-            <g transform="translate(-110, 0)">
-              <path d="M -55,-6 Q 0,-20 48,-2 Q 10,16 -55,-6 Z" fill="#ffffff"/>
-              <ellipse cx="2" cy="0" rx="14" ry="11" fill="#ffd600" filter="url(#ug-eye-glow)"/>
-              <!-- Cross Star Pupil -->
-              <polygon points="2,-7 4,-2 9,0 4,2 2,7 0,2 -5,0 0,-2" fill="#ff0055"/>
-              <path d="M -60,-10 Q 5,-28 55,-4" stroke="#ffffff" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <path d="M -50,-6 Q -110,-15 -190,-5" stroke="#00ffff" stroke-width="3" fill="none"/>
-            </g>
-            <g transform="translate(110, 0)">
-              <path d="M -48,-2 Q 0,-20 55,-6 Q 10,16 -48,-2 Z" fill="#ffffff"/>
-              <ellipse cx="-2" cy="0" rx="14" ry="11" fill="#ffd600" filter="url(#ug-eye-glow)"/>
-              <polygon points="-2,-7 0,-2 5,0 0,2 -2,7 -4,2 -9,0 -4,-2" fill="#ff0055"/>
-              <path d="M -55,-4 Q -5,-28 60,-10" stroke="#ffffff" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <path d="M 50,-6 Q 110,-15 190,-5" stroke="#00ffff" stroke-width="3" fill="none"/>
-            </g>
-          </g>
-        </svg>`;
-
-      case 'hero_furina':
-        return `
-        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-furina">
-          <defs>
-            <linearGradient id="fr-cutin-bg" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="rgba(5,20,38,0)"/>
-              <stop offset="15%" stop-color="#051426"/>
-              <stop offset="50%" stop-color="#0277bd"/>
-              <stop offset="85%" stop-color="#051426"/>
-              <stop offset="100%" stop-color="rgba(5,20,38,0)"/>
-            </linearGradient>
-            <filter id="fr-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#00e5ff" flood-opacity="1"/></filter>
-          </defs>
-          <polygon points="20,0 640,0 620,130 0,130" fill="url(#fr-cutin-bg)"/>
-          <line x1="30" y1="0" x2="630" y2="0" stroke="#00e5ff" stroke-width="3"/>
-          <line x1="10" y1="130" x2="610" y2="130" stroke="#ffffff" stroke-width="3"/>
-          <text x="320" y="80" font-family="'Courier New', monospace" font-size="64" font-weight="900" fill="rgba(0,229,255,0.12)" text-anchor="middle" letter-spacing="18">審 判 終 幕</text>
-          <!-- Furina Dramatic Heterochromia Eyes -->
+          <text x="320" y="80" font-family="'Courier New', monospace" font-size="54" font-weight="900" fill="rgba(0,255,204,0.15)" text-anchor="middle" letter-spacing="18">無 極 創 生</text>
           <g transform="translate(320, 65)">
             <g transform="translate(-110, 0)">
               <path d="M -55,-8 Q 0,-24 50,-2 Q 10,18 -55,-8 Z" fill="#ffffff"/>
-              <ellipse cx="2" cy="0" rx="15" ry="11" fill="#01579b"/>
-              <ellipse cx="2" cy="0" rx="9" ry="9" fill="#0288d1" filter="url(#fr-eye-glow)"/>
-              <circle cx="0" cy="-2" r="3.5" fill="#ffffff"/>
-              <path d="M -60,-12 Q 5,-32 55,-4" stroke="#00e5ff" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <path d="M -50,-8 Q -100,-25 -190,-12" stroke="#81d4fa" stroke-width="3" fill="none"/>
-            </g>
-            <g transform="translate(110, 0)">
-              <path d="M -50,-2 Q 0,-24 55,-8 Q 10,18 -50,-2 Z" fill="#ffffff"/>
-              <ellipse cx="-2" cy="0" rx="15" ry="11" fill="#006064"/>
-              <ellipse cx="-2" cy="0" rx="9" ry="9" fill="#00bcd4" filter="url(#fr-eye-glow)"/>
-              <circle cx="0" cy="-2" r="3.5" fill="#ffffff"/>
-              <path d="M -55,-4 Q -5,-32 60,-12" stroke="#00e5ff" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <path d="M 50,-8 Q 100,-25 190,-12" stroke="#81d4fa" stroke-width="3" fill="none"/>
-            </g>
-          </g>
-        </svg>`;
-
-      case 'hero_kazuha':
-        return `
-        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-kazuha">
-          <defs>
-            <linearGradient id="kz-cutin-bg" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="rgba(15,15,18,0)"/>
-              <stop offset="15%" stop-color="#0f0f12"/>
-              <stop offset="50%" stop-color="#37474f"/>
-              <stop offset="85%" stop-color="#0f0f12"/>
-              <stop offset="100%" stop-color="rgba(15,15,18,0)"/>
-            </linearGradient>
-            <filter id="kz-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#ff1744" flood-opacity="1"/></filter>
-          </defs>
-          <polygon points="20,0 640,0 620,130 0,130" fill="url(#kz-cutin-bg)"/>
-          <line x1="30" y1="0" x2="630" y2="0" stroke="#ff1744" stroke-width="3"/>
-          <line x1="10" y1="130" x2="610" y2="130" stroke="#ffffff" stroke-width="3"/>
-          <text x="320" y="80" font-family="'Courier New', monospace" font-size="64" font-weight="900" fill="rgba(255,23,68,0.12)" text-anchor="middle" letter-spacing="18">万 葉 一 刀</text>
-          <!-- Kazuha Resolute Ruby Samurai Eyes -->
-          <g transform="translate(320, 65)">
-            <g transform="translate(-110, 0)">
-              <path d="M -55,-6 Q 0,-20 48,-2 Q 10,16 -55,-6 Z" fill="#ffffff"/>
               <ellipse cx="2" cy="0" rx="15" ry="11" fill="#b71c1c"/>
-              <ellipse cx="2" cy="0" rx="9" ry="9" fill="#ff1744" filter="url(#kz-eye-glow)"/>
+              <ellipse cx="2" cy="0" rx="9" ry="9" fill="#00ffcc" filter="url(#ug-eye-glow)"/>
               <circle cx="2" cy="0" r="3.5" fill="#ffffff"/>
-              <path d="M -60,-10 Q 5,-28 55,-4" stroke="#d32f2f" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <path d="M -50,-6 Q -110,-15 -190,-5" stroke="#ff5252" stroke-width="3" fill="none"/>
-            </g>
-            <g transform="translate(110, 0)">
-              <path d="M -48,-2 Q 0,-20 55,-6 Q 10,16 -48,-2 Z" fill="#ffffff"/>
-              <ellipse cx="-2" cy="0" rx="15" ry="11" fill="#b71c1c"/>
-              <ellipse cx="-2" cy="0" rx="9" ry="9" fill="#ff1744" filter="url(#kz-eye-glow)"/>
-              <circle cx="-2" cy="0" r="3.5" fill="#ffffff"/>
-              <path d="M -55,-4 Q -5,-28 60,-10" stroke="#d32f2f" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <path d="M 50,-6 Q 110,-15 190,-5" stroke="#ff5252" stroke-width="3" fill="none"/>
-            </g>
-          </g>
-        </svg>`;
-
-      case 'hero_jiyan':
-        return `
-        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-jiyan">
-          <defs>
-            <linearGradient id="jy-cutin-bg" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="rgba(5,25,20,0)"/>
-              <stop offset="15%" stop-color="#051914"/>
-              <stop offset="50%" stop-color="#004d40"/>
-              <stop offset="85%" stop-color="#051914"/>
-              <stop offset="100%" stop-color="rgba(5,25,20,0)"/>
-            </linearGradient>
-            <filter id="jy-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#00e5ff" flood-opacity="1"/></filter>
-          </defs>
-          <polygon points="20,0 640,0 620,130 0,130" fill="url(#jy-cutin-bg)"/>
-          <line x1="30" y1="0" x2="630" y2="0" stroke="#00e5ff" stroke-width="3"/>
-          <line x1="10" y1="130" x2="610" y2="130" stroke="#69f0ae" stroke-width="3"/>
-          <text x="320" y="80" font-family="'Courier New', monospace" font-size="64" font-weight="900" fill="rgba(0,229,255,0.12)" text-anchor="middle" letter-spacing="18">青 龍 破 空</text>
-          <!-- Jiyan Dragon General Eyes -->
-          <g transform="translate(320, 65)">
-            <g transform="translate(-110, 0)">
-              <path d="M -55,-8 Q 0,-24 50,-2 Q 10,18 -55,-8 Z" fill="#ffffff"/>
-              <ellipse cx="2" cy="0" rx="15" ry="11" fill="#004d40"/>
-              <ellipse cx="2" cy="0" rx="9" ry="9" fill="#00e5ff" filter="url(#jy-eye-glow)"/>
-              <circle cx="2" cy="0" r="3.5" fill="#69f0ae"/>
-              <path d="M -60,-12 Q 5,-32 55,-4" stroke="#00bfa5" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <path d="M -50,-8 Q -100,-25 -190,-12" stroke="#64ffda" stroke-width="3" fill="none"/>
+              <path d="M -60,-12 Q 5,-32 55,-4" stroke="#ff0055" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M -50,-8 Q -100,-25 -190,-12" stroke="#00ffcc" stroke-width="3" fill="none"/>
             </g>
             <g transform="translate(110, 0)">
               <path d="M -50,-2 Q 0,-24 55,-8 Q 10,18 -50,-2 Z" fill="#ffffff"/>
-              <ellipse cx="-2" cy="0" rx="15" ry="11" fill="#004d40"/>
-              <ellipse cx="-2" cy="0" rx="9" ry="9" fill="#00e5ff" filter="url(#jy-eye-glow)"/>
-              <circle cx="-2" cy="0" r="3.5" fill="#69f0ae"/>
-              <path d="M -55,-4 Q -5,-32 60,-12" stroke="#00bfa5" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <path d="M 50,-8 Q 100,-25 190,-12" stroke="#64ffda" stroke-width="3" fill="none"/>
-            </g>
-          </g>
-        </svg>`;
-
-      case 'hero_amber':
-        return `
-        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-amber">
-          <defs>
-            <linearGradient id="ab-cutin-bg" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="rgba(30,10,5,0)"/>
-              <stop offset="15%" stop-color="#1e0a05"/>
-              <stop offset="50%" stop-color="#bf360c"/>
-              <stop offset="85%" stop-color="#1e0a05"/>
-              <stop offset="100%" stop-color="rgba(30,10,5,0)"/>
-            </linearGradient>
-            <filter id="ab-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#ff9800" flood-opacity="1"/></filter>
-          </defs>
-          <polygon points="20,0 640,0 620,130 0,130" fill="url(#ab-cutin-bg)"/>
-          <line x1="30" y1="0" x2="630" y2="0" stroke="#ff9800" stroke-width="3"/>
-          <line x1="10" y1="130" x2="610" y2="130" stroke="#ffeb3b" stroke-width="3"/>
-          <text x="320" y="80" font-family="'Courier New', monospace" font-size="64" font-weight="900" fill="rgba(255,152,0,0.15)" text-anchor="middle" letter-spacing="18">烈 火 燎 原</text>
-          <!-- Amber Energetic Outrider Eyes -->
-          <g transform="translate(320, 65)">
-            <g transform="translate(-110, 0)">
-              <path d="M -55,-8 Q 0,-22 48,-2 Q 10,18 -55,-8 Z" fill="#ffffff"/>
-              <ellipse cx="2" cy="0" rx="14" ry="11" fill="#e65100"/>
-              <ellipse cx="2" cy="0" rx="9" ry="9" fill="#ff9800" filter="url(#ab-eye-glow)"/>
-              <circle cx="2" cy="0" r="3.5" fill="#ffeb3b"/>
-              <path d="M -60,-12 Q 5,-30 55,-4" stroke="#d84315" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <path d="M -50,-8 Q -100,-25 -190,-12" stroke="#ffb74d" stroke-width="3" fill="none"/>
-            </g>
-            <g transform="translate(110, 0)">
-              <path d="M -48,-2 Q 0,-22 55,-8 Q 10,18 -48,-2 Z" fill="#ffffff"/>
-              <ellipse cx="-2" cy="0" rx="14" ry="11" fill="#e65100"/>
-              <ellipse cx="-2" cy="0" rx="9" ry="9" fill="#ff9800" filter="url(#ab-eye-glow)"/>
-              <circle cx="-2" cy="0" r="3.5" fill="#ffeb3b"/>
-              <path d="M -55,-4 Q -5,-30 60,-12" stroke="#d84315" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <path d="M 50,-8 Q 100,-25 190,-12" stroke="#ffb74d" stroke-width="3" fill="none"/>
-            </g>
-          </g>
-        </svg>`;
-
-      default: // Traveler
-        return `
-        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-traveler">
-          <defs>
-            <linearGradient id="tv-cutin-bg" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="rgba(10,25,20,0)"/>
-              <stop offset="15%" stop-color="#0a1914"/>
-              <stop offset="50%" stop-color="#00695c"/>
-              <stop offset="85%" stop-color="#0a1914"/>
-              <stop offset="100%" stop-color="rgba(10,25,20,0)"/>
-            </linearGradient>
-            <filter id="tv-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#ffd54f" flood-opacity="1"/></filter>
-          </defs>
-          <polygon points="20,0 640,0 620,130 0,130" fill="url(#tv-cutin-bg)"/>
-          <line x1="30" y1="0" x2="630" y2="0" stroke="#00e5ff" stroke-width="3"/>
-          <line x1="10" y1="130" x2="610" y2="130" stroke="#ffd54f" stroke-width="3"/>
-          <text x="320" y="80" font-family="'Courier New', monospace" font-size="64" font-weight="900" fill="rgba(255,213,79,0.15)" text-anchor="middle" letter-spacing="18">星 海 旅 人</text>
-          <!-- Traveler Steadfast Golden Eyes -->
-          <g transform="translate(320, 65)">
-            <g transform="translate(-110, 0)">
-              <path d="M -55,-6 Q 0,-20 48,-2 Q 10,16 -55,-6 Z" fill="#ffffff"/>
-              <ellipse cx="2" cy="0" rx="14" ry="11" fill="#f57c00"/>
-              <ellipse cx="2" cy="0" rx="9" ry="9" fill="#ffd54f" filter="url(#tv-eye-glow)"/>
-              <circle cx="2" cy="0" r="3.5" fill="#ffffff"/>
-              <path d="M -60,-10 Q 5,-28 55,-4" stroke="#fbc02d" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <path d="M -50,-6 Q -110,-15 -190,-5" stroke="#00e5ff" stroke-width="3" fill="none"/>
-            </g>
-            <g transform="translate(110, 0)">
-              <path d="M -48,-2 Q 0,-20 55,-6 Q 10,16 -48,-2 Z" fill="#ffffff"/>
-              <ellipse cx="-2" cy="0" rx="14" ry="11" fill="#f57c00"/>
-              <ellipse cx="-2" cy="0" rx="9" ry="9" fill="#ffd54f" filter="url(#tv-eye-glow)"/>
+              <ellipse cx="-2" cy="0" rx="15" ry="11" fill="#b71c1c"/>
+              <ellipse cx="-2" cy="0" rx="9" ry="9" fill="#00ffcc" filter="url(#ug-eye-glow)"/>
               <circle cx="-2" cy="0" r="3.5" fill="#ffffff"/>
-              <path d="M -55,-4 Q -5,-28 60,-10" stroke="#fbc02d" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-              <path d="M 50,-6 Q 110,-15 190,-5" stroke="#00e5ff" stroke-width="3" fill="none"/>
+              <path d="M -55,-4 Q -5,-32 60,-12" stroke="#ff0055" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M 50,-8 Q 100,-25 190,-12" stroke="#00ffcc" stroke-width="3" fill="none"/>
             </g>
           </g>
         </svg>`;
     }
   }
 };
-

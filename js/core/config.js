@@ -15,7 +15,7 @@ const GameState = {
   inventoryMax: 80,
   inventoryExpands: 0,
   heroes: [],
-  activeHeroId: 'hero_traveler',
+  activeHeroId: 'hero_starter',
   gacha: { totalPulls: 0, totalHeroPulls: 0, bannerTab: 'weapon' },
   autoGacha: {
     enabled: false,
@@ -321,205 +321,166 @@ const CONFIG = {
     ]
   },
 
-  // Danh sách Anh Hùng & Nhân Vật (Phong cách Genshin Impact & Wuthering Waves)
+  // Danh sách Anh Hùng Pixel (Chuẩn 7 Phẩm Cấp: Thường -> ???)
   HEROES_LIST: [
     {
-      id: 'hero_traveler',
-      name: 'Nhà Lữ Hành',
-      title: 'Hiệp Sĩ Khởi Đầu',
+      id: 'hero_starter',
+      name: 'Hiệp Sĩ Khởi Đầu',
+      title: 'Tân Thủ Tập Sự Chiến Trường',
       rarity: 'common',
-      element: 'anemo',
-      elementName: 'Phong 🍃',
-      elementColor: '#00e676',
+      element: 'physical',
+      elementName: 'Thép ⚔️',
+      elementColor: '#94a3b8',
+      pixelArchetype: 'starter_knight',
       atkBonusPct: 0.05, hpBonusPct: 0.05, defBonusPct: 0.05, spdBonus: 2,
       skills: [
-        { id: 's1', name: 'Ý Chí Khởi Hành', type: 'passive', icon: '✨', desc: 'Tăng vĩnh viễn 8% Sát thương và 5% Tốc độ đánh.', bonusAtk: 0.08 },
-        { id: 's2', name: 'Phong Nhận Trảm', type: 'active', icon: '🌪️', cd: 6, dmgMult: 1.8, desc: 'Tụ gió chém bão lốc gây 180% ATK sát thương Phong.' },
-        { id: 's3', name: 'Hoang Phong Cuồng Triều', type: 'burst', icon: '🌀', cd: 16, dmgMult: 4.5, desc: 'Tạo lốc xoáy khổng lồ cuốn phăng địch gây 450% ATK sát thương.' }
+        { id: 's1', name: 'Ý Chí Tập Sự', type: 'passive', icon: '✨', desc: 'Tăng 10% Sát thương và 5% Tốc độ đánh.', bonusAtk: 0.10 },
+        { id: 's2', name: 'Tập Tự Trảm', type: 'active', icon: '⚔️', cd: 5.0, dmgMult: 2.0, desc: 'Nhát chém chữ thập cơ bản gây 200% ATK sát thương Thép.' },
+        { id: 's3', name: 'Khai Sơn Phá Thạch', type: 'burst', icon: '💥', cd: 12.0, dmgMult: 5.5, desc: 'Dồn toàn lực dậm kiếm chém nứt mặt đất gây 550% ATK sát thương uy lực!' }
       ],
       eidolons: [
-        { level: 1, name: 'E1: Cuồng Phong Hộ Thân', desc: 'Tăng 15% Sát thương và +10% Tốc độ đánh.', bonusAtk: 0.15, extraSpd: 2 },
-        { level: 2, name: 'E2: Phong Nhận Bão Tố', desc: 'Hồi chiêu Phong Nhận Trảm giảm 1.5s, sát thương tăng thêm 40%.', cdReduction: 1.5, skillDmgMult: 0.40 },
-        { level: 3, name: 'E3: Ý Chí Phiêu Lưu', desc: 'Cấp kỹ năng bị động +3. Tăng vĩnh viễn 25% ATK & DEF.', bonusAtk: 0.25, bonusDef: 0.25 },
-        { level: 4, name: 'E4: Lốc Gió Chắn Đòn', desc: 'Khi nhận sát thương có 35% tỉ lệ giảm 40% sát thương phải chịu.', uniquePassive: 'wind_shield' },
-        { level: 5, name: 'E5: Bão Táp Thần Phong', desc: 'Cấp Nộ Tuyệt Kỹ Hoang Phong Cuồng Triều +3. Sát thương Nộ tăng thêm 80%.', burstDmgMult: 0.80 },
-        { level: 6, name: 'E6: Thiên Phong Thức Tỉnh', desc: 'Đòn đánh kèm lốc xoáy gây thêm 150% ATK, tăng 35% tỉ lệ đòn bồi Extra Turn!', extraTurnBonus: 0.35, uniquePassive: 'wind_slashes' }
+        { level: 1, name: 'E1: Ý Chí Bất Khuất', desc: 'Tăng 15% Sát thương và +10% Tốc độ đánh.', bonusAtk: 0.15, extraSpd: 2 },
+        { level: 2, name: 'E2: Kiếm Khí Thép', desc: 'Hồi chiêu Tập Tự Trảm giảm 1.0s, sát thương tăng thêm 35%.', cdReduction: 1.0, skillDmgMult: 0.35 },
+        { level: 3, name: 'E3: Khổ Luyện Thành Tài', desc: 'Cấp kỹ năng bị động +3. Tăng vĩnh viễn 25% ATK & DEF.', bonusAtk: 0.25, bonusDef: 0.25 },
+        { level: 4, name: 'E4: Khiên Sắt Kiên Cố', desc: 'Khi nhận sát thương có 30% tỉ lệ giảm 35% sát thương phải chịu.', uniquePassive: 'starter_iron_shield' },
+        { level: 5, name: 'E5: Phá Thạch Thần Lực', desc: 'Cấp Nộ Tuyệt Kỹ Khai Sơn Phá Thạch +3. Sát thương Nộ tăng thêm 75%.', burstDmgMult: 0.75 },
+        { level: 6, name: 'E6: Khởi Nguyên Anh Hùng', desc: 'Đòn đánh kèm đao khí gây thêm 140% ATK, tăng 30% tỉ lệ đòn bồi Extra Turn!', extraTurnBonus: 0.30, uniquePassive: 'starter_slashes' }
       ]
     },
     {
-      id: 'hero_amber',
-      name: 'Amber',
-      title: 'Kỵ Sĩ Trinh Sát Tây Phong',
+      id: 'hero_shadow_rogue',
+      name: 'Thích Khách Song Đao',
+      title: 'Bóng Ma Đoạt Hồn Ám Dạ',
       rarity: 'rare',
-      element: 'pyro',
-      elementName: 'Hỏa 🔥',
-      elementColor: '#ff7043',
-      atkBonusPct: 0.12, hpBonusPct: 0.10, defBonusPct: 0.08, spdBonus: 6,
+      element: 'anemo',
+      elementName: 'Ám Dạ 🗡️',
+      elementColor: '#3b82f6',
+      pixelArchetype: 'shadow_rogue',
+      atkBonusPct: 0.15, hpBonusPct: 0.10, defBonusPct: 0.08, spdBonus: 10,
       skills: [
-        { id: 's1', name: 'Tia Lửa Trinh Sát', type: 'passive', icon: '🔥', desc: 'Tăng 15% Sát thương và tăng 15% lượng Vàng nhận được.', bonusAtk: 0.15, bonusGold: 0.15 },
-        { id: 's2', name: 'Quán Quân Baron Bunny', type: 'active', icon: '🐰', cd: 5.5, dmgMult: 2.2, desc: 'Ném búp bê khiêu khích phát nổ gây 220% ATK sát thương Hỏa.' },
-        { id: 's3', name: 'Mưa Tên Rực Lửa (Fiery Rain)', type: 'burst', icon: '🏹', cd: 13, dmgMult: 5.8, desc: 'Bắn mưa mũi tên lửa từ bầu trời thiêu rụi mục tiêu gây 580% ATK sát thương.' }
+        { id: 's1', name: 'Ám Sát Bản Năng', type: 'passive', icon: '🗡️', desc: 'Tăng 18% Sát thương, +15% Tỉ lệ Bạo kích và +15% Tốc độ đánh.', bonusAtk: 0.18 },
+        { id: 's2', name: 'Song Đao Loạn Vũ', type: 'active', icon: '💨', cd: 4.8, dmgMult: 2.8, desc: 'Lướt bóng đêm ra sau lưng đối thủ chém 4 nhát song đao chớp nhoáng gây 280% ATK sát thương.' },
+        { id: 's3', name: 'Ảo Ảnh Tuyệt Sát', type: 'burst', icon: '👥', cd: 12.0, dmgMult: 7.5, desc: 'Phân thân thành vô số bóng mờ trảm sát liên hoàn gây 750% ATK sát thương bạo kích!' }
       ],
       eidolons: [
-        { level: 1, name: 'E1: Nhất Tiễn Song Điêu', desc: 'Đòn đánh thường bắn thêm 1 mũi tên lửa phụ gây 75% sát thương.', uniquePassive: 'double_arrow' },
-        { level: 2, name: 'E2: Bộc Phá Baron Bunny', desc: 'Bunny nổ gây thêm 100% sát thương Hỏa và giảm hồi chiêu 1.5s.', cdReduction: 1.5, skillDmgMult: 1.0 },
-        { level: 3, name: 'E3: Tia Lửa Thiêu Đốt', desc: 'Cấp kỹ năng bị động +3. Tăng 35% ATK và +30% Vàng rơi.', bonusAtk: 0.35, bonusGold: 0.30 },
-        { level: 4, name: 'E4: Khiên Lửa Tây Phong', desc: 'Giảm 25% sát thương nhận vào, tự thiêu đốt quái mỗi lượt.', bonusDef: 0.30 },
-        { level: 5, name: 'E5: Hỏa Vũ Cuồng Nộ', desc: 'Cấp Nộ Mưa Tên Rực Lửa +3. Sát thương Nộ tăng thêm 90%.', burstDmgMult: 0.90 },
-        { level: 6, name: 'E6: Bão Lửa Liêu Nguyên', desc: 'Sau khi tung Nộ, tăng 50% Tốc độ đánh và 60% Sát thương toàn đội!', extraSpd: 15, uniquePassive: 'fire_storm' }
+        { level: 1, name: 'E1: Ảnh Bộ Vô Tung', desc: 'Tăng 25% Tốc độ di chuyển và +25% sát thương Bạo kích.', extraSpd: 10, bonusAtk: 0.25 },
+        { level: 2, name: 'E2: Đoạt Mệnh Song Đao', desc: 'Song Đao Loạn Vũ giảm 1.0s hồi chiêu, khi chí mạng lập tức hồi lại 1 lần đánh.', cdReduction: 1.0, skillDmgMult: 0.40 },
+        { level: 3, name: 'E3: Thuật Thích Khách', desc: 'Cấp kỹ năng Ám Sát +3. Tăng 40% Sát thương toàn diện.', bonusAtk: 0.40 },
+        { level: 4, name: 'E4: Khí Tức Bóng Tối', desc: 'Có 30% tỉ lệ né tránh hoàn toàn đòn tấn công của đối thủ.', uniquePassive: 'shadow_dodge' },
+        { level: 5, name: 'E5: Huyễn Ảnh Cuồng Phong', desc: 'Cấp Nộ Ảo Ảnh Tuyệt Sát +3. Sát thương tăng thêm 80%.', burstDmgMult: 0.8 },
+        { level: 6, name: 'E6: Tử Thần Đoạt Hồn', desc: 'Đòn đánh thường có 40% tỉ lệ chém thêm 2 nhát đao khí bóng tối 180% ATK bạo kích!', uniquePassive: 'rogue_shadow_slashes' }
       ]
     },
     {
-      id: 'hero_kazuha',
-      name: 'Kaedehara Kazuha',
-      title: 'Phong Lãng Khách Tụ Địch',
+      id: 'hero_frost_knight',
+      name: 'Băng Kiếm Sĩ',
+      title: 'Chiến Tướng Băng Hà Vĩnh Cửu',
       rarity: 'epic',
-      element: 'anemo',
-      elementName: 'Phong 🍃',
-      elementColor: '#69f0ae',
-      atkBonusPct: 0.20, hpBonusPct: 0.15, defBonusPct: 0.10, spdBonus: 10,
-      skills: [
-        { id: 's1', name: 'Thiên Hướng Thi Ca', type: 'passive', icon: '🍃', desc: 'Tăng 25% Sát thương và tăng 15% tỉ lệ đòn bồi Extra Turn.', bonusAtk: 0.25 },
-        { id: 's2', name: 'Chihayaburu (Gió Lốc Bạt Mây)', type: 'active', icon: '🍂', cd: 6, dmgMult: 2.6, desc: 'Lướt gió chém rơi từ trên không gây 260% ATK sát thương Phong.' },
-        { id: 's3', name: 'Vạn Diệp Nhất Hoang', type: 'burst', icon: '🍁', cd: 14, dmgMult: 7.2, desc: 'Mở rộng Vùng Lá Phong thi triển nhát kiếm thi văn gây 720% ATK sát thương cực lớn.' }
-      ],
-      eidolons: [
-        { level: 1, name: 'E1: Xích Trảm Xuyên Mây', desc: 'Tung Nộ lập tức làm mới 100% hồi chiêu của Kỹ năng Chihayaburu!', uniquePassive: 'reset_skill2_on_burst' },
-        { level: 2, name: 'E2: Gió Cuốn Sơn Hà', desc: 'Tăng 35% tỉ lệ đòn bồi Extra Turn và +45% Sát thương Phong.', extraTurnBonus: 0.35, bonusAtk: 0.45 },
-        { level: 3, name: 'E3: Thu Sương Tụ Hội', desc: 'Cấp kỹ năng Chihayaburu +3. Sát thương kỹ năng tăng 60%.', skillDmgMult: 0.60 },
-        { level: 4, name: 'E4: Thi Ca Lãng Tử', desc: 'Hồi phục 10% Max HP mỗi khi tung kỹ năng, tăng 30% Tốc độ chạy.', extraSpd: 12, uniquePassive: 'kazuha_heal' },
-        { level: 5, name: 'E5: Vạn Diệp Phong Lưu', desc: 'Cấp Nộ Vạn Diệp Nhất Hoang +3. Vùng lá phong tồn tại vĩnh viễn.', burstDmgMult: 1.2 },
-        { level: 6, name: 'E6: Huyết Mạch Phong Kiếm', desc: 'Đính kèm Phong vào kiếm, đòn đánh xuyên 40% giáp của đối thủ và bạo kích liên tục!', uniquePassive: 'anemo_infusion' }
-      ]
-    },
-    {
-      id: 'hero_zhongli',
-      name: 'Zhongli',
-      title: 'Nham Vương Trấn Thế',
-      rarity: 'legendary',
-      element: 'geo',
-      elementName: 'Nham 🪨',
-      elementColor: '#ffab00',
-      atkBonusPct: 0.25, hpBonusPct: 0.40, defBonusPct: 0.35, spdBonus: 5,
-      skills: [
-        { id: 's1', name: 'Khiên Ngọc Nham Thạch', type: 'passive', icon: '🛡️', desc: 'Tăng 40% Phòng thủ và tự hồi 5% Max HP mỗi lượt đánh.', bonusDef: 0.40 },
-        { id: 's2', name: 'Địa Tâm Thạch Trụ', type: 'active', icon: '🗿', cd: 7, dmgMult: 2.8, desc: 'Tạo cột đá Nham cộng hưởng gây 280% ATK sát thương và làm choáng kẻ địch.' },
-        { id: 's3', name: 'Thiên Tinh Giáng Trần', type: 'burst', icon: '☄️', cd: 15, dmgMult: 9.0, desc: 'Gọi thiên thạch từ bầu trời nghiền nát mục tiêu gây 900% ATK sát thương Nham hủy diệt.' }
-      ],
-      eidolons: [
-        { level: 1, name: 'E1: Thạch Trụ Song Trùng', desc: 'Tạo thêm 1 cột đá Nham cộng hưởng kép, tăng 60% sát thương Skill 2.', skillDmgMult: 0.60 },
-        { level: 2, name: 'E2: Thạch Hồn Hộ Thể', desc: 'Khi kích hoạt Nộ Thiên Tinh, nhận lớp giáp Nham hấp thụ 100% Max HP!', uniquePassive: 'shield_burst' },
-        { level: 3, name: 'E3: Ngọc Nham Kiên Cố', desc: 'Cấp Kỹ năng Địa Tâm Thạch Trụ +3. Tăng 50% Phòng thủ.', bonusDef: 0.50 },
-        { level: 4, name: 'E4: Thiên Tinh Trừ Tà', desc: 'Thiên Tinh kéo dài thời gian Hóa Đá của đối thủ và tăng 50% sát thương.', burstDmgMult: 0.50 },
-        { level: 5, name: 'E5: Trấn Nhương Thương Hải', desc: 'Cấp Nộ Thiên Tinh Giáng Trần +3. Sát thương Nộ tăng gấp đôi.', burstDmgMult: 1.0 },
-        { level: 6, name: 'E6: Nham Vương Kim Thân', desc: 'Lớp giáp Nham chuyển hóa 40% sát thương nhận vào thành HỒI MÁU! Bất tử trước mọi Boss.', uniquePassive: 'zhongli_vamp_shield' }
-      ]
-    },
-    {
-      id: 'hero_jiyan',
-      name: 'Jiyan (Tướng Quân Cơ Diễm)',
-      title: 'Thanh Long Phá Trận',
-      rarity: 'legendary',
-      element: 'anemo',
-      elementName: 'Thanh Long 🐉',
+      element: 'cryo',
+      elementName: 'Hàn Băng ❄️',
       elementColor: '#00e5ff',
-      atkBonusPct: 0.35, hpBonusPct: 0.25, defBonusPct: 0.20, spdBonus: 15,
+      pixelArchetype: 'frost_knight',
+      atkBonusPct: 0.25, hpBonusPct: 0.25, defBonusPct: 0.20, spdBonus: 12,
       skills: [
-        { id: 's1', name: 'Long Hồn Chiến Ý', type: 'passive', icon: '🐲', desc: 'Tăng 35% Sát thương và tăng 25% tốc độ tấn công.', bonusAtk: 0.35 },
-        { id: 's2', name: 'Phong Trảm Thương Long', type: 'active', icon: '🗡️', cd: 5.5, dmgMult: 3.2, desc: 'Múa thương hóa rồng quét ngang gây 320% ATK sát thương xé rách phòng thủ.' },
-        { id: 's3', name: 'Thương Long Vạn Nhận Quy Tông', type: 'burst', icon: '🌪️', cd: 13, dmgMult: 10.5, desc: 'Triệu hồi Chân Long giáng thế càn quét chiến trường gây 1050% ATK sát thương bão tố.' }
+        { id: 's1', name: 'Băng Tinh Hộ Thể', type: 'passive', icon: '🛡️', desc: 'Tăng 30% Phòng thủ, giảm 20% sát thương nhận vào và tự hồi 5% Max HP mỗi lượt.', bonusDef: 0.30 },
+        { id: 's2', name: 'Hàn Băng Thập Tự Trảm', type: 'active', icon: '🗡️', cd: 5.5, dmgMult: 3.5, desc: 'Vung kiếm băng chém chữ thập gây 350% ATK sát thương Hàn Băng và làm chậm quái.' },
+        { id: 's3', name: 'Băng Phong Tuyệt Vực', type: 'burst', icon: '❄️', cd: 12.5, dmgMult: 9.8, desc: 'Triệu hồi bão chông băng nhọn đâm xuyên từ lòng đất gây 980% ATK sát thương và đóng băng kẻ địch!' }
       ],
       eidolons: [
-        { level: 1, name: 'E1: Thương Long Tụ Khí', desc: 'Thêm 1 lần sử dụng Phong Trảm Thương Long không tốn hồi chiêu.', uniquePassive: 'extra_charge' },
-        { level: 2, name: 'E2: Bá Vương Chiến Ý', desc: 'Vào trận nhận ngay +50% Sát thương và +25% Tốc độ đánh.', bonusAtk: 0.50, extraSpd: 15 },
-        { level: 3, name: 'E3: Long Hồn Thức Tỉnh', desc: 'Cấp kỹ năng Phong Trảm +3. Sát thương thương thuật tăng 70%.', skillDmgMult: 0.70 },
-        { level: 4, name: 'E4: Long Lân Bất Hoại', desc: 'Bỏ qua 40% Phòng thủ của toàn bộ quái vật và Boss.', uniquePassive: 'def_shred_40' },
-        { level: 5, name: 'E5: Chân Long Xuất Thế', desc: 'Cấp Nộ Thương Long Vạn Nhận +3. Sát thương rồng tăng 120%.', burstDmgMult: 1.2 },
-        { level: 6, name: 'E6: Thương Long Thần Uy', desc: 'Mỗi đòn đánh thường tung thêm Đao Khí Chân Long gây 300% ATK bạo kích cực đại!', uniquePassive: 'dragon_slash_e6' }
+        { level: 1, name: 'E1: Hàn Sương Phá Giáp', desc: 'Đòn đánh làm giảm 30% Giáp kẻ thù trong suốt trận chiến.', uniquePassive: 'frost_def_shred' },
+        { level: 2, name: 'E2: Băng Khiên Tinh Thể', desc: 'Khi tung Nộ lập tức nhận lớp giáp Băng hấp thụ sát thương tương đương 60% Max HP!', uniquePassive: 'frost_shield_burst' },
+        { level: 3, name: 'E3: Tâm Băng Vô Cực', desc: 'Cấp kỹ năng Thập Tự Trảm +3. Sát thương kiếm băng tăng 60%.', skillDmgMult: 0.60 },
+        { level: 4, name: 'E4: Huyết Mạch Băng Hà', desc: 'Hồi phục 12% Max HP mỗi khi tung kỹ năng, miễn nhiễm choáng.', bonusHp: 0.35 },
+        { level: 5, name: 'E5: Băng Tuyết Cuồng Triều', desc: 'Cấp Nộ Băng Phong Tuyệt Vực +3. Sát thương bão băng tăng gấp đôi.', burstDmgMult: 1.0 },
+        { level: 6, name: 'E6: Cực Hàn Thần Uy', desc: 'Đòn đánh thường chuyển thành Trảm Kích Băng Cực Hạn gây thêm 25% Max HP sát thương bỏ qua phòng thủ!', uniquePassive: 'frost_hp_slash' }
       ]
     },
     {
-      id: 'hero_furina',
-      name: 'Furina',
-      title: 'Thủy Thần Ca Vũ Kịch',
-      rarity: 'mythic',
-      element: 'hydro',
-      elementName: 'Thủy 💧',
-      elementColor: '#29b6f6',
-      atkBonusPct: 0.30, hpBonusPct: 0.35, defBonusPct: 0.20, spdBonus: 12,
-      skills: [
-        { id: 's1', name: 'Khúc Hoan Ca Muôn Dân', type: 'passive', icon: '🎭', desc: 'Tăng 30% Sát thương toàn thể và tăng 50% tỉ lệ rơi Vàng.', bonusGold: 0.50 },
-        { id: 's2', name: 'Đoàn Khách Thủy Triều', type: 'active', icon: '🦀', cd: 6, dmgMult: 3.0, desc: 'Triệu hồi bạn bè Thủy sinh tấn công liên hoàn gây 300% ATK sát thương Thủy.' },
-        { id: 's3', name: 'Vũ Điệu Muôn Dân Vạn Tuế', type: 'burst', icon: '🌊', cd: 14, dmgMult: 9.8, desc: 'Mở sân khấu nhạc kịch đại dương dâng sóng thần gây 980% ATK sát thương cuồng nộ.' }
-      ],
-      eidolons: [
-        { level: 1, name: 'E1: Tình Ca Biển Cả', desc: 'Vào trận nhận ngay tối đa điểm Hoan Ca, tăng vĩnh viễn 50% Sát thương.', bonusAtk: 0.50 },
-        { level: 2, name: 'E2: Thủy Triều Dâng Cao', desc: 'Giới hạn Max HP tăng 60%, sát thương kỹ năng tăng theo Máu tối đa.', bonusHp: 0.60 },
-        { level: 3, name: 'E3: Sân Khấu Kịch Nghệ', desc: 'Cấp kỹ năng Đoàn Khách Thủy Triều +3. Sát thương thủy sinh tăng 80%.', skillDmgMult: 0.80 },
-        { level: 4, name: 'E4: Hồi Âm Biển Sâu', desc: 'Tự hồi 12% Max HP mỗi lượt và tăng 100% tỉ lệ Vàng nhận được.', bonusGold: 1.0, uniquePassive: 'furina_regen' },
-        { level: 5, name: 'E5: Khúc Hoan Ca Vạn Niên', desc: 'Cấp Nộ Vũ Điệu Muôn Dân +3. Sát thương sóng thần tăng gấp đôi.', burstDmgMult: 1.0 },
-        { level: 6, name: 'E6: Vương Miện Vạn Thủy', desc: 'Đòn đánh thường chuyển thành Trảm Kích Thủy Thần gây 40% Max HP sát thương Thủy thuần khiết!', uniquePassive: 'furina_hp_slash' }
-      ]
-    },
-    {
-      id: 'hero_changli',
-      name: 'Changli (Trường Ly)',
-      title: 'Hỏa Phượng Liêu Nguyên',
-      rarity: 'chaos',
-      element: 'pyro',
-      elementName: 'Hỏa 🔥',
-      elementColor: '#ff1744',
-      atkBonusPct: 0.50, hpBonusPct: 0.30, defBonusPct: 0.25, spdBonus: 22,
-      skills: [
-        { id: 's1', name: 'Xích Hỏa Phần Thiên', type: 'passive', icon: '🪶', desc: 'Tăng 50% Sát thương bạo kích và bỏ qua 20% giáp của mọi kẻ thù.', bonusAtk: 0.50 },
-        { id: 's2', name: 'Chu Tước Nghịch Vũ', type: 'active', icon: '🔥', cd: 5, dmgMult: 4.2, desc: 'Biến hóa thành bóng phượng hoàng lướt chém lửa gây 420% ATK sát thương Hỏa.' },
-        { id: 's3', name: 'Phượng Hoàng Niết Bàn Tuyệt Kỹ', type: 'burst', icon: '🦚', cd: 12, dmgMult: 14.0, desc: 'Triệu hồi Hỏa Phượng thiêu rụi toàn cõi gây 1400% ATK sát thương Hỏa thiêu đốt.' }
-      ],
-      eidolons: [
-        { level: 1, name: 'E1: Xích Hỏa Chiêm Đoán', desc: 'Tung kỹ năng tăng 40% ATK và miễn nhiễm bị đẩy lùi.', bonusAtk: 0.40 },
-        { level: 2, name: 'E2: Phượng Vũ Nghịch Hỏa', desc: 'Tăng 35% Tỉ lệ Bạo kích và 70% Sát thương Bạo kích.', bonusAtk: 0.50, extraTurnBonus: 0.25 },
-        { level: 3, name: 'E3: Chu Tước Luyện Hỏa', desc: 'Cấp kỹ năng Chu Tước Nghịch Vũ +3. Sát thương Hỏa Phượng tăng 80%.', skillDmgMult: 0.80 },
-        { level: 4, name: 'E4: Thiêu Rụi Càn Khôn', desc: 'Đòn đánh thiêu đốt làm giảm 35% Giáp kẻ thù liên tục.', uniquePassive: 'def_shred_35' },
-        { level: 5, name: 'E5: Niết Bàn Trùng Sinh', desc: 'Cấp Nộ Phượng Hoàng Niết Bàn +3. Khi hấp hối lập tức hồi sinh 100% HP (hồi chiêu 60s).', uniquePassive: 'phoenix_revive' },
-        { level: 6, name: 'E6: Phượng Hoàng Thần Hỏa', desc: 'Nộ tuyệt kỹ bỏ qua 50% giáp của Boss, gây thêm Vụ Nổ Thần Hỏa 600% ATK cực kỳ chấn động!', uniquePassive: 'changli_super_burst' }
-      ]
-    },
-    {
-      id: 'hero_raiden',
-      name: 'Raiden Shogun (Lôi Thần Ei)',
-      title: 'Lôi Đình Tịch Diệt Vĩnh Cửu',
-      rarity: 'chaos',
+      id: 'hero_spear_lancer',
+      name: 'Long Thương Thủ',
+      title: 'Đệ Nhất Long Thương Hoàng Gia',
+      rarity: 'legendary',
       element: 'electro',
-      elementName: 'Lôi ⚡',
-      elementColor: '#d500f9',
-      atkBonusPct: 0.60, hpBonusPct: 0.35, defBonusPct: 0.30, spdBonus: 28,
+      elementName: 'Lôi Long ⚡',
+      elementColor: '#ffd700',
+      pixelArchetype: 'spear_lancer',
+      atkBonusPct: 0.40, hpBonusPct: 0.30, defBonusPct: 0.25, spdBonus: 20,
       skills: [
-        { id: 's1', name: 'Thần Mâu Vĩnh Cửu', type: 'passive', icon: '⚡', desc: 'Tăng 60% Sát thương và tăng 35% tốc độ tấn công, đòn đánh luôn kèm sét giật.', bonusAtk: 0.60 },
-        { id: 's2', name: 'Lôi Phạt Thần Uy', type: 'active', icon: '🗡️', cd: 4.5, dmgMult: 4.8, desc: 'Chém nhát kiếm Lôi phạt không gian gây 480% ATK sát thương điện giật làm tê liệt mục tiêu.' },
-        { id: 's3', name: 'Mộng Tưởng Nhất Đao (Musou no Hitotachi)', type: 'burst', icon: '⚔️', cd: 11, dmgMult: 18.0, desc: 'Rút bảo kiếm từ lồng ngực chém đứt lìa không gian thời gian gây 1800% ATK sát thương hủy diệt!' }
+        { id: 's1', name: 'Thương Tâm Hợp Nhất', type: 'passive', icon: '⚡', desc: 'Tăng 40% Sát thương, +30% Tốc độ đánh và tăng 35% tỉ lệ đòn bồi Extra Turn!', bonusAtk: 0.40, extraTurnBonus: 0.35 },
+        { id: 's2', name: 'Lôi Thương Xuyên Thấu', type: 'active', icon: '🔱', cd: 5.0, dmgMult: 4.2, desc: 'Đâm mũi trường thương bọc sấm sét chớp nhoáng gây 420% ATK sát thương xuyên thấu.' },
+        { id: 's3', name: 'Kim Long Phá Thiên', type: 'burst', icon: '🐉', cd: 12.0, dmgMult: 13.5, desc: 'Khai mở long hồn phóng đại thương phá vỡ không gian gây 1350% ATK sát thương sấm rồng hủy diệt!' }
       ],
       eidolons: [
-        { level: 1, name: 'E1: Ác Ma Dục Vọng', desc: 'Tốc độ tích lũy Ý Lực Lôi Phạt tăng 100%, +40% Sát thương Lôi.', bonusAtk: 0.40 },
-        { level: 2, name: 'E2: Trảm Phá Thiết Giáp', desc: '⚡ Mộng Tưởng Nhất Đao BỎ QUA 60% PHÒNG THỦ CỦA TOÀN BỘ KẺ ĐỊCH! (Đỉnh cao sức mạnh Lôi Thần)', uniquePassive: 'def_shred_60' },
-        { level: 3, name: 'E3: Chân Lý Lôi Đình', desc: 'Cấp Nộ Mộng Tưởng Nhất Đao +3. Sát thương nhát chém tăng 150%.', burstDmgMult: 1.5 },
-        { level: 4, name: 'E4: Lời Thề Vĩnh Cửu', desc: 'Sau khi chém Nộ, tăng 40% ATK vĩnh viễn và hồi máu 15% Max HP.', bonusAtk: 0.40 },
-        { level: 5, name: 'E5: Phạt Thần Xuất Thế', desc: 'Cấp kỹ năng Lôi Phạt Thần Uy +3. Thời gian hồi chiêu giảm 1s.', cdReduction: 1.0 },
-        { level: 6, name: 'E6: Thời Không Ngưng Trệ', desc: 'Nhát chém ngưng đọng thời gian, giảm 2s hồi chiêu toàn bộ kỹ năng mỗi đòn trúng, sấm sét Lôi Thần giật 350% ATK!', uniquePassive: 'raiden_timestop' }
+        { level: 1, name: 'E1: Thần Hành Vô Ảnh', desc: 'Tăng thêm 25% Tốc độ đánh và +40% sát thương đòn bồi Extra Turn.', bonusAtk: 0.30, extraSpd: 15 },
+        { level: 2, name: 'E2: Lôi Đình Thương Ý', desc: 'Lôi Thương Xuyên Thấu giảm 1.5s hồi chiêu, hồi chiêu xong tự động bồi thêm 1 phát đâm.', cdReduction: 1.5, skillDmgMult: 0.60 },
+        { level: 3, name: 'E3: Long Hồn Chiến Pháp', desc: 'Cấp kỹ năng Thương Tâm +3. Tăng 60% Sát thương toàn đội.', bonusAtk: 0.60 },
+        { level: 4, name: 'E4: Phá Trận Thần Thương', desc: 'Mọi đòn đánh đều bỏ qua 45% phòng thủ của Boss và quái vật.', uniquePassive: 'lancer_def_shred' },
+        { level: 5, name: 'E5: Cửu Tiêu Long Ngâm', desc: 'Cấp Nộ Kim Long Phá Thiên +3. Sát thương rồng sấm tăng thêm 130%.', burstDmgMult: 1.3 },
+        { level: 6, name: 'E6: Vạn Thương Quy Tông', desc: 'Mỗi đòn đánh thường tung thêm Đao Khí Chân Long gây 320% ATK bạo kích cực đại!', uniquePassive: 'lancer_dragon_slash' }
+      ]
+    },
+    {
+      id: 'hero_flame_knight',
+      name: 'Kiếm Sĩ Hỏa Diệm',
+      title: 'Bậc Thầy Trảm Kích Rực Lửa',
+      rarity: 'mythic',
+      element: 'pyro',
+      elementName: 'Hỏa Diệm 🔥',
+      elementColor: '#ff3d00',
+      pixelArchetype: 'flame_knight',
+      atkBonusPct: 0.55, hpBonusPct: 0.40, defBonusPct: 0.30, spdBonus: 22,
+      skills: [
+        { id: 's1', name: 'Hỏa Hồn Bất Diệt', type: 'passive', icon: '🔥', desc: 'Tăng 55% Sát thương và tăng 45% sát thương Bạo kích Hỏa.', bonusAtk: 0.55 },
+        { id: 's2', name: 'Hỏa Diệm Đoạt Mệnh', type: 'active', icon: '⚔️', cd: 4.8, dmgMult: 4.8, desc: 'Vung đại kiếm rực lửa chém bùng nổ gây 480% ATK sát thương Hỏa.' },
+        { id: 's3', name: 'Thiêu Càn Liệu Khôn', type: 'burst', icon: '🌋', cd: 12.0, dmgMult: 16.5, desc: 'Cắm đại kiếm xuống đất kích phát trận địa cột lửa hủy diệt gây 1650% ATK sát thương cực đại!' }
+      ],
+      eidolons: [
+        { level: 1, name: 'E1: Hỏa Lực Trùng Trùng', desc: 'Tăng 45% Sát thương và +20% Tốc độ đánh.', bonusAtk: 0.45, extraSpd: 10 },
+        { level: 2, name: 'E2: Liệt Diệm Kiếm Khí', desc: 'Hỏa Diệm Đoạt Mệnh giảm 1.5s hồi chiêu và gây thêm 80% sát thương.', cdReduction: 1.5, skillDmgMult: 0.80 },
+        { level: 3, name: 'E3: Hỏa Ma Thức Tỉnh', desc: 'Cấp kỹ năng Hỏa Hồn Bất Diệt +3. Tăng 50% Sát thương bạo kích.', bonusAtk: 0.50 },
+        { level: 4, name: 'E4: Giáp Lửa Bất Diệt', desc: 'Giảm 30% sát thương nhận vào, tự thiêu đốt quái vật mỗi hiệp.', bonusDef: 0.35 },
+        { level: 5, name: 'E5: Vạn Hỏa Triều Quy', desc: 'Cấp Nộ Thiêu Càn Liệu Khôn +3. Sát thương Nộ tăng thêm 120%.', burstDmgMult: 1.2 },
+        { level: 6, name: 'E6: Hỏa Thần Giáng Thế', desc: 'Nhát chém Nộ bỏ qua 50% giáp của đối thủ, kích phát vụ nổ hỏa diệm liên tiếp 450% ATK!', uniquePassive: 'flame_super_burst' }
+      ]
+    },
+    {
+      id: 'hero_arcane_mage',
+      name: 'Đại Pháp Sư Hư Không',
+      title: 'Chủ Nhân Cổ Thư Cấm Thuật',
+      rarity: 'chaos',
+      element: 'void',
+      elementName: 'Hư Vô 🔮',
+      elementColor: '#b026ff',
+      pixelArchetype: 'arcane_mage',
+      atkBonusPct: 0.75, hpBonusPct: 0.50, defBonusPct: 0.35, spdBonus: 28,
+      skills: [
+        { id: 's1', name: 'Ma Đạo Cổ Thư', type: 'passive', icon: '📖', desc: 'Tăng 75% Sát thương, miễn nhiễm suy yếu và tự hồi phục 10% Max HP mỗi hiệp đấu.', bonusAtk: 0.75 },
+        { id: 's2', name: 'Hư Vô Phù Chú', type: 'active', icon: '🔮', cd: 4.5, dmgMult: 5.8, desc: 'Khai mở cổ thư cấm thuật bắn chùm ấn chú hư không ma thuật gây 580% ATK sát thương Hư Vô.' },
+        { id: 's3', name: 'Hắc Động Tịch Diệt', type: 'burst', icon: '🌌', cd: 11.5, dmgMult: 22.0, desc: 'Triệu hồi pháp trận hắc động bóp nghẹt và nghiền nát không thời gian gây 2200% ATK sát thương bạo kích tuyệt đối!' }
+      ],
+      eidolons: [
+        { level: 1, name: 'E1: Bí Thuật Khởi Nguyên', desc: 'Tăng 60% Sát thương phép thuật và +30% Tốc độ đánh.', bonusAtk: 0.60, extraSpd: 15 },
+        { level: 2, name: 'E2: Trọng Lực Hư Không', desc: 'Kỹ năng Hư Vô Phù Chú làm tê liệt đối thủ 1 lượt và giảm 50% Giáp đối thủ.', uniquePassive: 'void_gravity' },
+        { level: 3, name: 'E3: Ma Pháp Tối Thượng', desc: 'Cấp kỹ năng Cổ Thư +3. Sát thương kỹ năng tăng 80%.', skillDmgMult: 0.80 },
+        { level: 4, name: 'E4: Khiên Ma Pháp Vĩnh Hằng', desc: 'Hấp thụ 40% sát thương nhận vào chuyển hóa thành hồi máu.', uniquePassive: 'mage_vamp_shield' },
+        { level: 5, name: 'E5: Hắc Động Vô Tận', desc: 'Cấp Nộ Hắc Động Tịch Diệt +3. Sát thương tăng gấp đôi.', burstDmgMult: 1.0 },
+        { level: 6, name: 'E6: Ma Thần Tái Thế', desc: 'Tung Nộ bỏ qua 60% giáp của Boss, gây thêm Vụ Nổ Hư Không 650% ATK chấn động toàn cõi!', uniquePassive: 'mage_singularity_e6' }
       ]
     },
     {
       id: 'hero_unknown_god',
-      name: 'Thiên Lý Khởi Nguyên (???)',
-      title: 'Chúa Tể Hư Vô Vạn Vật',
+      name: '⟦ VÔ CỰC NGHỊCH MỆNH THẦN QUÂN ⟧',
+      title: 'Chúa Tể Thái Sơ Vô Thượng',
       rarity: 'unknown',
-      element: 'void',
-      elementName: 'Hư Vô 🌌',
+      element: 'cosmic',
+      elementName: 'Hư Vô Thần Cấp 🌌',
       elementColor: '#00ffcc',
+      pixelArchetype: 'unknown_god',
       atkBonusPct: 2.0, hpBonusPct: 1.5, defBonusPct: 1.0, spdBonus: 60,
       skills: [
         { id: 's1', name: 'Thần Quyền Vô Cực', type: 'passive', icon: '🌌', desc: 'Tăng 200% Sát thương toàn thể, miễn nhiễm mọi hiệu ứng xấu và nhận 100% tỉ lệ đòn bồi.', bonusAtk: 2.0 },
-        { id: 's2', name: 'Hư Không Phân Rã', type: 'active', icon: '⬛', cd: 4, dmgMult: 10.0, desc: 'Triệu hồi khối lập phương màu đỏ phong ấn và bóp nghẹt đối thủ gây 1000% ATK sát thương hư vô.' },
-        { id: 's3', name: 'Tịch Diệt Thế Giới (Genesis Collapse)', type: 'burst', icon: '🌠', cd: 9, dmgMult: 50.0, desc: 'Tái tạo trật tự vũ trụ hủy diệt toàn bộ thực tại gây 5000% ATK sát thương Thần Thánh Vô Cực!' }
+        { id: 's2', name: 'Hư Không Phân Rã', type: 'active', icon: '⬛', cd: 4.0, dmgMult: 10.0, desc: 'Triệu hồi khối lập phương màu đỏ phong ấn và bóp nghẹt đối thủ gây 1000% ATK sát thương hư vô.' },
+        { id: 's3', name: 'Tịch Diệt Thế Giới (Genesis Collapse)', type: 'burst', icon: '🌠', cd: 9.0, dmgMult: 50.0, desc: 'Tái tạo trật tự vũ trụ hủy diệt toàn bộ thực tại gây 5000% ATK sát thương Thần Thánh Vô Cực!' }
       ],
       eidolons: [
         { level: 1, name: 'E1: Khởi Nguyên Vô Giới', desc: 'Tăng 150% Sát thương toàn thể và +100% Máu tối đa.', bonusAtk: 1.5, bonusHp: 1.0 },
@@ -668,3 +629,28 @@ CONFIG.getTowerBossInfo = function(floor) {
     atkMult: base.atkMult * (1 + (cycle - 1) * 0.4)
   };
 };
+
+CONFIG.getHeroPixelArchetype = function(heroId) {
+  const hero = this.getHeroById(heroId);
+  if (hero && hero.pixelArchetype) return hero.pixelArchetype;
+  const defaults = {
+    hero_starter: 'starter_knight',
+    hero_shadow_rogue: 'shadow_rogue',
+    hero_frost_knight: 'frost_knight',
+    hero_spear_lancer: 'spear_lancer',
+    hero_flame_knight: 'flame_knight',
+    hero_arcane_mage: 'arcane_mage',
+    hero_unknown_god: 'unknown_god',
+    // Fallback migration mapping
+    hero_traveler: 'starter_knight',
+    hero_amber: 'flame_knight',
+    hero_changli: 'flame_knight',
+    hero_furina: 'frost_knight',
+    hero_zhongli: 'spear_lancer',
+    hero_jiyan: 'spear_lancer',
+    hero_raiden: 'arcane_mage',
+    hero_kazuha: 'shadow_rogue'
+  };
+  return defaults[heroId] || 'starter_knight';
+};
+

@@ -172,7 +172,7 @@ const Dungeon = {
       m.hp = Math.max(0, m.hp - dmg);
       if (typeof UI !== 'undefined') {
         UI.showDamageNumber(dmg, true, 'dungeon-monster');
-        UI.animatePlayerAttack('dungeon');
+        UI.animatePlayerSkill('dungeon', skillRes.type);
         UI.animateMonsterHit('dungeon');
         if (skillRes.type === 'burst' && UI.playBurstCinematic) {
           try { UI.playBurstCinematic(skillRes); } catch(e) {}
@@ -180,7 +180,10 @@ const Dungeon = {
       }
       if (m.hp <= 0) {
         m.hp = 0;
-        if (typeof UI !== 'undefined') UI.updateDungeonRoomMonster(m);
+        if (typeof UI !== 'undefined') {
+          UI.updateDungeonRoomMonster(m);
+          UI.animatePlayerWalk('dungeon', 450);
+        }
         setTimeout(() => this.handleRoomWaveClear(), 400);
         return;
       }
@@ -405,7 +408,7 @@ const Dungeon = {
       m.hp = Math.max(0, m.hp - dmg);
       if (typeof UI !== 'undefined') {
         UI.showDamageNumber(dmg, true, 'tower-enemy');
-        UI.animatePlayerAttack('tower');
+        UI.animatePlayerSkill('tower', skillRes.type);
         UI.animateMonsterHit('tower');
         if (skillRes.type === 'burst' && UI.playBurstCinematic) {
           try { UI.playBurstCinematic(skillRes); } catch(e) {}
@@ -413,7 +416,10 @@ const Dungeon = {
       }
       if (m.hp <= 0) {
         m.hp = 0;
-        if (typeof UI !== 'undefined') UI.updateTowerStageEnemy(m);
+        if (typeof UI !== 'undefined') {
+          UI.updateTowerStageEnemy(m);
+          UI.animatePlayerWalk('tower', 450);
+        }
         setTimeout(() => this.handleTowerFloorClear(), 400);
         return;
       }

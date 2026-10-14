@@ -714,6 +714,10 @@ const UI = {
       nameEl.textContent = heroCfg.name;
       nameEl.style.color = heroCfg.elementColor || '#fff';
     }
+    // Nếu nhân vật đang trong hoạt ảnh chém vũ khí hoặc dùng skill, không bị ghi đè bởi idle
+    if (this._isPlayerAnimating && action === 'idle') {
+      return;
+    }
     if (typeof Sprites !== 'undefined') {
       el.innerHTML = Sprites.getPlayerSvg(action, GameState.activeHeroId);
       if (action === 'idle') el.className = 'fighter-avatar player-idle';
@@ -811,6 +815,7 @@ const UI = {
   },
 
   showExtraTurnIndicator() {
+    if (typeof Cinematics !== 'undefined' && Cinematics.active) return;
     const isBoss = GameState.boss?.active;
     const bannerId = isBoss ? 'boss-extra-turn-banner' : 'extra-turn-banner';
     const banner = document.getElementById(bannerId);
@@ -822,13 +827,13 @@ const UI = {
     const pSpriteId = isBoss ? 'boss-player-sprite' : 'player-sprite';
     const pSprite = document.getElementById(pSpriteId);
     if (pSprite && typeof Sprites !== 'undefined') {
-      const activeHero = GameState.activeHeroId || 'hero_traveler';
-      pSprite.innerHTML = Sprites.getPlayerSvg('extra');
+      const activeHero = GameState.activeHeroId || 'hero_starter';
+      pSprite.innerHTML = Sprites.getPlayerSvg('extra', activeHero);
       pSprite.className = `fighter-avatar player-extra-anim hero-extra-${activeHero}`;
       clearTimeout(this._playerAnimTimer);
       this._playerAnimTimer = setTimeout(() => {
         if (pSprite) {
-          pSprite.innerHTML = Sprites.getPlayerSvg('idle');
+          pSprite.innerHTML = Sprites.getPlayerSvg('idle', activeHero);
           pSprite.className = 'fighter-avatar player-idle';
         }
       }, 420);
@@ -838,6 +843,8 @@ const UI = {
   },
 
   animatePlayerAttack(mode) {
+    if (typeof Cinematics !== 'undefined' && Cinematics.active) return;
+    this._isPlayerAnimating = true;
     let pSpriteId = 'player-sprite';
     let targetSlash = 'slash-fx-monster';
     if (mode === 'dungeon') {
@@ -852,21 +859,23 @@ const UI = {
     }
     const pSprite = document.getElementById(pSpriteId);
     if (pSprite && typeof Sprites !== 'undefined') {
-      const activeHero = GameState.activeHeroId || 'hero_traveler';
-      pSprite.innerHTML = Sprites.getPlayerSvg('attack');
+      const activeHero = GameState.activeHeroId || 'hero_starter';
+      pSprite.innerHTML = Sprites.getPlayerSvg('attack', activeHero);
       pSprite.className = `fighter-avatar player-attack-anim hero-attack-${activeHero}`;
       clearTimeout(this._playerAnimTimer);
       this._playerAnimTimer = setTimeout(() => {
+        this._isPlayerAnimating = false;
         if (pSprite) {
-          pSprite.innerHTML = Sprites.getPlayerSvg('idle');
+          pSprite.innerHTML = Sprites.getPlayerSvg('idle', activeHero);
           pSprite.className = 'fighter-avatar player-idle';
         }
-      }, 350);
+      }, 340);
     }
     this._triggerSlashFx(targetSlash, 'normal');
   },
 
   animatePlayerHit(mode) {
+    if (typeof Cinematics !== 'undefined' && Cinematics.active) return;
     let pSpriteId = 'player-sprite';
     if (mode === 'dungeon') pSpriteId = 'dungeon-player-sprite';
     else if (mode === 'tower') pSpriteId = 'tower-player-sprite';
@@ -874,20 +883,95 @@ const UI = {
 
     const pSprite = document.getElementById(pSpriteId);
     if (pSprite && typeof Sprites !== 'undefined') {
-      pSprite.innerHTML = Sprites.getPlayerSvg('hit');
+      const activeHero = GameState.activeHeroId || 'hero_starter';
+      pSprite.innerHTML = Sprites.getPlayerSvg('hit', activeHero);
       pSprite.className = 'fighter-avatar hit-flash';
       setTimeout(() => {
         if (pSprite) {
-          pSprite.innerHTML = Sprites.getPlayerSvg('idle');
+          pSprite.innerHTML = Sprites.getPlayerSvg('idle', activeHero);
           pSprite.className = 'fighter-avatar player-idle';
         }
-      }, 250);
+      }, 280);
     } else {
       this._triggerAnim(pSpriteId, 'hit-flash');
     }
   },
 
+  animatePlayerSkill(mode, skillType = 'skill') {
+    if (typeof Cinematics !== 'undefined' && Cinematics.active && skillType === 'burst') return;
+    this._isPlayerAnimating = true;
+    let pSpriteId = 'player-sprite';
+    let targetSlash = 'slash-fx-monster';
+    if (mode === 'dungeon') {
+      pSpriteId = 'dungeon-player-sprite';
+      targetSlash = 'dungeon-monster-slash-fx';
+    } else if (mode === 'tower') {
+      pSpriteId = 'tower-player-sprite';
+      targetSlash = 'tower-enemy-slash-fx';
+    } else if (GameState.boss?.active) {
+      pSpriteId = 'boss-player-sprite';
+      targetSlash = 'slash-fx-boss';
+    }
+    const pSprite = document.getElementById(pSpriteId);
+    if (pSprite && typeof Sprites !== 'undefined') {
+      const activeHero = GameState.activeHeroId || 'hero_starter';
+      pSprite.innerHTML = Sprites.getPlayerSvg(skillType === 'burst' ? 'burst' : 'skill', activeHero);
+      pSprite.className = `fighter-avatar player-skill-anim`;
+      clearTimeout(this._playerAnimTimer);
+      const duration = skillType === 'burst' ? 950 : 750;
+      this._playerAnimTimer = setTimeout(() => {
+        this._isPlayerAnimating = false;
+        if (pSprite) {
+          pSprite.innerHTML = Sprites.getPlayerSvg('idle', activeHero);
+          pSprite.className = 'fighter-avatar player-idle';
+        }
+      }, duration);
+    }
+    this._triggerSlashFx(targetSlash, skillType === 'burst' ? 'burst' : 'skill');
+  },
+
+  animatePlayerWalk(mode, duration = 600) {
+    let pSpriteId = 'player-sprite';
+    if (mode === 'dungeon') pSpriteId = 'dungeon-player-sprite';
+    else if (mode === 'tower') pSpriteId = 'tower-player-sprite';
+    else if (GameState.boss?.active) pSpriteId = 'boss-player-sprite';
+
+    const pSprite = document.getElementById(pSpriteId);
+    if (pSprite && typeof Sprites !== 'undefined') {
+      const activeHero = GameState.activeHeroId || 'hero_starter';
+      const delay = this._isPlayerAnimating ? 140 : 0;
+      setTimeout(() => {
+        this._isPlayerAnimating = false;
+        if (pSprite) {
+          pSprite.innerHTML = Sprites.getPlayerSvg('walk', activeHero);
+          pSprite.className = `fighter-avatar player-walk-anim`;
+          clearTimeout(this._playerAnimTimer);
+          this._playerAnimTimer = setTimeout(() => {
+            if (pSprite) {
+              pSprite.innerHTML = Sprites.getPlayerSvg('idle', activeHero);
+              pSprite.className = 'fighter-avatar player-idle';
+            }
+          }, duration);
+        }
+      }, delay);
+    }
+  },
+
+  animatePlayerDeath(mode) {
+    let pSpriteId = 'player-sprite';
+    if (mode === 'dungeon') pSpriteId = 'dungeon-player-sprite';
+    else if (mode === 'tower') pSpriteId = 'tower-player-sprite';
+    else if (GameState.boss?.active) pSpriteId = 'boss-player-sprite';
+
+    const pSprite = document.getElementById(pSpriteId);
+    if (pSprite && typeof Sprites !== 'undefined') {
+      pSprite.innerHTML = Sprites.getPlayerSvg('death');
+      pSprite.className = `fighter-avatar player-death-anim`;
+    }
+  },
+
   animateMonsterAttack(mode) {
+    if (typeof Cinematics !== 'undefined' && Cinematics.active) return;
     if (mode === 'dungeon') {
       this._triggerAnim('dungeon-monster-sprite', 'monster-attack-anim');
       this._triggerSlashFx('dungeon-player-slash-fx', 'normal');
@@ -901,6 +985,7 @@ const UI = {
   },
 
   animateMonsterHit(mode) {
+    if (typeof Cinematics !== 'undefined' && Cinematics.active) return;
     if (mode === 'dungeon') {
       this._triggerAnim('dungeon-monster-sprite', 'hit-flash');
     } else if (mode === 'tower') {
@@ -935,6 +1020,7 @@ const UI = {
   },
 
   _triggerAnim(elementId, className) {
+    if (typeof Cinematics !== 'undefined' && Cinematics.active && (elementId === 'player-sprite' || elementId === 'monster-sprite')) return;
     const el = document.getElementById(elementId);
     if (!el) return;
     el.classList.remove(className);
@@ -1075,7 +1161,7 @@ const UI = {
   },
 
   updateHeroSkillsHudGeneric(prefix) {
-    const activeHeroId = GameState.activeHeroId || 'hero_traveler';
+    const activeHeroId = GameState.activeHeroId || 'hero_starter';
     const heroCfg = CONFIG.getHeroById(activeHeroId);
     if (!heroCfg) return;
     const skills = heroCfg.skills || [];
@@ -1897,7 +1983,7 @@ const UI = {
     const container = document.getElementById('active-hero-showcase');
     if (!container) return;
 
-    const activeId = GameState.activeHeroId || 'hero_traveler';
+    const activeId = GameState.activeHeroId || 'hero_starter';
     const heroCfg = CONFIG.getHeroById(activeId);
     const userHero = GameState.heroes?.find(h => h.id === activeId) || { constellation: 0, skillLevels: { s1: 1, s2: 1, s3: 1 } };
     const skills = heroCfg.skills || [];
@@ -2000,6 +2086,7 @@ const UI = {
             `;
           }).join('')}
         </div>
+
       </div>
     `;
 
@@ -2025,7 +2112,7 @@ const UI = {
   },
 
   _handleUpgradeHeroSkill(skKey) {
-    const activeId = GameState.activeHeroId || 'hero_traveler';
+    const activeId = GameState.activeHeroId || 'hero_starter';
     let userHero = GameState.heroes?.find(h => h.id === activeId);
     if (!userHero) return;
 
@@ -2056,22 +2143,35 @@ const UI = {
       const isActive = GameState.activeHeroId === hero.id;
 
       const card = document.createElement('div');
-      card.className = `hero-roster-card ${isActive ? 'active-hero' : ''} ${!isOwned ? 'locked-hero' : ''}`;
-      card.style.borderColor = isActive ? '#00ffcc' : isOwned ? `${hero.elementColor}60` : 'rgba(255,255,255,0.1)';
+      card.className = `hero-roster-card ${isActive ? 'active-hero' : ''} ${!isOwned ? 'locked-hero' : 'owned-hero'}`;
+      card.style.borderColor = isActive ? '#00ffcc' : isOwned ? `${hero.elementColor}60` : 'rgba(255,255,255,0.12)';
 
       const avatarHtml = typeof Sprites !== 'undefined'
-        ? `<div class="hero-card-avatar">${Sprites.getPlayerSvg('idle', hero.id)}</div>`
+        ? `<div class="hero-card-avatar ${!isOwned ? 'locked-avatar' : ''}">${Sprites.getPlayerSvg('idle', hero.id)}${!isOwned ? '<div class="avatar-lock-overlay">🔒</div>' : ''}</div>`
         : `<div class="hero-card-avatar" style="font-size:1.8rem;">👑</div>`;
 
-      const activeTag = isActive ? `<span class="hero-active-tag">XUẤT CHIẾN</span>` : '';
-      const cBadge = isOwned ? `<span class="hero-card-c-badge">E${userHero.constellation || 0}</span>` : `<span style="font-size:0.62rem; color:var(--text-muted);">🔒 Chưa mở</span>`;
+      const activeTag = isActive ? `<span class="hero-active-tag">✓ ĐANG DÙNG</span>` : '';
+      const cBadge = isOwned
+        ? `<span class="hero-card-c-badge">E${userHero.constellation || 0}</span>`
+        : `<span class="hero-card-lock-badge">🔒 Chưa mở</span>`;
+
+      const actionState = isActive
+        ? `<div class="hero-card-state state-deployed">Đang Xuất Trận</div>`
+        : isOwned
+          ? `<button class="btn btn-small btn-hero-select" style="width:100%; font-size:0.68rem; padding:3px 6px; font-weight:800; background:linear-gradient(135deg, #3b82f6, #1d4ed8); color:#fff; border-radius:4px; border:none; cursor:pointer;">⚔️ Xuất Trận</button>`
+          : `<div class="hero-card-state state-locked" style="font-size:0.62rem; color:#f59e0b; margin-top:2px;">(Quay Gacha)</div>`;
 
       card.innerHTML = `
         ${activeTag}
+        <div class="hero-card-top-row">
+          <span class="rate-badge rate-${hero.rarity}" style="font-size:0.58rem; padding:1px 5px;">${CONFIG.RARITY_NAMES[hero.rarity]}</span>
+          <span class="hero-card-elem" style="color:${hero.elementColor}; font-size:0.65rem;">${hero.elementName}</span>
+        </div>
         ${avatarHtml}
-        <div class="hero-card-name" style="color: ${hero.elementColor || '#fff'};">${hero.name}</div>
-        <div class="hero-card-rarity" style="color: ${CONFIG.RARITY_COLORS[hero.rarity]};">${CONFIG.RARITY_NAMES[hero.rarity]}</div>
-        ${cBadge}
+        <div class="hero-card-name" style="color: ${hero.elementColor || '#fff'};" title="${hero.name}">${hero.name}</div>
+        <div class="hero-card-sub" style="font-size:0.62rem; color:var(--text-muted); margin-bottom:4px;">${hero.title}</div>
+        <div style="margin-bottom:6px;">${cBadge}</div>
+        ${actionState}
       `;
 
       card.addEventListener('click', () => {
@@ -2080,7 +2180,7 @@ const UI = {
           return;
         }
         if (isActive) {
-          this.showToast(`${hero.name} đang xuất chiến rồi!`);
+          this.showToast(`👑 ${hero.name} đang xuất chiến rồi!`);
           return;
         }
         this._handleSelectActiveHero(hero.id);
@@ -2503,7 +2603,7 @@ const UI = {
   // ============================================================
   runAutoHeroSkillUpgrade() {
     if (!GameState.autoHeroSkill) return;
-    const activeId = GameState.activeHeroId || 'hero_traveler';
+    const activeId = GameState.activeHeroId || 'hero_starter';
     const userHero = GameState.heroes?.find(h => h.id === activeId);
     if (!userHero) return;
     const heroCfg = CONFIG.getHeroById(activeId);
@@ -2563,7 +2663,7 @@ const UI = {
     meta.slots.forEach(slot => {
       const isActive = slot.id === activeSlotId;
       const isEmpty = !!slot.isEmpty;
-      const hero = CONFIG.getHeroById(slot.heroId || 'hero_traveler');
+      const hero = CONFIG.getHeroById(slot.heroId || 'hero_starter');
       const timeStr = slot.timestamp ? new Date(slot.timestamp).toLocaleString('vi-VN') : 'Chưa có';
 
       html += `

@@ -444,6 +444,379 @@ body {
   100% { transform: translateX(0) scale(1); }
 }
 
+/* ============================================================
+   AUTHENTIC RETRO PIXEL HERO SPRITE ENGINE (36x36px FRAMES)
+   ============================================================ */
+
+:root {
+  --url-char-flame: url('../assets/characters/flame_knight.png');
+  --url-char-frost: url('../assets/characters/frost_knight.png');
+  --url-char-spear: url('../assets/characters/spear_lancer.png');
+  --url-char-arcane: url('../assets/characters/arcane_mage.png');
+  --url-char-shadow: url('../assets/characters/shadow_rogue.png');
+}
+
+.pixel-hero-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: visible;
+  user-select: none;
+}
+
+.pixel-hero-sprite {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  background-size: 360px 288px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  transform: scale(var(--pixel-hero-scale, 2.5));
+  transform-origin: bottom center;
+  z-index: 2;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+  transition: filter 0.15s ease;
+}
+
+/* Scaling Modifiers */
+.hero-card-avatar .pixel-hero-sprite,
+.gacha-item-card .pixel-hero-sprite {
+  --pixel-hero-scale: 1.45;
+  margin-bottom: 2px;
+}
+
+.hero-big-avatar .pixel-hero-sprite {
+  --pixel-hero-scale: 2.3;
+  margin-bottom: 4px;
+}
+
+.skin-preview-box .pixel-hero-sprite {
+  --pixel-hero-scale: 2.8;
+  margin-bottom: 4px;
+}
+
+/* 7 Character Texture Bindings */
+.pixel-hero-sprite.char-starter_knight {
+  background-image: var(--url-char-starter), url('assets/characters/flame_knight.png');
+  filter: grayscale(0.7) brightness(1.15) contrast(1.1) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+}
+.pixel-hero-sprite.char-flame_knight {
+  background-image: var(--url-char-flame), url('assets/characters/flame_knight.png');
+}
+.pixel-hero-sprite.char-frost_knight {
+  background-image: var(--url-char-frost), url('assets/characters/frost_knight.png');
+}
+.pixel-hero-sprite.char-spear_lancer {
+  background-image: var(--url-char-spear), url('assets/characters/spear_lancer.png');
+}
+.pixel-hero-sprite.char-arcane_mage {
+  background-image: var(--url-char-arcane), url('assets/characters/arcane_mage.png');
+}
+.pixel-hero-sprite.char-shadow_rogue {
+  background-image: var(--url-char-shadow), url('assets/characters/shadow_rogue.png');
+}
+.pixel-hero-sprite.char-unknown_god {
+  background-image: var(--url-char-unknown), url('assets/characters/arcane_mage.png');
+  filter: hue-rotate(185deg) brightness(1.35) drop-shadow(0 0 10px #00ffcc);
+}
+
+/* ============================================================
+   8-ROW SPRITE SHEET ANIMATIONS (EXACT 36px STEPS)
+   ============================================================ */
+
+/* Row 0: IDLE (6 frames, 0 to -216px) */
+.pixel-hero-sprite.action-idle {
+  background-position-y: 0px;
+  animation: heroAnimIdle 0.75s steps(6) infinite;
+}
+@keyframes heroAnimIdle {
+  from { background-position-x: 0px; }
+  to   { background-position-x: -216px; }
+}
+
+/* Row 1: WALK / RUN (6 frames, 0 to -216px) */
+.pixel-hero-sprite.action-walk {
+  background-position-y: -36px;
+  animation: heroAnimWalk 0.55s steps(6) infinite;
+}
+@keyframes heroAnimWalk {
+  from { background-position-x: 0px; }
+  to   { background-position-x: -216px; }
+}
+
+/* Row 2: DASH / JUMP / EXTRA (3 frames, 0 to -108px) */
+.pixel-hero-sprite.action-dash,
+.pixel-hero-sprite.action-extra {
+  background-position-y: -72px;
+  animation: heroAnimDash 0.32s steps(3) infinite;
+}
+@keyframes heroAnimDash {
+  from { background-position-x: 0px; }
+  to   { background-position-x: -108px; }
+}
+
+/* Row 3: ATTACK / SLASH (8 frames, 0 to -288px) */
+.pixel-hero-sprite.action-attack {
+  background-position-y: -108px;
+  animation: heroAnimAttack 0.42s steps(8) forwards;
+}
+@keyframes heroAnimAttack {
+  from { background-position-x: 0px; }
+  to   { background-position-x: -288px; }
+}
+
+/* Row 4: BLOCK / DEFEND (5 frames, 0 to -180px) */
+.pixel-hero-sprite.action-block {
+  background-position-y: -144px;
+  animation: heroAnimBlock 0.5s steps(5) forwards;
+}
+@keyframes heroAnimBlock {
+  from { background-position-x: 0px; }
+  to   { background-position-x: -180px; }
+}
+
+/* Row 5: HURT / HIT / FLINCH (3 frames, 0 to -108px) */
+.pixel-hero-sprite.action-hit {
+  background-position-y: -180px;
+  animation: heroAnimHit 0.28s steps(3) forwards;
+}
+@keyframes heroAnimHit {
+  from { background-position-x: 0px; }
+  to   { background-position-x: -108px; }
+}
+
+/* Row 6: DEATH / COLLAPSE (8 frames, 0 to -288px) */
+.pixel-hero-sprite.action-death {
+  background-position-y: -216px;
+  animation: heroAnimDeath 0.85s steps(8) forwards;
+}
+@keyframes heroAnimDeath {
+  from { background-position-x: 0px; }
+  to   { background-position-x: -288px; }
+}
+
+/* Row 7: SKILL / BURST (10 frames, 0 to -360px) */
+.pixel-hero-sprite.action-skill,
+.pixel-hero-sprite.action-burst {
+  background-position-y: -252px;
+  animation: heroAnimSkill 0.85s steps(10) forwards;
+}
+@keyframes heroAnimSkill {
+  from { background-position-x: 0px; }
+  to   { background-position-x: -360px; }
+}
+
+/* ============================================================
+   GROUND SHADOW & ELEMENTAL AURAS
+   ============================================================ */
+
+.pixel-hero-shadow {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 12px;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 75%);
+  border-radius: 50%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.pixel-hero-aura {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 24px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.65;
+  filter: blur(2px);
+  animation: heroAuraPulse 2s ease-in-out infinite alternate;
+}
+@keyframes heroAuraPulse {
+  0%   { transform: translateX(-50%) scale(0.92); opacity: 0.45; }
+  100% { transform: translateX(-50%) scale(1.18); opacity: 0.85; }
+}
+
+.aura-flame_knight {
+  background: radial-gradient(ellipse at center, rgba(255, 68, 0, 0.75) 0%, rgba(255, 170, 0, 0.35) 55%, transparent 75%);
+  box-shadow: 0 0 18px rgba(255, 85, 0, 0.65);
+}
+.aura-frost_knight {
+  background: radial-gradient(ellipse at center, rgba(0, 229, 255, 0.75) 0%, rgba(68, 138, 255, 0.35) 55%, transparent 75%);
+  box-shadow: 0 0 18px rgba(0, 229, 255, 0.65);
+}
+.aura-spear_lancer {
+  background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.75) 0%, rgba(0, 230, 118, 0.35) 55%, transparent 75%);
+  box-shadow: 0 0 18px rgba(255, 215, 0, 0.6);
+}
+.aura-arcane_mage {
+  background: radial-gradient(ellipse at center, rgba(176, 38, 255, 0.8) 0%, rgba(106, 0, 255, 0.4) 55%, transparent 75%);
+  box-shadow: 0 0 20px rgba(176, 38, 255, 0.7);
+}
+.aura-shadow_rogue {
+  background: radial-gradient(ellipse at center, rgba(148, 163, 184, 0.7) 0%, rgba(30, 41, 59, 0.45) 55%, transparent 75%);
+  box-shadow: 0 0 16px rgba(100, 116, 139, 0.55);
+}
+
+/* Skill Surge Aura */
+.pixel-hero-wrap.action-skill .pixel-hero-aura,
+.pixel-hero-wrap.action-burst .pixel-hero-aura {
+  animation: heroSkillAuraSurge 0.85s ease-out forwards;
+}
+@keyframes heroSkillAuraSurge {
+  0%   { transform: translateX(-50%) scale(1); filter: blur(2px) brightness(1); opacity: 0.7; }
+  50%  { transform: translateX(-50%) scale(2.0); filter: blur(5px) brightness(2.4); opacity: 1; }
+  100% { transform: translateX(-50%) scale(1.2); filter: blur(2px) brightness(1.2); opacity: 0.75; }
+}
+
+/* Dynamic Weapon Aura Halos */
+.pixel-weapon-glow {
+  position: absolute;
+  top: 15%;
+  right: 15%;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+}
+.weapon-aura-legendary .pixel-weapon-glow {
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.7) 0%, transparent 70%);
+  box-shadow: 0 0 12px #ffd700;
+  animation: weaponGlowPulse 1.4s ease-in-out infinite alternate;
+}
+.weapon-aura-mythic .pixel-weapon-glow {
+  background: radial-gradient(circle, rgba(255, 23, 68, 0.8) 0%, transparent 70%);
+  box-shadow: 0 0 15px #ff1744;
+  animation: weaponGlowPulse 1.2s ease-in-out infinite alternate;
+}
+.weapon-aura-chaos .pixel-weapon-glow {
+  background: radial-gradient(circle, rgba(224, 64, 251, 0.85) 0%, transparent 70%);
+  box-shadow: 0 0 18px #d500f9;
+  animation: weaponGlowPulse 1.0s ease-in-out infinite alternate;
+}
+.weapon-aura-cosmic .pixel-weapon-glow {
+  background: radial-gradient(circle, rgba(0, 255, 204, 0.9) 0%, transparent 70%);
+  box-shadow: 0 0 20px #00ffcc, 0 0 30px #ff007f;
+  animation: weaponGlowPulse 0.8s ease-in-out infinite alternate;
+}
+@keyframes weaponGlowPulse {
+  0%   { transform: scale(0.85); opacity: 0.55; }
+  100% { transform: scale(1.3); opacity: 0.95; }
+}
+
+/* Movement & Body Choreography */
+.player-walk-anim {
+  animation: heroWalkBob 0.55s ease-in-out infinite !important;
+}
+@keyframes heroWalkBob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+
+.player-skill-anim {
+  animation: heroSkillCastPop 0.85s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards !important;
+}
+@keyframes heroSkillCastPop {
+  0%   { transform: scale(1) translateY(0); }
+  35%  { transform: scale(1.18) translateY(-6px); filter: brightness(1.4); }
+  70%  { transform: scale(1.08) translateY(-2px); filter: brightness(1.2); }
+  100% { transform: scale(1) translateY(0); filter: brightness(1); }
+}
+
+.player-death-anim {
+  animation: heroDeathFade 0.85s ease-out forwards !important;
+}
+@keyframes heroDeathFade {
+  0%   { opacity: 1; filter: grayscale(0%); }
+  70%  { opacity: 0.5; filter: grayscale(80%); }
+  100% { opacity: 0.35; filter: grayscale(100%); }
+}
+
+/* 7 Pixel Hero Attack Choreography */
+.hero-attack-hero_starter {
+  animation: starterKnightSlash 0.36s cubic-bezier(0.18, 0.9, 0.3, 1) forwards !important;
+}
+@keyframes starterKnightSlash {
+  0%   { transform: translateX(0); }
+  40%  { transform: translateX(32px) scale(1.15) rotate(5deg); filter: drop-shadow(0 0 16px #ffd700); }
+  75%  { transform: translateX(18px) scale(1.08); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+.hero-attack-hero_flame_knight {
+  animation: flameKnightRush 0.36s cubic-bezier(0.18, 0.9, 0.3, 1) forwards !important;
+}
+@keyframes flameKnightRush {
+  0%   { transform: translateX(0); }
+  40%  { transform: translateX(36px) scale(1.2) rotate(6deg); filter: drop-shadow(0 0 20px #ff3d00); }
+  75%  { transform: translateX(20px) scale(1.1); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+.hero-attack-hero_frost_knight {
+  animation: frostKnightLunge 0.36s cubic-bezier(0.18, 0.9, 0.3, 1) forwards !important;
+}
+@keyframes frostKnightLunge {
+  0%   { transform: translateX(0); }
+  40%  { transform: translateX(34px) scale(1.18) rotate(4deg); filter: drop-shadow(0 0 20px #00e5ff); }
+  75%  { transform: translateX(18px) scale(1.08); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+.hero-attack-hero_spear_lancer {
+  animation: spearLancerThrust 0.34s cubic-bezier(0.15, 1, 0.3, 1) forwards !important;
+}
+@keyframes spearLancerThrust {
+  0%   { transform: translateX(0); }
+  45%  { transform: translateX(42px) scale(1.22); filter: drop-shadow(0 0 22px #ffd700); }
+  80%  { transform: translateX(20px) scale(1.1); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+.hero-attack-hero_arcane_mage {
+  animation: arcaneMageCastRush 0.38s ease-out forwards !important;
+}
+@keyframes arcaneMageCastRush {
+  0%   { transform: translateX(0) translateY(0); }
+  35%  { transform: translateX(18px) translateY(-14px) scale(1.22); filter: drop-shadow(0 0 22px #b026ff); }
+  65%  { transform: translateX(38px) translateY(0) scale(1.28); filter: drop-shadow(0 0 28px #d500f9); }
+  100% { transform: translateX(0) translateY(0) scale(1); }
+}
+
+.hero-attack-hero_shadow_rogue {
+  animation: shadowRogueBlink 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+@keyframes shadowRogueBlink {
+  0%   { transform: translateX(0); opacity: 1; }
+  25%  { transform: translateX(16px); opacity: 0.3; }
+  55%  { transform: translateX(44px) scale(1.25) rotate(10deg); opacity: 1; filter: drop-shadow(0 0 16px #94a3b8); }
+  80%  { transform: translateX(22px) scale(1.1); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+.hero-attack-hero_unknown_god {
+  animation: unknownGodCataclysm 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+@keyframes unknownGodCataclysm {
+  0%   { transform: translateX(0) scale(1); }
+  35%  { transform: translateX(25px) translateY(-12px) scale(1.3) rotate(-6deg); filter: drop-shadow(0 0 30px #00ffcc) brightness(1.5); }
+  65%  { transform: translateX(48px) translateY(4px) scale(1.35) rotate(8deg); filter: drop-shadow(0 0 40px #ff0055) brightness(1.8); }
+  100% { transform: translateX(0) translateY(0) scale(1); }
+}
+
 /* Quái vật tấn công & Hit flash */
 .monster-attack-anim {
   animation: monsterLunge 0.28s ease;
@@ -2566,21 +2939,26 @@ body {
 }
 .heroes-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  gap: 12px;
+  width: 100%;
 }
 .hero-roster-card {
   background: rgba(18, 22, 35, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-md);
-  padding: 10px 8px;
+  padding: 12px 8px 10px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   text-align: center;
   cursor: pointer;
   position: relative;
   transition: all 0.25s;
+  min-height: 200px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 .hero-roster-card:hover {
   transform: translateY(-2px);
@@ -2593,26 +2971,55 @@ body {
   background: linear-gradient(180deg, rgba(0, 255, 204, 0.12), rgba(18, 22, 35, 0.9));
 }
 .hero-roster-card.locked-hero {
-  opacity: 0.45;
-  filter: grayscale(0.85);
+  opacity: 0.55;
+  filter: grayscale(0.65);
+}
+.hero-card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 4px;
 }
 .hero-card-avatar {
-  width: 48px;
-  height: 48px;
-  margin-bottom: 6px;
+  width: 52px;
+  height: 52px;
+  margin: 4px 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+.avatar-lock-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 8px;
+  font-size: 1.2rem;
 }
 .hero-card-name {
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   font-weight: 800;
   color: #fff;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  width: 100%;
+}
+.hero-card-sub {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  width: 100%;
+  margin-bottom: 4px;
 }
 .hero-card-rarity {
   font-size: 0.65rem;
@@ -2628,6 +3035,29 @@ body {
   padding: 1px 6px;
   border-radius: 8px;
 }
+.hero-card-lock-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+.hero-card-state {
+  width: 100%;
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 4px 6px;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.hero-card-state.state-deployed {
+  background: rgba(0, 255, 204, 0.15);
+  border: 1px solid #00ffcc;
+  color: #00ffcc;
+}
 .hero-active-tag {
   position: absolute;
   top: 4px;
@@ -2638,6 +3068,7 @@ body {
   color: #000;
   padding: 1px 5px;
   border-radius: 4px;
+  z-index: 2;
 }
 
 /* ============================================================
@@ -3183,7 +3614,7 @@ body {
 /* Cinematic Full-Bleed HUD */
 .burst-content {
   position: absolute;
-  bottom: 60px;
+  bottom: 24px;
   left: 0;
   right: 0;
   z-index: 10;
@@ -3193,7 +3624,7 @@ body {
   justify-content: center;
   pointer-events: none;
   opacity: 0;
-  transform: translateY(24px);
+  transform: translateY(16px);
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -3213,60 +3644,66 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 8px 24px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.65) 0%, rgba(2, 6, 23, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
   animation: burstTextPop 0.45s 0.08s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
 .burst-kanji-stamp {
   font-family: 'Courier New', monospace;
-  font-size: 2.2rem;
+  font-size: 1.35rem;
   font-weight: 900;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.25em;
   color: #ffd700;
-  text-shadow: 0 0 20px currentColor, 0 0 45px currentColor;
-  margin-bottom: 4px;
-  animation: stampDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  text-shadow: 0 0 12px currentColor;
+  margin-bottom: 2px;
+  animation: stampDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes stampDown {
-  0%   { transform: scale(2.6); opacity: 0; }
-  60%  { transform: scale(0.92); opacity: 1; }
+  0%   { transform: scale(1.8); opacity: 0; }
+  60%  { transform: scale(0.95); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes burstTextPop {
-  from { transform: translateY(20px); opacity: 0; }
+  from { transform: translateY(16px); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
 }
 
 .burst-hero-title {
   font-family: var(--font-heading);
-  font-size: 0.85rem;
-  font-weight: 800;
-  letter-spacing: 0.2em;
-  color: #ffd700;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-  margin-bottom: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 1px;
 }
 
 .burst-hero-name {
   font-family: var(--font-heading);
-  font-size: 1.8rem;
+  font-size: 1.35rem;
   font-weight: 900;
   color: #fff;
-  text-shadow: 0 0 20px currentColor;
-  margin-bottom: 4px;
+  text-shadow: 0 0 15px currentColor;
+  margin: 1px 0 3px 0;
 }
 
 .burst-skill-name {
   font-family: var(--font-heading);
-  font-size: 1.15rem;
+  font-size: 0.92rem;
   font-weight: 800;
-  color: #ffffff;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 4px 16px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  color: #ffd700;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.2);
   display: inline-block;
 }
 
@@ -3993,3 +4430,540 @@ body {
 }
 
 
+
+/* Hero Pixel SVG Vector Display */
+.hero-pixel-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.55));
+  transition: transform 0.2s cubic-bezier(0.18, 0.9, 0.3, 1);
+}
+
+.hero-pixel-svg.action-idle {
+  animation: heroBreathing 2.4s ease-in-out infinite;
+}
+
+@keyframes heroBreathing {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+.hero-pixel-svg.action-walk {
+  animation: heroWalkBob 0.42s ease-in-out infinite alternate;
+}
+
+@keyframes heroWalkBob {
+  from { transform: translateY(0) rotate(-1deg); }
+  to { transform: translateY(-3px) rotate(1deg); }
+}
+
+.hero-pixel-svg.hero-arcane_mage,
+.hero-pixel-svg.hero-unknown_god {
+  animation: heroLevitation 3s ease-in-out infinite !important;
+}
+
+@keyframes heroLevitation {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.02); }
+}
+
+/* ============================================================
+   ULTIMATE CHOREOGRAPHY: DARK SPOTLIGHT & MONSTER IMPACT
+   ============================================================ */
+
+/* 1. Arena Darkening / Theater Spotlight */
+.arena-burst-blackout {
+  position: absolute;
+  inset: -120px -80px;
+  background: radial-gradient(circle at 50% 50%, rgba(2, 6, 23, 0.45) 0%, rgba(2, 6, 23, 0.94) 55%, #000000 90%);
+  z-index: 35;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 20px;
+}
+
+.arena-burst-active .arena-burst-blackout {
+  opacity: 1;
+}
+
+.arena-burst-active {
+  z-index: 999999 !important;
+  position: relative !important;
+}
+
+.arena-burst-active #fighter-player {
+  z-index: 50 !important;
+  filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.6)) brightness(1.15);
+}
+
+.arena-burst-active #fighter-monster {
+  z-index: 50 !important;
+  filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.45));
+}
+
+/* 2. Monster Impact Layer */
+.arena-burst-impact-fx {
+  position: absolute;
+  top: -40px;
+  right: -20px;
+  width: 220px;
+  height: 220px;
+  pointer-events: none;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.impact-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 15px currentColor);
+}
+
+/* 3. HERO ATTACK ANIMATIONS (7 UNIQUE CHOREOGRAPHIES) */
+
+/* Hero 1: Starter Knight (Charge -> Upward Launcher -> Sky Leap -> Downward Slam) */
+.hero-burst-hero_starter {
+  animation: heroBurstStarterAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes heroBurstStarterAnim {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(85px) scale(1.12); filter: brightness(1.4); }
+  28%  { transform: translateX(110px) rotate(35deg) translateY(-25px) scale(1.25); filter: brightness(2.5); }
+  45%  { transform: translateX(130px) translateY(-120px) rotate(-15deg) scale(1.3); }
+  68%  { transform: translateX(145px) translateY(0) rotate(75deg) scale(1.35); filter: brightness(3); }
+  85%  { transform: translateX(50px) translateY(0) scale(1.05); }
+  100% { transform: translateX(0); }
+}
+
+/* Hero 2: Shadow Rogue (Vanish -> 4 Shadow Clones -> Reverse Sheathe Click) */
+.hero-burst-hero_shadow_rogue {
+  animation: heroBurstRogueAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes heroBurstRogueAnim {
+  0%   { transform: scale(1); opacity: 1; }
+  18%  { transform: scale(0.6) translateY(20px); opacity: 0; filter: blur(4px); }
+  25%  { transform: translateX(160px) scale(1.1); opacity: 0.85; filter: drop-shadow(0 0 20px #00e5ff); }
+  40%  { transform: translateX(90px) translateY(-40px) scale(1.15); opacity: 0.85; }
+  55%  { transform: translateX(170px) translateY(-20px) scale(1.2); opacity: 0.9; }
+  72%  { transform: translateX(190px) scale(1.15) rotate(180deg); opacity: 1; filter: brightness(2); }
+  90%  { transform: translateX(80px) scale(1.05); opacity: 1; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+/* Hero 3: Frost Knight (Stabs Ground -> Blizzard Dash -> Shatter Cleave) */
+.hero-burst-hero_frost_knight {
+  animation: heroBurstFrostAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes heroBurstFrostAnim {
+  0%   { transform: translateY(0); }
+  22%  { transform: translateY(15px) rotate(15deg); filter: drop-shadow(0 0 25px #00e5ff); }
+  50%  { transform: translateY(0) scale(1.1) rotate(-10deg); filter: brightness(1.5); }
+  68%  { transform: translateX(130px) scale(1.3) rotate(45deg); filter: brightness(3); }
+  85%  { transform: translateX(60px) scale(1.08); }
+  100% { transform: translateX(0); }
+}
+
+/* Hero 4: Spear Lancer (Spear Spin -> 8-Thrust Rush -> Command Dragon) */
+.hero-burst-hero_spear_lancer {
+  animation: heroBurstSpearAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes heroBurstSpearAnim {
+  0%   { transform: scale(1); }
+  20%  { transform: rotate(-25deg) scale(1.1); }
+  25%, 35%, 45%, 55% { transform: translateX(95px) scale(1.25); filter: brightness(2.5) drop-shadow(0 0 20px #ffd700); }
+  30%, 40%, 50%, 60% { transform: translateX(70px) scale(1.15); filter: brightness(1.5); }
+  70%  { transform: translateX(120px) rotate(60deg) scale(1.3); }
+  88%  { transform: translateX(40px) scale(1.05); }
+  100% { transform: translateX(0); }
+}
+
+/* Hero 5: Flame Knight (Phoenix Wings Flare -> Fire Crescent -> Heavenly Dive) */
+.hero-burst-hero_flame_knight {
+  animation: heroBurstFlameAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes heroBurstFlameAnim {
+  0%   { transform: scale(1); }
+  22%  { transform: scale(1.15) translateY(-15px); filter: drop-shadow(0 0 30px #ff3d00); }
+  45%  { transform: translateX(100px) rotate(45deg) scale(1.25); filter: brightness(2.5); }
+  68%  { transform: translateX(130px) translateY(-110px) rotate(80deg) scale(1.35); }
+  78%  { transform: translateX(140px) translateY(0) rotate(110deg) scale(1.4); filter: brightness(4); }
+  90%  { transform: translateX(50px) scale(1.05); }
+  100% { transform: translateX(0); }
+}
+
+/* Hero 6: Arcane Mage (Levitation -> Black Hole Channel -> Finger Snap) */
+.hero-burst-hero_arcane_mage {
+  animation: heroBurstMageAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes heroBurstMageAnim {
+  0%   { transform: translateY(0); }
+  30%  { transform: translateY(-40px) scale(1.2); filter: drop-shadow(0 0 35px #d500f9); }
+  60%  { transform: translateY(-50px) scale(1.28); filter: drop-shadow(0 0 45px #00e5ff) brightness(1.8); }
+  75%  { transform: translateY(-35px) scale(1.35); filter: brightness(4); }
+  90%  { transform: translateY(-10px) scale(1.05); }
+  100% { transform: translateY(0); }
+}
+
+/* Hero 7: Unknown God (Time Stop -> Cube Command -> Spatial Severance) */
+.hero-burst-hero_unknown_god {
+  animation: heroBurstGodAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes heroBurstGodAnim {
+  0%   { transform: scale(1); }
+  30%  { transform: translateY(-30px) scale(1.22); filter: drop-shadow(0 0 40px #00ffcc); }
+  65%  { transform: translateY(-20px) scale(1.3); filter: drop-shadow(0 0 50px #ff0055) brightness(2.2); }
+  75%  { transform: translateX(60px) rotate(25deg) scale(1.4); filter: brightness(5); }
+  90%  { transform: translateX(20px) scale(1.08); }
+  100% { transform: translateX(0); }
+}
+
+
+/* 4. MONSTER REACTION ANIMATIONS (7 UNIQUE TARGET IMPACTS) */
+
+/* Starter: KNOCKED UP FLYING IN THE AIR -> SLICED -> DOWNWARD SLAM CRASH */
+.monster-burst-hero_starter {
+  animation: monsterBurstStarterAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes monsterBurstStarterAnim {
+  0%   { transform: translateY(0); }
+  24%  { transform: translateY(0) scale(1.02); }
+  30%  { transform: translateY(-115px) rotate(-22deg) scale(1.1); filter: drop-shadow(0 0 25px #ffd700) brightness(1.6); }
+  45%  { transform: translateY(-120px) rotate(-15deg) scale(1.05); filter: brightness(2.2); }
+  60%  { transform: translateY(-110px) rotate(-25deg) scale(1.08); filter: brightness(2.8); }
+  70%  { transform: translateY(0) scale(1.3, 0.65); filter: brightness(3.5); }
+  85%  { transform: translateY(-15px) scale(0.95, 1.05); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* Rogue: TRAPPED IN SHADOW VORTEX -> MULTI-CLONE SHAKE -> EXPLOSIVE X-CUT */
+.monster-burst-hero_shadow_rogue {
+  animation: monsterBurstRogueAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes monsterBurstRogueAnim {
+  0%   { transform: translateY(0); }
+  20%  { transform: translateY(-25px) scale(0.95); filter: drop-shadow(0 0 20px #00e5ff); }
+  25%, 45%, 65% { transform: translateY(-30px) translateX(-10px) rotate(-8deg); filter: brightness(2.5) contrast(1.4); }
+  35%, 55%      { transform: translateY(-25px) translateX(10px) rotate(8deg); filter: brightness(0.6) hue-rotate(180deg); }
+  75%  { transform: translateY(-35px) scale(1.05); filter: brightness(1.2); }
+  85%  { transform: translateY(-45px) scale(1.3); filter: brightness(4) drop-shadow(0 0 35px #00e5ff); }
+  100% { transform: translateY(0) scale(1); filter: none; }
+}
+
+/* Frost: FROZEN SOLID IN ICE PILLAR BLOCK -> 80PX HOIST -> ICE SHATTER */
+.monster-burst-hero_frost_knight {
+  animation: monsterBurstFrostAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes monsterBurstFrostAnim {
+  0%   { transform: translateY(0); }
+  24%  { transform: translateY(-80px) scale(1.06); filter: drop-shadow(0 0 30px #00e5ff) brightness(1.5); }
+  58%  { transform: translateY(-80px) scale(1.06); filter: drop-shadow(0 0 35px #80d8ff) brightness(1.6); }
+  68%  { transform: translateY(-85px) rotate(-18deg); filter: brightness(3.5); }
+  82%  { transform: translateY(0) scale(1.2, 0.8); }
+  100% { transform: translateY(0) scale(1); filter: none; }
+}
+
+/* Spear: PINNED BY 8 LIGHTNING THRUSTS -> CARRIED SKY-HIGH BY GOLDEN DRAGON */
+.monster-burst-hero_spear_lancer {
+  animation: monsterBurstSpearAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes monsterBurstSpearAnim {
+  0%   { transform: translateY(0); }
+  20%  { transform: translateY(-25px) translateX(15px); }
+  25%, 35%, 45%, 55% { transform: translateY(-35px) translateX(25px) rotate(5deg); filter: brightness(3) drop-shadow(0 0 25px #ffd700); }
+  30%, 40%, 50%, 60% { transform: translateY(-20px) translateX(10px) rotate(-5deg); filter: brightness(1.8); }
+  70%  { transform: translateY(-145px) scale(0.85); filter: drop-shadow(0 0 45px #ffd700) brightness(3.5); }
+  88%  { transform: translateY(-150px) scale(0.82); }
+  100% { transform: translateY(0) scale(1); filter: none; }
+}
+
+/* Flame: SWEPT 90PX INTO FIRE TORNADO -> HEAVENLY PHOENIX DIVE IMPACT */
+.monster-burst-hero_flame_knight {
+  animation: monsterBurstFlameAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes monsterBurstFlameAnim {
+  0%   { transform: translateY(0); }
+  26%  { transform: translateY(-95px) rotate(180deg) scale(1.12); filter: drop-shadow(0 0 35px #ff3d00); }
+  55%  { transform: translateY(-90px) rotate(360deg) scale(1.08); filter: brightness(2.2); }
+  70%  { transform: translateY(0) scale(1.35, 0.65); filter: brightness(4.5); }
+  85%  { transform: translateY(-12px) scale(0.95); }
+  100% { transform: translateY(0) scale(1); filter: none; }
+}
+
+/* Mage: PULLED INTO GRAVITATIONAL BLACK HOLE -> ZERO-G WARP -> SUPERNOVA COLLAPSE */
+.monster-burst-hero_arcane_mage {
+  animation: monsterBurstMageAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes monsterBurstMageAnim {
+  0%   { transform: translateY(0); }
+  26%  { transform: translateY(-70px) rotate(180deg) scale(0.75, 1.3); filter: drop-shadow(0 0 30px #d500f9); }
+  55%  { transform: translateY(-80px) rotate(540deg) scale(0.6, 1.4); filter: hue-rotate(90deg) brightness(2); }
+  72%  { transform: translateY(-75px) scale(0.28); filter: brightness(6); }
+  82%  { transform: translateY(-15px) scale(1.3); filter: brightness(3.5); }
+  100% { transform: translateY(0) scale(1); filter: none; }
+}
+
+/* Unknown God: TRAPPED IN 6 DIVINE GEOMETRIC CUBES -> SPATIAL SEVERANCE */
+.monster-burst-hero_unknown_god {
+  animation: monsterBurstGodAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes monsterBurstGodAnim {
+  0%   { transform: translateY(0); }
+  24%  { transform: translateY(-75px) scale(1.08); filter: drop-shadow(0 0 40px #00ffcc) brightness(1.8); }
+  62%  { transform: translateY(-75px) scale(1.08); filter: drop-shadow(0 0 50px #00ffcc) brightness(2); }
+  70%  { transform: translateY(-75px) translateX(-20px) skewX(-20deg); filter: brightness(6); }
+  84%  { transform: translateY(-30px) scale(0.5) rotate(20deg); opacity: 0.35; }
+  100% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; filter: none; }
+}
+
+
+/* 5. PREVIEW DUEL STAGE STYLING (FOR HEROES TAB PREVIEW) */
+.preview-duel-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 100px;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.preview-hero-actor {
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.7));
+}
+
+.preview-monster-actor {
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.6));
+}
+
+.preview-impact-overlay {
+  position: absolute;
+  right: 15%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 260px;
+  height: 260px;
+  pointer-events: none;
+}
+
+
+/* 6. DEV ADMIN MODAL & FLOATING BUTTON */
+.btn-dev-toggle {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  z-index: 999998;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.78rem;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.45);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-dev-toggle:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.7);
+}
+
+.dev-admin-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dev-admin-modal.hidden {
+  display: none !important;
+}
+
+.dev-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.75);
+  backdrop-filter: blur(8px);
+}
+
+.dev-modal-panel {
+  position: relative;
+  z-index: 10;
+  width: 90%;
+  max-width: 680px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8), 0 0 30px rgba(16, 185, 129, 0.25);
+}
+
+.dev-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+}
+
+.dev-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dev-badge {
+  background: #10b981;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.btn-close-dev {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  font-size: 1.1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btn-close-dev:hover {
+  background: #ef4444;
+}
+
+.dev-info-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  margin-bottom: 16px;
+}
+
+.dev-nav-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.dev-tab-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dev-tab-btn.active {
+  background: #10b981;
+  color: #fff;
+  border-color: #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+}
+
+.dev-tab-pane {
+  display: none;
+}
+.dev-tab-pane.active {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dev-action-group h4 {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+}
+
+.dev-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dev-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.dev-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dev-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+.dev-btn-primary {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #10b981;
+}
+
+.dev-btn-special {
+  width: 100%;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  padding: 10px;
+  font-size: 0.85rem;
+}
+
+.dev-btn-god {
+  background: linear-gradient(135deg, #00ffcc, #ff0055);
+  color: #000;
+  font-weight: 900;
+}
+
+.dev-btn-danger {
+  background: #ef4444;
+  border-color: #dc2626;
+}

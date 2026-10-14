@@ -16,9 +16,9 @@ const SaveManager = {
       meta = {
         activeSlotId: 'slot_1',
         slots: [
-          { id: 'slot_1', name: 'Chiến Binh 1', level: 1, heroId: 'hero_traveler', stage: 1, timestamp: Date.now(), isEmpty: false },
-          { id: 'slot_2', name: 'Hồ Sơ 2 (Trống)', level: 0, heroId: 'hero_traveler', stage: 1, timestamp: 0, isEmpty: true },
-          { id: 'slot_3', name: 'Hồ Sơ 3 (Trống)', level: 0, heroId: 'hero_traveler', stage: 1, timestamp: 0, isEmpty: true }
+          { id: 'slot_1', name: 'Chiến Binh 1', level: 1, heroId: 'hero_starter', stage: 1, timestamp: Date.now(), isEmpty: false },
+          { id: 'slot_2', name: 'Hồ Sơ 2 (Trống)', level: 0, heroId: 'hero_starter', stage: 1, timestamp: 0, isEmpty: true },
+          { id: 'slot_3', name: 'Hồ Sơ 3 (Trống)', level: 0, heroId: 'hero_starter', stage: 1, timestamp: 0, isEmpty: true }
         ]
       };
 
@@ -29,7 +29,8 @@ const SaveManager = {
           const parsed = JSON.parse(oldSave);
           localStorage.setItem(`${CONFIG.SAVE_KEY}_slot_1`, oldSave);
           meta.slots[0].level = parsed.player?.level || 1;
-          meta.slots[0].heroId = parsed.activeHeroId || 'hero_traveler';
+          const oldHero = parsed.activeHeroId;
+          meta.slots[0].heroId = (oldHero === 'hero_traveler' || !oldHero) ? 'hero_starter' : oldHero;
           meta.slots[0].stage = parsed.stage?.current || 1;
           meta.slots[0].timestamp = parsed.timestamp || Date.now();
           meta.slots[0].isEmpty = false;
@@ -105,7 +106,7 @@ const SaveManager = {
       const slot = meta.slots.find(s => s.id === slotId);
       if (slot) {
         slot.level = GameState.player?.level || 1;
-        slot.heroId = GameState.activeHeroId || 'hero_traveler';
+        slot.heroId = GameState.activeHeroId || 'hero_starter';
         slot.stage = GameState.stage?.current || 1;
         slot.timestamp = data.timestamp;
         slot.gold = GameState.player?.gold || 0;
@@ -214,8 +215,8 @@ const SaveManager = {
     GameState.inventoryMax = CONFIG.INVENTORY_BASE_MAX || 80;
     CONFIG.INVENTORY_MAX = GameState.inventoryMax;
     GameState.inventoryExpands = 0;
-    GameState.heroes = [{ id: 'hero_traveler', constellation: 0, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() }];
-    GameState.activeHeroId = 'hero_traveler';
+    GameState.heroes = [{ id: 'hero_starter', constellation: 0, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() }];
+    GameState.activeHeroId = 'hero_starter';
     GameState.gacha = { totalPulls: 0, totalHeroPulls: 0, bannerTab: 'weapon' };
     GameState.combat = { monstersKilled: 0 };
     GameState.dungeon = {
@@ -308,7 +309,7 @@ const SaveManager = {
       if (slot) {
         slot.isEmpty = false;
         slot.level = parsed.player.level;
-        slot.heroId = parsed.activeHeroId || 'hero_traveler';
+        slot.heroId = parsed.activeHeroId || 'hero_starter';
         slot.stage = parsed.stage?.current || 1;
         slot.timestamp = Date.now();
         this.saveProfilesMeta(meta);
@@ -378,17 +379,53 @@ const SaveManager = {
       Object.assign(GameState.stage, data.stage);
     }
 
+    // Di chuyển và chuẩn hóa dữ liệu Anh Hùng sang 7 hệ Pixel chuẩn
+    const heroIdMap = {
+      hero_traveler: 'hero_starter',
+      hero_amber: 'hero_flame_knight',
+      hero_kazuha: 'hero_shadow_rogue',
+      hero_zhongli: 'hero_spear_lancer',
+      hero_jiyan: 'hero_spear_lancer',
+      hero_furina: 'hero_frost_knight',
+      hero_changli: 'hero_flame_knight',
+      hero_raiden: 'hero_arcane_mage'
+    };
+
     if (data.heroes && Array.isArray(data.heroes) && data.heroes.length > 0) {
-      GameState.heroes = data.heroes;
+      GameState.heroes = data.heroes.map(h => {
+        const mappedId = heroIdMap[h.id] || h.id;
+        return { ...h, id: mappedId };
+      });
+      // Deduplicate heroes if any
+      const uniqueHeroes = [];
+      const seenIds = new Set();
+      GameState.heroes.forEach(h => {
+        if (!seenIds.has(h.id) && CONFIG.getHeroById(h.id)) {
+          seenIds.add(h.id);
+          uniqueHeroes.push(h);
+        }
+      });
+      GameState.heroes = uniqueHeroes;
     } else {
-      // Đảm bảo luôn có ít nhất Nhà Lữ Hành mặc định
-      GameState.heroes = [{ id: 'hero_traveler', constellation: 0, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() }];
+      GameState.heroes = [];
+    }
+
+    // Đảm bảo luôn có Hiệp Sĩ Khởi Đầu mở khóa sẵn
+    if (!GameState.heroes.some(h => h.id === 'hero_starter')) {
+      GameState.heroes.unshift({ id: 'hero_starter', constellation: 0, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() });
     }
 
     if (data.activeHeroId) {
-      GameState.activeHeroId = data.activeHeroId;
-    } else if (GameState.heroes.length > 0) {
-      GameState.activeHeroId = GameState.heroes[0].id;
+      GameState.activeHeroId = heroIdMap[data.activeHeroId] || data.activeHeroId;
+      if (!CONFIG.getHeroById(GameState.activeHeroId)) {
+        GameState.activeHeroId = 'hero_starter';
+      }
+    } else {
+      GameState.activeHeroId = 'hero_starter';
+    }
+
+    if (GameState.player) {
+      delete GameState.player.pixelSkin;
     }
 
     if (data.autoUpgrade) Object.assign(GameState.autoUpgrade, data.autoUpgrade);

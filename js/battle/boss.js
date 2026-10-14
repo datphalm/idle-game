@@ -103,7 +103,7 @@ const Boss = {
       b.hp = Math.max(0, b.hp - pDmg);
       if (typeof UI !== 'undefined') {
         UI.showDamageNumber(pDmg, true, 'boss');
-        UI.animatePlayerAttack();
+        UI.animatePlayerSkill('boss', skillRes.type);
         UI.animateBossHit();
         UI.updateBossChamber();
         const badgeName = skillRes.type === 'burst' ? '🌟 TUYỆT KỸ NỘ' : '⚡ KỸ NĂNG';
@@ -121,7 +121,7 @@ const Boss = {
 
       if (typeof UI !== 'undefined') {
         UI.showDamageNumber(pDmg, false, 'boss');
-        UI.animatePlayerAttack();
+        UI.animatePlayerAttack('boss');
         UI.animateBossHit();
         UI.updateBossChamber();
       }
@@ -195,7 +195,7 @@ const Boss = {
         }
 
         UI.animateBossAttack();
-        UI.animatePlayerHit();
+        UI.animatePlayerHit('boss');
 
         const regen = Player.getEffectiveHpRegen();
         if (regen > 0 && !pResult.isDead) Player.heal(regen);
@@ -205,6 +205,7 @@ const Boss = {
       }
 
       if (pResult.isDead) {
+        if (typeof UI !== 'undefined') UI.animatePlayerDeath('boss');
         this.endFight(false, 'Bạn đã ngã xuống trước sức mạnh của Boss!');
       }
     }, 280);

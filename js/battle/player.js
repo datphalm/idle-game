@@ -24,7 +24,7 @@ const Player = {
 
   // Lấy dữ liệu Hero đang xuất chiến (Kèm toàn bộ Buff Cung Mệnh E1-E6 và Tinh Luyện Vũ Khí R1-R5)
   getActiveHeroData() {
-    const activeId = GameState.activeHeroId || 'hero_traveler';
+    const activeId = GameState.activeHeroId || 'hero_starter';
     const heroCfg = CONFIG.getHeroById(activeId);
     const userHero = GameState.heroes?.find(h => h.id === activeId) || { constellation: 0, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 } };
     const curEidolon = userHero.constellation || 0; // 0 = E0, 1 = E1, ... 6 = E6
@@ -99,6 +99,7 @@ const Player = {
   },
 
   getEffectiveAttack() {
+    if (GameState.oneHitKill) return 999999999;
     const p = GameState.player;
     const u = GameState.upgrades;
     const hero = this.getActiveHeroData();
@@ -249,6 +250,7 @@ const Player = {
   },
 
   takeDamage(amount) {
+    if (GameState.godMode) return { damage: 0, isDead: false };
     const actual = Math.max(1, amount);
     GameState.player.currentHp = Math.max(0, GameState.player.currentHp - actual);
     return { damage: actual, isDead: GameState.player.currentHp <= 0 };
