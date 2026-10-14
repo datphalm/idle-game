@@ -468,6 +468,56 @@ const CONFIG = {
       ]
     },
     {
+      id: 'hero_aetheris',
+      name: 'Aetheris — Tinh Vực Đại Pháp Sư',
+      title: 'Chúa Tể Tinh Cầu & Vạn Cổ Tinh Linh',
+      rarity: 'chaos',
+      element: 'astral',
+      elementName: 'Tinh Không 🌌✨',
+      elementColor: '#00e5ff',
+      pixelArchetype: 'aetheris_archmage',
+      atkBonusPct: 1.2, hpBonusPct: 0.9, defBonusPct: 0.6, spdBonus: 45,
+      skills: [
+        { 
+          id: 's1', 
+          name: 'Tinh Thể Hội Tụ & Hóa Thân Thái Thần', 
+          type: 'passive', 
+          icon: '💠', 
+          desc: '3 Tinh Thể Tinh Linh bay quanh người. Đòn đánh cơ bản phóng Tinh Thể khắc Ấn Bụi Sao (tích 3 ấn tự kích nổ 320% ATK). Khi máu dưới 60%, hóa thân Tinh Linh Vương bất tử 2 lượt và hồi 8% HP!', 
+          bonusAtk: 1.0,
+          uniquePassive: 'aetheris_transcendence'
+        },
+        { 
+          id: 's2', 
+          name: 'Cổng Xoáy Cổ Ngữ: Trận Pháp Tinh Thể', 
+          type: 'active', 
+          icon: '🌀', 
+          cd: 4.2, 
+          dmgMult: 8.5, 
+          desc: 'Mở Cổng Xoáy Cổ Ngữ bắn chùm Tia Sáng Tinh Thể 5 nhịp liên hoàn, phóng lốc sấm sét làm choáng đối thủ và giảm 40% Giáp!',
+          multiHit: 5,
+          defShred: 0.40
+        },
+        { 
+          id: 's3', 
+          name: 'Vạn Tinh Huyền Diệt: Bão Thiên Thạch Vũ Trụ', 
+          type: 'burst', 
+          icon: '☄️', 
+          cd: 10.5, 
+          dmgMult: 35.0, 
+          desc: 'Tuyệt kỹ tối thượng: Mở Hố Đen Thiên Hà, khai mở đại pháo la-de xé rách không thời gian và dội bão thiên thạch hủy diệt toàn cõi gây 3500% ATK sát thương cực đại!'
+        }
+      ],
+      eidolons: [
+        { level: 1, name: 'E1: Tinh Bụi Vĩnh Hằng', desc: 'Tăng 60% Sát thương và tăng số Tinh Thể Tinh Linh tối đa, +25 Tốc độ đánh.', bonusAtk: 0.60, extraSpd: 25 },
+        { level: 2, name: 'E2: Vòng Cổ Ngữ Thấu Kính', desc: 'Cổng Xoáy Skill 2 giảm 1.2s hồi chiêu, bắn thêm 3 nhịp tia tinh thể và giảm thêm 30% Giáp quái.', cdReduction: 1.2, skillDmgMult: 0.8 },
+        { level: 3, name: 'E3: Vương Miện Tinh Không', desc: 'Cấp kỹ năng Hóa Thân Tinh Linh +3. Tăng 80% Sát thương Tinh Không.', bonusAtk: 0.80 },
+        { level: 4, name: 'E4: Hộ Thể Tinh Cầu', desc: 'Khi nhận sát thương chí tử, đôi cánh pha lê tạo màn chắn hấp thụ 100% sát thương và lập tức hồi 50% HP.', uniquePassive: 'aetheris_crystal_barrier' },
+        { level: 5, name: 'E5: Khai Mở Thiên Hà', desc: 'Cấp Nộ Tuyệt Kỹ +3. Sát thương Bão Thiên Thạch tăng thêm 150%.', burstDmgMult: 1.5 },
+        { level: 6, name: 'E6: Chúa Tể Vạn Cổ Tinh Không', desc: 'Mọi đòn đánh đều kèm Tia La-de Cổ Ngữ 400% ATK, Tuyệt Kỹ Nộ triệu hồi Siêu Hố Đen bóp nghẹt quái vật, bỏ qua 70% Phòng Thủ của Boss!', uniquePassive: 'aetheris_cosmic_sovereign' }
+      ]
+    },
+    {
       id: 'hero_unknown_god',
       name: '⟦ VÔ CỰC NGHỊCH MỆNH THẦN QUÂN ⟧',
       title: 'Chúa Tể Thái Sơ Vô Thượng',

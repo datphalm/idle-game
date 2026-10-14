@@ -210,7 +210,7 @@ const Player = {
         skill: skill3, 
         damage: dmg, 
         hero: hero.config,
-        defShredPct: hero.unlockedPassives.includes('def_shred_60') ? 0.60 : (hero.unlockedPassives.includes('def_shred_40') ? 0.40 : 0)
+        defShredPct: hero.unlockedPassives.includes('aetheris_cosmic_sovereign') ? 0.70 : (hero.unlockedPassives.includes('def_shred_60') ? 0.60 : (hero.unlockedPassives.includes('def_shred_40') ? 0.40 : 0))
       };
     }
 
@@ -252,6 +252,21 @@ const Player = {
   takeDamage(amount) {
     if (GameState.godMode) return { damage: 0, isDead: false };
     const actual = Math.max(1, amount);
+
+    // Aetheris E4: Hộ Thể Tinh Cầu (Crystal Barrier)
+    const activeHero = this.getActiveHeroData();
+    if (activeHero?.unlockedPassives?.includes('aetheris_crystal_barrier') && GameState.player.currentHp - actual <= 0) {
+      if (!this._lastBarrierUsed || Date.now() - this._lastBarrierUsed > 45000) {
+        this._lastBarrierUsed = Date.now();
+        GameState.player.currentHp = Math.floor(this.getEffectiveMaxHp() * 0.5);
+        if (typeof UI !== 'undefined') {
+          UI.addCombatLog(`🛡️ <strong>HỘ THỂ TINH CẦU:</strong> Đôi cánh pha lê đỡ đòn chí tử và hồi phục 50% HP!`, 'log-extra');
+          UI.showDamageNumber('BẢO HỘ!', false, 'player');
+        }
+        return { damage: 0, isDead: false };
+      }
+    }
+
     GameState.player.currentHp = Math.max(0, GameState.player.currentHp - actual);
     return { damage: actual, isDead: GameState.player.currentHp <= 0 };
   },

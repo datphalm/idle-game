@@ -153,6 +153,7 @@ const DevAdmin = {
               <button class="btn dev-btn" onclick="DevAdmin.castUltimateForHero('hero_spear_lancer')">⚡ Nộ: Long Thương Thủ</button>
               <button class="btn dev-btn" onclick="DevAdmin.castUltimateForHero('hero_flame_knight')">🔥 Nộ: Kiếm Sĩ Hỏa Diệm</button>
               <button class="btn dev-btn" onclick="DevAdmin.castUltimateForHero('hero_arcane_mage')">🌌 Nộ: Đại Pháp Sư Hư Không</button>
+              <button class="btn dev-btn" style="background:#0284c7; border-color:#00e5ff; color:#ffffff;" onclick="DevAdmin.castUltimateForHero('hero_aetheris')">☄️ Nộ: AETHERIS (BÃO THIÊN THẠCH)</button>
               <button class="btn dev-btn dev-btn-god" onclick="DevAdmin.castUltimateForHero('hero_unknown_god')">👑 Nộ: VÔ CỰC NGHỊCH MỆNH THẦN QUÂN</button>
             </div>
           </div>
@@ -166,6 +167,7 @@ const DevAdmin = {
               <button class="btn dev-btn" onclick="DevAdmin.setActiveHero('hero_spear_lancer')">Dùng: Long Thương Thủ</button>
               <button class="btn dev-btn" onclick="DevAdmin.setActiveHero('hero_flame_knight')">Dùng: Kiếm Sĩ Hỏa Diệm</button>
               <button class="btn dev-btn" onclick="DevAdmin.setActiveHero('hero_arcane_mage')">Dùng: Đại Pháp Sư Hư Không</button>
+              <button class="btn dev-btn" style="background:#0284c7; border-color:#00e5ff; color:#ffffff;" onclick="DevAdmin.setActiveHero('hero_aetheris')">Dùng: Aetheris — Tinh Vực</button>
               <button class="btn dev-btn dev-btn-god" onclick="DevAdmin.setActiveHero('hero_unknown_god')">Dùng: THẦN QUÂN VÔ CỰC</button>
             </div>
           </div>
@@ -332,7 +334,7 @@ const DevAdmin = {
     });
 
     if (typeof UI !== 'undefined' && UI.updateHeroesTab) UI.updateHeroesTab();
-    this._afterResourceChange("👑 Đã Mở Khóa Full 7 Anh Hùng E6 & Max Kỹ Năng!");
+    this._afterResourceChange("👑 Đã Mở Khóa Full 8 Anh Hùng E6 & Max Kỹ Năng!");
   },
 
   setActiveHero(heroId) {
@@ -366,6 +368,10 @@ const DevAdmin = {
     const burstSkill = (heroCfg.skills || []).find(s => s.type === 'burst') || heroCfg.skills[2];
     const modal = document.getElementById('dev-admin-modal');
     if (modal) modal.classList.add('hidden'); // Đóng modal để người chơi xem trọn vẹn Cutscene
+
+    if (typeof UI !== 'undefined' && UI.switchTab) {
+      UI.switchTab('battle');
+    }
 
     setTimeout(() => {
       if (typeof UI !== 'undefined' && UI.playBurstCinematic) {

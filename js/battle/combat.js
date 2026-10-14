@@ -96,6 +96,22 @@ const Combat = {
         UI.animatePlayerSkill(null, skillRes.type);
         UI.animateMonsterHit();
 
+        // Kỹ năng Cổng Xoáy Cổ Ngữ của Aetheris: Bắn liên hoàn 5 nhịp & gây choáng
+        if (skillRes.hero?.id === 'hero_aetheris' && skillRes.type === 'skill') {
+          m.isStunned = true;
+          const hitDamage = Math.max(1, Math.floor(skillRes.damage / 5));
+          for (let hit = 1; hit < 5; hit++) {
+            setTimeout(() => {
+              if (m.hp > 0) {
+                Monster.takeDamage(hitDamage);
+                UI.showDamageNumber(hitDamage, hit === 4, 'monster');
+                UI.animateMonsterHit();
+                UI.updateBattleStatsOnly();
+              }
+            }, hit * 90);
+          }
+        }
+
         const badgeName = skillRes.type === 'burst' ? '🌟 TUYỆT KỸ NỘ' : '⚡ KỸ NĂNG NGUYÊN TỐ';
         UI.addCombatLog(
           `<strong>${badgeName} [${skillRes.hero.name}]:</strong> ` +
@@ -127,6 +143,40 @@ const Combat = {
         UI.showDamageNumber(pDamage, false, 'monster');
         UI.animatePlayerAttack();
         UI.animateMonsterHit();
+
+        // Cơ chế Tinh Thể Vũ Trụ & Vũ Khúc Tinh Thần của Aetheris (Đổi mới hoàn toàn)
+        const activeHero = Player.getActiveHeroData();
+        if (activeHero?.config?.id === 'hero_aetheris') {
+          Player._aetherisShards = (Player._aetherisShards || 0) + 1;
+          if (Player._aetherisShards >= 3) {
+            Player._aetherisShards = 0;
+            const resonanceDmg = Math.floor(pDamage * 1.6);
+            const extraRes = Monster.takeDamage(resonanceDmg);
+            setTimeout(() => {
+              UI.showDamageNumber(resonanceDmg, true, 'monster');
+              UI.animateMonsterHit();
+              if (extraRes.isDead) {
+                m.hp = 0;
+                UI.updateBattleStatsOnly();
+                setTimeout(() => {
+                  UI.animateMonsterDeath(() => {
+                    UI.animatePlayerWalk(null, 500);
+                    Combat._onMonsterKill(m);
+                  });
+                }, 180);
+              }
+            }, 120);
+            Player._skill3NextReady = Math.max(0, Player._skill3NextReady - 2500);
+            UI.addCombatLog(`🌌 <strong>VŨ KHÚC TINH THẦN:</strong> Thu hồi 3 Tinh Thể kích nổ bạo kích <strong style="color:#00e5ff;">-${resonanceDmg}</strong> & nạp năng lượng Nộ!`, 'log-extra');
+          } else {
+            const shardDmg = Math.max(1, Math.floor(pDamage * 0.45));
+            Monster.takeDamage(shardDmg);
+            setTimeout(() => {
+              UI.showDamageNumber(shardDmg, false, 'monster');
+            }, 80);
+            UI.addCombatLog(`✨ Tinh Thể Tinh Linh (${Player._aetherisShards}/3) găm sâu vào đối thủ!`, 'log-normal');
+          }
+        }
 
         if (hitResult.isDead) {
           m.hp = 0;
@@ -169,6 +219,14 @@ const Combat = {
       }
 
       // --- 2. LƯỢT PHẢN CÔNG CỦA QUÁI ---
+      if (m.isStunned) {
+        m.isStunned = false;
+        UI.addCombatLog(`🌀 <strong>[${m.name}]</strong> bị Cổng Xoáy Cổ Ngữ làm tê liệt, mất lượt phản công!`, 'log-extra');
+        UI.updateBattleStatsOnly();
+        UI.updateMonsterDisplay();
+        this._scheduleNextTurn(skillRes.triggered && skillRes.type === 'burst' ? 2550 : 650);
+        return;
+      }
       const mDamage = Math.max(1, Math.floor(m.attack * (0.85 + Math.random() * 0.3)) - Player.getEffectiveDefense());
       const pTakeDmg = Player.takeDamage(mDamage);
       const counterDelay = (skillRes.triggered && skillRes.type === 'burst') ? 2200 : 350;

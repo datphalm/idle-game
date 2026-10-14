@@ -163,8 +163,9 @@ const Cinematics = {
       this.pixiCanvas = document.getElementById('burst-canvas');
       this.threeCanvas = document.getElementById('burst-three-canvas');
 
-      const w = window.innerWidth || 1280;
-      const h = window.innerHeight || 720;
+      const stageEl = document.getElementById('arena-stage');
+      const w = stageEl && stageEl.clientWidth > 100 ? stageEl.clientWidth : (window.innerWidth || 1280);
+      const h = stageEl && stageEl.clientHeight > 100 ? stageEl.clientHeight : 320;
       this.width = w;
       this.height = h;
 
@@ -180,8 +181,9 @@ const Cinematics = {
 
   resize() {
     try {
-      const w = window.innerWidth || 1280;
-      const h = window.innerHeight || 720;
+      const stageEl = document.getElementById('arena-stage');
+      const w = stageEl && stageEl.clientWidth > 100 ? stageEl.clientWidth : (window.innerWidth || 1280);
+      const h = stageEl && stageEl.clientHeight > 100 ? stageEl.clientHeight : 320;
       this.width = w;
       this.height = h;
 
@@ -353,7 +355,8 @@ const Cinematics = {
     // Preload Hero Stance Textures
     const HERO_LIST = [
       'hero_starter', 'hero_shadow_rogue', 'hero_frost_knight',
-      'hero_spear_lancer', 'hero_flame_knight', 'hero_arcane_mage', 'hero_unknown_god'
+      'hero_spear_lancer', 'hero_flame_knight', 'hero_arcane_mage',
+      'hero_aetheris', 'hero_unknown_god'
     ];
 
     HERO_LIST.forEach(heroId => {
@@ -501,6 +504,8 @@ const Cinematics = {
         return [0xff3d00, 0xff9100, 0xd50000, 0xffd600, 0xffffff];
       case 'hero_arcane_mage':
         return [0xb026ff, 0xd500f9, 0x4a148c, 0x00e5ff, 0xffffff];
+      case 'hero_aetheris':
+        return [0x00e5ff, 0xd500f9, 0xffd700, 0x0091ea, 0xffffff];
       case 'hero_unknown_god':
         return [0x00ffcc, 0xff0055, 0xaa00ff, 0x880e4f, 0xffffff];
       default:
@@ -727,6 +732,19 @@ const Cinematics = {
           g.connect(ctx.destination);
           osc1.start(now);
           osc1.stop(now + 0.38);
+        } else if (targetId === 'hero_aetheris') {
+          [587.33, 880, 1174.66, 1760, 2349.32].forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+            g.gain.setValueAtTime(0.22, now + idx * 0.05);
+            g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.4);
+            osc.connect(g);
+            g.connect(ctx.destination);
+            osc.start(now + idx * 0.05);
+            osc.stop(now + idx * 0.05 + 0.4);
+          });
         } else {
           const osc1 = ctx.createOscillator();
           const g = ctx.createGain();
@@ -776,6 +794,18 @@ const Cinematics = {
           zapG.connect(ctx.destination);
           zap.start(now);
           zap.stop(now + 0.42);
+        } else if (targetId === 'hero_aetheris') {
+          const beam = ctx.createOscillator();
+          const beamG = ctx.createGain();
+          beam.type = 'sawtooth';
+          beam.frequency.setValueAtTime(1400, now);
+          beam.frequency.exponentialRampToValueAtTime(90, now + 0.45);
+          beamG.gain.setValueAtTime(0.45, now);
+          beamG.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+          beam.connect(beamG);
+          beamG.connect(ctx.destination);
+          beam.start(now);
+          beam.stop(now + 0.5);
         } else if (targetId === 'hero_frost_knight') {
           const water = ctx.createOscillator();
           const waterG = ctx.createGain();
@@ -808,6 +838,29 @@ const Cinematics = {
           noise.start(now);
           noise.stop(now + 0.5);
         }
+      } else if (phase === 'sheathe') {
+        const click = ctx.createOscillator();
+        const clickG = ctx.createGain();
+        click.type = 'sine';
+        click.frequency.setValueAtTime(3200, now);
+        click.frequency.exponentialRampToValueAtTime(1600, now + 0.12);
+        clickG.gain.setValueAtTime(0.3, now);
+        clickG.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        click.connect(clickG);
+        clickG.connect(ctx.destination);
+        click.start(now);
+        click.stop(now + 0.22);
+
+        const bell = ctx.createOscillator();
+        const bellG = ctx.createGain();
+        bell.type = 'triangle';
+        bell.frequency.setValueAtTime(1174.66, now + 0.04);
+        bellG.gain.setValueAtTime(0.2, now + 0.04);
+        bellG.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        bell.connect(bellG);
+        bellG.connect(ctx.destination);
+        bell.start(now + 0.04);
+        bell.stop(now + 0.45);
       }
     } catch (e) {
       // AudioCtx protected
@@ -1101,12 +1154,16 @@ const Cinematics = {
           <!-- Upward Greatsword Launcher Arc (Knocks monster flying up!) -->
           <path class="slash-upward-arc" d="M 50,260 Q 150,150 250,30" stroke="url(#st-arc-grad)" stroke-width="14" fill="none" stroke-linecap="round" filter="url(#st-spark-glow)"/>
           <path class="slash-upward-arc-core" d="M 50,260 Q 150,150 250,30" stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round"/>
-          <!-- 4 Rapid Airborne Cross Slashes -->
+          <!-- 8 Rapid Airborne White Slashes Cutting Blood-Red Monster -->
           <g class="airborne-cross-slashes" filter="url(#st-spark-glow)">
-            <line class="cross-sl-1" x1="40" y1="70" x2="260" y2="150" stroke="#ffffff" stroke-width="6"/>
-            <line class="cross-sl-2" x1="260" y1="80" x2="40" y2="160" stroke="#ffd700" stroke-width="7"/>
-            <line class="cross-sl-3" x1="70" y1="30" x2="230" y2="200" stroke="#ffffff" stroke-width="8"/>
-            <line class="cross-sl-4" x1="230" y1="30" x2="70" y2="200" stroke="#ffeb3b" stroke-width="8"/>
+            <line class="cross-sl-1" x1="30" y1="60" x2="270" y2="160" stroke="#ffffff" stroke-width="6"/>
+            <line class="cross-sl-2" x1="260" y1="70" x2="40" y2="180" stroke="#ffffff" stroke-width="7"/>
+            <line class="cross-sl-3" x1="60" y1="30" x2="240" y2="220" stroke="#ffffff" stroke-width="8"/>
+            <line class="cross-sl-4" x1="240" y1="30" x2="60" y2="220" stroke="#ffffff" stroke-width="8"/>
+            <line class="cross-sl-5" x1="20" y1="120" x2="280" y2="120" stroke="#ffffff" stroke-width="7"/>
+            <line class="cross-sl-6" x1="150" y1="20" x2="150" y2="240" stroke="#ffffff" stroke-width="7"/>
+            <line class="cross-sl-7" x1="50" y1="190" x2="250" y2="80" stroke="#ffffff" stroke-width="8"/>
+            <line class="cross-sl-8" x1="250" y1="190" x2="50" y2="80" stroke="#ffffff" stroke-width="8"/>
           </g>
           <!-- Downward Ground Hammer Crash Impact -->
           <g class="ground-smash-burst">
@@ -1235,6 +1292,81 @@ const Cinematics = {
           <circle class="supernova-blast-ring" cx="150" cy="130" r="140" stroke="#ffffff" stroke-width="8" fill="none" filter="url(#am-void-glow-2)"/>
         </svg>`;
 
+      case 'hero_aetheris':
+        return `
+        <svg viewBox="0 0 320 320" class="impact-svg impact-aetheris" width="100%" height="100%">
+          <defs>
+            <linearGradient id="ae-meteor-fire" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="30%" stop-color="#ffeb3b"/>
+              <stop offset="70%" stop-color="#ff5722"/>
+              <stop offset="100%" stop-color="#b71c1c"/>
+            </linearGradient>
+            <linearGradient id="ae-impact-beam" x1="0" y1="1" x2="1" y2="0">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="40%" stop-color="#00e5ff"/>
+              <stop offset="75%" stop-color="#d500f9"/>
+              <stop offset="100%" stop-color="#311b92"/>
+            </linearGradient>
+            <filter id="ae-impact-glow"><feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#00e5ff" flood-opacity="1"/></filter>
+            <filter id="ae-fire-glow"><feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#ff3d00" flood-opacity="1"/></filter>
+          </defs>
+
+          <!-- Top-Right: Dimensional Cosmic Vortex Rift (Image 2 Panel 4) -->
+          <g class="aether-cosmic-rift" filter="url(#ae-impact-glow)">
+            <ellipse cx="250" cy="55" rx="55" ry="24" transform="rotate(-30 250 55)" fill="#050014" stroke="#00e5ff" stroke-width="4"/>
+            <ellipse cx="250" cy="55" rx="42" ry="16" transform="rotate(-30 250 55)" fill="none" stroke="#d500f9" stroke-width="3" stroke-dasharray="10,5" class="spin-singularity"/>
+            <circle cx="250" cy="55" r="10" fill="#ffffff"/>
+          </g>
+
+          <!-- Colossal Prismatic Beam Tearing Reality from Staff into the Rift (Panel 4) -->
+          <g class="aether-laser-cannon" filter="url(#ae-impact-glow)">
+            <polygon points="-30,260 250,55 260,70 -15,280" fill="url(#ae-impact-beam)" opacity="0.95"/>
+            <line x1="-30" y1="270" x2="255" y2="62" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+            <line x1="-30" y1="270" x2="255" y2="62" stroke="#00e5ff" stroke-width="4"/>
+            <!-- Electric Lightning Tendrils along beam -->
+            <path d="M 10,240 Q 60,180 100,165 Q 160,120 230,80" stroke="#d500f9" stroke-width="3" fill="none"/>
+            <path d="M 0,250 Q 80,210 130,150 Q 180,110 240,70" stroke="#00e5ff" stroke-width="2.5" fill="none"/>
+          </g>
+
+          <!-- Planetary Meteor Shower Bombardment Falling from Sky (Panel 4) -->
+          <g class="aether-meteor-shower" filter="url(#ae-fire-glow)">
+            <!-- Meteor 1 (Giant direct hit on monster) -->
+            <g class="meteor-projectile m-1">
+              <path d="M 230,70 Q 170,140 130,200 L 145,210 Q 190,145 245,75 Z" fill="url(#ae-meteor-fire)"/>
+              <circle cx="130" cy="200" r="14" fill="#3e2723" stroke="#ff3d00" stroke-width="3"/>
+              <circle cx="130" cy="200" r="8" fill="#ff6d00"/>
+              <circle cx="130" cy="200" r="4" fill="#ffeb3b"/>
+            </g>
+            <!-- Meteor 2 -->
+            <g class="meteor-projectile m-2">
+              <path d="M 260,40 Q 200,90 170,160 L 180,168 Q 215,95 270,45 Z" fill="url(#ae-meteor-fire)"/>
+              <circle cx="170" cy="160" r="10" fill="#3e2723" stroke="#ff5722" stroke-width="2"/>
+              <circle cx="170" cy="160" r="5" fill="#ff9100"/>
+            </g>
+            <!-- Meteor 3 -->
+            <g class="meteor-projectile m-3">
+              <path d="M 210,90 Q 140,150 90,210 L 100,218 Q 155,155 220,95 Z" fill="url(#ae-meteor-fire)"/>
+              <circle cx="90" cy="210" r="11" fill="#3e2723" stroke="#ff3d00" stroke-width="2"/>
+              <circle cx="90" cy="210" r="6" fill="#ffd600"/>
+            </g>
+          </g>
+
+          <!-- Fiery Cataclysmic Ground Explosions & Shattered Earth (Panel 4) -->
+          <g class="aether-ground-detonation" filter="url(#ae-fire-glow)">
+            <ellipse cx="140" cy="250" rx="90" ry="26" fill="#ff3d00" opacity="0.65"/>
+            <!-- Fire Blast Puffs -->
+            <circle cx="110" cy="235" r="28" fill="#ff6d00" opacity="0.85"/>
+            <circle cx="160" cy="230" r="32" fill="#ff9100" opacity="0.9"/>
+            <circle cx="135" cy="225" r="24" fill="#ffeb3b"/>
+            <circle cx="135" cy="225" r="14" fill="#ffffff"/>
+            <!-- Ground Debris Rocks Flying -->
+            <polygon points="70,240 60,225 80,230" fill="#212121"/>
+            <polygon points="190,245 205,220 185,230" fill="#37474f"/>
+            <polygon points="140,205 148,185 132,190" fill="#ff5722"/>
+          </g>
+        </svg>`;
+
       case 'hero_unknown_god':
         return `
         <svg viewBox="0 0 300 300" class="impact-svg impact-unknown_god" width="100%" height="100%">
@@ -1302,6 +1434,7 @@ const Cinematics = {
         hero_spear_lancer: '⟦ 金 龍 破 天 ⟧',
         hero_flame_knight: '⟦ 燎 原 烈 火 ⟧',
         hero_arcane_mage: '⟦ 黒 洞 寂 滅 ⟧',
+        hero_aetheris: '⟦ 星 穹 ⟧',
         hero_unknown_god: '⟦ 無 極 創 生 ⟧',
         // Fallbacks for legacy saves
         hero_traveler: '⟦ 開 山 破 石 ⟧',
@@ -1331,6 +1464,12 @@ const Cinematics = {
       this._buildEyeCutinWebGL(heroId);
       this._resetParticlesForBurst(heroId);
 
+      // Phase 1 (0ms - 550ms): Eye cut-in banner
+      if (eyeCutin && typeof Sprites !== 'undefined') {
+        eyeCutin.innerHTML = Sprites.getHeroEyeCutinSvg(heroId);
+        eyeCutin.classList.add('cutin-active');
+      }
+
       // 3. Shockwave & Chromatic Aberration Spike on Activation
       if (this.shockwaveFilter && this.shockwaveFilter.uniforms) {
         this.shockwaveFilter.uniforms.uProgress = 0.01;
@@ -1344,7 +1483,7 @@ const Cinematics = {
         this.bloomFilter.uniforms.uGlowIntensity = 0.55;
       }
 
-      // Play Phase 0 Audio
+      // Play Phase 1 Intro Audio
       this.playBurstAudio(heroId, 'intro');
 
       // 4. Show Overlay & Hero-Themed CSS
@@ -1357,11 +1496,11 @@ const Cinematics = {
 
       // 6. Dynamic 3D Camera Tilt on 2D Arena & Staging
       if (arenaStage) {
-        arenaStage.classList.add('camera-3d-active', 'arena-burst-active', `theme-${heroId}`);
+        arenaStage.classList.add('camera-3d-active', 'arena-burst-active', 'phase-1-charging', `theme-${heroId}`);
         this._apply3DCameraAngle(arenaStage, heroId);
       }
 
-      // 6.5. Activate Dark Spotlight & Arena Monster Impact
+      // 6.5. Phase 1 Setup: Hero winds up, monster frozen under spotlight, NO slashes yet
       const pSprite = document.getElementById('player-sprite');
       const mSprite = document.getElementById('monster-sprite');
       const blackoutEl = document.getElementById('arena-burst-blackout');
@@ -1369,16 +1508,15 @@ const Cinematics = {
 
       if (blackoutEl) blackoutEl.classList.remove('hidden');
       if (impactFxEl) {
-        impactFxEl.innerHTML = this._getHeroBurstImpactSvg(heroId);
-        impactFxEl.className = `arena-burst-impact-fx theme-${heroId}`;
-        impactFxEl.classList.remove('hidden');
+        impactFxEl.innerHTML = '';
+        impactFxEl.classList.add('hidden');
       }
 
       if (pSprite) {
-        pSprite.className = `fighter-avatar hero-burst-acting action-burst hero-burst-${heroId}`;
+        pSprite.className = `fighter-avatar hero-burst-charging hero-charge-${heroId}`;
       }
       if (mSprite) {
-        mSprite.className = `fighter-avatar monster-burst-target monster-burst-${heroId}`;
+        mSprite.className = `fighter-avatar monster-frozen`;
       }
 
       // Preview Duel Stage (when testing from Heroes Tab or Dev Menu)
@@ -1394,11 +1532,69 @@ const Cinematics = {
         `;
       }
 
+      // Clean existing phase timers
+      if (this._phaseTimers) {
+        this._phaseTimers.forEach(t => clearTimeout(t));
+      }
+      this._phaseTimers = [];
+
+      // PHASE 2 (550ms): HERO DASHES FORWARD, MONSTER AIRBORNE BLOOD-RED, SLASH BARRAGE
+      const tPhase2 = setTimeout(() => {
+        if (!this.active) return;
+        if (eyeCutin) {
+          eyeCutin.innerHTML = '';
+          eyeCutin.classList.remove('cutin-active');
+        }
+        if (this.eyeCutinLayer) this.eyeCutinLayer.removeChildren();
+
+        if (arenaStage) {
+          arenaStage.classList.remove('phase-1-charging');
+          arenaStage.classList.add('phase-2-assault');
+        }
+
+        if (pSprite) {
+          pSprite.className = `fighter-avatar hero-burst-acting action-burst hero-burst-${heroId}`;
+        }
+        if (mSprite) {
+          mSprite.className = `fighter-avatar monster-burst-target monster-burst-${heroId}`;
+        }
+        if (impactFxEl) {
+          impactFxEl.innerHTML = this._getHeroBurstImpactSvg(heroId);
+          impactFxEl.className = `arena-burst-impact-fx theme-${heroId}`;
+          impactFxEl.classList.remove('hidden');
+        }
+      }, 550);
+      this._phaseTimers.push(tPhase2);
+
+      // PHASE 3 (1500ms): FINISHER CRASH, MONSTER LANDS, HERO RETURNS & THU KIẾM / POSE DÁNG
+      const tPhase3 = setTimeout(() => {
+        if (!this.active) return;
+        if (impactFxEl) {
+          impactFxEl.innerHTML = '';
+          impactFxEl.classList.add('hidden');
+        }
+        if (arenaStage) {
+          arenaStage.classList.remove('phase-2-assault');
+          arenaStage.classList.add('phase-3-sheathe');
+        }
+        if (mSprite) {
+          mSprite.className = 'fighter-avatar monster-landing';
+        }
+        if (pSprite) {
+          pSprite.className = `fighter-avatar hero-burst-sheathe hero-sheathe-${heroId}`;
+          if (typeof Sprites !== 'undefined') {
+            pSprite.innerHTML = Sprites.getPlayerSvg('sheathe', heroId);
+          }
+        }
+        this.playBurstAudio(heroId, 'sheathe');
+      }, 1500);
+      this._phaseTimers.push(tPhase3);
+
       // 7. Delta-Time 60-144 FPS Rendering Loop
       const startTime = performance.now();
       this.startTime = startTime;
       this.lastTime = startTime;
-      const duration = 2100;
+      const duration = 2200;
 
       if (this.animId) cancelAnimationFrame(this.animId);
 
@@ -1410,8 +1606,8 @@ const Cinematics = {
         const elapsed = now - startTime;
         const progress = Math.min(1, elapsed / duration);
 
-        // Phase 1 -> Phase 2 Transition at 750ms (Climax Impact)
-        if (progress >= 0.357 && !this.impactFired) {
+        // Climax Impact Transition at ~1250ms (Hitstop, reality shatter & particle explosion)
+        if (elapsed >= 1250 && !this.impactFired) {
           this.impactFired = true;
 
           this._buildRealityShatterWebGL(heroId);
@@ -1419,13 +1615,13 @@ const Cinematics = {
 
           if (this.shockwaveFilter && this.shockwaveFilter.uniforms) {
             this.shockwaveFilter.uniforms.uProgress = 0.01;
-            this.shockwaveFilter.uniforms.uAmplitude = 0.05;
+            this.shockwaveFilter.uniforms.uAmplitude = 0.055;
           }
           if (this.chromaticFilter && this.chromaticFilter.uniforms) {
-            this.chromaticFilter.uniforms.uIntensity = 0.45;
+            this.chromaticFilter.uniforms.uIntensity = 0.5;
           }
           if (this.bloomFilter && this.bloomFilter.uniforms) {
-            this.bloomFilter.uniforms.uGlowIntensity = 0.85;
+            this.bloomFilter.uniforms.uGlowIntensity = 0.9;
           }
 
           this.playBurstAudio(heroId, 'climax');
@@ -1450,17 +1646,18 @@ const Cinematics = {
             const actProgress = Math.min(1.0, elapsed / 360);
             this.shockwaveFilter.uniforms.uProgress = actProgress;
           } else {
-            const climProgress = Math.min(1.0, (elapsed - 750) / 950);
+            const climProgress = Math.min(1.0, (elapsed - 1250) / 750);
             this.shockwaveFilter.uniforms.uProgress = climProgress;
           }
         }
 
         if (this.chromaticFilter && this.chromaticFilter.uniforms) {
           if (!this.impactFired) {
-            this.chromaticFilter.uniforms.uIntensity = Math.max(0.12, 1.0 - (elapsed / 320));
+            const actP = Math.min(1.0, elapsed / 320);
+            this.chromaticFilter.uniforms.uIntensity = Math.max(0.08, 0.35 - actP * 0.25);
           } else {
-            const climElapsed = elapsed - 750;
-            this.chromaticFilter.uniforms.uIntensity = Math.max(0.0, 1.0 - (climElapsed / 480));
+            const climElapsed = elapsed - 1250;
+            this.chromaticFilter.uniforms.uIntensity = Math.max(0.0, 1.0 - (climElapsed / 450));
           }
         }
 
@@ -1468,8 +1665,8 @@ const Cinematics = {
           if (!this.impactFired) {
             this.bloomFilter.uniforms.uGlowIntensity = 0.45 + Math.sin(elapsed * 0.015) * 0.2;
           } else {
-            const climElapsed = elapsed - 750;
-            this.bloomFilter.uniforms.uGlowIntensity = Math.max(0.15, 0.85 - (climElapsed / 600) * 0.7);
+            const climElapsed = elapsed - 1250;
+            this.bloomFilter.uniforms.uGlowIntensity = Math.max(0.12, 0.85 - (climElapsed / 550) * 0.7);
           }
         }
 
@@ -1509,6 +1706,10 @@ const Cinematics = {
   _finishBurst() {
     this.active = false;
     if (this.animId) cancelAnimationFrame(this.animId);
+    if (this._phaseTimers) {
+      this._phaseTimers.forEach(t => clearTimeout(t));
+      this._phaseTimers = [];
+    }
 
     const overlay = document.getElementById('burst-cinematic-overlay');
     const arenaStage = document.getElementById('arena-stage');
@@ -1550,9 +1751,12 @@ const Cinematics = {
 
     if (arenaStage) {
       arenaStage.style.transform = '';
-      arenaStage.classList.remove('arena-burst-active', 'theme-hero_starter', 'theme-hero_shadow_rogue',
+      arenaStage.classList.remove(
+        'arena-burst-active', 'phase-1-charging', 'phase-2-assault', 'phase-3-sheathe',
+        'theme-hero_starter', 'theme-hero_shadow_rogue',
         'theme-hero_frost_knight', 'theme-hero_spear_lancer', 'theme-hero_flame_knight',
-        'theme-hero_arcane_mage', 'theme-hero_unknown_god');
+        'theme-hero_arcane_mage', 'theme-hero_unknown_god', 'theme-hero_aetheris'
+      );
       setTimeout(() => arenaStage.classList.remove('camera-3d-active'), 300);
     }
 
@@ -1822,6 +2026,34 @@ const Cinematics = {
         break;
       }
 
+      case 'hero_aetheris': {
+        const vortexGeo = new THREE.TorusGeometry(6.5, 0.6, 16, 64);
+        const vortexMat = new THREE.MeshStandardMaterial({ color: 0x0d47a1, emissive: 0x00e5ff, emissiveIntensity: 2.2 });
+        const vortex = new THREE.Mesh(vortexGeo, vortexMat);
+        vortex.position.set(0, 1.0, -8);
+        scene.add(vortex);
+        this.threeObjects.aetherVortex = vortex;
+
+        const runeGeo = new THREE.RingGeometry(5.2, 7.8, 32);
+        const runeMat = new THREE.MeshBasicMaterial({ color: 0xd500f9, side: THREE.DoubleSide, wireframe: true });
+        const runeRing = new THREE.Mesh(runeGeo, runeMat);
+        runeRing.position.set(0, 1.0, -7.5);
+        scene.add(runeRing);
+        this.threeObjects.aetherRune = runeRing;
+
+        const meteors = [];
+        const meteorMat = new THREE.MeshStandardMaterial({ color: 0xbf360c, emissive: 0xff3d00, emissiveIntensity: 2.5 });
+        for (let m = 0; m < 12; m++) {
+          const mGeo = new THREE.DodecahedronGeometry(0.5 + Math.random() * 0.4, 0);
+          const mMesh = new THREE.Mesh(mGeo, meteorMat);
+          mMesh.position.set(-12 + Math.random() * 24, 10 + Math.random() * 12, -4 - Math.random() * 8);
+          scene.add(mMesh);
+          meteors.push(mMesh);
+        }
+        this.threeObjects.aetherMeteors = meteors;
+        break;
+      }
+
       case 'hero_unknown_god': {
         const cubes = [];
         const cubeMat = new THREE.MeshStandardMaterial({ color: 0x212121, emissive: 0x00ffcc, emissiveIntensity: 2.2 });
@@ -1981,6 +2213,28 @@ const Cinematics = {
 
         if (obj.musouRing) obj.musouRing.rotation.z += dt * 3.5;
         if (obj.lightningRing) obj.lightningRing.rotation.z -= dt * 4.8;
+        break;
+      }
+
+      case 'hero_aetheris': {
+        camera.position.set(Math.sin(elapsed * 0.003) * 2.5, 1.8, 9.5);
+        camera.lookAt(0, 0.5, -4);
+
+        if (obj.aetherVortex) obj.aetherVortex.rotation.z += dt * 3.8;
+        if (obj.aetherRune) obj.aetherRune.rotation.z -= dt * 2.5;
+
+        if (obj.aetherMeteors && progress >= 0.357) {
+          obj.aetherMeteors.forEach((m, idx) => {
+            m.position.y -= dt * (18 + (idx % 4) * 6);
+            m.position.x += dt * 5;
+            m.rotation.x += dt * 4;
+            m.rotation.y += dt * 5;
+            if (m.position.y < -12) {
+              m.position.y = 12 + Math.random() * 6;
+              m.position.x = -12 + Math.random() * 18;
+            }
+          });
+        }
         break;
       }
 

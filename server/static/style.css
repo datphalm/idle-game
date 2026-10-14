@@ -237,6 +237,10 @@ body {
   align-items: center;
   gap: 12px;
   padding: 16px 8px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  min-height: 280px;
   transform-style: preserve-3d;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
 }
@@ -3226,9 +3230,12 @@ body {
 }
 
 .burst-overlay {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: 99999;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  z-index: 30;
   pointer-events: none;
   overflow: hidden;
   display: flex;
@@ -3242,7 +3249,7 @@ body {
   right: 0;
   height: 0;
   background: #000;
-  z-index: 10;
+  z-index: 32;
   transition: height 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .letterbox-top { top: 0; }
@@ -3250,7 +3257,7 @@ body {
 
 .burst-overlay.burst-active .letterbox-top,
 .burst-overlay.burst-active .letterbox-bottom {
-  height: 52px;
+  height: 18px;
 }
 
 .burst-bg-flash {
@@ -3281,12 +3288,12 @@ body {
 /* Phase 0: Close-up Eye Cut-in Slash Ribbon */
 .burst-eye-cutin {
   position: absolute;
-  top: 42%;
+  top: 48%;
   left: 0;
   right: 0;
-  height: 130px;
+  height: 95px;
   transform: translateY(-50%) skewY(-2.5deg);
-  z-index: 25;
+  z-index: 38;
   pointer-events: none;
   overflow: hidden;
   opacity: 0;
@@ -3324,8 +3331,8 @@ body {
 }
 
 .eye-cutin-svg {
-  width: min(95vw, 680px);
-  height: 130px;
+  width: min(95%, 520px);
+  height: 95px;
   display: block;
 }
 
@@ -4473,46 +4480,71 @@ body {
    ULTIMATE CHOREOGRAPHY: DARK SPOTLIGHT & MONSTER IMPACT
    ============================================================ */
 
-/* 1. Arena Darkening / Theater Spotlight */
+/* ============================================================
+   ULTIMATE CHOREOGRAPHY: STRICT ARENA CONTAINMENT & SEQUENTIAL PHASING
+   ============================================================ */
+
+/* 1. Arena Darkening / Theater Spotlight (Strictly Confined Inside Arena) */
 .arena-burst-blackout {
   position: absolute;
-  inset: -120px -80px;
-  background: radial-gradient(circle at 50% 50%, rgba(2, 6, 23, 0.45) 0%, rgba(2, 6, 23, 0.94) 55%, #000000 90%);
-  z-index: 35;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(2, 6, 23, 0.6) 0%, rgba(2, 6, 23, 0.95) 55%, #000000 92%);
+  z-index: 20;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: 20px;
+  border-radius: inherit;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
 }
 
+/* Phase 1: Soft cinematic spotlight */
 .arena-burst-active .arena-burst-blackout {
+  opacity: 0.92;
+}
+
+/* Phase 2: Complete pitch-black void focusing ONLY on blood-red monster and hero */
+.arena-burst-active.phase-2-assault .arena-burst-blackout {
   opacity: 1;
+  background: #000000 !important;
+}
+
+/* Phase 3: Smooth return */
+.arena-burst-active.phase-3-sheathe .arena-burst-blackout {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
 }
 
 .arena-burst-active {
-  z-index: 999999 !important;
   position: relative !important;
 }
 
 .arena-burst-active #fighter-player {
   z-index: 50 !important;
-  filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.6)) brightness(1.15);
+  position: relative !important;
+  filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.6)) brightness(1.2);
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .arena-burst-active #fighter-monster {
   z-index: 50 !important;
-  filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.45));
+  position: relative !important;
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
-/* 2. Monster Impact Layer */
+/* Phase 2: Monster turns INTENSE BLOOD-RED under dark screen as requested */
+.arena-burst-active.phase-2-assault #fighter-monster,
+#fighter-monster.monster-burst-target {
+  filter: drop-shadow(0 0 25px #ff0033) drop-shadow(0 0 50px #ff0000) brightness(2.2) contrast(1.8) saturate(2) !important;
+}
+
+/* 2. Monster Impact Layer (Positioned directly over monster side) */
 .arena-burst-impact-fx {
   position: absolute;
-  top: -40px;
-  right: -20px;
-  width: 220px;
-  height: 220px;
+  top: 10px;
+  right: 15px;
+  width: 260px;
+  height: 260px;
   pointer-events: none;
-  z-index: 60;
+  z-index: 55;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4525,200 +4557,611 @@ body {
   filter: drop-shadow(0 0 15px currentColor);
 }
 
-/* 3. HERO ATTACK ANIMATIONS (7 UNIQUE CHOREOGRAPHIES) */
+/* Phase 1 Charging Animation */
+.hero-burst-charging {
+  animation: heroChargeAnim 0.55s ease-in-out forwards;
+}
+@keyframes heroChargeAnim {
+  0%   { transform: translateX(0) scale(1); filter: brightness(1); }
+  50%  { transform: translateX(-12px) scale(1.08); filter: brightness(1.4) drop-shadow(0 0 20px #ffd700); }
+  100% { transform: translateX(-15px) scale(1.12); filter: brightness(1.6) drop-shadow(0 0 25px #ffffff); }
+}
 
-/* Hero 1: Starter Knight (Charge -> Upward Launcher -> Sky Leap -> Downward Slam) */
+/* Phase 3 Hero Thu Kiếm / Pose Dáng Animation */
+.hero-burst-sheathe {
+  animation: heroSheatheAnim 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes heroSheatheAnim {
+  0%   { transform: translateX(0) scale(1.05); }
+  25%  { transform: translateX(0) scale(1.14) rotate(-8deg); filter: drop-shadow(0 0 30px #ffd700) brightness(2.8); } /* Metallic click shine */
+  60%  { transform: translateX(0) scale(1.08) rotate(0deg); filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5)) brightness(1.2); }
+  100% { transform: translateX(0) scale(1); filter: none; }
+}
+
+/* Phase 3 Monster Landing & Recovery */
+.monster-landing {
+  animation: monsterLandingAnim 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes monsterLandingAnim {
+  0%   { transform: translateY(0) scale(1.4, 0.6); filter: brightness(3); }
+  35%  { transform: translateY(-16px) scale(0.92, 1.08); filter: brightness(1.5); }
+  70%  { transform: translateY(0) scale(1.05, 0.95); filter: none; }
+  100% { transform: translateY(0) scale(1); filter: none; }
+}
+
+/* ============================================================
+   3. HERO ATTACK ANIMATIONS (8 UNIQUE CHOREOGRAPHIES)
+   P1 (0-25%): Charge windup | P2 (25-68%): Dash & Multi-hits | P3 (68-100%): Return & Sheathe
+   ============================================================ */
+
+/* Hero 1: Starter Knight (Charge -> Dash & Leap -> Downward Slam -> Sheathe) */
 .hero-burst-hero_starter {
-  animation: heroBurstStarterAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: heroBurstStarterAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes heroBurstStarterAnim {
-  0%   { transform: translateX(0); }
-  20%  { transform: translateX(85px) scale(1.12); filter: brightness(1.4); }
-  28%  { transform: translateX(110px) rotate(35deg) translateY(-25px) scale(1.25); filter: brightness(2.5); }
-  45%  { transform: translateX(130px) translateY(-120px) rotate(-15deg) scale(1.3); }
-  68%  { transform: translateX(145px) translateY(0) rotate(75deg) scale(1.35); filter: brightness(3); }
-  85%  { transform: translateX(50px) translateY(0) scale(1.05); }
-  100% { transform: translateX(0); }
+  0%   { transform: translateX(0) scale(1); filter: brightness(1); }
+  15%  { transform: translateX(-14px) scale(1.08); filter: drop-shadow(0 0 20px #ffd700) brightness(1.3); }
+  24%  { transform: translateX(-18px) scale(1.12); filter: brightness(1.6); }
+  26%  { transform: translateX(180px) scale(1.25); filter: brightness(3); }
+  32%  { transform: translateX(205px) translateY(-70px) rotate(25deg) scale(1.3); filter: brightness(2); }
+  42%  { transform: translateX(190px) translateY(-95px) rotate(-15deg) scale(1.32); }
+  52%  { transform: translateX(215px) translateY(-80px) rotate(35deg) scale(1.3); }
+  60%  { transform: translateX(200px) translateY(-110px) rotate(-20deg) scale(1.35); filter: brightness(2.5); }
+  64%  { transform: translateX(210px) translateY(0) rotate(85deg) scale(1.45); filter: brightness(5) drop-shadow(0 0 35px #ffffff); }
+  70%  { transform: translateX(120px) translateY(0) scale(1.15) rotate(15deg); filter: brightness(1.5); }
+  80%  { transform: translateX(0) translateY(0) scale(1.05) rotate(0deg); }
+  88%  { transform: translateX(0) rotate(-12deg) scale(1.1); filter: drop-shadow(0 0 25px #ffd700) brightness(2.5); }
+  100% { transform: translateX(0) rotate(0deg) scale(1); filter: none; }
 }
 
-/* Hero 2: Shadow Rogue (Vanish -> 4 Shadow Clones -> Reverse Sheathe Click) */
+/* Hero 2: Shadow Rogue (Shadow Stance -> Vanish -> 4 Phantom Streaks -> Click Sheathe) */
 .hero-burst-hero_shadow_rogue {
-  animation: heroBurstRogueAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: heroBurstRogueAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes heroBurstRogueAnim {
   0%   { transform: scale(1); opacity: 1; }
-  18%  { transform: scale(0.6) translateY(20px); opacity: 0; filter: blur(4px); }
-  25%  { transform: translateX(160px) scale(1.1); opacity: 0.85; filter: drop-shadow(0 0 20px #00e5ff); }
-  40%  { transform: translateX(90px) translateY(-40px) scale(1.15); opacity: 0.85; }
-  55%  { transform: translateX(170px) translateY(-20px) scale(1.2); opacity: 0.9; }
-  72%  { transform: translateX(190px) scale(1.15) rotate(180deg); opacity: 1; filter: brightness(2); }
-  90%  { transform: translateX(80px) scale(1.05); opacity: 1; }
-  100% { transform: translateX(0); opacity: 1; }
+  20%  { transform: scale(0.9) translateX(-10px); filter: drop-shadow(0 0 20px #00e5ff); }
+  25%  { transform: scale(0.2) translateX(60px); opacity: 0; filter: blur(6px); }
+  35%  { transform: translateX(210px) translateY(-50px) scale(1.2); opacity: 0.85; filter: drop-shadow(0 0 30px #00e5ff) brightness(2); }
+  48%  { transform: translateX(180px) translateY(20px) scale(1.15); opacity: 0.9; }
+  60%  { transform: translateX(220px) translateY(-30px) scale(1.25); opacity: 0.95; filter: brightness(3); }
+  66%  { transform: translateX(190px) scale(1.3) rotate(180deg); opacity: 1; filter: brightness(4); }
+  74%  { transform: translateX(60px) scale(1.1); opacity: 1; }
+  82%  { transform: translateX(0) scale(1.05); }
+  90%  { transform: translateX(0) scale(1.1) rotate(6deg); filter: drop-shadow(0 0 25px #00e5ff) brightness(2.2); }
+  100% { transform: translateX(0) scale(1); opacity: 1; filter: none; }
 }
 
-/* Hero 3: Frost Knight (Stabs Ground -> Blizzard Dash -> Shatter Cleave) */
+/* Hero 3: Frost Knight (Stab Ground -> Glacial Dash -> Ice Shatter Cleave -> Salute) */
 .hero-burst-hero_frost_knight {
-  animation: heroBurstFrostAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: heroBurstFrostAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes heroBurstFrostAnim {
   0%   { transform: translateY(0); }
-  22%  { transform: translateY(15px) rotate(15deg); filter: drop-shadow(0 0 25px #00e5ff); }
-  50%  { transform: translateY(0) scale(1.1) rotate(-10deg); filter: brightness(1.5); }
-  68%  { transform: translateX(130px) scale(1.3) rotate(45deg); filter: brightness(3); }
-  85%  { transform: translateX(60px) scale(1.08); }
-  100% { transform: translateX(0); }
+  20%  { transform: translateY(12px) rotate(12deg); filter: drop-shadow(0 0 30px #00e5ff) brightness(1.5); }
+  26%  { transform: translateX(160px) scale(1.18); filter: brightness(2.5); }
+  45%  { transform: translateX(195px) translateY(-40px) scale(1.25) rotate(-15deg); }
+  62%  { transform: translateX(215px) translateY(-20px) scale(1.35) rotate(45deg); filter: brightness(4.5) drop-shadow(0 0 35px #ffffff); }
+  72%  { transform: translateX(90px) scale(1.1); }
+  82%  { transform: translateX(0) scale(1.05); }
+  90%  { transform: translateX(0) translateY(4px) rotate(8deg) scale(1.08); filter: drop-shadow(0 0 25px #00e5ff) brightness(2); }
+  100% { transform: translateX(0) translateY(0) scale(1); filter: none; }
 }
 
-/* Hero 4: Spear Lancer (Spear Spin -> 8-Thrust Rush -> Command Dragon) */
+/* Hero 4: Spear Lancer (Spear Spin -> 8-Thrust Rush -> Golden Dragon Command -> Plant Spear) */
 .hero-burst-hero_spear_lancer {
-  animation: heroBurstSpearAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: heroBurstSpearAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes heroBurstSpearAnim {
   0%   { transform: scale(1); }
-  20%  { transform: rotate(-25deg) scale(1.1); }
-  25%, 35%, 45%, 55% { transform: translateX(95px) scale(1.25); filter: brightness(2.5) drop-shadow(0 0 20px #ffd700); }
-  30%, 40%, 50%, 60% { transform: translateX(70px) scale(1.15); filter: brightness(1.5); }
-  70%  { transform: translateX(120px) rotate(60deg) scale(1.3); }
-  88%  { transform: translateX(40px) scale(1.05); }
-  100% { transform: translateX(0); }
+  20%  { transform: rotate(-25deg) scale(1.1) translateX(-12px); filter: drop-shadow(0 0 25px #ffd700); }
+  26%  { transform: translateX(170px) scale(1.25); filter: brightness(2.5); }
+  32%, 42%, 52% { transform: translateX(205px) scale(1.3) rotate(10deg); filter: brightness(3) drop-shadow(0 0 25px #ffd700); }
+  37%, 47%, 57% { transform: translateX(185px) scale(1.2) rotate(-5deg); filter: brightness(2); }
+  64%  { transform: translateX(215px) translateY(-50px) rotate(70deg) scale(1.4); filter: brightness(5); }
+  74%  { transform: translateX(80px) scale(1.1); }
+  82%  { transform: translateX(0) scale(1.05); }
+  90%  { transform: translateX(0) rotate(-8deg) scale(1.1); filter: drop-shadow(0 0 30px #ffd700) brightness(2.2); }
+  100% { transform: translateX(0) scale(1); filter: none; }
 }
 
-/* Hero 5: Flame Knight (Phoenix Wings Flare -> Fire Crescent -> Heavenly Dive) */
+/* Hero 5: Flame Knight (Wings Flare -> Flame Cyclone Dash -> Phoenix Dive -> Rest Sword) */
 .hero-burst-hero_flame_knight {
-  animation: heroBurstFlameAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: heroBurstFlameAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes heroBurstFlameAnim {
   0%   { transform: scale(1); }
-  22%  { transform: scale(1.15) translateY(-15px); filter: drop-shadow(0 0 30px #ff3d00); }
-  45%  { transform: translateX(100px) rotate(45deg) scale(1.25); filter: brightness(2.5); }
-  68%  { transform: translateX(130px) translateY(-110px) rotate(80deg) scale(1.35); }
-  78%  { transform: translateX(140px) translateY(0) rotate(110deg) scale(1.4); filter: brightness(4); }
-  90%  { transform: translateX(50px) scale(1.05); }
-  100% { transform: translateX(0); }
+  20%  { transform: scale(1.12) translateY(-14px) translateX(-10px); filter: drop-shadow(0 0 35px #ff3d00); }
+  26%  { transform: translateX(160px) scale(1.25); filter: brightness(2.5); }
+  45%  { transform: translateX(200px) translateY(-75px) rotate(45deg) scale(1.3); filter: brightness(3); }
+  63%  { transform: translateX(215px) translateY(0) rotate(115deg) scale(1.45); filter: brightness(5) drop-shadow(0 0 45px #ff3d00); }
+  73%  { transform: translateX(80px) scale(1.1); }
+  82%  { transform: translateX(0) scale(1.05); }
+  90%  { transform: translateX(0) rotate(-15deg) scale(1.08); filter: drop-shadow(0 0 25px #ff5722) brightness(2); }
+  100% { transform: translateX(0) scale(1); filter: none; }
 }
 
-/* Hero 6: Arcane Mage (Levitation -> Black Hole Channel -> Finger Snap) */
+/* Hero 6: Arcane Mage (Void Float -> Black Hole Channel -> Finger Snap -> Rest Staff) */
 .hero-burst-hero_arcane_mage {
-  animation: heroBurstMageAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: heroBurstMageAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes heroBurstMageAnim {
   0%   { transform: translateY(0); }
-  30%  { transform: translateY(-40px) scale(1.2); filter: drop-shadow(0 0 35px #d500f9); }
-  60%  { transform: translateY(-50px) scale(1.28); filter: drop-shadow(0 0 45px #00e5ff) brightness(1.8); }
-  75%  { transform: translateY(-35px) scale(1.35); filter: brightness(4); }
-  90%  { transform: translateY(-10px) scale(1.05); }
-  100% { transform: translateY(0); }
+  20%  { transform: translateY(-30px) scale(1.15); filter: drop-shadow(0 0 35px #d500f9); }
+  35%  { transform: translateY(-45px) translateX(30px) scale(1.22); filter: drop-shadow(0 0 45px #00e5ff) brightness(1.8); }
+  55%  { transform: translateY(-50px) translateX(50px) scale(1.28); filter: brightness(2.5); }
+  64%  { transform: translateY(-40px) translateX(65px) scale(1.35); filter: brightness(5) drop-shadow(0 0 50px #d500f9); }
+  75%  { transform: translateY(-20px) translateX(20px) scale(1.12); }
+  85%  { transform: translateY(-6px) scale(1.05); }
+  92%  { transform: translateY(0) scale(1.08); filter: drop-shadow(0 0 25px #d500f9) brightness(2); }
+  100% { transform: translateY(0) scale(1); filter: none; }
 }
 
-/* Hero 7: Unknown God (Time Stop -> Cube Command -> Spatial Severance) */
+/* Hero 7: Unknown God (Time Stop -> Cube Command -> Spatial Severance -> Fold Arms) */
 .hero-burst-hero_unknown_god {
-  animation: heroBurstGodAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: heroBurstGodAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes heroBurstGodAnim {
   0%   { transform: scale(1); }
-  30%  { transform: translateY(-30px) scale(1.22); filter: drop-shadow(0 0 40px #00ffcc); }
-  65%  { transform: translateY(-20px) scale(1.3); filter: drop-shadow(0 0 50px #ff0055) brightness(2.2); }
-  75%  { transform: translateX(60px) rotate(25deg) scale(1.4); filter: brightness(5); }
-  90%  { transform: translateX(20px) scale(1.08); }
-  100% { transform: translateX(0); }
+  20%  { transform: translateY(-25px) scale(1.15); filter: drop-shadow(0 0 40px #00ffcc); }
+  38%  { transform: translateY(-35px) translateX(25px) scale(1.25); filter: drop-shadow(0 0 55px #ff0055) brightness(2.2); }
+  63%  { transform: translateY(-30px) translateX(60px) rotate(20deg) scale(1.38); filter: brightness(6) drop-shadow(0 0 60px #ffffff); }
+  75%  { transform: translateY(-15px) translateX(20px) scale(1.12); }
+  85%  { transform: translateY(0) scale(1.06); }
+  92%  { transform: translateY(0) scale(1.1) rotate(-4deg); filter: drop-shadow(0 0 30px #00ffcc) brightness(2.5); }
+  100% { transform: translateX(0) scale(1); filter: none; }
 }
 
+/* Hero 8: Aetheris (Astral Charge -> Teleport Dash -> Laser & Meteors -> Stellar Triad) */
+.hero-burst-hero_aetheris {
+  animation: heroBurstAetherisAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes heroBurstAetherisAnim {
+  0%   { transform: translateY(0); }
+  20%  { transform: translateY(-35px) scale(1.2); filter: drop-shadow(0 0 40px #00e5ff); }
+  28%  { transform: translateX(120px) translateY(-45px) scale(1.28); filter: drop-shadow(0 0 55px #d500f9) brightness(2); }
+  45%  { transform: translateX(150px) translateY(-50px) scale(1.35); filter: brightness(3); }
+  64%  { transform: translateX(165px) translateY(-40px) scale(1.42); filter: brightness(5) drop-shadow(0 0 60px #00e5ff); }
+  75%  { transform: translateX(60px) translateY(-20px) scale(1.15); }
+  85%  { transform: translateX(0) translateY(-6px) scale(1.06); }
+  92%  { transform: translateX(0) translateY(0) scale(1.1); filter: drop-shadow(0 0 30px #00e5ff) brightness(2.5); }
+  100% { transform: translateY(0) scale(1); filter: none; }
+}
 
-/* 4. MONSTER REACTION ANIMATIONS (7 UNIQUE TARGET IMPACTS) */
+/* ============================================================
+   4. MONSTER REACTION ANIMATIONS (AIRBORNE, BLOOD-RED, GROUND CRASH)
+   ============================================================ */
 
-/* Starter: KNOCKED UP FLYING IN THE AIR -> SLICED -> DOWNWARD SLAM CRASH */
+/* Starter: Air Launch -> 12 White Slices Suspended -> Ground Slam Crash */
 .monster-burst-hero_starter {
-  animation: monsterBurstStarterAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: monsterBurstStarterAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes monsterBurstStarterAnim {
-  0%   { transform: translateY(0); }
-  24%  { transform: translateY(0) scale(1.02); }
-  30%  { transform: translateY(-115px) rotate(-22deg) scale(1.1); filter: drop-shadow(0 0 25px #ffd700) brightness(1.6); }
-  45%  { transform: translateY(-120px) rotate(-15deg) scale(1.05); filter: brightness(2.2); }
-  60%  { transform: translateY(-110px) rotate(-25deg) scale(1.08); filter: brightness(2.8); }
-  70%  { transform: translateY(0) scale(1.3, 0.65); filter: brightness(3.5); }
-  85%  { transform: translateY(-15px) scale(0.95, 1.05); }
-  100% { transform: translateY(0) scale(1); }
+  0%, 24% { transform: translateY(0) scale(1); filter: none; }
+  26%  { transform: translateY(-30px) scale(1.05); filter: drop-shadow(0 0 30px #ff0033) brightness(2.2); }
+  32%  { transform: translateY(-115px) rotate(-18deg) scale(1.1); filter: drop-shadow(0 0 45px #ff0000) brightness(2.5) contrast(1.8); }
+  40%  { transform: translateY(-118px) rotate(-12deg) scale(1.05) translateX(-8px); filter: drop-shadow(0 0 50px #ff0033) brightness(3); }
+  48%  { transform: translateY(-112px) rotate(-22deg) scale(1.08) translateX(8px); filter: brightness(2.8); }
+  56%  { transform: translateY(-116px) rotate(-15deg) scale(1.06) translateX(-6px); filter: brightness(3.2); }
+  63%  { transform: translateY(-120px) rotate(-20deg) scale(1.12); filter: brightness(4.5); }
+  67%  { transform: translateY(0) scale(1.4, 0.6); filter: brightness(5) drop-shadow(0 0 30px #ffd700); }
+  78%  { transform: translateY(-18px) scale(0.92, 1.08); filter: brightness(1.6); }
+  88%  { transform: translateY(0) scale(1.05, 0.95); filter: brightness(1.1); }
+  100% { transform: translateY(0) scale(1); filter: none; }
 }
 
-/* Rogue: TRAPPED IN SHADOW VORTEX -> MULTI-CLONE SHAKE -> EXPLOSIVE X-CUT */
+/* Rogue: Trapped in Shadow Vortex -> 4 Phantom Slices -> X-Cut Shatter */
 .monster-burst-hero_shadow_rogue {
-  animation: monsterBurstRogueAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: monsterBurstRogueAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes monsterBurstRogueAnim {
-  0%   { transform: translateY(0); }
-  20%  { transform: translateY(-25px) scale(0.95); filter: drop-shadow(0 0 20px #00e5ff); }
-  25%, 45%, 65% { transform: translateY(-30px) translateX(-10px) rotate(-8deg); filter: brightness(2.5) contrast(1.4); }
-  35%, 55%      { transform: translateY(-25px) translateX(10px) rotate(8deg); filter: brightness(0.6) hue-rotate(180deg); }
-  75%  { transform: translateY(-35px) scale(1.05); filter: brightness(1.2); }
-  85%  { transform: translateY(-45px) scale(1.3); filter: brightness(4) drop-shadow(0 0 35px #00e5ff); }
+  0%, 24% { transform: translateY(0); filter: none; }
+  26%  { transform: translateY(-35px) scale(0.95); filter: drop-shadow(0 0 35px #ff0033) brightness(2); }
+  35%, 52% { transform: translateY(-75px) translateX(-12px) rotate(-10deg); filter: brightness(2.8) drop-shadow(0 0 45px #ff0000); }
+  43%, 59% { transform: translateY(-70px) translateX(12px) rotate(10deg); filter: brightness(2.6) drop-shadow(0 0 45px #ff0000); }
+  65%  { transform: translateY(-80px) scale(1.25); filter: brightness(5) drop-shadow(0 0 50px #00e5ff); }
+  72%  { transform: translateY(0) scale(1.35, 0.65); filter: brightness(3); }
+  85%  { transform: translateY(-12px) scale(0.95, 1.05); }
   100% { transform: translateY(0) scale(1); filter: none; }
 }
 
-/* Frost: FROZEN SOLID IN ICE PILLAR BLOCK -> 80PX HOIST -> ICE SHATTER */
+/* Frost: Encased in Glacial Pillar -> Ice Lances -> Ice Shatter Cleave */
 .monster-burst-hero_frost_knight {
-  animation: monsterBurstFrostAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: monsterBurstFrostAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes monsterBurstFrostAnim {
-  0%   { transform: translateY(0); }
-  24%  { transform: translateY(-80px) scale(1.06); filter: drop-shadow(0 0 30px #00e5ff) brightness(1.5); }
-  58%  { transform: translateY(-80px) scale(1.06); filter: drop-shadow(0 0 35px #80d8ff) brightness(1.6); }
-  68%  { transform: translateY(-85px) rotate(-18deg); filter: brightness(3.5); }
-  82%  { transform: translateY(0) scale(1.2, 0.8); }
+  0%, 24% { transform: translateY(0); filter: none; }
+  26%  { transform: translateY(-80px) scale(1.06); filter: drop-shadow(0 0 35px #ff0033) brightness(2.2); }
+  45%  { transform: translateY(-82px) rotate(-8deg) scale(1.06); filter: drop-shadow(0 0 45px #ff0000) brightness(2.6); }
+  63%  { transform: translateY(-85px) rotate(-20deg) scale(1.15); filter: brightness(5) drop-shadow(0 0 50px #ffffff); }
+  70%  { transform: translateY(0) scale(1.35, 0.65); filter: brightness(3.5); }
+  85%  { transform: translateY(-14px) scale(0.95, 1.05); }
   100% { transform: translateY(0) scale(1); filter: none; }
 }
 
-/* Spear: PINNED BY 8 LIGHTNING THRUSTS -> CARRIED SKY-HIGH BY GOLDEN DRAGON */
+/* Spear: Pinned in Air by 8 Lightning Thrusts -> Golden Dragon Dive Crash */
 .monster-burst-hero_spear_lancer {
-  animation: monsterBurstSpearAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: monsterBurstSpearAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes monsterBurstSpearAnim {
-  0%   { transform: translateY(0); }
-  20%  { transform: translateY(-25px) translateX(15px); }
-  25%, 35%, 45%, 55% { transform: translateY(-35px) translateX(25px) rotate(5deg); filter: brightness(3) drop-shadow(0 0 25px #ffd700); }
-  30%, 40%, 50%, 60% { transform: translateY(-20px) translateX(10px) rotate(-5deg); filter: brightness(1.8); }
-  70%  { transform: translateY(-145px) scale(0.85); filter: drop-shadow(0 0 45px #ffd700) brightness(3.5); }
-  88%  { transform: translateY(-150px) scale(0.82); }
+  0%, 24% { transform: translateY(0); filter: none; }
+  26%  { transform: translateY(-40px) scale(1.05); filter: drop-shadow(0 0 35px #ff0033); }
+  32%, 44%, 54% { transform: translateY(-90px) translateX(15px) rotate(8deg); filter: brightness(3) drop-shadow(0 0 45px #ff0000); }
+  38%, 49%, 59% { transform: translateY(-85px) translateX(-10px) rotate(-8deg); filter: brightness(2.6); }
+  64%  { transform: translateY(-110px) scale(0.85); filter: brightness(5) drop-shadow(0 0 55px #ffd700); }
+  70%  { transform: translateY(0) scale(1.4, 0.6); filter: brightness(4.5); }
+  85%  { transform: translateY(-15px) scale(0.95, 1.05); }
   100% { transform: translateY(0) scale(1); filter: none; }
 }
 
-/* Flame: SWEPT 90PX INTO FIRE TORNADO -> HEAVENLY PHOENIX DIVE IMPACT */
+/* Flame: Swept into Roaring Flame Tornado -> Phoenix Dive Hammer */
 .monster-burst-hero_flame_knight {
-  animation: monsterBurstFlameAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: monsterBurstFlameAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes monsterBurstFlameAnim {
-  0%   { transform: translateY(0); }
-  26%  { transform: translateY(-95px) rotate(180deg) scale(1.12); filter: drop-shadow(0 0 35px #ff3d00); }
-  55%  { transform: translateY(-90px) rotate(360deg) scale(1.08); filter: brightness(2.2); }
-  70%  { transform: translateY(0) scale(1.35, 0.65); filter: brightness(4.5); }
+  0%, 24% { transform: translateY(0); filter: none; }
+  26%  { transform: translateY(-95px) rotate(180deg) scale(1.12); filter: drop-shadow(0 0 40px #ff0033); }
+  45%  { transform: translateY(-90px) rotate(360deg) scale(1.08); filter: brightness(2.8) drop-shadow(0 0 50px #ff0000); }
+  64%  { transform: translateY(0) scale(1.4, 0.6); filter: brightness(6) drop-shadow(0 0 60px #ff3d00); }
+  78%  { transform: translateY(-16px) scale(0.95); }
+  100% { transform: translateY(0) scale(1); filter: none; }
+}
+
+/* Mage: Pulled into Dark Singularity -> Zero-G Scythe Cuts -> Supernova Blast */
+.monster-burst-hero_arcane_mage {
+  animation: monsterBurstMageAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes monsterBurstMageAnim {
+  0%, 24% { transform: translateY(0); filter: none; }
+  26%  { transform: translateY(-75px) rotate(180deg) scale(0.75, 1.3); filter: drop-shadow(0 0 40px #ff0033); }
+  45%  { transform: translateY(-80px) rotate(540deg) scale(0.6, 1.4); filter: brightness(3) drop-shadow(0 0 50px #ff0000); }
+  64%  { transform: translateY(-75px) scale(0.25); filter: brightness(7); }
+  70%  { transform: translateY(0) scale(1.35, 0.65); filter: brightness(4); }
   85%  { transform: translateY(-12px) scale(0.95); }
   100% { transform: translateY(0) scale(1); filter: none; }
 }
 
-/* Mage: PULLED INTO GRAVITATIONAL BLACK HOLE -> ZERO-G WARP -> SUPERNOVA COLLAPSE */
-.monster-burst-hero_arcane_mage {
-  animation: monsterBurstMageAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* Unknown God: Imprisoned in 6 Divine Cubes -> Reality Bisected by Severance Line */
+.monster-burst-hero_unknown_god {
+  animation: monsterBurstGodAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-@keyframes monsterBurstMageAnim {
-  0%   { transform: translateY(0); }
-  26%  { transform: translateY(-70px) rotate(180deg) scale(0.75, 1.3); filter: drop-shadow(0 0 30px #d500f9); }
-  55%  { transform: translateY(-80px) rotate(540deg) scale(0.6, 1.4); filter: hue-rotate(90deg) brightness(2); }
-  72%  { transform: translateY(-75px) scale(0.28); filter: brightness(6); }
-  82%  { transform: translateY(-15px) scale(1.3); filter: brightness(3.5); }
+@keyframes monsterBurstGodAnim {
+  0%, 24% { transform: translateY(0); filter: none; }
+  26%  { transform: translateY(-75px) scale(1.08); filter: drop-shadow(0 0 45px #ff0033) brightness(2.2); }
+  45%  { transform: translateY(-75px) scale(1.08); filter: drop-shadow(0 0 55px #ff0000) brightness(2.6); }
+  64%  { transform: translateY(-75px) translateX(-20px) skewX(-25deg); filter: brightness(8) drop-shadow(0 0 65px #ffffff); }
+  72%  { transform: translateY(0) scale(1.35, 0.65); filter: brightness(3.5); }
+  85%  { transform: translateY(-12px) scale(0.95); }
   100% { transform: translateY(0) scale(1); filter: none; }
 }
 
-/* Unknown God: TRAPPED IN 6 DIVINE GEOMETRIC CUBES -> SPATIAL SEVERANCE */
-.monster-burst-hero_unknown_god {
-  animation: monsterBurstGodAnim 2.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* Aetheris: Lifted into Astral Rift -> Prismatic Cannon & Falling Meteors */
+.monster-burst-hero_aetheris {
+  animation: monsterBurstAetherisAnim 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-@keyframes monsterBurstGodAnim {
-  0%   { transform: translateY(0); }
-  24%  { transform: translateY(-75px) scale(1.08); filter: drop-shadow(0 0 40px #00ffcc) brightness(1.8); }
-  62%  { transform: translateY(-75px) scale(1.08); filter: drop-shadow(0 0 50px #00ffcc) brightness(2); }
-  70%  { transform: translateY(-75px) translateX(-20px) skewX(-20deg); filter: brightness(6); }
-  84%  { transform: translateY(-30px) scale(0.5) rotate(20deg); opacity: 0.35; }
-  100% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; filter: none; }
+@keyframes monsterBurstAetherisAnim {
+  0%, 24% { transform: translateY(0); filter: none; }
+  26%  { transform: translateY(-65px) scale(1.1) rotate(12deg); filter: drop-shadow(0 0 40px #ff0033) brightness(2.2); }
+  45%  { transform: translateY(-80px) rotate(-15deg) scale(1.15); filter: drop-shadow(0 0 55px #ff0000) brightness(3); }
+  64%  { transform: translateY(0) scale(1.4, 0.6); filter: brightness(7) drop-shadow(0 0 65px #ff3d00); }
+  78%  { transform: translateY(-18px) scale(0.9, 1.1); filter: brightness(2.5); }
+  100% { transform: translateY(0) scale(1); filter: none; }
+}
+
+/* ============================================================
+   5. IMPACT SVG ANIMATIONS (WHITE SLASHES & SPECIAL EFFECTS)
+   ============================================================ */
+
+/* Starter: Upward Arc & 8-12 Rapid White Slashes Cutting Blood-Red Monster */
+.slash-upward-arc, .slash-upward-arc-core {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: strokeDashReveal 0.22s 0.56s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes strokeDashReveal {
+  0% { stroke-dashoffset: 400; opacity: 0; }
+  50% { opacity: 1; filter: brightness(3); }
+  100% { stroke-dashoffset: 0; opacity: 0.9; }
+}
+
+.airborne-cross-slashes line {
+  opacity: 0;
+  stroke-dasharray: 260;
+  stroke-dashoffset: 260;
+  stroke-linecap: round;
+}
+.cross-sl-1 { animation: rapidWhiteSlash 0.16s 0.72s ease-out forwards; }
+.cross-sl-2 { animation: rapidWhiteSlash 0.16s 0.78s ease-out forwards; }
+.cross-sl-3 { animation: rapidWhiteSlash 0.16s 0.84s ease-out forwards; }
+.cross-sl-4 { animation: rapidWhiteSlash 0.16s 0.90s ease-out forwards; }
+.cross-sl-5 { animation: rapidWhiteSlash 0.16s 0.96s ease-out forwards; }
+.cross-sl-6 { animation: rapidWhiteSlash 0.16s 1.02s ease-out forwards; }
+.cross-sl-7 { animation: rapidWhiteSlash 0.16s 1.08s ease-out forwards; }
+.cross-sl-8 { animation: rapidWhiteSlash 0.16s 1.14s ease-out forwards; }
+
+@keyframes rapidWhiteSlash {
+  0% {
+    stroke-dashoffset: 260;
+    opacity: 0;
+    stroke: #ffffff;
+    filter: drop-shadow(0 0 15px #ffffff) brightness(4);
+  }
+  35% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+    stroke: #ffffff;
+    filter: drop-shadow(0 0 25px #ffffff) drop-shadow(0 0 40px #ffd700) brightness(6);
+  }
+  75% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: -260;
+  }
+}
+
+.ground-smash-burst {
+  opacity: 0;
+  animation: groundSmashAnim 0.45s 1.30s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes groundSmashAnim {
+  0% { opacity: 0; transform: scale(0.2); }
+  30% { opacity: 1; transform: scale(1.15); filter: brightness(4); }
+  100% { opacity: 0; transform: scale(1.4); }
+}
+
+/* Rogue: Shadow Vortex & 6 Multi-Clone Slashes */
+.shadow-vortex-spin {
+  animation: spinInfinite 2s linear infinite;
+}
+.clone-flurry-slashes path {
+  opacity: 0;
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+}
+.flurry-1 { animation: rapidWhiteSlash 0.15s 0.72s ease-out forwards; }
+.flurry-2 { animation: rapidWhiteSlash 0.15s 0.79s ease-out forwards; }
+.flurry-3 { animation: rapidWhiteSlash 0.15s 0.86s ease-out forwards; }
+.flurry-4 { animation: rapidWhiteSlash 0.15s 0.93s ease-out forwards; }
+.flurry-5 { animation: rapidWhiteSlash 0.15s 1.00s ease-out forwards; }
+.flurry-6 { animation: rapidWhiteSlash 0.15s 1.07s ease-out forwards; }
+
+.delayed-execution-x line {
+  opacity: 0;
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: execXAnim 0.4s 1.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes execXAnim {
+  0% { stroke-dashoffset: 400; opacity: 0; }
+  35% { stroke-dashoffset: 0; opacity: 1; filter: drop-shadow(0 0 25px #00e5ff) brightness(4); }
+  80% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+/* Frost: Rising Glacier Spikes & Ice Cleave */
+.rising-glacier-spikes {
+  transform-origin: bottom center;
+  animation: glacierErupt 0.4s 0.58s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+@keyframes glacierErupt {
+  0% { transform: translateY(120px) scaleY(0.2); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(0) scaleY(1); opacity: 1; }
+}
+.ice-prison-block {
+  animation: icePrisonAnim 0.6s 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+@keyframes icePrisonAnim {
+  0% { transform: scale(0.6); opacity: 0; }
+  40% { transform: scale(1.05); opacity: 1; filter: brightness(2); }
+  85% { transform: scale(1); opacity: 0.9; }
+  100% { opacity: 0; transform: scale(1.15); filter: brightness(4); }
+}
+.frostmourne-cleave {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: frostCleaveAnim 0.35s 1.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes frostCleaveAnim {
+  0% { stroke-dashoffset: 400; opacity: 0; }
+  40% { stroke-dashoffset: 0; opacity: 1; filter: drop-shadow(0 0 30px #ffffff) brightness(5); }
+  100% { opacity: 0; }
+}
+
+/* Spear: Lightning Thrusts & Soaring Dragon */
+.lightning-thrust-barrage line {
+  opacity: 0;
+  stroke-dasharray: 260;
+  stroke-dashoffset: 260;
+}
+.thrust-1 { animation: rapidWhiteSlash 0.13s 0.70s ease-out forwards; }
+.thrust-2 { animation: rapidWhiteSlash 0.13s 0.77s ease-out forwards; }
+.thrust-3 { animation: rapidWhiteSlash 0.13s 0.84s ease-out forwards; }
+.thrust-4 { animation: rapidWhiteSlash 0.13s 0.91s ease-out forwards; }
+.thrust-5 { animation: rapidWhiteSlash 0.13s 0.98s ease-out forwards; }
+
+.ascending-golden-dragon {
+  opacity: 0;
+  transform-origin: bottom center;
+  animation: dragonAscendAnim 0.55s 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes dragonAscendAnim {
+  0% { transform: translateY(150px) scale(0.5); opacity: 0; }
+  40% { opacity: 1; filter: drop-shadow(0 0 35px #ffd700) brightness(3.5); }
+  80% { transform: translateY(-40px) scale(1.1); opacity: 1; }
+  100% { transform: translateY(-120px) scale(1.2); opacity: 0; }
+}
+
+/* Flame: Cyclone Vortex & Phoenix Dive */
+.spin-cyclone {
+  transform-origin: 150px 150px;
+  animation: spinInfinite 1.2s linear infinite;
+}
+.flame-cyclone-vortex {
+  animation: cycloneFadeInOut 0.85s 0.60s ease-in-out forwards;
+  opacity: 0;
+}
+@keyframes cycloneFadeInOut {
+  0% { opacity: 0; transform: scale(0.5); }
+  25% { opacity: 1; transform: scale(1.05); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.2); }
+}
+.diving-phoenix {
+  opacity: 0;
+  transform-origin: top center;
+  animation: phoenixDiveAnim 0.45s 1.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes phoenixDiveAnim {
+  0% { transform: translateY(-120px) scale(0.6); opacity: 0; }
+  35% { opacity: 1; filter: drop-shadow(0 0 45px #ff3d00) brightness(4.5); }
+  75% { transform: translateY(80px) scale(1.3); opacity: 1; }
+  100% { transform: translateY(150px) scale(1.5); opacity: 0; }
+}
+
+/* Mage: Black Hole Singularity & Supernova */
+.black-hole-singularity {
+  transform-origin: 150px 130px;
+  animation: blackHolePulse 0.9s 0.60s ease-in-out forwards;
+  opacity: 0;
+}
+@keyframes blackHolePulse {
+  0% { opacity: 0; transform: scale(0.3) rotate(0deg); }
+  30% { opacity: 1; transform: scale(1.15) rotate(180deg); filter: drop-shadow(0 0 35px #d500f9); }
+  80% { opacity: 1; transform: scale(1) rotate(540deg); }
+  100% { opacity: 0; transform: scale(0.1) rotate(720deg); filter: brightness(6); }
+}
+.spin-singularity {
+  transform-origin: 150px 130px;
+  animation: spinInfinite 1s linear infinite;
+}
+.supernova-blast-ring {
+  opacity: 0;
+  transform-origin: 150px 130px;
+  animation: supernovaBlastAnim 0.5s 1.26s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes supernovaBlastAnim {
+  0% { transform: scale(0.1); opacity: 0; }
+  30% { opacity: 1; filter: drop-shadow(0 0 50px #ffffff) brightness(6); }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* Unknown God: Geometric Cubes & Spatial Severance */
+.divine-cube-cage {
+  transform-origin: 150px 150px;
+  animation: cubeCageAnim 0.85s 0.58s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+@keyframes cubeCageAnim {
+  0% { opacity: 0; transform: scale(0.4) rotate(-30deg); }
+  30% { opacity: 1; transform: scale(1.05) rotate(0deg); filter: drop-shadow(0 0 35px #00ffcc) brightness(2.5); }
+  80% { opacity: 1; transform: scale(0.95); }
+  100% { opacity: 0; transform: scale(1.3) rotate(45deg); filter: brightness(6); }
+}
+.dimensional-cut-line {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: dimensionalCutAnim 0.4s 1.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes dimensionalCutAnim {
+  0% { stroke-dashoffset: 600; opacity: 0; }
+  25% { stroke-dashoffset: 0; opacity: 1; stroke: #ffffff; filter: drop-shadow(0 0 45px #ffffff) brightness(8); }
+  80% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+/* Aetheris: Cosmic Rift, Laser Cannon, Meteors, Detonation */
+.aether-cosmic-rift {
+  transform-origin: 250px 55px;
+  animation: riftOpenAnim 0.9s 0.58s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+@keyframes riftOpenAnim {
+  0%   { opacity: 0; transform: scale(0.2) rotate(-60deg); }
+  30%  { opacity: 1; transform: scale(1.1) rotate(0deg); filter: drop-shadow(0 0 35px #00e5ff); }
+  85%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.3); }
+}
+.aether-laser-cannon {
+  animation: laserPulseAnim 0.65s 0.70s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+@keyframes laserPulseAnim {
+  0%   { opacity: 0; transform: scaleX(0.1); }
+  25%  { opacity: 1; transform: scaleX(1); filter: drop-shadow(0 0 40px #00e5ff) brightness(4); }
+  75%  { opacity: 0.95; }
+  100% { opacity: 0; }
+}
+.meteor-projectile {
+  opacity: 0;
+}
+.m-1 { animation: meteorFall 0.4s 0.82s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.m-2 { animation: meteorFall 0.4s 0.92s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.m-3 { animation: meteorFall 0.4s 1.02s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes meteorFall {
+  0%   { opacity: 0; transform: translate(60px, -80px) scale(0.6); }
+  30%  { opacity: 1; filter: drop-shadow(0 0 25px #ff5722) brightness(3); }
+  80%  { transform: translate(0, 0) scale(1.1); opacity: 1; }
+  100% { opacity: 0; transform: scale(1.3); }
+}
+.aether-ground-detonation {
+  opacity: 0;
+  animation: detonationAnim 0.45s 1.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes detonationAnim {
+  0%   { opacity: 0; transform: scale(0.3); }
+  30%  { opacity: 1; transform: scale(1.2); filter: drop-shadow(0 0 50px #ff3d00) brightness(5); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
+/* Impact SVG Animations for Aetheris (Image 2 Panel 4) */
+.impact-aetheris {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+.impact-aetheris .aether-cosmic-rift {
+  animation: aetherRiftPulse 2.1s ease-out forwards;
+}
+@keyframes aetherRiftPulse {
+  0%   { opacity: 0; transform: scale(0.3) translate(80px, -40px); }
+  25%  { opacity: 1; transform: scale(1.05); }
+  70%  { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(0.8); }
+}
+.impact-aetheris .aether-laser-cannon {
+  animation: aetherLaserFire 2.1s ease-out forwards;
+}
+@keyframes aetherLaserFire {
+  0%, 30%  { opacity: 0; transform: scaleX(0); }
+  38%      { opacity: 1; transform: scaleX(1.08); }
+  68%      { opacity: 1; filter: brightness(3); }
+  85%      { opacity: 0.2; }
+  100%     { opacity: 0; }
+}
+.impact-aetheris .aether-meteor-shower {
+  animation: aetherMeteorCrash 2.1s ease-out forwards;
+}
+@keyframes aetherMeteorCrash {
+  0%, 35% { opacity: 0; transform: translateY(-130px) translateX(65px); }
+  68%     { opacity: 1; transform: translateY(0) translateX(0); }
+  85%     { opacity: 0.8; }
+  100%    { opacity: 0; }
+}
+.impact-aetheris .aether-ground-detonation {
+  animation: aetherGroundBlast 2.1s ease-out forwards;
+}
+@keyframes aetherGroundBlast {
+  0%, 65% { opacity: 0; transform: scale(0.1); }
+  72%     { opacity: 1; transform: scale(1.35); }
+  88%     { opacity: 0.9; transform: scale(1.1); }
+  100%    { opacity: 0; transform: scale(0.9); }
 }
 
 

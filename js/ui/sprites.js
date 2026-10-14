@@ -99,9 +99,10 @@ const Sprites = {
     const isAtk = action === 'attack';
     const isHit = action === 'hit';
     const isWalk = action === 'walk';
-    const swordRot = isAtk ? 75 : isHit ? -25 : 12;
-    const swordTx = isAtk ? 34 : 28;
-    const swordTy = isAtk ? 28 : 22;
+    const isSheathe = action === 'sheathe' || action === 'pose';
+    const swordRot = isAtk ? 75 : isHit ? -25 : isSheathe ? -18 : 12;
+    const swordTx = isAtk ? 34 : isSheathe ? 23 : 28;
+    const swordTy = isAtk ? 28 : isSheathe ? 32 : 22;
     return `
     <svg class="pixel-sprite hero-pixel-svg hero-starter action-${action}" viewBox="0 0 54 54" width="100%" height="100%" shape-rendering="crispEdges">
       <defs>
@@ -148,8 +149,9 @@ const Sprites = {
     const isAtk = action === 'attack';
     const isHit = action === 'hit';
     const isWalk = action === 'walk';
-    const d1Rot = isAtk ? 85 : 20;
-    const d2Rot = isAtk ? -75 : -140; // Reverse grip!
+    const isSheathe = action === 'sheathe' || action === 'pose';
+    const d1Rot = isAtk ? 85 : isSheathe ? -45 : 20;
+    const d2Rot = isAtk ? -75 : isSheathe ? 45 : -140; // Reverse grip / Sheathe!
     return `
     <svg class="pixel-sprite hero-pixel-svg hero-shadow_rogue action-${action}" viewBox="0 0 54 54" width="100%" height="100%" shape-rendering="crispEdges">
       <defs>
@@ -193,9 +195,10 @@ const Sprites = {
   _getHeroFrostKnightSvg(action) {
     const isAtk = action === 'attack';
     const isHit = action === 'hit';
-    const swordRot = isAtk ? 70 : 15;
-    const swordTx = isAtk ? 35 : 29;
-    const swordTy = isAtk ? 26 : 20;
+    const isSheathe = action === 'sheathe' || action === 'pose';
+    const swordRot = isAtk ? 70 : isSheathe ? 175 : 15;
+    const swordTx = isAtk ? 35 : isSheathe ? 25 : 29;
+    const swordTy = isAtk ? 26 : isSheathe ? 32 : 20;
     return `
     <svg class="pixel-sprite hero-pixel-svg hero-frost_knight action-${action}" viewBox="0 0 54 54" width="100%" height="100%" shape-rendering="crispEdges">
       <defs>
@@ -241,9 +244,10 @@ const Sprites = {
   _getHeroSpearLancerSvg(action) {
     const isAtk = action === 'attack';
     const isHit = action === 'hit';
-    const spearRot = isAtk ? 75 : 25;
-    const spearTx = isAtk ? 36 : 30;
-    const spearTy = isAtk ? 26 : 22;
+    const isSheathe = action === 'sheathe' || action === 'pose';
+    const spearRot = isAtk ? 75 : isSheathe ? 0 : 25;
+    const spearTx = isAtk ? 36 : isSheathe ? 22 : 30;
+    const spearTy = isAtk ? 26 : isSheathe ? 24 : 22;
     return `
     <svg class="pixel-sprite hero-pixel-svg hero-spear_lancer action-${action}" viewBox="0 0 54 54" width="100%" height="100%" shape-rendering="crispEdges">
       <defs>
@@ -287,9 +291,10 @@ const Sprites = {
 
   _getHeroFlameKnightSvg(action) {
     const isAtk = action === 'attack';
-    const swordRot = isAtk ? 75 : 18;
-    const swordTx = isAtk ? 35 : 29;
-    const swordTy = isAtk ? 26 : 20;
+    const isSheathe = action === 'sheathe' || action === 'pose';
+    const swordRot = isAtk ? 75 : isSheathe ? -40 : 18;
+    const swordTx = isAtk ? 35 : isSheathe ? 22 : 29;
+    const swordTy = isAtk ? 26 : isSheathe ? 18 : 20;
     return `
     <svg class="pixel-sprite hero-pixel-svg hero-flame_knight action-${action}" viewBox="0 0 54 54" width="100%" height="100%" shape-rendering="crispEdges">
       <defs>
@@ -423,6 +428,124 @@ const Sprites = {
     </svg>`;
   },
 
+  _getHeroAetherisSvg(action) {
+    const isAtk = action === 'attack';
+    const isHit = action === 'hit';
+    const isWalk = action === 'walk';
+
+    return `
+    <svg class="pixel-sprite hero-pixel-svg hero-aetheris action-${action}" viewBox="0 0 64 64" width="100%" height="100%" shape-rendering="crispEdges">
+      <defs>
+        <!-- Prismatic Crystal Wing & Shard Gradients -->
+        <linearGradient id="ae-prism-wing" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#00e5ff"/>
+          <stop offset="35%" stop-color="#80d8ff"/>
+          <stop offset="70%" stop-color="#d500f9"/>
+          <stop offset="100%" stop-color="#ffd700"/>
+        </linearGradient>
+        <linearGradient id="ae-staff-gem" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="45%" stop-color="#00e5ff"/>
+          <stop offset="100%" stop-color="#0091ea"/>
+        </linearGradient>
+        <linearGradient id="ae-purple-shard" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#e040fb"/>
+          <stop offset="100%" stop-color="#4a148c"/>
+        </linearGradient>
+        <!-- Glow Filters -->
+        <filter id="ae-glow"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#00e5ff" flood-opacity="1"/></filter>
+        <filter id="ae-purp-glow"><feDropShadow dx="0" dy="0" stdDeviation="2.5" flood-color="#d500f9" flood-opacity="1"/></filter>
+      </defs>
+
+      <!-- Astral Ground Ripple -->
+      <ellipse cx="28" cy="58" rx="14" ry="3" fill="rgba(0,229,255,0.35)"/>
+
+      <g class="pulse-aura" style="transform-origin: 28px 28px;">
+        <!-- 1. PRISMATIC CRYSTAL WINGS (Spread wide behind him, glowing softly) -->
+        <g class="spin-slow" style="transform-origin: 28px 26px;">
+          <!-- Left Crystal Wing Feathers -->
+          <polygon points="18,22 4,6 8,16 1,14 6,24 12,32 18,28" fill="url(#ae-prism-wing)" filter="url(#ae-glow)" opacity="0.95"/>
+          <line x1="18" y1="24" x2="6" y2="10" stroke="#ffffff" stroke-width="0.8"/>
+          <!-- Right Crystal Wing Feathers -->
+          <polygon points="38,22 52,6 48,16 55,14 50,24 44,32 38,28" fill="url(#ae-prism-wing)" filter="url(#ae-glow)" opacity="0.95"/>
+          <line x1="38" y1="24" x2="50" y2="10" stroke="#ffffff" stroke-width="0.8"/>
+        </g>
+
+        <!-- 2. ORBITING ASTRAL CRYSTAL SHARDS (Floating & rotating runes) -->
+        <g class="spin-aura" style="transform-origin: 28px 28px;">
+          <polygon points="9,16 12,11 15,16 12,21" fill="url(#ae-purple-shard)" stroke="#ffffff" stroke-width="0.5" filter="url(#ae-purp-glow)"/>
+          <polygon points="46,14 49,9 52,14 49,19" fill="url(#ae-staff-gem)" stroke="#ffffff" stroke-width="0.5" filter="url(#ae-glow)"/>
+          <polygon points="6,36 9,31 12,36 9,41" fill="url(#ae-staff-gem)" stroke="#00e5ff" stroke-width="0.5" filter="url(#ae-glow)"/>
+          <polygon points="48,38 51,33 54,38 51,43" fill="url(#ae-purple-shard)" stroke="#ffd700" stroke-width="0.5" filter="url(#ae-purp-glow)"/>
+        </g>
+
+        <!-- 3. DEEP NAVY / TEAL ASTRAL WIZARD ROBES -->
+        <path d="M 18,26 Q 9,42 13,52 Q 28,55 43,52 Q 47,42 38,26 Z" fill="#1a237e" stroke="#ffd700" stroke-width="1.2"/>
+        <path d="M 24,32 L 24,52 L 32,52 L 32,32 Z" fill="#0d47a1" opacity="0.75"/>
+        <!-- Fluffy Pure White Snow Collar -->
+        <ellipse cx="28" cy="27" rx="10" ry="4.5" fill="#f5f5f5" stroke="#cfd8dc" stroke-width="1"/>
+        <!-- Golden Medallion Cross Belt -->
+        <rect x="23" y="36" width="10" height="2.5" rx="0.5" fill="#ffd700"/>
+        <polygon points="28,34 30,37 28,40 26,37" fill="#00e5ff" filter="url(#ae-glow)"/>
+
+        <!-- 4. SILVER / PLATINUM HAIR FLOWING -->
+        <path d="M 17,16 Q 13,24 15,31 Q 20,27 20,22 Z" fill="#eceff1" stroke="#b0bec5" stroke-width="0.5"/>
+        <path d="M 39,16 Q 43,24 41,31 Q 36,27 36,22 Z" fill="#eceff1" stroke="#b0bec5" stroke-width="0.5"/>
+
+        <!-- 5. WIZARD HEAD & LUMINESCENT CYAN EYES -->
+        <rect x="20" y="15" width="16" height="11" fill="#ffe0b2" rx="2"/>
+        <!-- Luminescent Star Eyes -->
+        <rect class="pixel-eye" x="22.5" y="18.5" width="3" height="2.2" fill="#00e5ff" filter="url(#ae-glow)"/>
+        <rect class="pixel-eye" x="30.5" y="18.5" width="3" height="2.2" fill="#00e5ff" filter="url(#ae-glow)"/>
+        <circle cx="24" cy="19.5" r="0.7" fill="#ffffff"/>
+        <circle cx="32" cy="19.5" r="0.7" fill="#ffffff"/>
+
+        <!-- 6. WIDE-BRIMMED WIZARD HAT WITH GOLD MEDALLION -->
+        <!-- Wide Dark Brim -->
+        <ellipse cx="28" cy="17" rx="17" ry="4.5" fill="#0f172a" stroke="#311b92" stroke-width="1.2"/>
+        <!-- Purple Silk Ribbon Band -->
+        <rect x="18" y="11" width="20" height="4.5" fill="#4a148c"/>
+        <!-- Curving Pointed Peak Cone -->
+        <path d="M 18,12 Q 22,2 35,-2 Q 33,5 38,12 Z" fill="#1a237e" stroke="#283593" stroke-width="1"/>
+        <!-- Golden Medallion Clasp with Cyan Gem -->
+        <circle cx="28" cy="13" r="3" fill="#ffd700" stroke="#ff8f00" stroke-width="0.8"/>
+        <circle cx="28" cy="13" r="1.3" fill="#00e5ff" filter="url(#ae-glow)"/>
+
+        <!-- 7. GOLDEN AETHER STAFF -->
+        ${!isAtk ? `
+        <!-- Idle / Walk Stance: Staff held upright with floating gem -->
+        <g transform="translate(13, 0)">
+          <!-- Golden Staff Pole -->
+          <rect x="30" y="8" width="2.4" height="46" rx="1" fill="#ffd700" stroke="#ff8f00" stroke-width="0.6"/>
+          <!-- Ornate Gold Crown Setting -->
+          <polygon points="26,8 36,8 34,0 28,0" fill="#ffd700" stroke="#ffb300" stroke-width="0.6"/>
+          <!-- Giant Glowing Diamond Gem -->
+          <polygon points="31,-6 36,2 31,10 26,2" fill="url(#ae-staff-gem)" stroke="#ffffff" stroke-width="0.9" filter="url(#ae-glow)"/>
+          <!-- Floating Celestial Rune Ring -->
+          <ellipse cx="31" cy="2" rx="7.5" ry="2.8" fill="none" stroke="#00e5ff" stroke-width="0.9" stroke-dasharray="3,2" opacity="0.9" filter="url(#ae-glow)"/>
+        </g>
+        ` : `
+        <!-- Attack Stance: Staff thrust forward casting Portal & Piercing Crystal Beam! -->
+        <g transform="translate(0, 0)">
+          <!-- Horizontal Golden Staff -->
+          <line x1="26" y1="29" x2="48" y2="29" stroke="#ffd700" stroke-width="2.8" stroke-linecap="round"/>
+          <polygon points="47,26 53,29 47,32" fill="#ffd700"/>
+          <!-- Thrust Diamond Gem -->
+          <polygon points="56,29 52,24 48,29 52,34" fill="url(#ae-staff-gem)" stroke="#ffffff" stroke-width="1" filter="url(#ae-glow)"/>
+          <!-- Concentric Runic Magic Circle Rings (Portal) -->
+          <ellipse cx="52" cy="29" rx="3.5" ry="14" fill="none" stroke="#d500f9" stroke-width="1.8" stroke-dasharray="4,2" filter="url(#ae-purp-glow)"/>
+          <ellipse cx="52" cy="29" rx="2" ry="8" fill="none" stroke="#00e5ff" stroke-width="1.4" filter="url(#ae-glow)"/>
+          <!-- Piercing Laser Beam Burst -->
+          <polygon points="52,26 66,22 64,29 66,36 52,32" fill="url(#ae-prism-wing)" filter="url(#ae-glow)"/>
+          <line x1="53" y1="29" x2="68" y2="29" stroke="#ffffff" stroke-width="2.2"/>
+          <polygon points="60,20 65,22 61,24" fill="#00e5ff"/>
+          <polygon points="61,35 66,37 62,39" fill="#d500f9"/>
+        </g>
+        `}
+      </g>
+    </svg>`;
+  },
+
   getPlayerSvg(action = 'idle', targetHeroId = null) {
     const rawId = targetHeroId || (typeof GameState !== 'undefined' && GameState.activeHeroId) || 'hero_starter';
     const idMap = {
@@ -450,6 +573,8 @@ const Sprites = {
         return this._getHeroFlameKnightSvg(action);
       case 'hero_arcane_mage':
         return this._getHeroArcaneMageSvg(action);
+      case 'hero_aetheris':
+        return this._getHeroAetherisSvg(action);
       case 'hero_unknown_god':
         return this._getHeroUnknownGodSvg(action);
       default:
@@ -684,7 +809,86 @@ const Sprites = {
       </svg>`;
     }
 
-    // 7. VÔ CỰC NGHỊCH MỆNH THẦN QUÂN (UNKNOWN GOD — THÁI CƠ)
+    // 7. AETHERIS — TINH VỰC ĐẠI PHÁP SƯ (COSMIC ARCHMAGE — TINH KHÔNG)
+    if (targetId === 'hero_aetheris') {
+      return `
+      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-aetheris">
+        <defs>
+          <filter id="ae-super-glow"><feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#00e5ff" flood-opacity="1"/></filter>
+          <filter id="ae-purp-super-glow"><feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#d500f9" flood-opacity="1"/></filter>
+          <linearGradient id="ae-vortex-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="25%" stop-color="#00e5ff"/>
+            <stop offset="60%" stop-color="#d500f9"/>
+            <stop offset="85%" stop-color="#311b92"/>
+            <stop offset="100%" stop-color="#050014"/>
+          </linearGradient>
+          <linearGradient id="ae-swirl-wing" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00e5ff"/>
+            <stop offset="40%" stop-color="#80d8ff"/>
+            <stop offset="70%" stop-color="#e040fb"/>
+            <stop offset="100%" stop-color="#ffd700"/>
+          </linearGradient>
+        </defs>
+
+        <!-- BACKDROP: GIANT COSMIC GALAXY VORTEX & RUNIC PORTAL RING (Image 2 Panel 2) -->
+        <g transform="translate(340, 160)">
+          <!-- Giant Cosmic Deep Void Core -->
+          <circle cx="0" cy="0" r="135" fill="#050014" stroke="#00e5ff" stroke-width="1.5" opacity="0.95"/>
+          <!-- Swirling Nebula Galaxy Arms -->
+          <g class="spin-slow" style="transform-origin: 0px 0px;">
+            <path d="M 0,0 Q 60,-40 110,-20 Q 140,20 100,70 Q 50,110 -20,100 Q -90,80 -110,10 Q -120,-60 -50,-100 Q 20,-120 70,-80" fill="none" stroke="url(#ae-vortex-grad)" stroke-width="18" stroke-linecap="round" filter="url(#ae-purp-super-glow)"/>
+            <path d="M 0,0 Q -60,40 -110,20 Q -140,-20 -100,-70 Q -50,-110 20,-100 Q 90,-80 110,-10 Q 120,60 50,100 Q -20,120 -70,80" fill="none" stroke="url(#ae-vortex-grad)" stroke-width="12" stroke-linecap="round" filter="url(#ae-super-glow)"/>
+            <circle cx="0" cy="0" r="30" fill="#ffffff" filter="url(#ae-super-glow)"/>
+            <circle cx="0" cy="0" r="14" fill="#00e5ff"/>
+          </g>
+          <!-- Ancient Mystic Runic Magic Ring -->
+          <circle cx="0" cy="0" r="145" fill="none" stroke="#d500f9" stroke-width="3" stroke-dasharray="16,8,6,8" class="spin-aura" filter="url(#ae-purp-super-glow)"/>
+          <circle cx="0" cy="0" r="152" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-dasharray="4,6" opacity="0.8"/>
+          <!-- Runic Sigil Stamps on Ring -->
+          <text x="0" y="-140" fill="#00e5ff" font-size="12" font-family="monospace" text-anchor="middle" filter="url(#ae-super-glow)">✦</text>
+          <text x="140" y="5" fill="#ffd700" font-size="12" font-family="monospace" text-anchor="middle">✧</text>
+          <text x="0" y="148" fill="#d500f9" font-size="12" font-family="monospace" text-anchor="middle">✦</text>
+          <text x="-140" y="5" fill="#00e5ff" font-size="12" font-family="monospace" text-anchor="middle">✧</text>
+          <!-- Orbiting Shattered Crystal Monoliths drawn into Vortex -->
+          <polygon points="60,-70 72,-85 80,-72 70,-60" fill="#d500f9" filter="url(#ae-purp-super-glow)"/>
+          <polygon points="-80,50 -95,65 -85,75 -70,62" fill="#00e5ff" filter="url(#ae-super-glow)"/>
+          <polygon points="90,70 105,80 95,92 82,82" fill="#ffffff"/>
+          <polygon points="-65,-80 -80,-92 -70,-102 -58,-90" fill="#e040fb"/>
+        </g>
+
+        <!-- FOREGROUND: AETHERIS FLOATING IN COSMOS WITH WINGS & GOLDEN STAFF -->
+        <g transform="translate(140, 70) scale(3.5)">
+          <!-- Celestial Floating Prismatic Wings -->
+          <polygon points="12,22 -6,4 0,16 -8,14 -3,26 4,34 12,28" fill="url(#ae-swirl-wing)" filter="url(#ae-super-glow)"/>
+          <polygon points="26,22 44,4 38,16 46,14 41,26 34,34 26,28" fill="url(#ae-swirl-wing)" filter="url(#ae-super-glow)"/>
+          <!-- Navy Robe & Fur Collar -->
+          <path d="M 12,25 Q 4,40 8,50 Q 19,53 30,50 Q 34,40 26,25 Z" fill="#1a237e" stroke="#ffd700" stroke-width="0.8"/>
+          <ellipse cx="19" cy="25" rx="8" ry="3.5" fill="#ffffff"/>
+          <rect x="15" y="33" width="8" height="2" fill="#ffd700"/>
+          <!-- Silver Hair & Face -->
+          <path d="M 11,16 Q 8,24 10,29 Q 14,26 14,21 Z" fill="#ffffff"/>
+          <rect x="13" y="14" width="12" height="10" fill="#ffe0b2" rx="2"/>
+          <rect class="pixel-eye" x="15" y="17" width="3" height="2" fill="#00e5ff" filter="url(#ae-super-glow)"/>
+          <rect class="pixel-eye" x="21" y="17" width="3" height="2" fill="#00e5ff" filter="url(#ae-super-glow)"/>
+          <!-- Wizard Hat with Purple Ribbon & Gold Clasp -->
+          <ellipse cx="19" cy="15" rx="14" ry="4" fill="#0f172a" stroke="#311b92" stroke-width="0.8"/>
+          <rect x="11" y="10" width="16" height="3.5" fill="#4a148c"/>
+          <path d="M 11,11 Q 15,1 26,-2 Q 24,4 28,11 Z" fill="#1a237e" stroke="#283593" stroke-width="0.8"/>
+          <circle cx="19" cy="12" r="2.2" fill="#ffd700"/>
+          <circle cx="19" cy="12" r="1" fill="#00e5ff"/>
+          <!-- Golden Staff Aimed into Vortex -->
+          <line x1="16" y1="28" x2="42" y2="20" stroke="#ffd700" stroke-width="2.5" stroke-linecap="round"/>
+          <polygon points="41,18 48,18 45,24 38,24" fill="#ffd700"/>
+          <polygon points="50,19 45,14 41,19 45,24" fill="#00e5ff" stroke="#ffffff" stroke-width="0.8" filter="url(#ae-super-glow)"/>
+          <!-- Energy Beam firing into vortex center -->
+          <line x1="50" y1="19" x2="75" y2="15" stroke="#ffffff" stroke-width="3" filter="url(#ae-super-glow)"/>
+          <line x1="50" y1="19" x2="75" y2="15" stroke="#00e5ff" stroke-width="1.5"/>
+        </g>
+      </svg>`;
+    }
+
+    // 8. VÔ CỰC NGHỊCH MỆNH THẦN QUÂN (UNKNOWN GOD — THÁI CƠ)
     return `
     <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-god">
       <defs>
@@ -1524,6 +1728,71 @@ const Sprites = {
               <path d="M -60,-4 Q -5,-32 65,-12" stroke="#e040fb" stroke-width="4.5" fill="none" stroke-linecap="round"/>
               <path d="M 50,-8 Q 100,-20 180,-10" stroke="#00ffff" stroke-width="2.5" fill="none" opacity="0.9"/>
             </g>
+          </g>
+        </svg>`;
+
+      case 'hero_aetheris':
+        return `
+        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-aetheris">
+          <defs>
+            <linearGradient id="ae-cutin-bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="rgba(5,0,20,0)"/>
+              <stop offset="15%" stop-color="#050014"/>
+              <stop offset="50%" stop-color="#1a237e"/>
+              <stop offset="85%" stop-color="#050014"/>
+              <stop offset="100%" stop-color="rgba(5,0,20,0)"/>
+            </linearGradient>
+            <filter id="ae-eye-glint"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#00e5ff" flood-opacity="1"/></filter>
+            <filter id="ae-lightning-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#d500f9" flood-opacity="1"/></filter>
+          </defs>
+          <polygon points="20,0 640,0 620,130 0,130" fill="url(#ae-cutin-bg)"/>
+          <line x1="30" y1="0" x2="630" y2="0" stroke="#00e5ff" stroke-width="3.5" filter="url(#ae-eye-glint)"/>
+          <line x1="10" y1="130" x2="610" y2="130" stroke="#d500f9" stroke-width="3.5" filter="url(#ae-lightning-glow)"/>
+          <text x="320" y="80" font-family="'Courier New', monospace" font-size="52" font-weight="900" fill="rgba(0,229,255,0.14)" text-anchor="middle" letter-spacing="18">萬 星 玄 滅</text>
+
+          <!-- Cosmic Background Stars & Spiral Arc -->
+          <path d="M 60,110 Q 320,10 580,30" stroke="#80d8ff" stroke-width="1.5" stroke-dasharray="4,6" fill="none" opacity="0.6"/>
+          <circle cx="120" cy="30" r="1.5" fill="#ffffff"/>
+          <circle cx="520" cy="95" r="2" fill="#ffd700"/>
+          <circle cx="480" cy="25" r="1.5" fill="#00e5ff"/>
+
+          <!-- Purple Crackling Lightning Arcs (Image 2 Panel 1) -->
+          <path d="M 80,45 L 130,25 L 145,55 L 200,30" stroke="#d500f9" stroke-width="3" fill="none" filter="url(#ae-lightning-glow)"/>
+          <path d="M 440,30 L 490,60 L 510,35 L 560,70" stroke="#d500f9" stroke-width="3" fill="none" filter="url(#ae-lightning-glow)"/>
+
+          <!-- Eyes & Hat Tilt Close-Up Stage (Image 2 Panel 1 & 3) -->
+          <g transform="translate(320, 65)">
+            <!-- Left Eye (Cyan with Supernova 4-Point Star Glint - Panel 3) -->
+            <g transform="translate(-110, 0)">
+              <path d="M -55,-8 Q 0,-24 50,-2 Q 10,18 -55,-8 Z" fill="#ffffff"/>
+              <ellipse cx="2" cy="0" rx="16" ry="12" fill="#0d47a1"/>
+              <ellipse cx="2" cy="0" rx="10" ry="10" fill="#00e5ff" filter="url(#ae-eye-glint)"/>
+              <!-- 4-Point Star Core -->
+              <polygon points="2,-7 4,-1 10,0 4,1 2,7 0,1 -6,0 0,-1" fill="#ffffff" filter="url(#ae-eye-glint)"/>
+              <circle cx="2" cy="0" r="2.5" fill="#ffffff"/>
+              <!-- Upper Eyelid & Gold Accent -->
+              <path d="M -60,-12 Q 5,-32 55,-4" stroke="#ffd700" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M -50,-8 Q -100,-25 -190,-12" stroke="#00e5ff" stroke-width="3" fill="none"/>
+            </g>
+
+            <!-- Right Eye (Cyan with Star Glint) -->
+            <g transform="translate(110, 0)">
+              <path d="M -50,-2 Q 0,-24 55,-8 Q 10,18 -50,-2 Z" fill="#ffffff"/>
+              <ellipse cx="-2" cy="0" rx="16" ry="12" fill="#0d47a1"/>
+              <ellipse cx="-2" cy="0" rx="10" ry="10" fill="#00e5ff" filter="url(#ae-eye-glint)"/>
+              <!-- 4-Point Star Core -->
+              <polygon points="-2,-7 0,-1 6,0 0,1 -2,7 -4,1 -10,0 -4,-1" fill="#ffffff" filter="url(#ae-eye-glint)"/>
+              <circle cx="-2" cy="0" r="2.5" fill="#ffffff"/>
+              <!-- Upper Eyelid & Gold Accent -->
+              <path d="M -55,-4 Q -5,-32 60,-12" stroke="#ffd700" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M 50,-8 Q 100,-25 190,-12" stroke="#d500f9" stroke-width="3" fill="none"/>
+            </g>
+
+            <!-- Center Hat Brim Shadow & Tilting Glove Hand (Image 2 Panel 1) -->
+            <path d="M -180,-30 Q 0,-50 180,-30 L 170,-22 Q 0,-40 -170,-22 Z" fill="#0f172a" stroke="#4a148c" stroke-width="1.5"/>
+            <!-- Hand holding brim -->
+            <polygon points="-15,-38 15,-38 12,-24 -12,-24" fill="#37474f" stroke="#ffd700" stroke-width="1.2"/>
+            <circle cx="0" cy="-31" r="3.5" fill="#ffd700"/>
           </g>
         </svg>`;
 

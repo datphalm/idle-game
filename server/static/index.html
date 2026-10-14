@@ -204,6 +204,37 @@
             <!-- Arena Burst Spotlight & Impact Layers -->
             <div id="arena-burst-blackout" class="arena-burst-blackout hidden"></div>
             <div id="arena-burst-impact-fx" class="arena-burst-impact-fx hidden"></div>
+
+            <!-- Genshin-Style Burst Ultimate Cinematic Cutscene Overlay (Arena Contained) -->
+            <div id="burst-cinematic-overlay" class="burst-overlay hidden">
+              <!-- WebGL 3D GPU Canvas for AAA 3D Cutscenes -->
+              <canvas id="burst-three-canvas" class="burst-three-canvas"></canvas>
+              <!-- 2D Particle & Speedline Canvas Overlay -->
+              <canvas id="burst-canvas" class="burst-canvas"></canvas>
+              <div class="letterbox letterbox-top"></div>
+              <div class="letterbox letterbox-bottom"></div>
+              <div class="burst-bg-flash" id="burst-bg-flash"></div>
+              <div class="burst-impact-flash" id="burst-impact-flash"></div>
+              
+              <!-- Phase 0: Close-Up Eye Slash Cut-In Banner -->
+              <div class="burst-eye-cutin" id="burst-eye-cutin"></div>
+
+              <!-- Climax Impact: Reality Shatter Glass Shards -->
+              <div class="burst-shatter-container" id="burst-shatter-container"></div>
+
+              <!-- Phase 1: Character Dynamic Stage (Sword Dance & Martial Stance Actor) -->
+              <div class="burst-actor-stage" id="burst-actor-stage"></div>
+
+              <!-- Cinematic Lower-Third HUD -->
+              <div class="burst-content">
+                <div class="burst-text-container">
+                  <div class="burst-kanji-stamp" id="burst-kanji-stamp">⟦ 夢 想 ⟧</div>
+                  <div class="burst-hero-title" id="burst-hero-title">LÔI ĐÌNH TỊCH DIỆT VĨNH CỬU</div>
+                  <div class="burst-hero-name" id="burst-hero-name">Raiden Shogun</div>
+                  <div class="burst-skill-name" id="burst-skill-name">⚔️ Mộng Tưởng Nhất Đao ⚔️</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Kill Counter -->
@@ -1278,36 +1309,7 @@
     </div>
   </div>
 
-  <!-- Genshin-Style Burst Ultimate Cinematic Cutscene Overlay -->
-  <div id="burst-cinematic-overlay" class="burst-overlay hidden">
-    <!-- WebGL 3D GPU Canvas for AAA 3D Cutscenes -->
-    <canvas id="burst-three-canvas" class="burst-three-canvas"></canvas>
-    <!-- 2D Particle & Speedline Canvas Overlay -->
-    <canvas id="burst-canvas" class="burst-canvas"></canvas>
-    <div class="letterbox letterbox-top"></div>
-    <div class="letterbox letterbox-bottom"></div>
-    <div class="burst-bg-flash" id="burst-bg-flash"></div>
-    <div class="burst-impact-flash" id="burst-impact-flash"></div>
-    
-    <!-- Phase 0: Close-Up Eye Slash Cut-In Banner -->
-    <div class="burst-eye-cutin" id="burst-eye-cutin"></div>
 
-    <!-- Climax Impact: Reality Shatter Glass Shards -->
-    <div class="burst-shatter-container" id="burst-shatter-container"></div>
-
-    <!-- Phase 1: Character Dynamic Stage (Sword Dance & Martial Stance Actor) -->
-    <div class="burst-actor-stage" id="burst-actor-stage"></div>
-
-    <!-- Cinematic Lower-Third HUD -->
-    <div class="burst-content">
-      <div class="burst-text-container">
-        <div class="burst-kanji-stamp" id="burst-kanji-stamp">⟦ 夢 想 ⟧</div>
-        <div class="burst-hero-title" id="burst-hero-title">LÔI ĐÌNH TỊCH DIỆT VĨNH CỬU</div>
-        <div class="burst-hero-name" id="burst-hero-name">Raiden Shogun</div>
-        <div class="burst-skill-name" id="burst-skill-name">⚔️ Mộng Tưởng Nhất Đao ⚔️</div>
-      </div>
-    </div>
-  </div>
 
   <!-- WebGL Graphic Libraries (Pixi.js & Three.js) -->
   <script src="js/libs/pixi.min.js"></script>
