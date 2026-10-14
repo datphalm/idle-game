@@ -123,8 +123,8 @@ const Combat = {
         if (hitResult.isDead) {
           m.hp = 0;
           UI.updateBattleStatsOnly();
-          const deathDelay = (skillRes.type === 'burst') ? 2100 : 180;
-          const nextTurnDelay = (skillRes.type === 'burst') ? 2550 : 650;
+          const deathDelay = (skillRes.type === 'burst') ? 3900 : 180;
+          const nextTurnDelay = (skillRes.type === 'burst') ? 4350 : 650;
           setTimeout(() => {
             UI.animateMonsterDeath(() => {
               UI.animatePlayerWalk(null, 500);
@@ -224,12 +224,12 @@ const Combat = {
         UI.addCombatLog(`🌀 <strong>[${m.name}]</strong> bị Cổng Xoáy Cổ Ngữ làm tê liệt, mất lượt phản công!`, 'log-extra');
         UI.updateBattleStatsOnly();
         UI.updateMonsterDisplay();
-        this._scheduleNextTurn(skillRes.triggered && skillRes.type === 'burst' ? 2550 : 650);
+        this._scheduleNextTurn(skillRes.triggered && skillRes.type === 'burst' ? 4350 : 650);
         return;
       }
       const mDamage = Math.max(1, Math.floor(m.attack * (0.85 + Math.random() * 0.3)) - Player.getEffectiveDefense());
       const pTakeDmg = Player.takeDamage(mDamage);
-      const counterDelay = (skillRes.triggered && skillRes.type === 'burst') ? 2200 : 350;
+      const counterDelay = (skillRes.triggered && skillRes.type === 'burst') ? 4000 : 350;
 
       setTimeout(() => {
         UI.showDamageNumber(mDamage, false, 'player');
@@ -248,7 +248,7 @@ const Combat = {
 
       UI.updateBattleStatsOnly();
       UI.updateMonsterDisplay();
-      this._scheduleNextTurn(skillRes.triggered && skillRes.type === 'burst' ? 2550 : undefined);
+      this._scheduleNextTurn(skillRes.triggered && skillRes.type === 'burst' ? 4350 : undefined);
     } catch (err) {
       console.error("Combat step recovered from error:", err);
       this._scheduleNextTurn(600);

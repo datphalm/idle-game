@@ -597,13 +597,13 @@ const Cinematics = {
       if (p.phase === 'swirl') {
         // High-Speed Swirling Trajectory & Serpentine Curvature
         p.angle += p.angularSpeed * dt;
-        const inwardProgress = Math.min(1, elapsed / 750);
+        const inwardProgress = Math.min(1, elapsed / 2500);
         const currentRadius = p.baseRadius * (1.0 - inwardProgress * 0.65) + Math.sin(elapsed * 0.012 + p.seed) * 22;
         p.x = cx + Math.cos(p.angle) * currentRadius * 1.25;
         p.y = cy + Math.sin(p.angle) * (currentRadius * 0.55) + Math.cos(elapsed * 0.008 + p.seed) * 16;
 
         p.sprite.position.set(p.x, p.y);
-        p.sprite.alpha = Math.min(1.0, elapsed / 280) * p.alpha;
+        p.sprite.alpha = Math.min(1.0, elapsed / 350) * p.alpha;
       } else if (p.phase === 'disperse') {
         // Radial Dispersion & Screen Boundary Collisions
         p.x += p.vx * dt;
@@ -635,8 +635,8 @@ const Cinematics = {
           p.bounced++;
         }
 
-        const disperseElapsed = elapsed - 750;
-        const fade = Math.max(0, 1.0 - (disperseElapsed / 1350));
+        const disperseElapsed = elapsed - 2500;
+        const fade = Math.max(0, 1.0 - (disperseElapsed / 1400));
         p.sprite.alpha = fade * p.alpha;
         p.sprite.position.set(p.x, p.y);
 
@@ -922,8 +922,8 @@ const Cinematics = {
     if (!this.eyeCutinLayer || !this.eyeCutinLayer.visible) return;
     const W = this.width || 1280;
 
-    if (elapsed < 420) {
-      const t = elapsed / 420;
+    if (elapsed < 750) {
+      const t = elapsed / 750;
       if (t < 0.25) {
         const p = t / 0.25;
         this.eyeCutinLayer.alpha = p;
@@ -1083,8 +1083,8 @@ const Cinematics = {
     }
 
     // Dynamic Parallax Zoom Logic
-    if (elapsed < 450) {
-      const t = elapsed / 450;
+    if (elapsed < 600) {
+      const t = elapsed / 600;
       const ease = 1.0 - Math.pow(1.0 - t, 3);
       const scale = 2.6 - (2.6 - 1.08) * ease;
       this.heroContainer.scale.set(scale);
@@ -1092,13 +1092,13 @@ const Cinematics = {
       const targetX = cx + Math.sin(t * Math.PI) * 28;
       const targetY = cy + Math.cos(t * Math.PI * 0.5) * 18;
       this.heroContainer.position.set(targetX, targetY);
-    } else if (elapsed < 750) {
+    } else if (elapsed < 900) {
       const breath = 1.0 + Math.sin(elapsed * 0.008) * 0.025;
       this.heroContainer.scale.set(1.08 * breath);
       this.heroContainer.position.set(cx, cy + Math.sin(elapsed * 0.005) * 8);
     } else {
-      const postElapsed = elapsed - 750;
-      const dashProgress = Math.min(1.0, postElapsed / 380);
+      const postElapsed = elapsed - 900;
+      const dashProgress = Math.min(1.0, postElapsed / 450);
       const dashEase = Math.pow(dashProgress, 2);
       this.heroContainer.position.x = cx + dashEase * (W * 0.45);
       this.heroContainer.scale.set(1.08 + dashEase * 0.22);
@@ -1538,7 +1538,7 @@ const Cinematics = {
       }
       this._phaseTimers = [];
 
-      // PHASE 2 (550ms): HERO DASHES FORWARD, MONSTER AIRBORNE BLOOD-RED, SLASH BARRAGE
+      // PHASE 2 (900ms): HERO DASHES FORWARD, MONSTER AIRBORNE BLOOD-RED, SLASH BARRAGE
       const tPhase2 = setTimeout(() => {
         if (!this.active) return;
         if (eyeCutin) {
@@ -1563,10 +1563,10 @@ const Cinematics = {
           impactFxEl.className = `arena-burst-impact-fx theme-${heroId}`;
           impactFxEl.classList.remove('hidden');
         }
-      }, 550);
+      }, 900);
       this._phaseTimers.push(tPhase2);
 
-      // PHASE 3 (1500ms): FINISHER CRASH, MONSTER LANDS, HERO RETURNS & THU KIẾM / POSE DÁNG
+      // PHASE 3 (3100ms): FINISHER CRASH, MONSTER LANDS, HERO RETURNS & THU KIẾM / POSE DÁNG
       const tPhase3 = setTimeout(() => {
         if (!this.active) return;
         if (impactFxEl) {
@@ -1587,14 +1587,14 @@ const Cinematics = {
           }
         }
         this.playBurstAudio(heroId, 'sheathe');
-      }, 1500);
+      }, 3100);
       this._phaseTimers.push(tPhase3);
 
       // 7. Delta-Time 60-144 FPS Rendering Loop
       const startTime = performance.now();
       this.startTime = startTime;
       this.lastTime = startTime;
-      const duration = 2200;
+      const duration = 3900;
 
       if (this.animId) cancelAnimationFrame(this.animId);
 
@@ -1606,8 +1606,8 @@ const Cinematics = {
         const elapsed = now - startTime;
         const progress = Math.min(1, elapsed / duration);
 
-        // Climax Impact Transition at ~1250ms (Hitstop, reality shatter & particle explosion)
-        if (elapsed >= 1250 && !this.impactFired) {
+        // Climax Impact Transition at ~2500ms (Hitstop, reality shatter & particle explosion)
+        if (elapsed >= 2500 && !this.impactFired) {
           this.impactFired = true;
 
           this._buildRealityShatterWebGL(heroId);
@@ -1628,7 +1628,7 @@ const Cinematics = {
 
           if (overlay) {
             overlay.classList.add('hitstop-active');
-            setTimeout(() => overlay && overlay.classList.remove('hitstop-active'), 65);
+            setTimeout(() => overlay && overlay.classList.remove('hitstop-active'), 85);
           }
 
           const appEl = document.getElementById('app');
@@ -1643,21 +1643,21 @@ const Cinematics = {
         // 8. Update Post-Processing Shaders
         if (this.shockwaveFilter && this.shockwaveFilter.uniforms) {
           if (!this.impactFired) {
-            const actProgress = Math.min(1.0, elapsed / 360);
+            const actProgress = Math.min(1.0, elapsed / 600);
             this.shockwaveFilter.uniforms.uProgress = actProgress;
           } else {
-            const climProgress = Math.min(1.0, (elapsed - 1250) / 750);
+            const climProgress = Math.min(1.0, (elapsed - 2500) / 950);
             this.shockwaveFilter.uniforms.uProgress = climProgress;
           }
         }
 
         if (this.chromaticFilter && this.chromaticFilter.uniforms) {
           if (!this.impactFired) {
-            const actP = Math.min(1.0, elapsed / 320);
+            const actP = Math.min(1.0, elapsed / 600);
             this.chromaticFilter.uniforms.uIntensity = Math.max(0.08, 0.35 - actP * 0.25);
           } else {
-            const climElapsed = elapsed - 1250;
-            this.chromaticFilter.uniforms.uIntensity = Math.max(0.0, 1.0 - (climElapsed / 450));
+            const climElapsed = elapsed - 2500;
+            this.chromaticFilter.uniforms.uIntensity = Math.max(0.0, 1.0 - (climElapsed / 600));
           }
         }
 
@@ -1665,8 +1665,8 @@ const Cinematics = {
           if (!this.impactFired) {
             this.bloomFilter.uniforms.uGlowIntensity = 0.45 + Math.sin(elapsed * 0.015) * 0.2;
           } else {
-            const climElapsed = elapsed - 1250;
-            this.bloomFilter.uniforms.uGlowIntensity = Math.max(0.12, 0.85 - (climElapsed / 550) * 0.7);
+            const climElapsed = elapsed - 2500;
+            this.bloomFilter.uniforms.uGlowIntensity = Math.max(0.12, 0.95 - (climElapsed / 800) * 0.8);
           }
         }
 

@@ -51,9 +51,9 @@
       "constellation": 0,
       "level": 999,
       "stage": 189,
-      "towerFloor": 119,
-      "power": 1427918,
-      "lastActive": 1791950444750,
+      "towerFloor": 121,
+      "power": 1455395,
+      "lastActive": 1791990467729,
       "isMe": false
     },
     {
@@ -167,7 +167,7 @@
       "stage": 326,
       "towerFloor": 42,
       "power": 43200297878,
-      "lastActive": 1791989634200,
+      "lastActive": 1791990470505,
       "knownPlayers": [
         {
           "id": "p_1",
@@ -524,6 +524,18 @@
       "towerFloor": 1,
       "power": 83748,
       "lastActive": 1791960688080,
+      "isMe": false
+    },
+    {
+      "id": "p_mv88u5zt_2s62j",
+      "name": "Chiến Binh 1",
+      "heroId": "hero_starter",
+      "constellation": 0,
+      "level": 2,
+      "stage": 3,
+      "towerFloor": 1,
+      "power": 515,
+      "lastActive": 1791990442110,
       "isMe": false
     }
   ],
