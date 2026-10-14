@@ -689,7 +689,7 @@ const Cinematics = {
             const g = ctx.createGain();
             osc.type = 'sine';
             osc.frequency.setValueAtTime(freq, now + idx * 0.07);
-            g.gain.setValueAtTime(0.25, now + idx * 0.07);
+            g.gain.setValueAtTime(0.06, now + idx * 0.07);
             g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.35);
             osc.connect(g);
             g.connect(ctx.destination);
@@ -701,7 +701,7 @@ const Cinematics = {
           const clickG = ctx.createGain();
           click.type = 'triangle';
           click.frequency.setValueAtTime(3400, now + 0.22);
-          clickG.gain.setValueAtTime(0.38, now + 0.22);
+          clickG.gain.setValueAtTime(0.08, now + 0.22);
           clickG.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
           click.connect(clickG);
           clickG.connect(ctx.destination);
@@ -713,7 +713,7 @@ const Cinematics = {
             const g = ctx.createGain();
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-            g.gain.setValueAtTime(0.18, now + idx * 0.08);
+            g.gain.setValueAtTime(0.05, now + idx * 0.08);
             g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.12);
             osc.connect(g);
             g.connect(ctx.destination);
@@ -726,7 +726,7 @@ const Cinematics = {
           osc1.type = 'sawtooth';
           osc1.frequency.setValueAtTime(800, now);
           osc1.frequency.exponentialRampToValueAtTime(2400, now + 0.35);
-          g.gain.setValueAtTime(0.25, now);
+          g.gain.setValueAtTime(0.06, now);
           g.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
           osc1.connect(g);
           g.connect(ctx.destination);
@@ -738,7 +738,7 @@ const Cinematics = {
             const g = ctx.createGain();
             osc.type = 'sine';
             osc.frequency.setValueAtTime(freq, now + idx * 0.05);
-            g.gain.setValueAtTime(0.22, now + idx * 0.05);
+            g.gain.setValueAtTime(0.05, now + idx * 0.05);
             g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.4);
             osc.connect(g);
             g.connect(ctx.destination);
@@ -751,7 +751,7 @@ const Cinematics = {
           osc1.type = 'sine';
           osc1.frequency.setValueAtTime(2600, now);
           osc1.frequency.exponentialRampToValueAtTime(3900, now + 0.35);
-          g.gain.setValueAtTime(0.24, now);
+          g.gain.setValueAtTime(0.06, now);
           g.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
           osc1.connect(g);
           g.connect(ctx.destination);
@@ -865,6 +865,202 @@ const Cinematics = {
     } catch (e) {
       // AudioCtx protected
     }
+  },
+
+  // ============================================================
+  // AUTHENTIC ANIME JAPANESE VOICE LINES (ULTIMATE & SKILLS)
+  // ============================================================
+  JAPANESE_VOICE_MAP: {
+    hero_starter: {
+      burst: {
+        text: '震えろ！',
+        romaji: 'Furuero!',
+        sub: '「震えろ！開山破石！」'
+      },
+      skill: {
+        text: '荒星！',
+        romaji: 'Kousei!',
+        sub: '「荒星！十字斬！」'
+      }
+    },
+    hero_shadow_rogue: {
+      burst: {
+        text: '雲隠れ…雁鳴く時！',
+        romaji: 'Kumogakure... kari naku toki!',
+        sub: '「雲隠れ…雁鳴く時！幻影絶殺！」'
+      },
+      skill: {
+        text: '風よ！',
+        romaji: 'Kaze yo!',
+        sub: '「風よ！双刀乱舞！」'
+      }
+    },
+    hero_frost_knight: {
+      burst: {
+        text: '神里流…霜滅！',
+        romaji: 'Kamisato-ryū... Sōmetsu!',
+        sub: '「神里流…霜滅！氷封絶域！」'
+      },
+      skill: {
+        text: '雪よ、舞え！',
+        romaji: 'Yuki yo, mae!',
+        sub: '「雪よ、舞え！氷刃十字斬！」'
+      }
+    },
+    hero_spear_lancer: {
+      burst: {
+        text: '天動万象！',
+        romaji: 'Tendō-banshou!',
+        sub: '「天動万象！金龍破天！」'
+      },
+      skill: {
+        text: '壁立千仞！',
+        romaji: 'Hekiritsu-senjin!',
+        sub: '「壁立千仞！雷槍穿刺！」'
+      }
+    },
+    hero_flame_knight: {
+      burst: {
+        text: '裁きを、受けよ！',
+        romaji: 'Sabaki o, ukeyo!',
+        sub: '「裁きを、受けよ！燎原烈火！」'
+      },
+      skill: {
+        text: 'はっ！',
+        romaji: 'Ha!',
+        sub: '「紅蓮一閃！炎刃烈斬！」'
+      }
+    },
+    hero_arcane_mage: {
+      burst: {
+        text: 'ここより、寂滅の時！',
+        romaji: 'Koko yori, jakumetsu no toki!',
+        sub: '「ここより、寂滅の時！黒洞寂滅！」'
+      },
+      skill: {
+        text: '裁きの雷！',
+        romaji: 'Sabaki no ikazuchi!',
+        sub: '「裁きの雷！虚無の呪印！」'
+      }
+    },
+    hero_aetheris: {
+      burst: {
+        text: '運命よ、ここにいでよ！',
+        romaji: 'Unmei yo, koko ni ide yo!',
+        sub: '「運命よ、ここにいでよ！万星玄滅！」'
+      },
+      skill: {
+        text: '水中幻願！',
+        romaji: 'Suichū-gengan!',
+        sub: '「水中幻願！古語の渦！」'
+      }
+    },
+    hero_unknown_god: {
+      burst: {
+        text: '礼を弁えぬ虫けらが！',
+        romaji: 'Rei o wakimaenu mushikera ga!',
+        sub: '「礼を弁えぬ虫けらが！無極創生！」'
+      },
+      skill: {
+        text: '風よ！',
+        romaji: 'Kaze yo!',
+        sub: '「風よ！虚空崩壊！」'
+      }
+    }
+  },
+
+  playHeroVoice(heroId, type = 'burst') {
+    if (typeof GameState !== 'undefined' && GameState.settings && GameState.settings.sfxEnabled === false) return null;
+
+    // RULE 1: If an Ultimate burst cinematic is playing, NEVER play skill voice lines (prevents sound collision)
+    if (type === 'skill' && this.active) return null;
+
+    // RULE 2: Debounce skill voices (minimum 4.0s interval) to prevent rapid overlapping in auto-combat
+    const nowTime = Date.now();
+    if (type === 'skill') {
+      if (this._lastSkillVoiceTime && (nowTime - this._lastSkillVoiceTime) < 4000) {
+        return null;
+      }
+      this._lastSkillVoiceTime = nowTime;
+    }
+
+    const idMap = {
+      hero_traveler: 'hero_starter',
+      hero_kazuha: 'hero_shadow_rogue',
+      hero_furina: 'hero_frost_knight',
+      hero_zhongli: 'hero_spear_lancer',
+      hero_jiyan: 'hero_spear_lancer',
+      hero_amber: 'hero_flame_knight',
+      hero_changli: 'hero_flame_knight',
+      hero_raiden: 'hero_arcane_mage'
+    };
+    const targetId = idMap[heroId] || heroId || 'hero_starter';
+    const voiceData = this.JAPANESE_VOICE_MAP[targetId] || this.JAPANESE_VOICE_MAP.hero_starter;
+    const entry = voiceData[type] || voiceData.burst;
+
+    // RULE 3: Stop any currently playing voice line immediately so sounds NEVER stack/overlap
+    if (this._currentVoiceAudio) {
+      try {
+        this._currentVoiceAudio.pause();
+        this._currentVoiceAudio.currentTime = 0;
+      } catch (e) {}
+      this._currentVoiceAudio = null;
+    }
+
+    const canPlayOgg = typeof Audio !== 'undefined' && new Audio().canPlayType('audio/ogg') !== '';
+    const ext = canPlayOgg ? 'ogg' : 'mp3';
+    const audioFile = `assets/audio/voice/${type === 'burst' ? 'ult' : 'skill'}_${targetId}.${ext}`;
+
+    try {
+      if (!this._voiceAudioCache) this._voiceAudioCache = {};
+      let audio = this._voiceAudioCache[audioFile];
+      if (!audio) {
+        audio = new Audio(audioFile);
+        this._voiceAudioCache[audioFile] = audio;
+      }
+      audio.currentTime = 0;
+      audio.volume = 1.0;
+      this._currentVoiceAudio = audio;
+      audio.onended = () => {
+        if (this._currentVoiceAudio === audio) this._currentVoiceAudio = null;
+      };
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          this._speakJapaneseFallback(targetId, type, entry.text);
+        });
+      }
+    } catch (e) {
+      this._speakJapaneseFallback(targetId, type, entry.text);
+    }
+
+    return entry;
+  },
+
+  _speakJapaneseFallback(targetId, type, text) {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'ja-JP';
+
+      const voices = window.speechSynthesis.getVoices();
+      const jaVoice = voices.find(v => v.lang.startsWith('ja') || v.lang.includes('JP'));
+      if (jaVoice) utter.voice = jaVoice;
+
+      if (targetId === 'hero_arcane_mage' || targetId === 'hero_aetheris') {
+        utter.pitch = 1.25;
+        utter.rate = 1.05;
+      } else if (targetId === 'hero_unknown_god' || targetId === 'hero_spear_lancer') {
+        utter.pitch = 0.85;
+        utter.rate = 0.95;
+      } else {
+        utter.pitch = 1.0;
+        utter.rate = 1.1;
+      }
+      window.speechSynthesis.speak(utter);
+    } catch (e) {}
   },
 
   // ============================================================
@@ -1459,6 +1655,14 @@ const Cinematics = {
       }
       if (skillName) skillName.textContent = `⚔️ ${skillRes.skill?.name || 'Tuyệt Kỹ Nộ'} ⚔️`;
 
+      // Trigger Authentic Anime Japanese Voice Line + Subtitle
+      const voiceSub = document.getElementById('burst-voice-subtitle');
+      const voiceEntry = this.playHeroVoice(heroId, 'burst');
+      if (voiceSub && voiceEntry) {
+        voiceSub.innerHTML = `<span class="voice-ja">${voiceEntry.sub}</span> <span class="voice-romaji">${voiceEntry.romaji}</span>`;
+        voiceSub.style.display = 'block';
+      }
+
       // 2. Build WebGL Layers
       this._buildHeroStageWebGL(heroId);
       this._buildEyeCutinWebGL(heroId);
@@ -1748,6 +1952,12 @@ const Cinematics = {
       impactFxEl.classList.add('hidden');
     }
     if (actorStage) actorStage.innerHTML = '';
+
+    const voiceSub = document.getElementById('burst-voice-subtitle');
+    if (voiceSub) {
+      voiceSub.innerHTML = '';
+      voiceSub.style.display = 'none';
+    }
 
     if (arenaStage) {
       arenaStage.style.transform = '';

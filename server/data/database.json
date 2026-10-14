@@ -50,10 +50,10 @@
       "heroId": "hero_unknown_god",
       "constellation": 0,
       "level": 999,
-      "stage": 189,
-      "towerFloor": 121,
-      "power": 1455395,
-      "lastActive": 1791990467729,
+      "stage": 346,
+      "towerFloor": 214,
+      "power": 43201133482,
+      "lastActive": 1791992354457,
       "isMe": false
     },
     {
@@ -167,7 +167,7 @@
       "stage": 326,
       "towerFloor": 42,
       "power": 43200297878,
-      "lastActive": 1791990470505,
+      "lastActive": 1791992433335,
       "knownPlayers": [
         {
           "id": "p_1",
@@ -536,6 +536,18 @@
       "towerFloor": 1,
       "power": 515,
       "lastActive": 1791990442110,
+      "isMe": false
+    },
+    {
+      "id": "p_mv89x10q_tdyb3",
+      "name": "Chiến Binh 1",
+      "heroId": "hero_starter",
+      "constellation": 0,
+      "level": 1,
+      "stage": 1,
+      "towerFloor": 1,
+      "power": 437,
+      "lastActive": 1791992330121,
       "isMe": false
     }
   ],

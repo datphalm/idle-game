@@ -928,6 +928,12 @@ const UI = {
       }, duration);
     }
     this._triggerSlashFx(targetSlash, skillType === 'burst' ? 'burst' : 'skill');
+
+    // Trigger Authentic Anime Japanese Voice Line for Active Skill (Skill 2)
+    if (skillType !== 'burst' && typeof Cinematics !== 'undefined' && Cinematics.playHeroVoice) {
+      const activeHero = GameState.activeHeroId || 'hero_starter';
+      Cinematics.playHeroVoice(activeHero, 'skill');
+    }
   },
 
   animatePlayerWalk(mode, duration = 600) {
