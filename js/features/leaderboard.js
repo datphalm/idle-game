@@ -6,7 +6,7 @@
 const Leaderboard = {
   _currentFilter: 'level', // 'level' | 'tower' | 'power'
   _cachedPlayers: [],
-  _serverUrl: 'https://idle-game-ms6o.onrender.com/api',
+  _serverUrl: 'https://idle-game-ypvy.onrender.com/api',
   _isSyncing: false,
   _syncStatus: 'idle', // 'idle' | 'loading' | 'online' | 'offline'
 

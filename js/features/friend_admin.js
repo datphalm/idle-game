@@ -5,7 +5,7 @@
 
 const FriendAdmin = {
   _logs: [],
-  _serverUrl: 'https://idle-game-ms6o.onrender.com/api',
+  _serverUrl: 'https://idle-game-ypvy.onrender.com/api',
 
   init() {
     this._loadLogs();

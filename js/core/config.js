@@ -642,8 +642,8 @@ const CONFIG = {
   ],
 
   GAME_VERSION: '2.3.0',
-  UPDATE_URL: 'https://idle-game-ms6o.onrender.com/api/version',
-  SERVER_URL: 'https://idle-game-ms6o.onrender.com/api',
+  UPDATE_URL: 'https://idle-game-ypvy.onrender.com/api/version',
+  SERVER_URL: 'https://idle-game-ypvy.onrender.com/api',
   AUTO_SAVE_INTERVAL: 20000,
   MAX_OFFLINE_SECONDS: 86400,
   SAVE_KEY: 'idle_rpg_save_v2'

@@ -150,7 +150,7 @@ def build_dist_release(base_dir: str):
     db_path = os.path.join(base_dir, "server", "data", "database.json")
     try:
         import urllib.request
-        req = urllib.request.Request("https://idle-game-ms6o.onrender.com/api/leaderboard", headers={"User-Agent": "IdleRPG-Build"})
+        req = urllib.request.Request("https://idle-game-ypvy.onrender.com/api/leaderboard", headers={"User-Agent": "IdleRPG-Build"})
         with urllib.request.urlopen(req, timeout=4) as resp:
             if resp.status == 200:
                 remote_players = json.loads(resp.read().decode("utf-8"))

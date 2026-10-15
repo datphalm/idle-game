@@ -266,7 +266,7 @@ namespace IdleRPGLauncher
             {
                 // Cho phép giao thức bảo mật TLS 1.2
                 ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | SecurityProtocolType.Tls;
-                string versionUrl = "https://idle-game-ms6o.onrender.com/api/version";
+                string versionUrl = "https://idle-game-ypvy.onrender.com/api/version";
 
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(versionUrl);
                 req.Timeout = 2500;
@@ -302,7 +302,7 @@ namespace IdleRPGLauncher
                 // Nếu máy chủ có phiên bản mới hơn, tự động kéo bản vá Hot-Patch về đè ngay
                 if (IsNewerVersion(remoteVersion, localVersion))
                 {
-                    string bundleUrl = "https://idle-game-ms6o.onrender.com/api/patch/bundle";
+                    string bundleUrl = "https://idle-game-ypvy.onrender.com/api/patch/bundle";
                     string targetBundle = Path.Combine(_baseDir, "js", "game.bundle.js");
                     string tempBundle = targetBundle + ".tmp";
 
@@ -325,7 +325,7 @@ namespace IdleRPGLauncher
                         // Tải bổ sung CSS nếu có cập nhật giao diện
                         try
                         {
-                            string cssUrl = "https://idle-game-ms6o.onrender.com/api/patch/css";
+                            string cssUrl = "https://idle-game-ypvy.onrender.com/api/patch/css";
                             string targetCss = Path.Combine(_baseDir, "css", "style.css");
                             string tempCss = targetCss + ".tmp";
                             wc.DownloadFile(cssUrl, tempCss);
@@ -340,7 +340,7 @@ namespace IdleRPGLauncher
                         // Tải bổ sung HTML nếu có cập nhật cấu trúc trang
                         try
                         {
-                            string htmlUrl = "https://idle-game-ms6o.onrender.com/api/patch/html";
+                            string htmlUrl = "https://idle-game-ypvy.onrender.com/api/patch/html";
                             string targetHtml = Path.Combine(_baseDir, "index.html");
                             string tempHtml = targetHtml + ".tmp";
                             wc.DownloadFile(htmlUrl, tempHtml);
