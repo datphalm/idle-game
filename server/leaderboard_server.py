@@ -75,6 +75,9 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self._set_headers(200)
 
+    def do_HEAD(self):
+        self._set_headers(200)
+
     def do_GET(self):
         db = load_db()
         path = self.path.split("?")[0]
