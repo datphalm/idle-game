@@ -213,14 +213,38 @@ def build_dist_release(base_dir: str):
                     os.makedirs(static_libs, exist_ok=True)
                     shutil.copy2(src_f, os.path.join(static_libs, lib_file))
 
-    # 3. Copy css & assets
+    # 3. Minify & Nén bảo vệ toàn bộ CSS (Làm rối và loại bỏ chú thích/khoảng trắng)
+    def _minify_css(raw_css):
+        c = re.sub(r'/\*[\s\S]*?\*/', '', raw_css)
+        c = re.sub(r'\s+', ' ', c)
+        c = re.sub(r'\s*([\{\};:,>~])\s*', r'\1', c)
+        c = re.sub(r'\band\(', 'and (', c)
+        c = re.sub(r'\bor\(', 'or (', c)
+        c = re.sub(r'\bnot\(', 'not (', c)
+        c = re.sub(r'calc\(([^)]+)\)', lambda m: 'calc(' + re.sub(r'(?<=[0-9a-zA-Z%])([+\-])(?=[0-9a-zA-Z%])', r' \1 ', m.group(1)) + ')', c)
+        return "/* IDLE RPG PROTECTED STYLESHEET - DO NOT MODIFY */\n" + c.strip()
+
     css_src = os.path.join(base_dir, "css")
     css_dst = os.path.join(dist_dir, "css")
+    os.makedirs(css_dst, exist_ok=True)
     if os.path.exists(css_src):
-        shutil.copytree(css_src, css_dst, dirs_exist_ok=True)
-        if os.path.exists(server_static):
-            static_css = os.path.join(server_static, "css")
-            shutil.copytree(css_src, static_css, dirs_exist_ok=True)
+        for f in os.listdir(css_src):
+            src_f = os.path.join(css_src, f)
+            if os.path.isfile(src_f):
+                if f.endswith('.css'):
+                    with open(src_f, 'r', encoding='utf-8') as cf:
+                        min_css = _minify_css(cf.read())
+                    with open(os.path.join(css_dst, f), 'w', encoding='utf-8') as cf:
+                        cf.write(min_css)
+                    if os.path.exists(server_static):
+                        static_css = os.path.join(server_static, "css")
+                        os.makedirs(static_css, exist_ok=True)
+                        with open(os.path.join(static_css, f), 'w', encoding='utf-8') as cf:
+                            cf.write(min_css)
+                        with open(os.path.join(server_static, f), 'w', encoding='utf-8') as cf:
+                            cf.write(min_css)
+                else:
+                    shutil.copy2(src_f, os.path.join(css_dst, f))
 
     assets_src = os.path.join(base_dir, "assets")
     assets_dst = os.path.join(dist_dir, "assets")
