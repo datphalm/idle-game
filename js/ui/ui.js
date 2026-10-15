@@ -287,10 +287,137 @@ const UI = {
       this.toggleVfx(e.target.checked);
     });
 
+    this.renderHeroSkillsHudLayout();
     this._renderUpgradeCards();
     this._syncAutoControls();
     this.updateVfxToggleDisplay();
     this._startSkillCooldownTicker();
+  },
+
+  renderHeroSkillsHudLayout() {
+    const activeHeroId = GameState.activeHeroId || 'hero_starter';
+    const isCassius = (activeHeroId === 'hero_cassius');
+    const heroCfg = CONFIG.getHeroById(activeHeroId);
+    const s2 = heroCfg?.skills?.find(s => s.type === 'active');
+    const s3 = heroCfg?.skills?.find(s => s.type === 'burst') || heroCfg?.skills?.[2];
+
+    const prefixList = [
+      { pfx: 'hud', s2Id: 'hud-skill-2', s3Id: 'hud-skill-3' },
+      { pfx: 'boss-hud', s2Id: 'boss-hud-skill-2', s3Id: 'boss-hud-skill-3' },
+      { pfx: 'dungeon-hud', s2Id: 'dungeon-hud-skill-2', s3Id: 'dungeon-hud-skill-3' },
+      { pfx: 'tower-hud', s2Id: 'tower-hud-skill-2', s3Id: 'tower-hud-skill-3' }
+    ];
+
+    prefixList.forEach(({ pfx, s2Id, s3Id }) => {
+      const s2El = document.getElementById(s2Id);
+      const s3El = document.getElementById(s3Id);
+
+      // 1. Skill 2: An voi Cassius per user request, hien dang tron cho cac tuong khac
+      if (s2El) {
+        if (isCassius) {
+          s2El.style.display = 'none';
+        } else {
+          s2El.style.display = 'flex';
+          const s2Icon = document.getElementById(`${pfx}-s2-icon`);
+          if (s2Icon && s2) s2Icon.textContent = s2.icon || '⚡';
+        }
+      }
+
+      // 2. Skill 3: The bai Tarot CHI cho Cassius, nut tron tieu chuan cho cac tuong khac
+      if (s3El) {
+        if (isCassius) {
+          s3El.className = 'skill-hud-item skill-hud-burst-wrapper';
+          s3El.innerHTML = `
+            <div class="burst-card-container">
+              <div class="skill-burst-card is-ready" id="${pfx}-burst-card" role="button" tabindex="0">
+                <div class="burst-card-inner">
+                  <img src="assets/characters/cassius/art_skill_ultimate.png" class="burst-card-img" alt="Tuyệt Kỹ Nộ" />
+                  <div class="burst-card-cd-overlay" id="${pfx}-s3-fill"></div>
+                  <div class="burst-card-frame"></div>
+                </div>
+              </div>
+              <span class="burst-card-status-text" id="${pfx}-s3-timer">Sẵn sàng</span>
+            </div>
+          `;
+        } else {
+          s3El.className = 'skill-hud-item';
+          s3El.innerHTML = `
+            <div class="skill-hud-circle burst-circle is-ready" id="${pfx}-burst-card" role="button" tabindex="0" title="${s3?.name || 'Tuyệt Kỹ Nộ'}">
+              <div class="skill-hud-fill" id="${pfx}-s3-fill"></div>
+              <span class="skill-hud-icon" id="${pfx}-s3-icon">${s3?.icon || '🌟'}</span>
+            </div>
+            <span class="skill-hud-timer" id="${pfx}-s3-timer">Sẵn sàng</span>
+          `;
+        }
+      }
+    });
+
+    this._bindBurstCardEvents();
+  },
+
+  _bindBurstCardEvents() {
+    const cardSelectors = [
+      { cardId: 'hud-burst-card' },
+      { cardId: 'boss-burst-card' },
+      { cardId: 'dungeon-burst-card' },
+      { cardId: 'tower-burst-card' }
+    ];
+
+    cardSelectors.forEach(({ cardId }) => {
+      const cardEl = document.getElementById(cardId);
+      if (!cardEl) return;
+
+      // Mouse Hover Preview (ONLY for Cassius!)
+      cardEl.onmouseenter = () => {
+        if (GameState.activeHeroId !== 'hero_cassius') return;
+        const showcase = document.getElementById('hero-hover-showcase');
+        if (showcase) showcase.classList.add('showcase-active');
+      };
+
+      cardEl.onmouseleave = () => {
+        const showcase = document.getElementById('hero-hover-showcase');
+        if (showcase) showcase.classList.remove('showcase-active');
+      };
+
+      // Manual Activation Click
+      cardEl.onclick = (e) => {
+        e.stopPropagation();
+        this.handleManualBurstClick();
+      };
+    });
+  },
+
+  handleManualBurstClick() {
+    const res = Player.triggerManualBurst();
+    if (!res.success) {
+      if (res.reason === 'cooldown') {
+        this.showToast(`⏳ Tuyệt kỹ đang hồi chiêu (${res.remainingSec}s)!`);
+        document.querySelectorAll('.skill-burst-card').forEach(c => {
+          c.classList.remove('shake-card');
+          void c.offsetWidth;
+          c.classList.add('shake-card');
+        });
+      }
+      return;
+    }
+
+    // Dismiss 3D hover preview and left-side showcase immediately on click
+    document.querySelectorAll('.burst-card-3d-preview').forEach(p => p.classList.remove('preview-active'));
+    const showcase = document.getElementById('hero-hover-showcase');
+    if (showcase) showcase.classList.remove('showcase-active');
+
+    // Trigger turn immediately if combat is running
+    if (typeof Combat !== 'undefined' && Combat.isRunning && !Combat._isReviving && !(typeof Cinematics !== 'undefined' && Cinematics.active)) {
+      if (Combat._timer) {
+        clearTimeout(Combat._timer);
+        Combat._timer = null;
+      }
+      Combat.step();
+    } else if (typeof Boss !== 'undefined' && GameState.boss?.active && !(typeof Cinematics !== 'undefined' && Cinematics.active)) {
+      Boss._stepFight();
+    }
+
+    this.updateSkillCooldowns();
   },
 
   _startSkillCooldownTicker() {
@@ -595,6 +722,10 @@ const UI = {
   },
 
   updateBattle() {
+    if (this._currentHeroLayoutId !== GameState.activeHeroId) {
+      this._currentHeroLayoutId = GameState.activeHeroId;
+      this.renderHeroSkillsHudLayout();
+    }
     this.updateStageDisplay();
     this.updateSkillCooldowns();
     this.updateBattleStatsOnly();
@@ -635,13 +766,15 @@ const UI = {
     if (!heroCfg) return;
     const progress = Player.getSkillCooldownProgress();
 
-    const prefixes = ['hud', 'boss-hud', 'dungeon-hud', 'tower-hud'];
-    prefixes.forEach(pfx => {
-      const s2IconEl = document.getElementById(`${pfx}-s2-icon`);
-      const s3IconEl = document.getElementById(`${pfx}-s3-icon`);
-      if (s2IconEl && heroCfg.skills?.[1]) s2IconEl.textContent = heroCfg.skills[1].icon;
-      if (s3IconEl && heroCfg.skills?.[2]) s3IconEl.textContent = heroCfg.skills[2].icon;
+    const prefixMap = [
+      { pfx: 'hud', cardId: 'hud-burst-card' },
+      { pfx: 'boss-hud', cardId: 'boss-burst-card' },
+      { pfx: 'dungeon-hud', cardId: 'dungeon-burst-card' },
+      { pfx: 'tower-hud', cardId: 'tower-burst-card' }
+    ];
 
+    prefixMap.forEach(({ pfx, cardId }) => {
+      // Skill 2
       const s2Fill = document.getElementById(`${pfx}-s2-fill`);
       const s2Timer = document.getElementById(`${pfx}-s2-timer`);
       if (s2Fill) s2Fill.style.height = `${100 - progress.s2.pct}%`;
@@ -655,16 +788,32 @@ const UI = {
         }
       }
 
+      // Skill 3 (Burst Card)
+      const cardEl = document.getElementById(cardId);
       const s3Fill = document.getElementById(`${pfx}-s3-fill`);
       const s3Timer = document.getElementById(`${pfx}-s3-timer`);
-      if (s3Fill) s3Fill.style.height = `${100 - progress.s3.pct}%`;
-      if (s3Timer) {
-        if (progress.s3.ready) {
+
+      if (progress.s3.ready) {
+        if (cardEl) {
+          cardEl.classList.add('is-ready');
+          cardEl.classList.remove('is-charging');
+        }
+        if (s3Fill) s3Fill.style.height = '0%';
+        const isCass = (heroCfg.id === 'hero_cassius');
+        if (s3Timer) {
           s3Timer.textContent = 'Sẵn sàng';
-          s3Timer.className = 'skill-hud-timer skill-ready';
-        } else {
+          s3Timer.className = isCass ? 'burst-card-status-text skill-ready' : 'skill-hud-timer skill-ready';
+        }
+      } else {
+        if (cardEl) {
+          cardEl.classList.remove('is-ready');
+          cardEl.classList.add('is-charging');
+        }
+        if (s3Fill) s3Fill.style.height = `${100 - progress.s3.pct}%`;
+        const isCass = (heroCfg.id === 'hero_cassius');
+        if (s3Timer) {
           s3Timer.textContent = `${progress.s3.remainingSec}s`;
-          s3Timer.className = 'skill-hud-timer';
+          s3Timer.className = isCass ? 'burst-card-status-text' : 'skill-hud-timer';
         }
       }
     });
@@ -714,8 +863,8 @@ const UI = {
       nameEl.textContent = heroCfg.name;
       nameEl.style.color = heroCfg.elementColor || '#fff';
     }
-    // Nếu nhân vật đang trong hoạt ảnh chém vũ khí hoặc dùng skill, không bị ghi đè bởi idle
-    if (this._isPlayerAnimating && action === 'idle') {
+    // Nếu nhân vật đang trong hoạt ảnh chém vũ khí hoặc dùng skill hoặc đang chiếu Cinematic, không bị ghi đè bởi idle
+    if ((this._isPlayerAnimating || (typeof Cinematics !== 'undefined' && Cinematics.active)) && action === 'idle') {
       return;
     }
     if (typeof Sprites !== 'undefined') {
@@ -755,7 +904,7 @@ const UI = {
     document.getElementById('monster-name').textContent = m.name;
     document.getElementById('monster-level').textContent = `Lv. ${m.level}`;
     const mSprite = document.getElementById('monster-sprite');
-    if (mSprite) {
+    if (mSprite && !(typeof Cinematics !== 'undefined' && Cinematics.active)) {
       if (typeof Sprites !== 'undefined') {
         mSprite.innerHTML = Sprites.getMonsterSvg(m.name);
         mSprite.className = 'fighter-avatar monster-idle';
@@ -773,7 +922,7 @@ const UI = {
     if (mText) mText.textContent = `${this._formatNumber(curHp)} / ${this._formatNumber(maxHp)}`;
   },
 
-  showDamageNumber(amount, isCrit, target) {
+  showDamageNumber(amount, isCrit, target, isBurst = false) {
     let id = 'monster-damage-container';
     if (target === 'player') {
       if (GameState.boss?.active) id = 'boss-player-damage-container';
@@ -796,13 +945,14 @@ const UI = {
 
     const isTargetPlayer = target === 'player' || target === 'dungeon-player' || target === 'tower-player';
     const el = document.createElement('div');
-    el.className = `damage-number ${isTargetPlayer ? 'damage-player' : 'damage-monster'} ${isCrit ? 'damage-crit' : ''}`;
+    const critClass = isBurst ? 'damage-burst' : (isCrit ? 'damage-crit' : '');
+    el.className = `damage-number ${isTargetPlayer ? 'damage-player' : 'damage-monster'} ${critClass}`;
     el.textContent = `-${this._formatNumber(amount)}`;
-    el.style.left = `calc(50% + ${Math.random() * 50 - 25}px)`;
-    el.style.top = `${Math.random() * 15}px`;
+    el.style.left = `calc(50% + ${Math.random() * 40 - 20}px)`;
+    el.style.top = `${Math.random() * 10}px`;
 
     container.appendChild(el);
-    setTimeout(() => el.remove(), 850);
+    setTimeout(() => el.remove(), isBurst ? 1300 : 850);
   },
 
   screenShake() {
@@ -826,10 +976,12 @@ const UI = {
 
     const pSpriteId = isBoss ? 'boss-player-sprite' : 'player-sprite';
     const pSprite = document.getElementById(pSpriteId);
+    const activeHero = GameState.activeHeroId || 'hero_starter';
     if (pSprite && typeof Sprites !== 'undefined') {
-      const activeHero = GameState.activeHeroId || 'hero_starter';
-      pSprite.innerHTML = Sprites.getPlayerSvg('extra', activeHero);
-      pSprite.className = `fighter-avatar player-extra-anim hero-extra-${activeHero}`;
+      pSprite.innerHTML = Sprites.getPlayerSvg(activeHero === 'hero_cassius' ? 'attack' : 'extra', activeHero);
+      pSprite.className = (activeHero === 'hero_cassius')
+        ? 'fighter-avatar player-attack-anim'
+        : `fighter-avatar player-extra-anim hero-extra-${activeHero}`;
       clearTimeout(this._playerAnimTimer);
       this._playerAnimTimer = setTimeout(() => {
         if (pSprite) {
@@ -838,8 +990,10 @@ const UI = {
         }
       }, 420);
     }
-    const targetSlash = isBoss ? 'slash-fx-boss' : 'slash-fx-monster';
-    this._triggerSlashFx(targetSlash, 'extra');
+    if (activeHero !== 'hero_cassius') {
+      const targetSlash = isBoss ? 'slash-fx-boss' : 'slash-fx-monster';
+      this._triggerSlashFx(targetSlash, 'extra');
+    }
   },
 
   animatePlayerAttack(mode) {
@@ -858,8 +1012,8 @@ const UI = {
       targetSlash = 'slash-fx-boss';
     }
     const pSprite = document.getElementById(pSpriteId);
+    const activeHero = GameState.activeHeroId || 'hero_starter';
     if (pSprite && typeof Sprites !== 'undefined') {
-      const activeHero = GameState.activeHeroId || 'hero_starter';
       pSprite.innerHTML = Sprites.getPlayerSvg('attack', activeHero);
       pSprite.className = `fighter-avatar player-attack-anim hero-attack-${activeHero}`;
       clearTimeout(this._playerAnimTimer);
@@ -871,7 +1025,11 @@ const UI = {
         }
       }, 340);
     }
-    this._triggerSlashFx(targetSlash, 'normal');
+    // Temporarily disabled slash VFX per user request for Cassius
+    if (activeHero !== 'hero_cassius') {
+      const slashType = 'normal';
+      this._triggerSlashFx(targetSlash, slashType);
+    }
   },
 
   animatePlayerHit(mode) {
@@ -913,8 +1071,8 @@ const UI = {
       targetSlash = 'slash-fx-boss';
     }
     const pSprite = document.getElementById(pSpriteId);
+    const activeHero = GameState.activeHeroId || 'hero_starter';
     if (pSprite && typeof Sprites !== 'undefined') {
-      const activeHero = GameState.activeHeroId || 'hero_starter';
       pSprite.innerHTML = Sprites.getPlayerSvg(skillType === 'burst' ? 'burst' : 'skill', activeHero);
       pSprite.className = `fighter-avatar player-skill-anim`;
       clearTimeout(this._playerAnimTimer);
@@ -927,16 +1085,16 @@ const UI = {
         }
       }, duration);
     }
-    this._triggerSlashFx(targetSlash, skillType === 'burst' ? 'burst' : 'skill');
-
-    // Trigger Authentic Anime Japanese Voice Line for Active Skill (Skill 2)
-    if (skillType !== 'burst' && typeof Cinematics !== 'undefined' && Cinematics.playHeroVoice) {
-      const activeHero = GameState.activeHeroId || 'hero_starter';
-      Cinematics.playHeroVoice(activeHero, 'skill');
+    // Temporarily disabled slash VFX per user request for Cassius
+    if (activeHero !== 'hero_cassius') {
+      this._triggerSlashFx(targetSlash, skillType === 'burst' ? 'burst' : 'skill');
     }
+
+    // Sub-skill voice lines disabled per user request (only ulti sound kept)
   },
 
   animatePlayerWalk(mode, duration = 600) {
+    if (typeof Cinematics !== 'undefined' && Cinematics.active) return;
     let pSpriteId = 'player-sprite';
     if (mode === 'dungeon') pSpriteId = 'dungeon-player-sprite';
     else if (mode === 'tower') pSpriteId = 'tower-player-sprite';
@@ -990,14 +1148,15 @@ const UI = {
     }
   },
 
-  animateMonsterHit(mode) {
-    if (typeof Cinematics !== 'undefined' && Cinematics.active) return;
+  animateMonsterHit(mode, force = false) {
+    const isEndingPhase = document.getElementById('arena-stage')?.classList.contains('phase-3-sheathe');
+    if (typeof Cinematics !== 'undefined' && Cinematics.active && !isEndingPhase && !force) return;
     if (mode === 'dungeon') {
-      this._triggerAnim('dungeon-monster-sprite', 'hit-flash');
+      this._triggerAnim('dungeon-monster-sprite', 'hit-flash', force);
     } else if (mode === 'tower') {
-      this._triggerAnim('tower-enemy-sprite', 'hit-flash');
+      this._triggerAnim('tower-enemy-sprite', 'hit-flash', force);
     } else {
-      this._triggerAnim('monster-sprite', 'hit-flash');
+      this._triggerAnim('monster-sprite', 'hit-flash', force);
     }
   },
 
@@ -1006,13 +1165,15 @@ const UI = {
     this._triggerSlashFx('boss-player-slash-fx', 'normal');
   },
 
-  animateBossHit() {
-    this._triggerAnim('boss-active-sprite', 'hit-flash');
+  animateBossHit(force = false) {
+    this._triggerAnim('boss-active-sprite', 'hit-flash', force);
     this._triggerSlashFx('slash-fx-boss', 'normal');
   },
 
   _triggerSlashFx(containerId, type = 'normal') {
     if (GameState.settings && GameState.settings.vfxEnabled === false) return;
+    const activeHero = GameState.activeHeroId || 'hero_starter';
+    if (activeHero === 'hero_cassius') return;
     const container = document.getElementById(containerId);
     if (!container || typeof Sprites === 'undefined') return;
     container.innerHTML = Sprites.getSlashFxSvg(type);
@@ -1025,8 +1186,9 @@ const UI = {
     }, 450);
   },
 
-  _triggerAnim(elementId, className) {
-    if (typeof Cinematics !== 'undefined' && Cinematics.active && (elementId === 'player-sprite' || elementId === 'monster-sprite')) return;
+  _triggerAnim(elementId, className, force = false) {
+    const isEndingPhase = document.getElementById('arena-stage')?.classList.contains('phase-3-sheathe');
+    if (typeof Cinematics !== 'undefined' && Cinematics.active && !isEndingPhase && !force && (elementId === 'player-sprite' || elementId === 'monster-sprite')) return;
     const el = document.getElementById(elementId);
     if (!el) return;
     el.classList.remove(className);
@@ -1994,7 +2156,9 @@ const UI = {
     const userHero = GameState.heroes?.find(h => h.id === activeId) || { constellation: 0, skillLevels: { s1: 1, s2: 1, s3: 1 } };
     const skills = heroCfg.skills || [];
 
-    const avatarSvg = typeof Sprites !== 'undefined' ? Sprites.getPlayerSvg('idle', activeId) : '👑';
+    const avatarSvg = (activeId === 'hero_cassius')
+      ? `<img src="assets/characters/cassius/model_3d_bust.png" alt="Cassius Bust" style="width:100%; height:100%; object-fit:cover; object-position:center top; border-radius:inherit;" />`
+      : (typeof Sprites !== 'undefined' ? Sprites.getPlayerSvg('idle', activeId) : '👑');
     const cBadge = userHero.constellation > 0 ? `Cung Mệnh E${userHero.constellation}` : 'Cung Mệnh E0';
     const constellationBonus = (userHero.constellation || 0) * 20;
 
@@ -2045,6 +2209,25 @@ const UI = {
 
     container.innerHTML = `
       <div class="hero-showcase-card">
+        ${activeId === 'hero_cassius' ? `
+        <div class="hero-3d-stage-banner" style="margin-bottom: 14px; position: relative; border-radius: 12px; background: radial-gradient(circle at 50% 50%, rgba(255,215,0,0.15) 0%, rgba(20,20,32,0.85) 65%, #0b0b12 100%); border: 1px solid rgba(255,215,0,0.4); box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 0 30px rgba(255,215,0,0.08); overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 14px 20px; gap: 20px;">
+          <div style="position: absolute; top: 10px; right: 12px; font-size: 0.68rem; font-weight: 800; color: #ffd700; background: rgba(0,0,0,0.6); border: 1px solid #ffd700; border-radius: 6px; padding: 3px 8px; text-transform: uppercase; letter-spacing: 1px;">
+            ✨ Authentic 3D Spine Model & Chibi
+          </div>
+          <div style="width: 140px; height: 160px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.8));">
+            <img src="assets/characters/cassius/model_3d_full.png" alt="Cassius 3D Model" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 0.95rem; font-weight: 800; color: #ffd700; display: flex; align-items: center; gap: 8px;">
+              <span>🎲 Quỷ Diện & Xúc Xắc Cánh Dơi</span>
+              <span style="font-size: 0.7rem; color: #facc15; background: rgba(250,204,21,0.15); border: 1px solid rgba(250,204,21,0.4); padding: 1px 6px; border-radius: 4px;">Exclusive Model</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.45;">
+              Tái hiện nguyên bản từ mô hình 3D Spine: Quân Vương Cassius với áo choàng tuxedo tà đuôi lượn sóng, gậy Spade quyền trượng, tay máy hoàng kim cùng Quỷ Xí Ngầu bay lượn và phi bài Tarot bách phát bách trúng.
+            </div>
+          </div>
+        </div>
+        ` : ''}
         <div class="hero-main-header">
           <div class="hero-big-avatar" style="border-color: ${heroCfg.elementColor || '#a855f7'};">
             ${avatarSvg}
@@ -2103,11 +2286,14 @@ const UI = {
     container.querySelectorAll('.btn-preview-burst').forEach(btn => {
       btn.addEventListener('click', () => {
         const burstSkill = skills.find(s => s.type === 'burst') || skills[skills.length - 1];
+        const activeHeroData = (typeof Player !== 'undefined' && Player.getActiveHeroData) ? Player.getActiveHeroData() : null;
+        const baseAtk = (typeof Player !== 'undefined' && Player.getEffectiveAttack) ? Player.getEffectiveAttack() : 1000;
+        const previewDmg = Math.floor(baseAtk * (burstSkill?.dmgMult || 50.0) * (1 + (activeHeroData?.burstDmgBonus || 0)));
         if (typeof Cinematics !== 'undefined' && Cinematics.playBurst) {
           Cinematics.playBurst({
             hero: heroCfg,
             skill: burstSkill,
-            damage: 999999,
+            damage: previewDmg,
             isCrit: true,
             buffName: burstSkill?.buffDesc || 'Tuyệt Kỹ Nộ 3D',
             forcePreview: true
@@ -2202,6 +2388,11 @@ const UI = {
     Player._skill3NextReady = 0;
     const heroCfg = CONFIG.getHeroById(heroId);
 
+    // Dismiss showcase and 3D preview
+    const showcase = document.getElementById('hero-hover-showcase');
+    if (showcase) showcase.classList.remove('showcase-active');
+
+    this.renderHeroSkillsHudLayout();
     this.showToast(`👑 Đã đổi tướng xuất chiến: [${heroCfg.name}]!`);
     this.updateBattle();
     this.updateHeroesTab();
@@ -2592,6 +2783,11 @@ const UI = {
   // GENSHIN BURST ULTIMATE CINEMATIC CUTSCENE
   // ============================================================
   playBurstCinematic(skillRes) {
+    // Hide 3D hover preview and left-side showcase if open
+    document.querySelectorAll('.burst-card-3d-preview').forEach(p => p.classList.remove('preview-active'));
+    const showcase = document.getElementById('hero-hover-showcase');
+    if (showcase) showcase.classList.remove('showcase-active');
+
     if (GameState.settings && GameState.settings.vfxEnabled === false && !skillRes?.forcePreview) {
       return;
     }

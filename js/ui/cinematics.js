@@ -508,6 +508,8 @@ const Cinematics = {
         return [0x00e5ff, 0xd500f9, 0xffd700, 0x0091ea, 0xffffff];
       case 'hero_unknown_god':
         return [0x00ffcc, 0xff0055, 0xaa00ff, 0x880e4f, 0xffffff];
+      case 'hero_cassius':
+        return [0xffd700, 0xff0044, 0x111119, 0xffe066, 0xffffff];
       default:
         return [0xffd700, 0x00e5ff, 0xff007f, 0x76ff03, 0xffffff];
     }
@@ -966,23 +968,26 @@ const Cinematics = {
         romaji: 'Kaze yo!',
         sub: '「風よ！虚空崩壊！」'
       }
+    },
+    hero_cassius: {
+      burst: {
+        text: '運命の賭けだ！オールイン！',
+        romaji: 'Unmei no kake da! Ōru-in!',
+        sub: '「運命の賭けだ！オールイン！死のロイヤルストレートフラッシュ！」'
+      },
+      skill: {
+        text: 'ダイスを振れ！',
+        romaji: 'Daisu o fure!',
+        sub: '「ダイスを振れ！悪魔の囁き！」'
+      }
     }
   },
 
   playHeroVoice(heroId, type = 'burst') {
     if (typeof GameState !== 'undefined' && GameState.settings && GameState.settings.sfxEnabled === false) return null;
 
-    // RULE 1: If an Ultimate burst cinematic is playing, NEVER play skill voice lines (prevents sound collision)
-    if (type === 'skill' && this.active) return null;
-
-    // RULE 2: Debounce skill voices (minimum 4.0s interval) to prevent rapid overlapping in auto-combat
-    const nowTime = Date.now();
-    if (type === 'skill') {
-      if (this._lastSkillVoiceTime && (nowTime - this._lastSkillVoiceTime) < 4000) {
-        return null;
-      }
-      this._lastSkillVoiceTime = nowTime;
-    }
+    // RULE 1: Sub-skill voice lines disabled per user request (only ulti sound kept)
+    if (type === 'skill') return null;
 
     const idMap = {
       hero_traveler: 'hero_starter',
@@ -997,6 +1002,11 @@ const Cinematics = {
     const targetId = idMap[heroId] || heroId || 'hero_starter';
     const voiceData = this.JAPANESE_VOICE_MAP[targetId] || this.JAPANESE_VOICE_MAP.hero_starter;
     const entry = voiceData[type] || voiceData.burst;
+
+    // RULE 2.5: For Hero Unknown God & Cassius burst, the voice & SFX are already mastered into the cinematic video
+    if (type === 'burst' && (targetId === 'hero_unknown_god' || targetId === 'hero_cassius')) {
+      return entry;
+    }
 
     // RULE 3: Stop any currently playing voice line immediately so sounds NEVER stack/overlap
     if (this._currentVoiceAudio) {
@@ -1583,6 +1593,42 @@ const Cinematics = {
           <line class="dimensional-cut-line" x1="-60" y1="150" x2="360" y2="150" stroke="#ffffff" stroke-width="8" filter="url(#ug-cube-glow)"/>
         </svg>`;
 
+      case 'hero_cassius':
+        return `
+        <svg viewBox="0 0 300 300" class="impact-svg impact-cassius" width="100%" height="100%">
+          <defs>
+            <filter id="cas-gold-glow"><feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#ffd700" flood-opacity="1"/></filter>
+            <filter id="cas-red-glow"><feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#ff0044" flood-opacity="1"/></filter>
+            <linearGradient id="cas-gold-beam" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="50%" stop-color="#ffd700"/>
+              <stop offset="100%" stop-color="#b8860b"/>
+            </linearGradient>
+          </defs>
+          <!-- Giant Golden Spade Crest Burst -->
+          <g class="giant-spade-burst" transform="translate(150, 150) scale(1.6)" filter="url(#cas-gold-glow)">
+            <path d="M 0,-35 C-25,-10 -30,12 0,38 C30,12 25,-10 0,-35 Z" fill="url(#cas-gold-beam)" stroke="#ffffff" stroke-width="2"/>
+            <polygon points="0,32 -14,50 14,50" fill="url(#cas-gold-beam)"/>
+            <circle cx="0" cy="5" r="8" fill="#ffffff" opacity="0.9"/>
+          </g>
+          <!-- Expanding Casino Shockwave Rings -->
+          <ellipse cx="150" cy="150" rx="120" ry="80" stroke="#ffd700" stroke-width="4" stroke-dasharray="16,8" fill="none" class="casino-ring-spin" filter="url(#cas-gold-glow)"/>
+          <ellipse cx="150" cy="150" rx="90" ry="60" stroke="#ff0044" stroke-width="2.5" fill="none" class="casino-ring-spin-rev" filter="url(#cas-red-glow)"/>
+          <!-- Royal Flush Card Slashes Traversing Center -->
+          <g class="royal-cards-slash" filter="url(#cas-gold-glow)">
+            <line x1="20" y1="50" x2="280" y2="250" stroke="#ffffff" stroke-width="6"/>
+            <line x1="280" y1="50" x2="20" y2="250" stroke="#ffd700" stroke-width="6"/>
+            <line x1="30" y1="150" x2="270" y2="150" stroke="#fff7cc" stroke-width="5"/>
+          </g>
+          <!-- Tumbling Golden Dice Sparks -->
+          <g class="dice-sparks" filter="url(#cas-gold-glow)">
+            <rect x="50" y="80" width="22" height="22" rx="4" fill="#ffd700" stroke="#ffffff" stroke-width="1.5" class="dice-bounce-1"/>
+            <rect x="230" y="90" width="20" height="20" rx="4" fill="#ffd700" stroke="#ffffff" stroke-width="1.5" class="dice-bounce-2"/>
+            <rect x="70" y="210" width="18" height="18" rx="3.5" fill="#ffd700" stroke="#ffffff" stroke-width="1.5" class="dice-bounce-3"/>
+            <rect x="210" y="200" width="24" height="24" rx="4" fill="#ffd700" stroke="#ffffff" stroke-width="1.5" class="dice-bounce-4"/>
+          </g>
+        </svg>`;
+
       default:
         return '';
     }
@@ -1632,6 +1678,7 @@ const Cinematics = {
         hero_arcane_mage: '⟦ 黒 洞 寂 滅 ⟧',
         hero_aetheris: '⟦ 星 穹 ⟧',
         hero_unknown_god: '⟦ 無 極 創 生 ⟧',
+        hero_cassius: '⟦ 命 運 賭 徒 ⟧',
         // Fallbacks for legacy saves
         hero_traveler: '⟦ 開 山 破 石 ⟧',
         hero_kazuha: '⟦ 幻 影 絶 殺 ⟧',
@@ -1663,48 +1710,87 @@ const Cinematics = {
         voiceSub.style.display = 'block';
       }
 
-      // 2. Build WebGL Layers
-      this._buildHeroStageWebGL(heroId);
-      this._buildEyeCutinWebGL(heroId);
-      this._resetParticlesForBurst(heroId);
+      // 2. High-Fidelity Anime Video Cutscene vs WebGL Canvas Setup
+      const isVideoCutscene = (heroId === 'hero_unknown_god' || heroId === 'hero_cassius');
+      const isCassius = (heroId === 'hero_cassius');
+      const videoContainer = document.getElementById('burst-video-container');
+      const videoPlayer = document.getElementById('burst-video-player');
 
-      // Phase 1 (0ms - 550ms): Eye cut-in banner
-      if (eyeCutin && typeof Sprites !== 'undefined') {
-        eyeCutin.innerHTML = Sprites.getHeroEyeCutinSvg(heroId);
-        eyeCutin.classList.add('cutin-active');
+      if (!isVideoCutscene) {
+        if (videoContainer) videoContainer.classList.add('hidden');
+        if (videoPlayer) {
+          try { videoPlayer.pause(); } catch (e) {}
+        }
+        // Build 2D/3D WebGL Layers for Standard Heroes
+        this._buildHeroStageWebGL(heroId);
+        this._buildEyeCutinWebGL(heroId);
+        this._resetParticlesForBurst(heroId);
+
+        // Phase 1 (0ms - 550ms): Eye cut-in banner
+        if (eyeCutin && typeof Sprites !== 'undefined') {
+          eyeCutin.innerHTML = Sprites.getHeroEyeCutinSvg(heroId);
+          eyeCutin.classList.add('cutin-active');
+        }
+
+        // Play Phase 1 Intro Audio
+        this.playBurstAudio(heroId, 'intro');
+      } else {
+        // Video Cutscene starts hidden during Act 1 and starts playing at videoStartTiming
+        if (videoContainer) videoContainer.classList.add('hidden');
+        if (isCassius) {
+          if (this.pixiCanvas) this.pixiCanvas.style.display = 'none';
+          if (this.threeCanvas) this.threeCanvas.style.display = 'none';
+          if (this.particleLayer) this.particleLayer.removeChildren();
+          if (this.slashAndShatterLayer) this.slashAndShatterLayer.removeChildren();
+          if (this.heroStageLayer) this.heroStageLayer.removeChildren();
+        }
       }
 
       // 3. Shockwave & Chromatic Aberration Spike on Activation
-      if (this.shockwaveFilter && this.shockwaveFilter.uniforms) {
-        this.shockwaveFilter.uniforms.uProgress = 0.01;
-        this.shockwaveFilter.uniforms.uCenter = [0.5, 0.5];
-        this.shockwaveFilter.uniforms.uAmplitude = 0.035;
-      }
-      if (this.chromaticFilter && this.chromaticFilter.uniforms) {
-        this.chromaticFilter.uniforms.uIntensity = 0.35;
-      }
-      if (this.bloomFilter && this.bloomFilter.uniforms) {
-        this.bloomFilter.uniforms.uGlowIntensity = 0.55;
+      if (!isCassius) {
+        if (this.shockwaveFilter && this.shockwaveFilter.uniforms) {
+          this.shockwaveFilter.uniforms.uProgress = 0.01;
+          this.shockwaveFilter.uniforms.uCenter = [0.5, 0.5];
+          this.shockwaveFilter.uniforms.uAmplitude = 0.035;
+        }
+        if (this.chromaticFilter && this.chromaticFilter.uniforms) {
+          this.chromaticFilter.uniforms.uIntensity = 0.35;
+        }
+        if (this.bloomFilter && this.bloomFilter.uniforms) {
+          this.bloomFilter.uniforms.uGlowIntensity = 0.55;
+        }
+      } else {
+        if (this.shockwaveFilter && this.shockwaveFilter.uniforms) this.shockwaveFilter.uniforms.uProgress = 0.0;
+        if (this.chromaticFilter && this.chromaticFilter.uniforms) this.chromaticFilter.uniforms.uIntensity = 0.0;
+        if (this.bloomFilter && this.bloomFilter.uniforms) this.bloomFilter.uniforms.uGlowIntensity = 0.0;
       }
 
-      // Play Phase 1 Intro Audio
-      this.playBurstAudio(heroId, 'intro');
-
-      // 4. Show Overlay & Hero-Themed CSS
+      // 4. Show Overlay & Hero-Themed CSS (Fullscreen overflow for Unknown God)
       if (overlay) {
-        overlay.className = `burst-overlay burst-active theme-${heroId}`;
+        overlay.className = isVideoCutscene 
+          ? `burst-overlay burst-active fullscreen-cutscene theme-${heroId}`
+          : `burst-overlay burst-active theme-${heroId}`;
       }
 
       // 5. Build Genuine 3D Three.js Scene
-      this._buildHero3DScene(heroId);
+      if (!isCassius) {
+        this._buildHero3DScene(heroId);
+      } else {
+        this._cleanHero3DScene();
+      }
 
       // 6. Dynamic 3D Camera Tilt on 2D Arena & Staging
       if (arenaStage) {
-        arenaStage.classList.add('camera-3d-active', 'arena-burst-active', 'phase-1-charging', `theme-${heroId}`);
-        this._apply3DCameraAngle(arenaStage, heroId);
+        if (!isCassius) {
+          arenaStage.classList.add('camera-3d-active', 'arena-burst-active', 'phase-1-charging', `theme-${heroId}`);
+          this._apply3DCameraAngle(arenaStage, heroId);
+        } else {
+          arenaStage.classList.add('arena-burst-active', 'phase-1-charging', `theme-${heroId}`);
+          arenaStage.style.transform = '';
+        }
       }
 
-      // 6.5. Phase 1 Setup: Hero winds up, monster frozen under spotlight, NO slashes yet
+      // 6.5. Act 1: Pixel Opening Setup (0ms - 1100ms)
       const pSprite = document.getElementById('player-sprite');
       const mSprite = document.getElementById('monster-sprite');
       const blackoutEl = document.getElementById('arena-burst-blackout');
@@ -1717,14 +1803,19 @@ const Cinematics = {
       }
 
       if (pSprite) {
-        pSprite.className = `fighter-avatar hero-burst-charging hero-charge-${heroId}`;
+        if (isVideoCutscene && typeof Sprites !== 'undefined') {
+          pSprite.innerHTML = Sprites.getPlayerSvg('sheathe', heroId);
+        }
+        pSprite.className = isVideoCutscene 
+          ? (isCassius ? 'fighter-avatar hero-burst-cassius-opening' : 'fighter-avatar hero-burst-god-opening')
+          : `fighter-avatar hero-burst-charging hero-charge-${heroId}`;
       }
       if (mSprite) {
         mSprite.className = `fighter-avatar monster-frozen`;
       }
 
-      // Preview Duel Stage (when testing from Heroes Tab or Dev Menu)
-      if (actorStage && (skillRes.forcePreview || (typeof UI !== 'undefined' && UI.isBattleViewActive && !UI.isBattleViewActive()))) {
+      // Preview Duel Stage (when testing from Heroes Tab or Dev Menu for standard heroes)
+      if (!isVideoCutscene && actorStage && (skillRes.forcePreview || (typeof UI !== 'undefined' && UI.isBattleViewActive && !UI.isBattleViewActive()))) {
         const dummySvg = typeof Sprites !== 'undefined' ? Sprites.getMonsterSvg('Bộ Xương Kiếm Sĩ', false) : '💀';
         const heroSvg = typeof Sprites !== 'undefined' ? Sprites.getPlayerSvg('attack', heroId) : '⚔️';
         actorStage.innerHTML = `
@@ -1742,63 +1833,198 @@ const Cinematics = {
       }
       this._phaseTimers = [];
 
-      // PHASE 2 (900ms): HERO DASHES FORWARD, MONSTER AIRBORNE BLOOD-RED, SLASH BARRAGE
-      const tPhase2 = setTimeout(() => {
-        if (!this.active) return;
-        if (eyeCutin) {
-          eyeCutin.innerHTML = '';
-          eyeCutin.classList.remove('cutin-active');
-        }
-        if (this.eyeCutinLayer) this.eyeCutinLayer.removeChildren();
+      if (isVideoCutscene) {
+        const wipeTiming = isCassius ? 120 : 780;
+        const videoStartTiming = isCassius ? 180 : 920;
+        const dissolveTiming = isCassius ? 3450 : 4800;
+        const endingTiming = isCassius ? 5700 : 5100;
 
-        if (arenaStage) {
-          arenaStage.classList.remove('phase-1-charging');
-          arenaStage.classList.add('phase-2-assault');
+        // ACT 1.5: DIAGONAL RAZOR BLADE FLASH WIPE ACROSS THE SCREEN (Unknown God only)
+        if (!isCassius) {
+          const tBladeWipe = setTimeout(() => {
+            if (!this.active) return;
+            let wipeEl = document.getElementById('god-blade-wipe-overlay');
+            if (!wipeEl) {
+              wipeEl = document.createElement('div');
+              wipeEl.id = 'god-blade-wipe-overlay';
+              wipeEl.className = 'god-blade-wipe';
+              wipeEl.innerHTML = '<div class="god-blade-wipe-line"></div>';
+              document.body.appendChild(wipeEl);
+            }
+            wipeEl.classList.remove('active');
+            void wipeEl.offsetWidth; // Force DOM reflow
+            wipeEl.classList.add('active');
+            setTimeout(() => wipeEl && wipeEl.classList.remove('active'), 450);
+          }, wipeTiming);
+          this._phaseTimers.push(tBladeWipe);
         }
 
-        if (pSprite) {
-          pSprite.className = `fighter-avatar hero-burst-acting action-burst hero-burst-${heroId}`;
-        }
-        if (mSprite) {
-          mSprite.className = `fighter-avatar monster-burst-target monster-burst-${heroId}`;
-        }
-        if (impactFxEl) {
-          impactFxEl.innerHTML = this._getHeroBurstImpactSvg(heroId);
-          impactFxEl.className = `arena-burst-impact-fx theme-${heroId}`;
-          impactFxEl.classList.remove('hidden');
-        }
-      }, 900);
-      this._phaseTimers.push(tPhase2);
-
-      // PHASE 3 (3100ms): FINISHER CRASH, MONSTER LANDS, HERO RETURNS & THU KIẾM / POSE DÁNG
-      const tPhase3 = setTimeout(() => {
-        if (!this.active) return;
-        if (impactFxEl) {
-          impactFxEl.innerHTML = '';
-          impactFxEl.classList.add('hidden');
-        }
-        if (arenaStage) {
-          arenaStage.classList.remove('phase-2-assault');
-          arenaStage.classList.add('phase-3-sheathe');
-        }
-        if (mSprite) {
-          mSprite.className = 'fighter-avatar monster-landing';
-        }
-        if (pSprite) {
-          pSprite.className = `fighter-avatar hero-burst-sheathe hero-sheathe-${heroId}`;
-          if (typeof Sprites !== 'undefined') {
-            pSprite.innerHTML = Sprites.getPlayerSvg('sheathe', heroId);
+        // ACT 2: SEAMLESS MATCH-CUT INTO FLUID ANIME CUTSCENE
+        const tVideoStart = setTimeout(() => {
+          if (!this.active) return;
+          if (overlay && !isCassius) {
+            overlay.classList.add('hitstop-active');
+            setTimeout(() => overlay && overlay.classList.remove('hitstop-active'), 80);
           }
-        }
-        this.playBurstAudio(heroId, 'sheathe');
-      }, 3100);
-      this._phaseTimers.push(tPhase3);
+          if (videoContainer && videoPlayer) {
+            videoContainer.classList.remove('hidden');
+            videoContainer.classList.remove('video-dissolve-to-battle');
+            const videoSrc = isCassius ? 'assets/video/cassius_ult.mp4' : 'assets/video/unknown_god_ult.mp4';
+            if (!videoPlayer.src || !videoPlayer.src.includes(videoSrc)) {
+              videoPlayer.src = videoSrc;
+            }
+            videoPlayer.currentTime = 0;
+            videoPlayer.playbackRate = 1.0;
+            videoPlayer.muted = false;
+            const playPromise = videoPlayer.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(err => {
+                console.warn("Video audio autoplay blocked, using muted fallback:", err);
+                videoPlayer.muted = true;
+                videoPlayer.play().catch(e => console.error("Video play failed:", e));
+              });
+            }
+          }
+          // Hide arena backdrop smoothly as cutscene takes over
+          setTimeout(() => {
+            if (this.active && arenaStage) arenaStage.classList.add('arena-video-burst-active');
+          }, 60);
+        }, videoStartTiming);
+        this._phaseTimers.push(tVideoStart);
+
+        // ACT 2.5: DISSOLVE CUTSCENE INTO MAIN BATTLE SCREEN WHILE AUDIO FINISHES
+        const tDissolve = setTimeout(() => {
+          if (!this.active) return;
+          if (videoContainer) {
+            videoContainer.classList.add('video-dissolve-to-battle');
+          }
+
+          // Supernova Whiteout Dissolve: Smoothly dissolves pure whiteout into the arena
+          if (!isCassius) {
+            let whiteoutEl = document.getElementById('god-supernova-whiteout-overlay');
+            if (!whiteoutEl) {
+              whiteoutEl = document.createElement('div');
+              whiteoutEl.id = 'god-supernova-whiteout-overlay';
+              whiteoutEl.className = 'god-supernova-whiteout';
+              document.body.appendChild(whiteoutEl);
+            }
+            whiteoutEl.classList.remove('active');
+            void whiteoutEl.offsetWidth; // Force reflow
+            whiteoutEl.classList.add('active');
+            setTimeout(() => whiteoutEl && whiteoutEl.classList.remove('active'), 500);
+          }
+
+          if (arenaStage) {
+            arenaStage.classList.remove('arena-video-burst-active');
+            arenaStage.classList.add('phase-3-sheathe');
+          }
+          if (pSprite) {
+            pSprite.className = isCassius ? 'fighter-avatar player-idle' : 'fighter-avatar hero-burst-god-ending';
+            if (typeof Sprites !== 'undefined') {
+              pSprite.innerHTML = Sprites.getPlayerSvg('idle', heroId);
+            }
+          }
+          if (mSprite) {
+            mSprite.className = isCassius ? 'fighter-avatar monster-idle' : 'fighter-avatar monster-burst-god-airborne';
+          }
+          if (!isCassius) {
+            if (impactFxEl) {
+              impactFxEl.innerHTML = this._getHeroBurstImpactSvg(heroId);
+              impactFxEl.className = `arena-burst-impact-fx theme-${heroId}`;
+              impactFxEl.classList.remove('hidden');
+            }
+            this._buildRealityShatterWebGL(heroId);
+            this.playBurstAudio(heroId, 'sheathe');
+          } else {
+            if (impactFxEl) {
+              impactFxEl.innerHTML = '';
+              impactFxEl.classList.add('hidden');
+            }
+          }
+
+          if (skillRes.forcePreview && skillRes.damage && typeof UI !== 'undefined' && UI.showDamageNumber) {
+            const tPreviewDmg = setTimeout(() => {
+              if (!this.active) return;
+              UI.showDamageNumber(skillRes.damage, true, 'monster', true);
+              UI.screenShake();
+              UI.animateMonsterHit(null, true);
+            }, 180);
+            this._phaseTimers.push(tPreviewDmg);
+          }
+        }, dissolveTiming);
+        this._phaseTimers.push(tDissolve);
+
+        // ACT 3: CUTSCENE FULL COMPLETION (Audio tail finishes cleanly)
+        const tEnding = setTimeout(() => {
+          if (!this.active) return;
+          if (videoPlayer) {
+            try { videoPlayer.pause(); } catch (e) {}
+          }
+          if (videoContainer) {
+            videoContainer.classList.add('hidden');
+            videoContainer.classList.remove('video-dissolve-to-battle');
+          }
+        }, endingTiming);
+        this._phaseTimers.push(tEnding);
+      } else {
+        // Standard Hero Phases (Phase 2 at 900ms, Phase 3 at 3100ms)
+        const tPhase2 = setTimeout(() => {
+          if (!this.active) return;
+          if (eyeCutin) {
+            eyeCutin.innerHTML = '';
+            eyeCutin.classList.remove('cutin-active');
+          }
+          if (this.eyeCutinLayer) this.eyeCutinLayer.removeChildren();
+
+          if (arenaStage) {
+            arenaStage.classList.remove('phase-1-charging');
+            arenaStage.classList.add('phase-2-assault');
+          }
+
+          if (pSprite) {
+            pSprite.className = `fighter-avatar hero-burst-acting action-burst hero-burst-${heroId}`;
+          }
+          if (mSprite) {
+            mSprite.className = `fighter-avatar monster-burst-target monster-burst-${heroId}`;
+          }
+          if (impactFxEl) {
+            impactFxEl.innerHTML = this._getHeroBurstImpactSvg(heroId);
+            impactFxEl.className = `arena-burst-impact-fx theme-${heroId}`;
+            impactFxEl.classList.remove('hidden');
+          }
+        }, 900);
+        this._phaseTimers.push(tPhase2);
+
+        const tPhase3 = setTimeout(() => {
+          if (!this.active) return;
+          if (impactFxEl) {
+            impactFxEl.innerHTML = '';
+            impactFxEl.classList.add('hidden');
+          }
+          if (arenaStage) {
+            arenaStage.classList.remove('phase-2-assault');
+            arenaStage.classList.add('phase-3-sheathe');
+          }
+          if (mSprite) {
+            mSprite.className = 'fighter-avatar monster-landing';
+          }
+          if (pSprite) {
+            pSprite.className = `fighter-avatar hero-burst-sheathe hero-sheathe-${heroId}`;
+            if (typeof Sprites !== 'undefined') {
+              pSprite.innerHTML = Sprites.getPlayerSvg('sheathe', heroId);
+            }
+          }
+          this.playBurstAudio(heroId, 'sheathe');
+        }, 3100);
+        this._phaseTimers.push(tPhase3);
+      }
 
       // 7. Delta-Time 60-144 FPS Rendering Loop
       const startTime = performance.now();
       this.startTime = startTime;
       this.lastTime = startTime;
-      const duration = 3900;
+      const duration = isVideoCutscene ? (isCassius ? 5700 : 6400) : 3900;
+      const climaxTiming = isVideoCutscene ? (isCassius ? 2950 : 4900) : 2500;
 
       if (this.animId) cancelAnimationFrame(this.animId);
 
@@ -1810,12 +2036,15 @@ const Cinematics = {
         const elapsed = now - startTime;
         const progress = Math.min(1, elapsed / duration);
 
-        // Climax Impact Transition at ~2500ms (Hitstop, reality shatter & particle explosion)
-        if (elapsed >= 2500 && !this.impactFired) {
+        // Climax Impact Transition (Hitstop, reality shatter & particle explosion)
+        if (elapsed >= climaxTiming && !this.impactFired) {
           this.impactFired = true;
 
-          this._buildRealityShatterWebGL(heroId);
-          this._triggerParticleExplosion(heroId);
+          if (!isVideoCutscene) {
+            this._buildRealityShatterWebGL(heroId);
+            this._triggerParticleExplosion(heroId);
+            this.playBurstAudio(heroId, 'climax');
+          }
 
           if (this.shockwaveFilter && this.shockwaveFilter.uniforms) {
             this.shockwaveFilter.uniforms.uProgress = 0.01;
@@ -1828,11 +2057,9 @@ const Cinematics = {
             this.bloomFilter.uniforms.uGlowIntensity = 0.9;
           }
 
-          this.playBurstAudio(heroId, 'climax');
-
           if (overlay) {
             overlay.classList.add('hitstop-active');
-            setTimeout(() => overlay && overlay.classList.remove('hitstop-active'), 85);
+            setTimeout(() => overlay && overlay.classList.remove('hitstop-active'), 100);
           }
 
           const appEl = document.getElementById('app');
@@ -1840,7 +2067,7 @@ const Cinematics = {
             appEl.classList.remove('screen-shake-intense', 'screen-shake-light');
             void appEl.offsetWidth;
             appEl.classList.add('screen-shake-intense');
-            setTimeout(() => appEl && appEl.classList.remove('screen-shake-intense'), 550);
+            setTimeout(() => appEl && appEl.classList.remove('screen-shake-intense'), 600);
           }
         }
 
@@ -1850,7 +2077,7 @@ const Cinematics = {
             const actProgress = Math.min(1.0, elapsed / 600);
             this.shockwaveFilter.uniforms.uProgress = actProgress;
           } else {
-            const climProgress = Math.min(1.0, (elapsed - 2500) / 950);
+            const climProgress = Math.min(1.0, (elapsed - climaxTiming) / 950);
             this.shockwaveFilter.uniforms.uProgress = climProgress;
           }
         }
@@ -1860,7 +2087,7 @@ const Cinematics = {
             const actP = Math.min(1.0, elapsed / 600);
             this.chromaticFilter.uniforms.uIntensity = Math.max(0.08, 0.35 - actP * 0.25);
           } else {
-            const climElapsed = elapsed - 2500;
+            const climElapsed = elapsed - climaxTiming;
             this.chromaticFilter.uniforms.uIntensity = Math.max(0.0, 1.0 - (climElapsed / 600));
           }
         }
@@ -1869,17 +2096,19 @@ const Cinematics = {
           if (!this.impactFired) {
             this.bloomFilter.uniforms.uGlowIntensity = 0.45 + Math.sin(elapsed * 0.015) * 0.2;
           } else {
-            const climElapsed = elapsed - 2500;
+            const climElapsed = elapsed - climaxTiming;
             this.bloomFilter.uniforms.uGlowIntensity = Math.max(0.12, 0.95 - (climElapsed / 800) * 0.8);
           }
         }
 
         // 9. Update Pixi WebGL Scene Layers
-        this._updateEyeCutinWebGL(elapsed);
-        this._updateHeroParallaxWebGL(elapsed, dt);
-        this._updateParticles(elapsed, dt);
-        if (this.impactFired) {
-          this._updateRealityShatterWebGL(dt);
+        if (!isVideoCutscene) {
+          this._updateEyeCutinWebGL(elapsed);
+          this._updateHeroParallaxWebGL(elapsed, dt);
+          this._updateParticles(elapsed, dt);
+          if (this.impactFired) {
+            this._updateRealityShatterWebGL(dt);
+          }
         }
 
         // Render Pixi WebGL Stage
@@ -1914,6 +2143,22 @@ const Cinematics = {
       this._phaseTimers.forEach(t => clearTimeout(t));
       this._phaseTimers = [];
     }
+
+    // Stop and reset Video Player if active
+    const videoContainer = document.getElementById('burst-video-container');
+    const videoPlayer = document.getElementById('burst-video-player');
+    if (videoPlayer) {
+      try {
+        videoPlayer.pause();
+        videoPlayer.currentTime = 0;
+      } catch (e) {}
+    }
+    if (videoContainer) {
+      videoContainer.classList.add('hidden');
+      videoContainer.classList.remove('video-dissolve-to-battle');
+    }
+    if (this.pixiCanvas) this.pixiCanvas.style.display = '';
+    if (this.threeCanvas) this.threeCanvas.style.display = '';
 
     const overlay = document.getElementById('burst-cinematic-overlay');
     const arenaStage = document.getElementById('arena-stage');
@@ -1962,7 +2207,7 @@ const Cinematics = {
     if (arenaStage) {
       arenaStage.style.transform = '';
       arenaStage.classList.remove(
-        'arena-burst-active', 'phase-1-charging', 'phase-2-assault', 'phase-3-sheathe',
+        'arena-burst-active', 'arena-video-burst-active', 'phase-1-charging', 'phase-2-assault', 'phase-3-sheathe',
         'theme-hero_starter', 'theme-hero_shadow_rogue',
         'theme-hero_frost_knight', 'theme-hero_spear_lancer', 'theme-hero_flame_knight',
         'theme-hero_arcane_mage', 'theme-hero_unknown_god', 'theme-hero_aetheris'
@@ -2011,7 +2256,8 @@ const Cinematics = {
         stage.style.transform = 'perspective(900px) rotateX(24deg) rotateY(-18deg) scale(1.35) translateZ(45px)';
         break;
       case 'hero_unknown_god':
-        stage.style.transform = 'perspective(800px) rotateX(32deg) rotateY(-12deg) rotateZ(8deg) scale(1.42)';
+      case 'hero_cassius':
+        stage.style.transform = 'none';
         break;
       default:
         stage.style.transform = 'perspective(900px) rotateX(18deg) rotateZ(4deg) scale(1.34)';
@@ -2264,24 +2510,9 @@ const Cinematics = {
         break;
       }
 
-      case 'hero_unknown_god': {
-        const cubes = [];
-        const cubeMat = new THREE.MeshStandardMaterial({ color: 0x212121, emissive: 0x00ffcc, emissiveIntensity: 2.2 });
-        for (let c = 0; c < 14; c++) {
-          const sz = 0.8 + (c % 3) * 0.4;
-          const cubeMesh = new THREE.Mesh(new THREE.BoxGeometry(sz, sz, sz), cubeMat);
-          cubeMesh.position.set((Math.random() - 0.5) * 14, (Math.random() - 0.5) * 10, -5 - Math.random() * 5);
-          scene.add(cubeMesh);
-          cubes.push(cubeMesh);
-        }
-        this.threeObjects.cubes = cubes;
-
-        const diskGeo = new THREE.RingGeometry(4.5, 6.2, 6);
-        const diskMat = new THREE.MeshBasicMaterial({ color: 0xff0055, side: THREE.DoubleSide, wireframe: true });
-        const disk = new THREE.Mesh(diskGeo, diskMat);
-        disk.position.set(0, 0, -8);
-        scene.add(disk);
-        this.threeObjects.disk = disk;
+      case 'hero_unknown_god':
+      case 'hero_cassius': {
+        // Cutscene hiệu ứng cũ được thay thế hoàn toàn bằng anime cutscene video
         break;
       }
 
@@ -2449,20 +2680,6 @@ const Cinematics = {
       }
 
       case 'hero_unknown_god': {
-        camera.position.set(Math.sin(elapsed * 0.002) * 2.2, Math.cos(elapsed * 0.002) * 2.2, 8.5);
-        camera.lookAt(0, 0, 0);
-
-        if (obj.cubes) {
-          const converge = progress > 0.35 ? (progress - 0.35) / 0.65 : 0;
-          const dist = Math.max(0.6, (1 - converge * 1.25) * 7);
-          obj.cubes.forEach((c, i) => {
-            const angle = (i / 14) * Math.PI * 2 + elapsed * 0.003;
-            c.position.set(Math.cos(angle) * dist, Math.sin(angle * 2) * (dist * 0.5), Math.sin(angle) * dist);
-            c.rotation.x += dt * 3.2;
-            c.rotation.y += dt * 3.2;
-          });
-        }
-        if (obj.disk) obj.disk.rotation.z += dt * 2.8;
         break;
       }
 

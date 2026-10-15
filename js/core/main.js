@@ -13,10 +13,18 @@ function initGame() {
 
   // Khởi tạo các giá trị mặc định cho Anh Hùng và Ải nếu chưa có
   if (!GameState.heroes || GameState.heroes.length === 0) {
-    GameState.heroes = [{ id: 'hero_starter', constellation: 0, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() }];
+    GameState.heroes = [
+      { id: 'hero_cassius', constellation: 6, level: 90, skillLevels: { s1: 10, s2: 10, s3: 10 }, unlockedAt: Date.now() },
+      { id: 'hero_starter', constellation: 0, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() }
+    ];
+  } else {
+    // Luôn đảm bảo Cassius được mở khóa đầy đủ tinh hồn
+    if (!GameState.heroes.find(h => h.id === 'hero_cassius')) {
+      GameState.heroes.push({ id: 'hero_cassius', constellation: 6, level: 90, skillLevels: { s1: 10, s2: 10, s3: 10 }, unlockedAt: Date.now() });
+    }
   }
   if (!GameState.activeHeroId) {
-    GameState.activeHeroId = 'hero_starter';
+    GameState.activeHeroId = 'hero_cassius';
   }
   if (!GameState.stage) {
     GameState.stage = { current: 1, max: 1, autoAdvance: true };

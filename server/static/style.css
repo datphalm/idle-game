@@ -235,12 +235,12 @@ body {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 12px;
-  padding: 16px 8px;
+  gap: 16px;
+  padding: 24px 16px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 16px;
-  min-height: 280px;
+  min-height: 420px;
   transform-style: preserve-3d;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
 }
@@ -248,6 +248,13 @@ body {
 #arena-stage.camera-3d-active {
   z-index: 50;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+#arena-stage.arena-video-burst-active .fighter-side,
+#arena-stage.arena-video-burst-active #battle-vs-badge {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s ease;
 }
 
 .fighter-side {
@@ -282,12 +289,32 @@ body {
 .fighter-sprite-wrapper {
   position: relative;
   display: inline-block;
-  margin: 6px 0;
-  width: 90px;
-  height: 90px;
+  margin: 10px 0;
+  width: 170px;
+  height: 180px;
+}
+
+.fighter-ground-circle {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 156px;
+  height: 48px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.stationary-ground-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
 }
 
 .fighter-avatar {
+  position: relative;
+  z-index: 2;
   width: 100%;
   height: 100%;
   display: flex;
@@ -344,10 +371,10 @@ body {
   animation: playerExtraDash 0.42s ease-out forwards;
 }
 @keyframes playerExtraDash {
-  0%   { transform: translateX(0); filter: drop-shadow(0 0 10px #00e5ff); }
-  25%  { transform: translateX(36px) scale(1.2); filter: drop-shadow(-8px 0 16px #00e5ff) brightness(1.5); }
-  50%  { transform: translateX(18px) scale(1.1); }
-  75%  { transform: translateX(32px) scale(1.15); filter: drop-shadow(-6px 0 12px #00e5ff); }
+  0%   { transform: translateX(0); filter: none; }
+  25%  { transform: translateX(36px) scale(1.18); filter: none; }
+  50%  { transform: translateX(18px) scale(1.08); }
+  75%  { transform: translateX(30px) scale(1.12); filter: none; }
   100% { transform: translateX(0) scale(1); filter: none; }
 }
 
@@ -382,6 +409,17 @@ body {
   30%  { transform: translateY(-20px) scale(1.22); filter: drop-shadow(0 0 20px #00ffff) drop-shadow(0 0 30px #ff0055); }
   65%  { transform: translateX(42px) translateY(6px) scale(1.36) rotate(-10deg); filter: drop-shadow(0 0 35px #00ffff) brightness(1.9); }
   85%  { transform: translateX(16px) scale(1.15); }
+  100% { transform: translateX(0) translateY(0) scale(1); }
+}
+
+.hero-attack-hero_cassius {
+  animation: cassiusCardFling 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+@keyframes cassiusCardFling {
+  0%   { transform: translateX(0) scale(1); }
+  30%  { transform: translateX(-12px) translateY(-4px) scale(1.08) rotate(-8deg); }
+  65%  { transform: translateX(45px) translateY(2px) scale(1.18) rotate(10deg); }
+  85%  { transform: translateX(12px) scale(1.05); }
   100% { transform: translateX(0) translateY(0) scale(1); }
 }
 
@@ -866,12 +904,37 @@ body {
   30% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.2) rotate(15deg);
-    filter: drop-shadow(0 0 12px #00ffff);
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
   }
   100% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(1.5) rotate(45deg);
-    filter: drop-shadow(0 0 4px #ffd54f);
+    filter: none;
+  }
+}
+
+.slash-fx-anim .fx-cassius-card {
+  animation: cassiusCardSlashFlight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+@keyframes cassiusCardSlashFlight {
+  0% {
+    opacity: 0;
+    transform: translate(-100%, -20%) scale(0.4) rotate(-35deg);
+  }
+  25% {
+    opacity: 1;
+    transform: translate(-40%, -42%) scale(1.15) rotate(6deg);
+    filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.8));
+  }
+  60% {
+    opacity: 1;
+    transform: translate(10%, -52%) scale(1.3) rotate(22deg);
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.95));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(65%, -62%) scale(1.45) rotate(32deg);
+    filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0));
   }
 }
 
@@ -886,7 +949,7 @@ body {
   25% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.3) rotate(0deg);
-    filter: drop-shadow(0 0 16px #00ffff) brightness(1.8);
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.85));
   }
   50% {
     opacity: 0.5;
@@ -1012,6 +1075,19 @@ body {
   text-shadow: 0 0 12px rgba(6,182,212,0.9), 0 2px 4px rgba(0,0,0,0.8) !important;
 }
 
+.damage-burst {
+  color: #fff !important;
+  background: linear-gradient(180deg, #ffffff 0%, #ffe066 35%, #ff0055 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  font-size: 2.25rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.5px;
+  filter: drop-shadow(0 0 16px rgba(255, 0, 85, 0.95)) drop-shadow(0 0 35px rgba(255, 51, 102, 0.8)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.95)) !important;
+  animation: floatBurstDamage 1.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+  z-index: 1000 !important;
+}
+
 .damage-player {
   color: var(--accent-red);
   text-shadow: 0 0 8px rgba(239,68,68,0.8), 0 2px 4px rgba(0,0,0,0.8);
@@ -1021,6 +1097,14 @@ body {
   0%   { opacity: 1; transform: translateY(0) scale(0.6); }
   25%  { transform: translateY(-12px) scale(1.15); }
   100% { opacity: 0; transform: translateY(-55px) scale(0.85); }
+}
+
+@keyframes floatBurstDamage {
+  0%   { opacity: 0; transform: translate(-50%, 15px) scale(0.3) rotate(-5deg); }
+  18%  { opacity: 1; transform: translate(-50%, -18px) scale(1.42) rotate(2deg); }
+  35%  { transform: translate(-50%, -28px) scale(1.18) rotate(0deg); }
+  75%  { opacity: 1; transform: translate(-50%, -55px) scale(1.08); }
+  100% { opacity: 0; transform: translate(-50%, -95px) scale(0.85); filter: blur(2px); }
 }
 
 /* Stats Grid */
@@ -2502,11 +2586,12 @@ body {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin-top: 8px;
-  padding: 4px 8px;
-  background: rgba(0, 0, 0, 0.45);
+  margin-top: 10px;
+  padding: 4px 10px;
+  background: transparent;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: visible;
 }
 .skill-hud-item {
   display: flex;
@@ -2562,6 +2647,303 @@ body {
 .skill-ready {
   color: #00ffcc !important;
   text-shadow: 0 0 6px #00ffcc;
+}
+
+/* ============================================================
+   CASSIUS BURST TAROT CARD BUTTON & 3D HOVER PREVIEW
+   ============================================================ */
+.burst-card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+
+.skill-burst-card {
+  width: 58px;
+  height: 84px;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7), 0 0 10px rgba(255, 215, 0, 0.35);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+  background: #0f1015;
+  border: 2px solid rgba(255, 215, 0, 0.6);
+  cursor: pointer;
+}
+
+.skill-burst-card:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85), 0 0 20px rgba(255, 215, 0, 0.75);
+}
+
+.skill-burst-card:active {
+  transform: translateY(1px) scale(0.97);
+}
+
+.burst-card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.burst-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+.burst-card-cd-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: rgba(5, 5, 8, 0.78);
+  backdrop-filter: grayscale(1) blur(1px);
+  pointer-events: none;
+  transition: height 0.15s linear;
+  z-index: 3;
+}
+
+.burst-card-frame {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* Golden Pulse when Burst is Ready */
+.skill-burst-card.is-ready {
+  border-color: #ffd700;
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.85), 0 0 28px rgba(245, 158, 11, 0.55);
+  animation: cardReadyGlow 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes cardReadyGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 0 18px rgba(245, 158, 11, 0.4);
+    border-color: #ffd700;
+  }
+  100% {
+    box-shadow: 0 0 22px rgba(255, 215, 0, 1), 0 0 38px rgba(255, 215, 0, 0.75);
+    border-color: #ffffff;
+  }
+}
+
+.burst-card-status-text {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #ffd700;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.8);
+  margin-top: 2px;
+  transition: color 0.2s ease;
+}
+
+.skill-burst-card.is-charging + .burst-card-status-text {
+  color: #94a3b8;
+  text-shadow: none;
+}
+
+/* Shake card animation on CD click */
+.shake-card {
+  animation: cardShakeAnim 0.35s ease;
+}
+@keyframes cardShakeAnim {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px) rotate(-2deg); }
+  40%, 80% { transform: translateX(4px) rotate(2deg); }
+}
+
+/* 3D Character Hover Preview Popup (Replaced by grand left-side showcase) */
+.burst-card-3d-preview {
+  display: none !important;
+}
+
+/* ============================================================
+   GRAND LEFT-SIDE HERO SHOWCASE (HOVER OVER ULTIMATE CARD)
+   ============================================================ */
+.hero-hover-showcase {
+  position: fixed;
+  right: calc(50vw + 365px);
+  top: 50%;
+  transform-origin: right center;
+  transform: translateY(-50%) translateX(-40px);
+  width: 580px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s ease;
+}
+
+.hero-hover-showcase.showcase-active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) translateX(0);
+}
+
+@media (max-width: 1650px) {
+  .hero-hover-showcase {
+    transform: translateY(-50%) translateX(-40px) scale(0.86);
+  }
+  .hero-hover-showcase.showcase-active {
+    transform: translateY(-50%) translateX(0) scale(0.86);
+  }
+}
+
+@media (max-width: 1400px) {
+  .hero-hover-showcase {
+    transform: translateY(-50%) translateX(-40px) scale(0.72);
+  }
+  .hero-hover-showcase.showcase-active {
+    transform: translateY(-50%) translateX(0) scale(0.72);
+  }
+}
+
+.showcase-aura-backdrop {
+  position: absolute;
+  width: 760px;
+  height: 760px;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.38) 0%, rgba(225, 29, 72, 0.20) 35%, rgba(255, 215, 0, 0.06) 55%, transparent 72%);
+  filter: blur(26px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: showcaseAuraPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes showcaseAuraPulse {
+  0% { transform: translate(-50%, -50%) scale(0.92); opacity: 0.65; filter: blur(20px) brightness(1); }
+  100% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; filter: blur(30px) brightness(1.35); }
+}
+
+.showcase-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.showcase-character-img {
+  width: 580px;
+  height: auto;
+  max-height: 720px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.85));
+  animation: showcaseHeroFloat 3.2s ease-in-out infinite alternate;
+}
+
+@keyframes showcaseHeroFloat {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-10px); }
+}
+
+.showcase-pedestal-glow {
+  width: 420px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.95) 0%, rgba(245, 158, 11, 0.5) 55%, transparent 75%);
+  box-shadow: 0 0 38px rgba(255, 215, 0, 0.9);
+  margin-top: -30px;
+  animation: showcasePedestalPulse 3.2s ease-in-out infinite alternate;
+}
+
+@keyframes showcasePedestalPulse {
+  0%   { transform: scale(0.92); opacity: 0.6; }
+  100% { transform: scale(1.08); opacity: 1; }
+}
+
+.showcase-typography {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 5px;
+}
+
+.showcase-roman-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #ffd700;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.85);
+}
+
+.showcase-jp-kanji {
+  font-size: 1.65rem;
+  font-weight: 900;
+  letter-spacing: 3.5px;
+  background: linear-gradient(135deg, #ffffff 0%, #ffd700 50%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.95));
+  line-height: 1.3;
+}
+
+.showcase-jp-quote {
+  font-size: 1.02rem;
+  font-style: italic;
+  font-weight: 600;
+  color: #fcd34d;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+/* Video Cutscene Dissolve directly into Main Battle Scene with Cinematic Blur */
+.burst-video-container.video-dissolve-to-battle {
+  opacity: 0 !important;
+  filter: blur(32px) brightness(1.2) !important;
+  transform: scale(1.03) !important;
+  pointer-events: none !important;
+  transition: opacity 2.2s cubic-bezier(0.2, 0.8, 0.2, 1), filter 2.2s cubic-bezier(0.2, 0.8, 0.2, 1), transform 2.2s ease-out !important;
+}
+
+.preview-3d-pedestal {
+  width: 150px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.75) 0%, rgba(255, 215, 0, 0.2) 60%, transparent 100%);
+  margin-top: -6px;
+  margin-bottom: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.preview-3d-title {
+  font-family: var(--font-heading);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: #ffd700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
 }
 
 /* ============================================================
@@ -3283,6 +3665,317 @@ body {
 }
 .burst-impact-flash.impact-active {
   opacity: 0.95;
+}
+
+/* High-Fidelity Theatrical Fullscreen Video Cutscene Layer */
+.burst-video-container {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 999999 !important;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 1;
+  filter: blur(0px);
+  transform: scale(1);
+  transition: opacity 0.25s ease, filter 0.25s ease, transform 0.25s ease;
+}
+
+.burst-video-container.hidden {
+  display: none !important;
+  opacity: 0;
+}
+
+.burst-video-container video,
+#burst-video-player {
+  width: 100vw !important;
+  height: 100vh !important;
+  object-fit: contain !important;
+  display: block !important;
+  background: #000 !important;
+}
+
+.video-cinematic-bar {
+  display: none !important;
+}
+.video-cinematic-bar-top {
+  top: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.85);
+}
+.video-cinematic-bar-bottom {
+  bottom: 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.85);
+}
+
+/* Fullscreen Theatrical Cutscene (Tràn viền màn hình theo yêu cầu) */
+.burst-overlay.fullscreen-cutscene {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 99999 !important;
+  border-radius: 0 !important;
+  pointer-events: none;
+}
+
+.burst-overlay.fullscreen-cutscene .letterbox-top,
+.burst-overlay.fullscreen-cutscene .letterbox-bottom {
+  height: 5.5vh !important;
+}
+
+.burst-overlay.fullscreen-cutscene .burst-content {
+  bottom: 8vh !important;
+}
+
+/* Opening: Pixel Hero Supreme Aura & Supersonic Warp Dash */
+/* Opening: Pixel Hero Supreme Aura & Supersonic Battō Blitz */
+.fighter-avatar.hero-burst-god-opening {
+  animation: godOpeningDash 0.95s cubic-bezier(0.2, 0.9, 0.3, 1) forwards !important;
+  filter: drop-shadow(0 0 25px #ff0055) drop-shadow(0 0 45px #e11d48) !important;
+  z-index: 45 !important;
+}
+
+@keyframes godOpeningDash {
+  0% {
+    transform: scale(1) translateX(0) translateY(0);
+    filter: drop-shadow(0 0 15px #ff0055);
+  }
+  28% {
+    /* Coiling anticipation & momentum windup (lấy đà) */
+    transform: scale(1.15, 0.90) translateX(-32px) translateY(8px) skewX(6deg);
+    filter: drop-shadow(0 0 35px #ff0055) drop-shadow(0 0 55px #e11d48) brightness(1.3);
+  }
+  58% {
+    /* Maximum spring compression before release */
+    transform: scale(1.22, 0.94) translateX(-18px) translateY(4px) skewX(3deg);
+    filter: drop-shadow(0 0 50px #ff0055) brightness(1.6);
+  }
+  78% {
+    /* Supersonic explosive blitz release */
+    transform: scale(1.42, 1.04) translateX(290px) translateY(-4px) skewX(-18deg);
+    filter: drop-shadow(-50px 0 30px #ff0055) brightness(2.8);
+  }
+  100% {
+    /* Piercing strike past the monster position */
+    transform: scale(1.65, 1.08) translateX(490px) translateY(-6px) skewX(-24deg);
+    filter: brightness(4.5) blur(1px);
+    opacity: 0.15;
+  }
+}
+
+/* Diagonal Razor Blade Wipe Match-Cut */
+.god-blade-wipe {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000005 !important;
+  overflow: hidden;
+  opacity: 0;
+}
+.god-blade-wipe.active {
+  animation: godBladeWipeAnim 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes godBladeWipeAnim {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.god-blade-wipe-line {
+  position: absolute;
+  top: 50%;
+  left: -25%;
+  width: 150%;
+  height: 7px;
+  background: linear-gradient(90deg, transparent 5%, #ff0055 25%, #ffffff 50%, #ff0055 75%, transparent 95%);
+  box-shadow: 0 0 35px #ffffff, 0 0 80px #ff0055;
+  transform: rotate(-32deg);
+  animation: godSlashSweep 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes godSlashSweep {
+  0% {
+    transform: translateY(-80px) rotate(-32deg) scaleX(0.2);
+    opacity: 0;
+  }
+  40% {
+    transform: translateY(0) rotate(-32deg) scaleX(1.4);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(80px) rotate(-32deg) scaleX(2.0);
+    opacity: 0;
+  }
+}
+
+/* Supernova Whiteout Dissolve between Cutscene Climax and Arena Sheathe */
+.god-supernova-whiteout {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000000;
+  background: #ffffff;
+  opacity: 0;
+}
+.god-supernova-whiteout.active {
+  animation: supernovaDissolve 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes supernovaDissolve {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Ending: Pixel Hero Sheathe Flourish behind airborne monster */
+.fighter-avatar.hero-burst-god-ending {
+  animation: godEndingSheathe 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  filter: drop-shadow(0 0 30px #ffd700) drop-shadow(0 0 45px #ff0055) !important;
+  z-index: 45 !important;
+}
+
+@keyframes godEndingSheathe {
+  0% {
+    transform: translateX(320px) translateY(4px) scale(1.25);
+    filter: brightness(3.5) drop-shadow(0 0 40px #ff0055);
+    opacity: 0;
+  }
+  18% {
+    transform: translateX(270px) translateY(3px) scale(1.2);
+    filter: brightness(2.0) drop-shadow(0 0 35px #ffd700);
+    opacity: 1;
+  }
+  75% {
+    transform: translateX(250px) translateY(2px) scale(1.15);
+    filter: brightness(1.2) drop-shadow(0 0 25px #ffd700);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0) translateY(0) scale(1);
+    filter: brightness(1);
+    opacity: 1;
+  }
+}
+
+/* Ending: Monster Airborne & Reality Shatter */
+.fighter-avatar.monster-burst-god-airborne {
+  animation: monsterGodAirborne 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  filter: drop-shadow(0 0 35px #ff0055) saturate(2) !important;
+  z-index: 40 !important;
+}
+
+@keyframes monsterGodAirborne {
+  0% {
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  30% {
+    transform: translateY(-65px) scale(1.3) rotate(-14deg);
+    filter: brightness(2.2) drop-shadow(0 0 45px #ff0055);
+  }
+  65% {
+    transform: translateY(-45px) scale(1.15) rotate(8deg);
+  }
+  100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+/* Opening: Pixel Hero Cassius Sovereign Windup & Supersonic Card Dash */
+.fighter-avatar.hero-burst-cassius-opening {
+  animation: cassiusOpeningDash 0.72s cubic-bezier(0.2, 0.9, 0.3, 1) forwards !important;
+  filter: drop-shadow(0 0 30px #ffd700) drop-shadow(0 0 50px #ff0044) !important;
+  z-index: 45 !important;
+}
+
+@keyframes cassiusOpeningDash {
+  0% {
+    transform: scale(1) translateX(0) translateY(0);
+    filter: drop-shadow(0 0 15px #ffd700);
+  }
+  28% {
+    /* Sovereign cane windup & card fan flourish */
+    transform: scale(1.18, 0.92) translateX(-30px) translateY(6px) skewX(5deg);
+    filter: drop-shadow(0 0 35px #ffd700) drop-shadow(0 0 55px #ff0044) brightness(1.5);
+  }
+  58% {
+    /* Maximum gamble coil & golden dice aura */
+    transform: scale(1.26, 0.95) translateX(-16px) translateY(3px) skewX(2deg);
+    filter: drop-shadow(0 0 50px #ffd700) brightness(2.0);
+  }
+  78% {
+    /* Supersonic card fling blitz */
+    transform: scale(1.45, 1.05) translateX(300px) translateY(-5px) skewX(-16deg);
+    filter: drop-shadow(-50px 0 35px #ffd700) brightness(3.0);
+  }
+  100% {
+    /* Piercing through into cinematic cutscene */
+    transform: scale(1.68, 1.08) translateX(490px) translateY(-8px) skewX(-22deg);
+    filter: brightness(4.8) blur(1px);
+    opacity: 0.12;
+  }
+}
+
+/* Ending: Pixel Hero Cassius Sheathe Pose with Floating Ace & Demon Familiar */
+.fighter-avatar.hero-burst-cassius-ending {
+  animation: cassiusEndingSheathe 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  filter: drop-shadow(0 0 35px #ffd700) drop-shadow(0 0 45px #ff0044) !important;
+  z-index: 45 !important;
+}
+
+@keyframes cassiusEndingSheathe {
+  0% {
+    transform: translateX(320px) translateY(4px) scale(1.28);
+    filter: brightness(4.0) drop-shadow(0 0 45px #ffd700);
+    opacity: 0;
+  }
+  18% {
+    transform: translateX(270px) translateY(2px) scale(1.22);
+    filter: brightness(2.4) drop-shadow(0 0 40px #ffd700) drop-shadow(0 0 30px #ff0044);
+    opacity: 1;
+  }
+  75% {
+    transform: translateX(250px) translateY(2px) scale(1.15);
+    filter: brightness(1.3) drop-shadow(0 0 30px #ffd700);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0) translateY(0) scale(1);
+    filter: brightness(1);
+    opacity: 1;
+  }
+}
+
+/* Ending: Monster Airborne & Royal Flush Explosion */
+.fighter-avatar.monster-burst-cassius-airborne {
+  animation: monsterCassiusAirborne 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  filter: drop-shadow(0 0 40px #ffd700) drop-shadow(0 0 35px #ff0044) saturate(2.2) !important;
+  z-index: 40 !important;
+}
+
+@keyframes monsterCassiusAirborne {
+  0% {
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  28% {
+    transform: translateY(-75px) scale(1.35) rotate(-16deg);
+    filter: brightness(2.6) drop-shadow(0 0 50px #ffd700) drop-shadow(0 0 45px #ff0044);
+  }
+  65% {
+    transform: translateY(-40px) scale(1.15) rotate(10deg);
+  }
+  100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
 }
 
 /* Phase 0: Close-up Eye Cut-in Slash Ribbon */
@@ -4501,7 +5194,8 @@ body {
 }
 
 .hero-pixel-svg.hero-arcane_mage,
-.hero-pixel-svg.hero-unknown_god {
+.hero-pixel-svg.hero-unknown_god,
+.hero-pixel-svg.hero-cassius {
   animation: heroLevitation 3s ease-in-out infinite !important;
 }
 
@@ -4768,6 +5462,22 @@ body {
   100% { transform: translateY(0) scale(1); filter: none; }
 }
 
+/* Hero 9: Cassius (Dice Roll -> Royal Flush Card Barrage -> Golden Scepter Slam -> Sheathe) */
+.hero-burst-hero_cassius {
+  animation: heroBurstCassiusAnim 3.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes heroBurstCassiusAnim {
+  0%   { transform: scale(1); }
+  18%  { transform: translateY(-30px) scale(1.18); filter: drop-shadow(0 0 40px #ffd700) drop-shadow(0 0 25px #ff0044); }
+  28%  { transform: translateY(-40px) translateX(30px) scale(1.26); filter: drop-shadow(0 0 55px #ffd700) brightness(2.4); }
+  48%  { transform: translateY(-38px) translateX(55px) scale(1.32); filter: brightness(3.2); }
+  64%  { transform: translateY(-32px) translateX(70px) rotate(22deg) scale(1.45); filter: brightness(6) drop-shadow(0 0 65px #ffffff); }
+  75%  { transform: translateY(-16px) translateX(25px) scale(1.15); }
+  80%  { transform: translateY(0) scale(1.08); }
+  88%  { transform: translateY(0) scale(1.14) rotate(-4deg); filter: drop-shadow(0 0 40px #ffd700) brightness(2.8); }
+  100% { transform: translateX(0) scale(1); filter: none; }
+}
+
 /* ============================================================
    4. MONSTER REACTION ANIMATIONS (AIRBORNE, BLOOD-RED, GROUND CRASH)
    ============================================================ */
@@ -4887,6 +5597,20 @@ body {
   45%  { transform: translateY(-80px) rotate(-15deg) scale(1.15); filter: drop-shadow(0 0 55px #ff0000) brightness(3); }
   64%  { transform: translateY(0) scale(1.4, 0.6); filter: brightness(8) drop-shadow(0 0 65px #ff3d00); }
   78%  { transform: translateY(-18px) scale(0.9, 1.1); filter: brightness(2.5); }
+  100% { transform: translateY(0) scale(1); filter: none; }
+}
+
+/* Cassius: Trapped in Golden Spade Ring -> Sliced by Royal Flush Cards -> Super Jackpot Blast */
+.monster-burst-hero_cassius {
+  animation: monsterBurstCassiusAnim 3.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes monsterBurstCassiusAnim {
+  0%, 23% { transform: translateY(0); filter: none; }
+  26%  { transform: translateY(-80px) scale(1.1) rotate(-12deg); filter: drop-shadow(0 0 45px #ffd700) brightness(2.4); }
+  45%  { transform: translateY(-85px) scale(1.12) rotate(16deg); filter: drop-shadow(0 0 55px #ff0044) brightness(2.8); }
+  64%  { transform: translateY(-80px) translateX(-25px) skewX(-20deg); filter: brightness(8) drop-shadow(0 0 70px #ffffff); }
+  72%  { transform: translateY(0) scale(1.4, 0.65); filter: brightness(4); }
+  84%  { transform: translateY(-14px) scale(0.95); }
   100% { transform: translateY(0) scale(1); filter: none; }
 }
 
@@ -5209,6 +5933,81 @@ body {
   85%, 100%{ opacity: 0; transform: scale(0.9); }
 }
 
+/* Impact SVG Animations for Cassius (Golden Spade, Casino Rings, Royal Slashes, Tumbling Dice) */
+.impact-cassius {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 42;
+}
+.impact-cassius .giant-spade-burst {
+  transform-origin: 150px 150px;
+  animation: spadeBurstAnim 1.6s 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+@keyframes spadeBurstAnim {
+  0%   { opacity: 0; transform: translate(150px, 150px) scale(0.2) rotate(-30deg); }
+  25%  { opacity: 1; transform: translate(150px, 150px) scale(1.8) rotate(0deg); filter: brightness(2.5) drop-shadow(0 0 50px #ffd700); }
+  75%  { opacity: 1; transform: translate(150px, 150px) scale(1.6); }
+  100% { opacity: 0; transform: translate(150px, 150px) scale(2.2); filter: brightness(5); }
+}
+.impact-cassius .casino-ring-spin {
+  transform-origin: 150px 150px;
+  animation: casinoRingSpin 1.8s linear infinite;
+}
+@keyframes casinoRingSpin {
+  0%   { transform: rotate(0deg) scale(0.85); opacity: 0.8; }
+  50%  { transform: rotate(180deg) scale(1.2); opacity: 1; }
+  100% { transform: rotate(360deg) scale(0.85); opacity: 0.8; }
+}
+.impact-cassius .casino-ring-spin-rev {
+  transform-origin: 150px 150px;
+  animation: casinoRingSpinRev 1.5s linear infinite;
+}
+@keyframes casinoRingSpinRev {
+  0%   { transform: rotate(360deg) scale(1.1); opacity: 0.9; }
+  50%  { transform: rotate(180deg) scale(0.8); opacity: 0.7; }
+  100% { transform: rotate(0deg) scale(1.1); opacity: 0.9; }
+}
+.impact-cassius .royal-cards-slash line {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: royalSlashAnim 0.45s 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes royalSlashAnim {
+  0%   { stroke-dashoffset: 400; opacity: 0; }
+  30%  { stroke-dashoffset: 0; opacity: 1; filter: drop-shadow(0 0 35px #ffffff) brightness(6); }
+  75%  { opacity: 0.95; }
+  100% { opacity: 0; }
+}
+.impact-cassius .dice-sparks rect {
+  transform-origin: center;
+}
+.impact-cassius .dice-bounce-1 { animation: diceBounce1 1.2s 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.impact-cassius .dice-bounce-2 { animation: diceBounce2 1.2s 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.impact-cassius .dice-bounce-3 { animation: diceBounce3 1.2s 1.0s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.impact-cassius .dice-bounce-4 { animation: diceBounce4 1.2s 1.05s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+@keyframes diceBounce1 {
+  0%   { opacity: 0; transform: translate(50px, 40px) scale(0.3) rotate(0deg); }
+  35%  { opacity: 1; transform: translate(-30px, -45px) scale(1.3) rotate(140deg); filter: brightness(2.2); }
+  100% { opacity: 0; transform: translate(-60px, -70px) scale(0.5) rotate(360deg); }
+}
+@keyframes diceBounce2 {
+  0%   { opacity: 0; transform: translate(-40px, 40px) scale(0.3) rotate(0deg); }
+  35%  { opacity: 1; transform: translate(35px, -40px) scale(1.3) rotate(-140deg); filter: brightness(2.2); }
+  100% { opacity: 0; transform: translate(70px, -65px) scale(0.5) rotate(-360deg); }
+}
+@keyframes diceBounce3 {
+  0%   { opacity: 0; transform: translate(40px, -30px) scale(0.3) rotate(0deg); }
+  35%  { opacity: 1; transform: translate(-35px, 35px) scale(1.25) rotate(120deg); filter: brightness(2.2); }
+  100% { opacity: 0; transform: translate(-65px, 60px) scale(0.5) rotate(280deg); }
+}
+@keyframes diceBounce4 {
+  0%   { opacity: 0; transform: translate(-30px, -30px) scale(0.3) rotate(0deg); }
+  35%  { opacity: 1; transform: translate(30px, 35px) scale(1.35) rotate(-160deg); filter: brightness(2.2); }
+  100% { opacity: 0; transform: translate(65px, 65px) scale(0.5) rotate(-320deg); }
+}
 
 /* 5. PREVIEW DUEL STAGE STYLING (FOR HEROES TAB PREVIEW) */
 .preview-duel-stage {

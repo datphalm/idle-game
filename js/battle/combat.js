@@ -90,6 +90,89 @@ const Combat = {
             console.warn("Burst cinematic error caught safely:", vfxErr);
           }
         }
+
+        // Video Cutscene Heroes: Cassius and Unknown God
+        if (skillRes.type === 'burst' && (skillRes.hero?.id === 'hero_cassius' || skillRes.hero?.id === 'hero_unknown_god')) {
+          const isCassius = (skillRes.hero?.id === 'hero_cassius');
+          const badgeName = isCassius ? '🎰 CANH BẠC VÔ CỰC' : '🌟 TUYỆT KỸ NỘ';
+          UI.addCombatLog(
+            `<strong>${badgeName} [${skillRes.hero.name}]:</strong> ` +
+            `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.skill.name}</span> ` +
+            (isCassius ? `tung xúc xắc và lật lá bài Át Chủ Bài...` : `bắt đầu giải phóng thực tại...`),
+            'log-extra'
+          );
+
+          // E6 execution check
+          let actualDmg = skillRes.damage;
+          if (skillRes.executeThresholdPct && (m.hp / m.maxHp) <= skillRes.executeThresholdPct) {
+            actualDmg = m.hp + 999999;
+          }
+
+          const willKill = (m.hp <= actualDmg);
+          const hitDelay = isCassius ? 3450 : 5500;
+          const turnDelayKill = isCassius ? 5800 : 6800;
+          const counterDelay = isCassius ? 5600 : 6500;
+          const turnDelaySurvive = isCassius ? 5900 : 7100;
+
+          setTimeout(() => {
+            const hitResult = Monster.takeDamage(actualDmg);
+            UI.showDamageNumber(actualDmg, true, 'monster', true);
+            UI.screenShake();
+            UI.animatePlayerSkill(null, skillRes.type);
+            UI.animateMonsterHit();
+            UI.updateBattleStatsOnly();
+
+            UI.addCombatLog(
+              isCassius
+                ? `<strong>👑 ROYAL FLUSH JACKPOT:</strong> ` +
+                  `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.hero.name}</span> ` +
+                  `đập trọn bộ bài Hoàng Gia bùng nổ sát thương Hoàng Kim <strong style="color:#ffd700;">-${actualDmg}</strong>!`
+                : `<strong>💥 TỊCH DIỆT HOÀN TOÀN:</strong> ` +
+                  `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.hero.name}</span> ` +
+                  `chém nát không gian gây sát thương bùng nổ <strong style="color:#ff0055;">-${actualDmg}</strong>!`,
+              'log-extra'
+            );
+
+            if (hitResult.isDead) {
+              m.hp = 0;
+              UI.updateBattleStatsOnly();
+              setTimeout(() => {
+                UI.animateMonsterDeath(() => {
+                  UI.animatePlayerWalk(null, 500);
+                  this._onMonsterKill(m);
+                });
+              }, 350);
+            }
+          }, hitDelay);
+
+          if (willKill) {
+            this._scheduleNextTurn(turnDelayKill);
+            return;
+          } else {
+            // Quái còn sống, chờ ulti kết thúc rồi mới phản công
+            setTimeout(() => {
+              if (m.hp <= 0) return;
+              const mDamage = Math.max(1, Math.floor(m.attack * (0.85 + Math.random() * 0.3)) - Player.getEffectiveDefense());
+              const pTakeDmg = Player.takeDamage(mDamage);
+              UI.showDamageNumber(mDamage, false, 'player');
+              UI.animateMonsterAttack();
+              UI.animatePlayerHit();
+
+              if (pTakeDmg.isDead) {
+                UI.animatePlayerDeath();
+                UI.addCombatLog(`💥 ${m.name} tung đòn phản công gây <strong>-${mDamage}</strong>! Bạn đã tử trận!`, 'log-danger');
+              } else {
+                const regen = Player.getEffectiveHpRegen();
+                if (regen > 0) Player.heal(regen);
+              }
+              UI.updateBattle();
+            }, counterDelay);
+
+            this._scheduleNextTurn(turnDelaySurvive);
+            return;
+          }
+        }
+
         // Tung kỹ năng đặc biệt của Hero
         const hitResult = Monster.takeDamage(skillRes.damage);
         UI.showDamageNumber(skillRes.damage, true, 'monster');

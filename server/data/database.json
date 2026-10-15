@@ -1,14 +1,13 @@
 {
-  "version": "2.3.0",
+  "version": "2.4.0",
   "downloadUrl": "https://github.com/idlerpg/release/releases/latest",
   "changelog": [
-    "Ra mắt nhân vật mới độc bản: Aetheris — Tinh Vực Đại Pháp Sư với Đôi Cánh Pha Lê & Bộ Kỹ Năng Đổi Mới Toàn Diện (Cơ chế Tinh Thể Vũ Trụ, Cổng Xoáy 5 Nhịp, Tuyệt Kỹ Bão Thiên Thạch Xé Rách Không Gian)",
-    "Đại tu toàn diện Ultimate (Chiêu cuối): Màn hình tối sầm Shadow Arena rọi sáng nhân vật và quái vật",
-    "Hiệu ứng độc bản tương tác trực tiếp lên quái: Hất tung bay lơ lửng, Lồng băng pha lê nổ tung, Lốc lửa Phượng Hoàng, Rồng vàng thăng thiên, Lập phương thần thánh",
-    "Tạo hình 8 nhân vật Vector Pixel SVG độc nhất từ Khởi Đầu đến Thần Thoại & Hỗn Mang",
-    "Khắc phục triệt để lỗi Hiệp Sĩ Khởi Đầu bị tàng hình / mất ảnh",
-    "Sửa lỗi tràn khung Menu Chọn Nhân Vật, hỗ trợ đổi tướng mượt mà và trực quan",
-    "Bổ sung Bảng Điều Khiển Dev Admin (chỉ kích hoạt nội bộ) hỗ trợ kiểm tra tính năng nhanh chóng"
+    "Khởi tạo & Tái hiện hoàn hảo Quân Vương Bài Bạc: Cassius (The Sovereign Gambler) từ Spine 2D sang Pixel/SVG & Cinematic Cutscene",
+    "Ngoại hình độc bản: Mũ chú hề đại bác hai chỏm lục lạc vàng, mặt nạ đầu lâu hoàng kim mắt xoắn ốc vàng & mắt vạch đỏ, cánh tay rối vàng kim, thắt lưng 4 chất bài tây, trượng bích hoàng kim, xúc xắc bay và quỷ xúc xắc một mắt có cánh",
+    "Tuyệt Kỹ Vận Mệnh: Canh Bạc Vô Cực (All-In Jackpot) với video anime cutscene 1080p đồng bộ âm thanh chuẩn xác 100% từ frame đầu đến nhịp đập bài kết liễu",
+    "Cơ chế chiến đấu Canh Bạc Vận Mệnh: Đổ xúc xắc ngẫu nhiên kích hoạt bùa lợi tấn công/phòng thủ, phi bài sắc bén, nguyền rủa xúc xắc quỷ diện, kết liễu hành quyết 35% HP quái và cược mạng hồi sinh bất tử",
+    "Trọn bộ 6 Tinh Hồn (Eidolons E1 - E6) hoàng kim độc bản cho Cassius",
+    "Tối ưu hóa toàn diện hiệu năng và giao diện chiến đấu mượt mà 60fps"
   ],
   "players": [
     {
@@ -50,10 +49,10 @@
       "heroId": "hero_unknown_god",
       "constellation": 0,
       "level": 999,
-      "stage": 346,
-      "towerFloor": 214,
+      "stage": 362,
+      "towerFloor": 216,
       "power": 43201133482,
-      "lastActive": 1791992354457,
+      "lastActive": 1791995338337,
       "isMe": false
     },
     {
@@ -164,10 +163,10 @@
       "heroId": "hero_traveler",
       "constellation": 1,
       "level": 999,
-      "stage": 326,
+      "stage": 327,
       "towerFloor": 42,
       "power": 43200297878,
-      "lastActive": 1791992433335,
+      "lastActive": 1792000702906,
       "knownPlayers": [
         {
           "id": "p_1",
@@ -548,6 +547,126 @@
       "towerFloor": 1,
       "power": 437,
       "lastActive": 1791992330121,
+      "isMe": false
+    },
+    {
+      "id": "p_mv8bty6t_3vki0",
+      "name": "Chiến Binh 1",
+      "heroId": "hero_unknown_god",
+      "constellation": 0,
+      "level": 2,
+      "stage": 3,
+      "towerFloor": 1,
+      "power": 2018,
+      "lastActive": 1791995555531,
+      "isMe": false
+    },
+    {
+      "id": "p_mv8btlh8_hhmeg",
+      "name": "Chiến Binh 1",
+      "heroId": "hero_starter",
+      "constellation": 0,
+      "level": 1,
+      "stage": 1,
+      "towerFloor": 1,
+      "power": 437,
+      "lastActive": 1791995529514,
+      "isMe": false
+    },
+    {
+      "id": "p_mv8ctrt6_omebm",
+      "name": "Chiến Binh 1",
+      "heroId": "hero_unknown_god",
+      "constellation": 0,
+      "level": 2,
+      "stage": 3,
+      "towerFloor": 1,
+      "power": 2018,
+      "lastActive": 1791997226185,
+      "isMe": false
+    },
+    {
+      "id": "p_mv8cwztk_xtmr9",
+      "name": "Chiến Binh 1",
+      "heroId": "hero_unknown_god",
+      "constellation": 0,
+      "level": 2,
+      "stage": 3,
+      "towerFloor": 1,
+      "power": 2018,
+      "lastActive": 1791997376742,
+      "isMe": false
+    },
+    {
+      "id": "p_mv8cyjv1_6edgj",
+      "name": "Chiến Binh 1",
+      "heroId": "hero_starter",
+      "constellation": 0,
+      "level": 1,
+      "stage": 1,
+      "towerFloor": 1,
+      "power": 437,
+      "lastActive": 1791997440405,
+      "isMe": false
+    },
+    {
+      "id": "p_mv8by2zf_k89s4",
+      "name": "Chiến Binh 1",
+      "heroId": "hero_unknown_god",
+      "constellation": 0,
+      "level": 2,
+      "stage": 3,
+      "towerFloor": 1,
+      "power": 2018,
+      "lastActive": 1791995748383,
+      "isMe": false
+    },
+    {
+      "id": "p_mv8d4isd_zauvs",
+      "name": "Chiến Binh 1",
+      "heroId": "hero_starter",
+      "constellation": 0,
+      "level": 1,
+      "stage": 1,
+      "towerFloor": 1,
+      "power": 437,
+      "lastActive": 1791997718864,
+      "isMe": false
+    },
+    {
+      "id": "p_mv8dmkyb_p1i32",
+      "name": "Chiến Binh 1",
+      "heroId": "hero_starter",
+      "constellation": 0,
+      "level": 1,
+      "stage": 1,
+      "towerFloor": 1,
+      "power": 437,
+      "lastActive": 1791998561458,
+      "isMe": false
+    },
+    {
+      "id": "p_mv8dsvgd_n6tto",
+      "name": "Chiến Binh 1",
+      "heroId": "hero_starter",
+      "constellation": 0,
+      "level": 1,
+      "stage": 1,
+      "towerFloor": 1,
+      "power": 437,
+      "lastActive": 1791998855047,
+      "isMe": false
+    },
+    {
+      "id": "p_mv8ezwxq_rxpm8",
+      "name": "Chiến Binh 1",
+      "heroId": "hero_starter",
+      "constellation": 0,
+      "level": 1,
+      "stage": 1,
+      "towerFloor": 1,
+      "power": 437,
+      "lastActive": 1792000863169,
       "isMe": false
     }
   ],

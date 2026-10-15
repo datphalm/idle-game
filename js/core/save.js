@@ -214,9 +214,11 @@ const SaveManager = {
     GameState.inventory = [];
     GameState.inventoryMax = CONFIG.INVENTORY_BASE_MAX || 80;
     CONFIG.INVENTORY_MAX = GameState.inventoryMax;
-    GameState.inventoryExpands = 0;
-    GameState.heroes = [{ id: 'hero_starter', constellation: 0, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() }];
-    GameState.activeHeroId = 'hero_starter';
+    GameState.heroes = [
+      { id: 'hero_cassius', constellation: 6, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() },
+      { id: 'hero_starter', constellation: 0, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() }
+    ];
+    GameState.activeHeroId = 'hero_cassius';
     GameState.gacha = { totalPulls: 0, totalHeroPulls: 0, bannerTab: 'weapon' };
     GameState.combat = { monstersKilled: 0 };
     GameState.dungeon = {
@@ -410,18 +412,21 @@ const SaveManager = {
       GameState.heroes = [];
     }
 
-    // Đảm bảo luôn có Hiệp Sĩ Khởi Đầu mở khóa sẵn
+    // Đảm bảo luôn có Cassius & Hiệp Sĩ Khởi Đầu mở khóa sẵn
+    if (!GameState.heroes.some(h => h.id === 'hero_cassius')) {
+      GameState.heroes.unshift({ id: 'hero_cassius', constellation: 6, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() });
+    }
     if (!GameState.heroes.some(h => h.id === 'hero_starter')) {
-      GameState.heroes.unshift({ id: 'hero_starter', constellation: 0, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() });
+      GameState.heroes.push({ id: 'hero_starter', constellation: 0, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() });
     }
 
     if (data.activeHeroId) {
       GameState.activeHeroId = heroIdMap[data.activeHeroId] || data.activeHeroId;
-      if (!CONFIG.getHeroById(GameState.activeHeroId)) {
-        GameState.activeHeroId = 'hero_starter';
+      if (!CONFIG.getHeroById(GameState.activeHeroId) || GameState.activeHeroId === 'hero_unknown_god' || GameState.activeHeroId === 'hero_starter') {
+        GameState.activeHeroId = 'hero_cassius';
       }
     } else {
-      GameState.activeHeroId = 'hero_starter';
+      GameState.activeHeroId = 'hero_cassius';
     }
 
     if (GameState.player) {

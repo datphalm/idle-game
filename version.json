@@ -1,15 +1,14 @@
 {
-  "version": "2.3.0",
-  "title": "Bản Cập Nhật v2.3.0 - Đại Tu Toàn Diện Ultimate & Nhân Vật Mới Độc Bản",
-  "releaseDate": "2026-10-14",
+  "version": "2.4.0",
+  "title": "Bản Cập Nhật v2.4.0 - Đại Tướng Quân Vương Bài Bạc: Cassius",
+  "releaseDate": "2026-10-15",
   "changelog": [
-    "Ra mắt nhân vật mới độc bản: Aetheris — Tinh Vực Đại Pháp Sư với Đôi Cánh Pha Lê & Bộ Kỹ Năng Đổi Mới Toàn Diện (Cơ chế Tinh Thể Vũ Trụ, Cổng Xoáy 5 Nhịp, Tuyệt Kỹ Bão Thiên Thạch Xé Rách Không Gian)",
-    "Đại tu toàn diện Ultimate (Chiêu cuối): Màn hình tối sầm Shadow Arena rọi sáng nhân vật và quái vật",
-    "Hiệu ứng độc bản tương tác trực tiếp lên quái: Hất tung bay lơ lửng, Lồng băng pha lê nổ tung, Lốc lửa Phượng Hoàng, Rồng vàng thăng thiên, Lập phương thần thánh",
-    "Tạo hình 8 nhân vật Vector Pixel SVG độc nhất từ Khởi Đầu đến Thần Thoại & Hỗn Mang",
-    "Khắc phục triệt để lỗi Hiệp Sĩ Khởi Đầu bị tàng hình / mất ảnh",
-    "Sửa lỗi tràn khung Menu Chọn Nhân Vật, hỗ trợ đổi tướng mượt mà và trực quan",
-    "Bổ sung Bảng Điều Khiển Dev Admin (chỉ kích hoạt nội bộ) hỗ trợ kiểm tra tính năng nhanh chóng"
+    "Khởi tạo & Tái hiện hoàn hảo Quân Vương Bài Bạc: Cassius (The Sovereign Gambler) từ Spine 2D sang Pixel/SVG & Cinematic Cutscene",
+    "Ngoại hình độc bản: Mũ chú hề đại bác hai chỏm lục lạc vàng, mặt nạ đầu lâu hoàng kim mắt xoắn ốc vàng & mắt vạch đỏ, cánh tay rối vàng kim, thắt lưng 4 chất bài tây, trượng bích hoàng kim, xúc xắc bay và quỷ xúc xắc một mắt có cánh",
+    "Tuyệt Kỹ Vận Mệnh: Canh Bạc Vô Cực (All-In Jackpot) với video anime cutscene 1080p đồng bộ âm thanh chuẩn xác 100% từ frame đầu đến nhịp đập bài kết liễu",
+    "Cơ chế chiến đấu Canh Bạc Vận Mệnh: Đổ xúc xắc ngẫu nhiên kích hoạt bùa lợi tấn công/phòng thủ, phi bài sắc bén, nguyền rủa xúc xắc quỷ diện, kết liễu hành quyết 35% HP quái và cược mạng hồi sinh bất tử",
+    "Trọn bộ 6 Tinh Hồn (Eidolons E1 - E6) hoàng kim độc bản cho Cassius",
+    "Tối ưu hóa toàn diện hiệu năng và giao diện chiến đấu mượt mà 60fps"
   ],
   "downloadUrl": "https://github.com/datphalm/idle-game/releases/latest"
 }

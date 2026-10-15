@@ -2,6 +2,7 @@ const Player = {
   // Trạng thái hồi chiêu kỹ năng thời gian thực trong trận đấu (ms timestamp)
   _skill2NextReady: 0,
   _skill3NextReady: 0,
+  _manualBurstQueued: false,
 
   createDefault() {
     return {
@@ -178,6 +179,21 @@ const Player = {
     return Math.min(CONFIG.EXTRA_TURN_CAP, 0.05 + ratio * 0.75 + baseExtra);
   },
 
+  // Kích hoạt thủ công Tuyệt Kỹ Nộ (Skill 3) khi người chơi nhấp vào thẻ bài
+  triggerManualBurst() {
+    const now = Date.now();
+    const hero = this.getActiveHeroData();
+    const skills = hero.config?.skills || [];
+    const skill3 = skills[2];
+    if (!skill3) return { success: false, reason: 'no_skill' };
+    if (now < this._skill3NextReady) {
+      const remainingSec = ((this._skill3NextReady - now) / 1000).toFixed(1);
+      return { success: false, reason: 'cooldown', remainingSec };
+    }
+    this._manualBurstQueued = true;
+    return { success: true };
+  },
+
   // Kiểm tra và tự động kích hoạt kỹ năng Hero trong trận đấu
   checkTriggerHeroSkill() {
     const now = Date.now();
@@ -186,8 +202,9 @@ const Player = {
     const skill2 = skills[1]; // Elemental Skill
     const skill3 = skills[2]; // Elemental Burst (Nộ)
 
-    // Ưu tiên nộ tuyệt kỹ (Skill 3) nếu đã hồi
-    if (skill3 && now >= this._skill3NextReady) {
+    // Ưu tiên nộ tuyệt kỹ (Skill 3) CHỈ KHI NGƯỜI CHƠI BẤM KÍCH HOẠT THỦ CÔNG
+    if (this._manualBurstQueued && skill3 && now >= this._skill3NextReady) {
+      this._manualBurstQueued = false;
       const cd = Math.max(3, skill3.cd - (hero.cdReduction || 0));
       this._skill3NextReady = now + (cd * 1000);
       const userHero = hero.userHero;
@@ -210,7 +227,8 @@ const Player = {
         skill: skill3, 
         damage: dmg, 
         hero: hero.config,
-        defShredPct: hero.unlockedPassives.includes('aetheris_cosmic_sovereign') ? 0.70 : (hero.unlockedPassives.includes('def_shred_60') ? 0.60 : (hero.unlockedPassives.includes('def_shred_40') ? 0.40 : 0))
+        defShredPct: hero.unlockedPassives.includes('cassius_execute_e6') ? 0.80 : (hero.unlockedPassives.includes('aetheris_cosmic_sovereign') ? 0.70 : (hero.unlockedPassives.includes('def_shred_60') ? 0.60 : (hero.unlockedPassives.includes('def_shred_40') ? 0.40 : 0))),
+        executeThresholdPct: hero.unlockedPassives.includes('cassius_execute_e6') ? 0.35 : (hero.unlockedPassives.includes('execute_god_e6') ? 0.25 : 0)
       };
     }
 
@@ -253,8 +271,24 @@ const Player = {
     if (GameState.godMode) return { damage: 0, isDead: false };
     const actual = Math.max(1, amount);
 
-    // Aetheris E4: Hộ Thể Tinh Cầu (Crystal Barrier)
+    // Cassius E4: Bàn Cược Bất Tử (Gamble Immortal)
     const activeHero = this.getActiveHeroData();
+    if (activeHero?.unlockedPassives?.includes('cassius_gamble_immortal') && GameState.player.currentHp - actual <= 0) {
+      if (!this._lastCassiusGambleUsed || Date.now() - this._lastCassiusGambleUsed > 30000) {
+        this._lastCassiusGambleUsed = Date.now();
+        const diceRoll = Math.floor(Math.random() * 6) + 1;
+        if (diceRoll >= 2) {
+          GameState.player.currentHp = this.getEffectiveMaxHp();
+          if (typeof UI !== 'undefined') {
+            UI.addCombatLog(`🎲 <strong>BÀN CƯỢC BẤT TỬ:</strong> Cassius đổ xí ngầu ra điểm <strong>${diceRoll}</strong>! Miễn nhiễm tử vong và hồi đầy 100% HP!`, 'log-extra');
+            UI.showDamageNumber('JACKPOT BẤT TỬ!', false, 'player');
+          }
+          return { damage: 0, isDead: false };
+        }
+      }
+    }
+
+    // Aetheris E4: Hộ Thể Tinh Cầu (Crystal Barrier)
     if (activeHero?.unlockedPassives?.includes('aetheris_crystal_barrier') && GameState.player.currentHp - actual <= 0) {
       if (!this._lastBarrierUsed || Date.now() - this._lastBarrierUsed > 45000) {
         this._lastBarrierUsed = Date.now();

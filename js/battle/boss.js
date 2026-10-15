@@ -100,19 +100,49 @@ const Boss = {
       if (skillRes.type === 'burst' && typeof UI !== 'undefined' && UI.playBurstCinematic) {
         try { UI.playBurstCinematic(skillRes); } catch(e) {}
       }
-      b.hp = Math.max(0, b.hp - pDmg);
-      if (typeof UI !== 'undefined') {
-        UI.showDamageNumber(pDmg, true, 'boss');
-        UI.animatePlayerSkill('boss', skillRes.type);
-        UI.animateBossHit();
-        UI.updateBossChamber();
-        const badgeName = skillRes.type === 'burst' ? '🌟 TUYỆT KỸ NỘ' : '⚡ KỸ NĂNG';
-        UI.addCombatLog(
-          `<strong>${badgeName} [${skillRes.hero.name}]:</strong> ` +
-          `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.skill.name}</span> ` +
-          `gây <strong style="color:#ff0055;">-${pDmg}</strong> lên Boss!`,
-          'log-extra'
-        );
+
+      const isVideoCutscene = (skillRes.type === 'burst' && (skillRes.hero?.id === 'hero_unknown_god' || skillRes.hero?.id === 'hero_cassius'));
+      if (isVideoCutscene) {
+        const isCassius = (skillRes.hero?.id === 'hero_cassius');
+        const hitDelay = isCassius ? 3000 : 5500;
+        setTimeout(() => {
+          if (!GameState.boss?.active) return;
+          b.hp = Math.max(0, b.hp - pDmg);
+          if (typeof UI !== 'undefined') {
+            UI.showDamageNumber(pDmg, true, 'boss', true);
+            UI.screenShake();
+            UI.animatePlayerSkill('boss', skillRes.type);
+            UI.animateBossHit(true);
+            UI.updateBossChamber();
+            const badgeName = isCassius ? '🎰 CANH BẠC VÔ CỰC' : '🌟 TUYỆT KỸ NỘ';
+            UI.addCombatLog(
+              `<strong>${badgeName} [${skillRes.hero.name}]:</strong> ` +
+              `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.skill.name}</span> ` +
+              `gây <strong style="color:#ffd700;">-${pDmg}</strong> lên Boss!`,
+              'log-extra'
+            );
+          }
+          if (b.hp <= 0) {
+            b.hp = 0;
+            if (typeof UI !== 'undefined') UI.updateBossChamber();
+            setTimeout(() => this.endFight(true), 450);
+          }
+        }, hitDelay);
+      } else {
+        b.hp = Math.max(0, b.hp - pDmg);
+        if (typeof UI !== 'undefined') {
+          UI.showDamageNumber(pDmg, true, 'boss');
+          UI.animatePlayerSkill('boss', skillRes.type);
+          UI.animateBossHit();
+          UI.updateBossChamber();
+          const badgeName = skillRes.type === 'burst' ? '🌟 TUYỆT KỸ NỘ' : '⚡ KỸ NĂNG';
+          UI.addCombatLog(
+            `<strong>${badgeName} [${skillRes.hero.name}]:</strong> ` +
+            `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.skill.name}</span> ` +
+            `gây <strong style="color:#ff0055;">-${pDmg}</strong> lên Boss!`,
+            'log-extra'
+          );
+        }
       }
     } else {
       const pAtk = Player.getEffectiveAttack();
@@ -127,7 +157,7 @@ const Boss = {
       }
     }
 
-    if (b.hp <= 0) {
+    if (b.hp <= 0 && !isVideoCutscene) {
       b.hp = 0;
       if (typeof UI !== 'undefined') UI.updateBossChamber();
       setTimeout(() => this.endFight(true), 450);
@@ -136,7 +166,7 @@ const Boss = {
 
     // --- ĐÒN BỒI EXTRA TURN NẾU TỐC ĐỘ CAO ---
     const extraChance = Player.getExtraTurnChance(b.speed);
-    if (Math.random() < extraChance) {
+    if (Math.random() < extraChance && !isVideoCutscene) {
       const extraDmg = Math.max(1, Math.floor(pDmg * 0.85));
       b.hp = Math.max(0, b.hp - extraDmg);
 
@@ -159,6 +189,9 @@ const Boss = {
     }
 
     // --- LƯỢT ĐẠI BOSS PHẢN CÔNG ---
+    const bossCounterDelay = isVideoCutscene
+      ? ((skillRes.hero?.id === 'hero_cassius') ? 5400 : 6600)
+      : ((skillRes.triggered && skillRes.type === 'burst') ? 4000 : 600);
     setTimeout(() => {
       if (!GameState.boss?.active) return;
       b.rage = Math.min(100, (b.rage || 0) + 25);
@@ -208,7 +241,7 @@ const Boss = {
         if (typeof UI !== 'undefined') UI.animatePlayerDeath('boss');
         this.endFight(false, 'Bạn đã ngã xuống trước sức mạnh của Boss!');
       }
-    }, 280);
+    }, bossCounterDelay);
   },
 
   _stopAllIntervals() {

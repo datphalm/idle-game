@@ -15,7 +15,7 @@ const GameState = {
   inventoryMax: 80,
   inventoryExpands: 0,
   heroes: [],
-  activeHeroId: 'hero_starter',
+  activeHeroId: 'hero_cassius',
   gacha: { totalPulls: 0, totalHeroPulls: 0, bannerTab: 'weapon' },
   autoGacha: {
     enabled: false,
@@ -517,6 +517,7 @@ const CONFIG = {
         { level: 6, name: 'E6: Chúa Tể Vạn Cổ Tinh Không', desc: 'Mọi đòn đánh đều kèm Tia La-de Cổ Ngữ 400% ATK, Tuyệt Kỹ Nộ triệu hồi Siêu Hố Đen bóp nghẹt quái vật, bỏ qua 70% Phòng Thủ của Boss!', uniquePassive: 'aetheris_cosmic_sovereign' }
       ]
     },
+    /*
     {
       id: 'hero_unknown_god',
       name: '⟦ VÔ CỰC NGHỊCH MỆNH THẦN QUÂN ⟧',
@@ -539,6 +540,31 @@ const CONFIG = {
         { level: 4, name: 'E4: Trật Tự Bất Hoại', desc: 'Miễn nhiễm hoàn toàn 60% mọi sát thương nhận vào từ vũ trụ.', bonusDef: 1.0 },
         { level: 5, name: 'E5: Tịch Diệt Tinh Cầu', desc: 'Cấp Nộ Tịch Diệt Thế Giới +3. Sát thương Nộ tăng gấp 3 lần!', burstDmgMult: 2.0 },
         { level: 6, name: 'E6: ⟦ VÔ THƯỢNG THẦN LINH ⟧', desc: 'Tuyệt đỉnh tối thượng: Đòn đánh thường kèm Hư Vô Trảm 800% ATK, đòn Nộ hủy diệt kết liễu thẳng mọi kẻ thù dưới 25% HP!', uniquePassive: 'execute_god_e6' }
+      ]
+    },
+    */
+    {
+      id: 'hero_cassius',
+      name: '⟦ CASSIUS • QUÂN VƯƠNG BÀI BẠC ⟧',
+      title: 'Bậc Thầy Vận Mệnh & Xúc Xắc Ma Thuật',
+      rarity: 'unknown',
+      element: 'fate',
+      elementName: 'Vận Mệnh Hoàng Kim ♠️🎲',
+      elementColor: '#ffd700',
+      pixelArchetype: 'cassius',
+      atkBonusPct: 2.2, hpBonusPct: 1.6, defBonusPct: 1.2, spdBonus: 70,
+      skills: [
+        { id: 's1', name: 'Vận Mệnh Xúc Xắc (Destiny Dice)', type: 'passive', icon: '🎲', desc: 'Tăng 220% Sát thương toàn thể. Đổ xúc xắc vàng may mắn mỗi 6s (1=Khiên 50% HP, 2=Tốc độ +50%, 3=Hút máu 35%, 4=Vàng +100%, 5=Chí mạng +50%, 6=JACKPOT x3 Sát thương!).', bonusAtk: 2.2 },
+        { id: 's2', name: 'Thần Bài Cắt Gió & Quỷ Diện', type: 'active', icon: '♠️', cd: 3.5, dmgMult: 12.0, desc: 'Lướt tới vung tay phóng loạt phi bài Tarot cắt nát đối thủ, triệu hồi Quỷ Diện khóa chiêu và giảm 50% Giáp đối thủ trong 2.5s.' },
+        { id: 's3', name: 'Canh Bạc Vô Cực (All-In Jackpot)', type: 'burst', icon: '👑', cd: 8.0, dmgMult: 65.0, desc: 'Tái hiện đỉnh cao điện ảnh sòng bạc: Tung xí ngầu vàng, lật lá Át Chủ Bài và đập nát bộ bài Hoàng Gia Jack-Queen-King-Joker lên bàn cược gây 6500% ATK sát thương Hoàng Kim Vô Cực!' }
+      ],
+      eidolons: [
+        { level: 1, name: 'E1: Vận Mệnh Tất Thắng', desc: 'Tăng 180% Sát thương toàn thể, tỉ lệ đổ xúc xắc vào mặt 5 và 6 tăng vọt 200%.', bonusAtk: 1.8, bonusHp: 1.0 },
+        { level: 2, name: 'E2: Bẫy Bài Ảo Ảnh', desc: 'Mọi đòn đánh thường đều phóng thêm 3 phi bài Tarot xuyên thấu gây 300% ATK.', uniquePassive: 'cassius_card_barrage' },
+        { level: 3, name: 'E3: Quỷ Diện Thao Túng', desc: 'Cấp kỹ năng Thần Bài Cắt Gió +3. Sát thương tăng gấp đôi và kẻ địch bị choáng vĩnh viễn trong thời gian trúng chiêu.', skillDmgMult: 1.0 },
+        { level: 4, name: 'E4: Bàn Cược Bất Tử', desc: 'Khi nhận sát thương chí tử, tung xí ngầu: Nếu đổ từ 2-6 lập tức miễn nhiễm tử vong 5s và hồi phục 100% Máu tối đa!', uniquePassive: 'cassius_gamble_immortal' },
+        { level: 5, name: 'E5: Hoàng Triều Át Bích', desc: 'Cấp Nộ Canh Bạc Vô Cực +3. Sát thương Tuyệt Kỹ Nộ tăng thêm 250%!', burstDmgMult: 2.5 },
+        { level: 6, name: 'E6: ⟦ VUA SÒNG BẠC TOÀN TRI ⟧', desc: 'Mọi đòn đánh luôn duy trì hiệu ứng JACKPOT tối thượng, Tuyệt Kỹ Nộ lập tức kết liễu thẳng đối thủ dưới 35% HP!', uniquePassive: 'cassius_execute_e6' }
       ]
     }
   ],
@@ -649,6 +675,9 @@ CONFIG.getItemsByRarity = function(rarity) {
 };
 
 CONFIG.getHeroById = function(heroId) {
+  if (heroId === 'hero_unknown_god') {
+    return this.HEROES_LIST.find(h => h.id === 'hero_cassius') || this.HEROES_LIST[0];
+  }
   return this.HEROES_LIST.find(h => h.id === heroId) || this.HEROES_LIST[0];
 };
 
@@ -691,6 +720,7 @@ CONFIG.getHeroPixelArchetype = function(heroId) {
     hero_flame_knight: 'flame_knight',
     hero_arcane_mage: 'arcane_mage',
     hero_unknown_god: 'unknown_god',
+    hero_cassius: 'cassius',
     // Fallback migration mapping
     hero_traveler: 'starter_knight',
     hero_amber: 'flame_knight',

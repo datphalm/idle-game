@@ -134,7 +134,6 @@
             </div>
             <button id="btn-forfeit-dungeon" class="btn btn-small btn-danger">Rút lui</button>
           </div>
-          <div id="extra-turn-banner" class="hidden">⚡ EXTRA TURN! ĐÒN BỒI LIÊN HOÀN ⚡</div>
 
           <div id="arena-stage">
             <!-- Player Side -->
@@ -144,6 +143,27 @@
                 <span id="player-battle-level" class="fighter-level">Lv. 1</span>
               </div>
               <div class="fighter-sprite-wrapper">
+                <div id="player-ground-circle" class="fighter-ground-circle">
+                  <svg viewBox="0 0 160 50" width="100%" height="100%" class="stationary-ground-svg">
+                    <defs>
+                      <radialGradient id="cass-ground-grad" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#ffd700" stop-opacity="0.32"/>
+                        <stop offset="65%" stop-color="#f59e0b" stop-opacity="0.15"/>
+                        <stop offset="100%" stop-color="#ca8a04" stop-opacity="0"/>
+                      </radialGradient>
+                      <filter id="ground-ring-glow">
+                        <feDropShadow dx="0" dy="0" stdDeviation="2.2" flood-color="#ffd700" flood-opacity="0.85"/>
+                      </filter>
+                    </defs>
+                    <ellipse cx="80" cy="25" rx="72" ry="20" fill="url(#cass-ground-grad)"/>
+                    <ellipse cx="80" cy="25" rx="66" ry="17" fill="none" stroke="rgba(255, 215, 0, 0.45)" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#ground-ring-glow)"/>
+                    <ellipse cx="80" cy="25" rx="52" ry="13" fill="none" stroke="rgba(255, 215, 0, 0.75)" stroke-width="1.8"/>
+                    <circle cx="14" cy="25" r="2.2" fill="#ffd700"/>
+                    <circle cx="146" cy="25" r="2.2" fill="#ffd700"/>
+                    <circle cx="80" cy="8" r="2" fill="#ffffff"/>
+                    <circle cx="80" cy="42" r="2" fill="#ffffff"/>
+                  </svg>
+                </div>
                 <div id="player-sprite" class="fighter-avatar"></div>
                 <div id="player-damage-container" class="damage-container"></div>
                 <div id="slash-fx-player" class="slash-fx-container hidden"></div>
@@ -158,19 +178,34 @@
 
               <!-- Hero Skill Cooldown HUD in Arena -->
               <div id="player-hero-skills-hud" class="hero-skills-arena-hud">
-                <div class="skill-hud-item" id="hud-skill-2" title="Kỹ năng Chiến Kỹ (Skill 2)">
+                <div class="skill-hud-item" id="hud-skill-2" title="Kỹ năng Chiến Kỹ (Skill 2)" style="display: none !important;">
                   <div class="skill-hud-circle">
                     <div class="skill-hud-fill" id="hud-s2-fill"></div>
                     <span class="skill-hud-icon" id="hud-s2-icon">⚡</span>
                   </div>
                   <span class="skill-hud-timer" id="hud-s2-timer">Sẵn sàng</span>
                 </div>
-                <div class="skill-hud-item" id="hud-skill-3" title="Tuyệt Kỹ Nộ (Burst Ultimate)">
-                  <div class="skill-hud-circle burst-circle">
-                    <div class="skill-hud-fill" id="hud-s3-fill"></div>
-                    <span class="skill-hud-icon" id="hud-s3-icon">🌟</span>
+                <div class="skill-hud-item skill-hud-burst-wrapper" id="hud-skill-3" title="Tuyệt Kỹ Nộ (Nhấp để kích hoạt)">
+                  <div class="burst-card-container">
+                    <div class="skill-burst-card is-ready" id="hud-burst-card" role="button" tabindex="0">
+                      <div class="burst-card-inner">
+                        <img src="assets/characters/cassius/art_skill_ultimate.png" class="burst-card-img" alt="Tuyệt Kỹ Nộ" />
+                        <div class="burst-card-cd-overlay" id="hud-s3-fill"></div>
+                        <div class="burst-card-frame"></div>
+                      </div>
+                    </div>
+                    <span class="burst-card-status-text" id="hud-s3-timer">Sẵn sàng</span>
+
+                    <!-- 3D Character Preview on Hover -->
+                    <div class="burst-card-3d-preview" id="hud-burst-preview">
+                      <div class="preview-3d-card-inner">
+                        <div class="preview-3d-glow"></div>
+                        <img src="assets/characters/cassius/hover_3d_idle.webp" class="preview-3d-actor" alt="Cassius 3D Preview" />
+                        <div class="preview-3d-pedestal"></div>
+                        <div class="preview-3d-title">CASSIUS · BÀN CƯỢC HOÀNG KIM</div>
+                      </div>
+                    </div>
                   </div>
-                  <span class="skill-hud-timer" id="hud-s3-timer">Sẵn sàng</span>
                 </div>
               </div>
             </div>
@@ -215,7 +250,7 @@
               <div class="letterbox letterbox-bottom"></div>
               <div class="burst-bg-flash" id="burst-bg-flash"></div>
               <div class="burst-impact-flash" id="burst-impact-flash"></div>
-              
+
               <!-- Phase 0: Close-Up Eye Slash Cut-In Banner -->
               <div class="burst-eye-cutin" id="burst-eye-cutin"></div>
 
@@ -337,6 +372,17 @@
                 <span id="boss-player-level" class="fighter-level">Lv. 1</span>
               </div>
               <div class="fighter-sprite-wrapper">
+                <div id="boss-player-ground-circle" class="fighter-ground-circle">
+                  <svg viewBox="0 0 160 50" width="100%" height="100%" class="stationary-ground-svg">
+                    <ellipse cx="80" cy="25" rx="72" ry="20" fill="url(#cass-ground-grad)"/>
+                    <ellipse cx="80" cy="25" rx="66" ry="17" fill="none" stroke="rgba(255, 215, 0, 0.45)" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#ground-ring-glow)"/>
+                    <ellipse cx="80" cy="25" rx="52" ry="13" fill="none" stroke="rgba(255, 215, 0, 0.75)" stroke-width="1.8"/>
+                    <circle cx="14" cy="25" r="2.2" fill="#ffd700"/>
+                    <circle cx="146" cy="25" r="2.2" fill="#ffd700"/>
+                    <circle cx="80" cy="8" r="2" fill="#ffffff"/>
+                    <circle cx="80" cy="42" r="2" fill="#ffffff"/>
+                  </svg>
+                </div>
                 <div id="boss-player-sprite" class="fighter-avatar player-idle"></div>
                 <div id="boss-player-damage-container" class="damage-container"></div>
                 <div id="boss-player-slash-fx" class="slash-fx-container hidden"></div>
@@ -350,19 +396,34 @@
 
               <!-- Hero Skills Cooldown HUD trong Solo Boss -->
               <div id="boss-player-skills-hud" class="hero-skills-arena-hud">
-                <div class="skill-hud-item" id="boss-hud-skill-2" title="Chiến Kỹ">
+                <div class="skill-hud-item" id="boss-hud-skill-2" title="Chiến Kỹ" style="display: none !important;">
                   <div class="skill-hud-circle">
                     <div class="skill-hud-fill" id="boss-hud-s2-fill"></div>
                     <span class="skill-hud-icon" id="boss-hud-s2-icon">⚡</span>
                   </div>
                   <span class="skill-hud-timer" id="boss-hud-s2-timer">Sẵn sàng</span>
                 </div>
-                <div class="skill-hud-item" id="boss-hud-skill-3" title="Tuyệt Kỹ Nộ 3D">
-                  <div class="skill-hud-circle burst-circle">
-                    <div class="skill-hud-fill" id="boss-hud-s3-fill"></div>
-                    <span class="skill-hud-icon" id="boss-hud-s3-icon">🌟</span>
+                <div class="skill-hud-item skill-hud-burst-wrapper" id="boss-hud-skill-3" title="Tuyệt Kỹ Nộ (Nhấp để kích hoạt)">
+                  <div class="burst-card-container">
+                    <div class="skill-burst-card is-ready" id="boss-burst-card" role="button" tabindex="0">
+                      <div class="burst-card-inner">
+                        <img src="assets/characters/cassius/art_skill_ultimate.png" class="burst-card-img" alt="Tuyệt Kỹ Nộ" />
+                        <div class="burst-card-cd-overlay" id="boss-hud-s3-fill"></div>
+                        <div class="burst-card-frame"></div>
+                      </div>
+                    </div>
+                    <span class="burst-card-status-text" id="boss-hud-s3-timer">Sẵn sàng</span>
+
+                    <!-- 3D Character Preview on Hover -->
+                    <div class="burst-card-3d-preview" id="boss-burst-preview">
+                      <div class="preview-3d-card-inner">
+                        <div class="preview-3d-glow"></div>
+                        <img src="assets/characters/cassius/hover_3d_idle.webp" class="preview-3d-actor" alt="Cassius 3D Preview" />
+                        <div class="preview-3d-pedestal"></div>
+                        <div class="preview-3d-title">CASSIUS · BÀN CƯỢC HOÀNG KIM</div>
+                      </div>
+                    </div>
                   </div>
-                  <span class="skill-hud-timer" id="boss-hud-s3-timer">Sẵn sàng</span>
                 </div>
               </div>
             </div>
@@ -479,6 +540,17 @@
                 <span id="dungeon-player-level" class="fighter-level">Lv. 1</span>
               </div>
               <div class="fighter-sprite-wrapper">
+                <div id="dungeon-player-ground-circle" class="fighter-ground-circle">
+                  <svg viewBox="0 0 160 50" width="100%" height="100%" class="stationary-ground-svg">
+                    <ellipse cx="80" cy="25" rx="72" ry="20" fill="url(#cass-ground-grad)"/>
+                    <ellipse cx="80" cy="25" rx="66" ry="17" fill="none" stroke="rgba(255, 215, 0, 0.45)" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#ground-ring-glow)"/>
+                    <ellipse cx="80" cy="25" rx="52" ry="13" fill="none" stroke="rgba(255, 215, 0, 0.75)" stroke-width="1.8"/>
+                    <circle cx="14" cy="25" r="2.2" fill="#ffd700"/>
+                    <circle cx="146" cy="25" r="2.2" fill="#ffd700"/>
+                    <circle cx="80" cy="8" r="2" fill="#ffffff"/>
+                    <circle cx="80" cy="42" r="2" fill="#ffffff"/>
+                  </svg>
+                </div>
                 <div id="dungeon-player-sprite" class="fighter-avatar player-idle"></div>
                 <div id="dungeon-player-damage-container" class="damage-container"></div>
                 <div id="dungeon-player-slash-fx" class="slash-fx-container hidden"></div>
@@ -492,19 +564,34 @@
 
               <!-- Hero Skills HUD trong Dungeon -->
               <div id="dungeon-player-skills-hud" class="hero-skills-arena-hud">
-                <div class="skill-hud-item" id="dungeon-hud-skill-2">
+                <div class="skill-hud-item" id="dungeon-hud-skill-2" style="display: none !important;">
                   <div class="skill-hud-circle">
                     <div class="skill-hud-fill" id="dungeon-hud-s2-fill"></div>
                     <span class="skill-hud-icon" id="dungeon-hud-s2-icon">⚡</span>
                   </div>
                   <span class="skill-hud-timer" id="dungeon-hud-s2-timer">Sẵn sàng</span>
                 </div>
-                <div class="skill-hud-item" id="dungeon-hud-skill-3">
-                  <div class="skill-hud-circle burst-circle">
-                    <div class="skill-hud-fill" id="dungeon-hud-s3-fill"></div>
-                    <span class="skill-hud-icon" id="dungeon-hud-s3-icon">🌟</span>
+                <div class="skill-hud-item skill-hud-burst-wrapper" id="dungeon-hud-skill-3" title="Tuyệt Kỹ Nộ (Nhấp để kích hoạt)">
+                  <div class="burst-card-container">
+                    <div class="skill-burst-card is-ready" id="dungeon-burst-card" role="button" tabindex="0">
+                      <div class="burst-card-inner">
+                        <img src="assets/characters/cassius/art_skill_ultimate.png" class="burst-card-img" alt="Tuyệt Kỹ Nộ" />
+                        <div class="burst-card-cd-overlay" id="dungeon-hud-s3-fill"></div>
+                        <div class="burst-card-frame"></div>
+                      </div>
+                    </div>
+                    <span class="burst-card-status-text" id="dungeon-hud-s3-timer">Sẵn sàng</span>
+
+                    <!-- 3D Character Preview on Hover -->
+                    <div class="burst-card-3d-preview" id="dungeon-burst-preview">
+                      <div class="preview-3d-card-inner">
+                        <div class="preview-3d-glow"></div>
+                        <img src="assets/characters/cassius/hover_3d_idle.webp" class="preview-3d-actor" alt="Cassius 3D Preview" />
+                        <div class="preview-3d-pedestal"></div>
+                        <div class="preview-3d-title">CASSIUS · BÀN CƯỢC HOÀNG KIM</div>
+                      </div>
+                    </div>
                   </div>
-                  <span class="skill-hud-timer" id="dungeon-hud-s3-timer">Sẵn sàng</span>
                 </div>
               </div>
             </div>
@@ -598,6 +685,17 @@
                   <span id="tower-player-level" class="fighter-level">Lv. 1</span>
                 </div>
                 <div class="fighter-sprite-wrapper">
+                  <div id="tower-player-ground-circle" class="fighter-ground-circle">
+                    <svg viewBox="0 0 160 50" width="100%" height="100%" class="stationary-ground-svg">
+                      <ellipse cx="80" cy="25" rx="72" ry="20" fill="url(#cass-ground-grad)"/>
+                      <ellipse cx="80" cy="25" rx="66" ry="17" fill="none" stroke="rgba(255, 215, 0, 0.45)" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#ground-ring-glow)"/>
+                      <ellipse cx="80" cy="25" rx="52" ry="13" fill="none" stroke="rgba(255, 215, 0, 0.75)" stroke-width="1.8"/>
+                      <circle cx="14" cy="25" r="2.2" fill="#ffd700"/>
+                      <circle cx="146" cy="25" r="2.2" fill="#ffd700"/>
+                      <circle cx="80" cy="8" r="2" fill="#ffffff"/>
+                      <circle cx="80" cy="42" r="2" fill="#ffffff"/>
+                    </svg>
+                  </div>
                   <div id="tower-player-sprite" class="fighter-avatar player-idle"></div>
                   <div id="tower-player-damage-container" class="damage-container"></div>
                   <div id="tower-player-slash-fx" class="slash-fx-container hidden"></div>
@@ -610,19 +708,34 @@
                 </div>
                 <!-- Hero Skills HUD trong Tower -->
                 <div id="tower-player-skills-hud" class="hero-skills-arena-hud">
-                  <div class="skill-hud-item" id="tower-hud-skill-2">
+                  <div class="skill-hud-item" id="tower-hud-skill-2" style="display: none !important;">
                     <div class="skill-hud-circle">
                       <div class="skill-hud-fill" id="tower-hud-s2-fill"></div>
                       <span class="skill-hud-icon" id="tower-hud-s2-icon">⚡</span>
                     </div>
                     <span class="skill-hud-timer" id="tower-hud-s2-timer">Sẵn sàng</span>
                   </div>
-                  <div class="skill-hud-item" id="tower-hud-skill-3">
-                    <div class="skill-hud-circle burst-circle">
-                      <div class="skill-hud-fill" id="tower-hud-s3-fill"></div>
-                      <span class="skill-hud-icon" id="tower-hud-s3-icon">🌟</span>
+                  <div class="skill-hud-item skill-hud-burst-wrapper" id="tower-hud-skill-3" title="Tuyệt Kỹ Nộ (Nhấp để kích hoạt)">
+                    <div class="burst-card-container">
+                      <div class="skill-burst-card is-ready" id="tower-burst-card" role="button" tabindex="0">
+                        <div class="burst-card-inner">
+                          <img src="assets/characters/cassius/art_skill_ultimate.png" class="burst-card-img" alt="Tuyệt Kỹ Nộ" />
+                          <div class="burst-card-cd-overlay" id="tower-hud-s3-fill"></div>
+                          <div class="burst-card-frame"></div>
+                        </div>
+                      </div>
+                      <span class="burst-card-status-text" id="tower-hud-s3-timer">Sẵn sàng</span>
+
+                      <!-- 3D Character Preview on Hover -->
+                      <div class="burst-card-3d-preview" id="tower-burst-preview">
+                        <div class="preview-3d-card-inner">
+                          <div class="preview-3d-glow"></div>
+                          <img src="assets/characters/cassius/hover_3d_idle.webp" class="preview-3d-actor" alt="Cassius 3D Preview" />
+                          <div class="preview-3d-pedestal"></div>
+                          <div class="preview-3d-title">CASSIUS · BÀN CƯỢC HOÀNG KIM</div>
+                        </div>
+                      </div>
                     </div>
-                    <span class="skill-hud-timer" id="tower-hud-s3-timer">Sẵn sàng</span>
                   </div>
                 </div>
               </div>
@@ -1311,6 +1424,27 @@
   </div>
 
 
+
+  <!-- Grand Left-Side Hero Showcase (Triggered when hovering Ultimate Burst Card) -->
+  <div id="hero-hover-showcase" class="hero-hover-showcase">
+    <div class="showcase-aura-backdrop"></div>
+    <div class="showcase-content">
+      <img src="assets/characters/cassius/hover_3d_idle.webp" class="showcase-character-img" alt="Cassius Showcase" />
+      <div class="showcase-pedestal-glow"></div>
+      <div class="showcase-typography">
+        <span class="showcase-roman-title">CASSIUS · BÀN CƯỢC HOÀNG KIM</span>
+        <span class="showcase-jp-kanji">「死神の切札 · 運命の支配者」</span>
+        <span class="showcase-jp-quote">『賽は投げられた、全てを賭けろ』</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Theatrical Fullscreen Video Cutscene Overlay (Hero Unknown God - Tràn Viền Toàn Màn Hình) -->
+  <div id="burst-video-container" class="burst-video-container hidden">
+    <div class="video-cinematic-bar video-cinematic-bar-top"></div>
+    <video id="burst-video-player" playsinline preload="auto"></video>
+    <div class="video-cinematic-bar video-cinematic-bar-bottom"></div>
+  </div>
 
   <!-- WebGL Graphic Libraries (Pixi.js & Three.js) -->
   <script src="js/libs/pixi.min.js"></script>

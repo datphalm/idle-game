@@ -385,46 +385,193 @@ const Sprites = {
 
   _getHeroUnknownGodSvg(action) {
     const isAtk = action === 'attack';
+    const isHit = action === 'hit';
+    const isWalk = action === 'walk';
+    const isSheathe = action === 'sheathe' || action === 'pose';
+    
+    // Dynamic offsets & rotations based on combat action
+    const bodyTx = isAtk ? 5 : isHit ? -4 : 0;
+    const bodyTy = isSheathe ? 3 : isAtk ? 2 : 0;
+    const swordRot = isSheathe ? -42 : isAtk ? 75 : isHit ? -15 : 18;
+    const swordTx = isSheathe ? 24 : isAtk ? 42 : isHit ? 30 : 40;
+    const swordTy = isSheathe ? 36 : isAtk ? 26 : isHit ? 28 : 34;
+    const hairSway = isWalk ? -5 : isAtk ? -8 : 0;
+
     return `
-    <svg class="pixel-sprite hero-pixel-svg hero-unknown_god action-${action}" viewBox="0 0 54 54" width="100%" height="100%" shape-rendering="crispEdges">
+    <svg class="pixel-sprite hero-pixel-svg hero-unknown_god action-${action}" viewBox="0 0 64 64" width="100%" height="100%" shape-rendering="crispEdges">
       <defs>
-        <filter id="ug-glow"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#00ffcc" flood-opacity="1"/></filter>
-        <filter id="ug-red-glow"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#ff0055" flood-opacity="1"/></filter>
+        <filter id="ug-glow"><feDropShadow dx="0" dy="0" stdDeviation="2.5" flood-color="#ff0055" flood-opacity="1"/></filter>
+        <filter id="ug-blade-glow"><feDropShadow dx="0" dy="0" stdDeviation="3.2" flood-color="#ff1744" flood-opacity="1"/></filter>
+        <linearGradient id="ug-blade" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="30%" stop-color="#ff1744"/>
+          <stop offset="100%" stop-color="#88001b"/>
+        </linearGradient>
+        <linearGradient id="ug-tassel" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#ff1744"/>
+          <stop offset="100%" stop-color="#be123c"/>
+        </linearGradient>
       </defs>
-      <!-- Celestial Ground Shimmer -->
-      <ellipse cx="27" cy="51" rx="12" ry="3" fill="rgba(0,255,204,0.35)"/>
-      <g class="pulse-aura" style="transform-origin: 27px 22px;">
-        <!-- SUPREME PRISMATIC RAINBOW HALO -->
-        <circle cx="27" cy="22" r="21" fill="none" stroke="url(#prism-grad)" stroke-width="2.5" class="spin-aura"/>
-        <!-- 6 FLOATING RED & GOLD GEOMETRIC CUBES IN ORBIT (Sustainer of Heavenly Principles) -->
-        <g class="spin-aura" style="transform-origin: 27px 22px;">
-          <rect x="25" y="0" width="4" height="4" fill="#ff0055" stroke="#ffd700" stroke-width="0.8" filter="url(#ug-red-glow)"/>
-          <rect x="44" y="11" width="4" height="4" fill="#ff0055" stroke="#00ffcc" stroke-width="0.8" filter="url(#ug-glow)"/>
-          <rect x="44" y="29" width="4" height="4" fill="#ff0055" stroke="#ffd700" stroke-width="0.8" filter="url(#ug-red-glow)"/>
-          <rect x="25" y="40" width="4" height="4" fill="#ff0055" stroke="#00ffcc" stroke-width="0.8" filter="url(#ug-glow)"/>
-          <rect x="6" y="29" width="4" height="4" fill="#ff0055" stroke="#ffd700" stroke-width="0.8" filter="url(#ug-red-glow)"/>
-          <rect x="6" y="11" width="4" height="4" fill="#ff0055" stroke="#00ffcc" stroke-width="0.8" filter="url(#ug-glow)"/>
+
+      <!-- Ground Shadow & Drifting Blood Sakura Petals -->
+      <ellipse cx="32" cy="59" rx="15" ry="4" fill="rgba(0,0,0,0.45)"/>
+      <ellipse cx="32" cy="59" rx="18" ry="4.5" fill="none" stroke="rgba(255,0,85,0.3)" stroke-width="1" stroke-dasharray="4,3" class="spin-aura"/>
+      <!-- Drifting Sakura Petals -->
+      <polygon points="14,56 16,54 18,56 16,58" fill="#ff4d6d" opacity="0.8"/>
+      <polygon points="48,53 50,51 52,53 50,55" fill="#fda4af" opacity="0.7"/>
+      <polygon points="44,38 46,36 47,38 45,40" fill="#ff4d6d" opacity="0.85"/>
+      <polygon points="12,28 14,26 15,28 13,30" fill="#fda4af" opacity="0.75"/>
+
+      <g transform="translate(${bodyTx}, ${bodyTy})">
+        <!-- Ponytail Flowing Behind (High Ponytail + Crimson Ribbon Tassel) -->
+        <path d="M 26,14 Q ${16 + hairSway},18 ${10 + hairSway},26 Q ${8 + hairSway},36 ${12 + hairSway},42 Q ${15 + hairSway},36 ${18 + hairSway},28 Q 23,22 28,16 Z" fill="#0d0c14" stroke="#1c1926" stroke-width="1"/>
+        <!-- Crimson Ribbon Knot & Dangling Tassels -->
+        <circle cx="27" cy="14" r="2.5" fill="#e11d48"/>
+        <path d="M 27,15 Q ${23 + hairSway * 0.5},22 ${21 + hairSway},30" stroke="url(#ug-tassel)" stroke-width="1.5" fill="none"/>
+        <polygon points="${20 + hairSway},29 ${23 + hairSway},29 ${22 + hairSway},34 ${20 + hairSway},34" fill="#e11d48"/>
+        <path d="M 28,15 Q ${30 + hairSway * 0.4},21 ${31 + hairSway * 0.8},28" stroke="url(#ug-tassel)" stroke-width="1.2" fill="none"/>
+        <polygon points="${30 + hairSway * 0.8},27 ${32 + hairSway * 0.8},27 ${32 + hairSway * 0.8},32 ${30 + hairSway * 0.8},32" fill="#e11d48"/>
+
+        <!-- Flowing Haori / Coat Tails Behind with Dual White Silk Linings -->
+        <path d="M 24,32 Q ${16 + (isWalk ? -6 : 0)},42 ${18 + (isWalk ? -8 : 0)},56 Q 26,53 32,55 Q 38,53 44,56 Q 46,42 38,32 Z" fill="#0f0d16" stroke="#1f1b2b" stroke-width="1"/>
+        <path d="M 18,56 Q 22,50 24,42" stroke="#f8fafc" stroke-width="1.2" fill="none" opacity="0.85"/>
+        <path d="M 44,56 Q 40,50 38,42" stroke="#f8fafc" stroke-width="1.2" fill="none" opacity="0.85"/>
+
+        <!-- Legs & Ninja Tabi Wraps -->
+        <rect x="26" y="45" width="4" height="12" fill="#121018"/>
+        <rect x="33" y="45" width="4" height="12" fill="#121018"/>
+        <!-- Shinobi Boots with Crimson Accent Ties -->
+        <rect x="25" y="53" width="5" height="5" fill="#09080e" rx="1"/>
+        <rect x="33" y="53" width="5" height="5" fill="#09080e" rx="1"/>
+        <line x1="25" y1="52" x2="30" y2="52" stroke="#e11d48" stroke-width="1"/>
+        <line x1="33" y1="52" x2="38" y2="52" stroke="#e11d48" stroke-width="1"/>
+
+        <!-- Right Thigh Tactical Holster with Buckle -->
+        <rect x="34" y="46" width="3.5" height="4.5" fill="#0a0810" rx="0.8" stroke="#2a2438" stroke-width="0.6"/>
+        <line x1="32" y1="47" x2="38" y2="47" stroke="#e11d48" stroke-width="1"/>
+        <rect x="34.5" y="46.5" width="1.5" height="1.5" fill="#ffd700"/>
+
+        <!-- Tactical Shinobi Bodysuit & Crimson Chest Harness -->
+        <path d="M 25,27 L 38,27 L 36,44 L 27,44 Z" fill="#14111d" stroke="#241f33" stroke-width="1"/>
+        <!-- Crimson Tactical Harness Straps with Gold Buckles -->
+        <line x1="26" y1="30" x2="37" y2="30" stroke="#e11d48" stroke-width="1.4"/>
+        <line x1="26" y1="36" x2="37" y2="36" stroke="#e11d48" stroke-width="1.4"/>
+        <line x1="30" y1="27" x2="28" y2="44" stroke="#be123c" stroke-width="1.2"/>
+        <line x1="33" y1="27" x2="35" y2="44" stroke="#be123c" stroke-width="1.2"/>
+        <rect x="30.5" y="29" width="2" height="2" fill="#ffd700" rx="0.4"/>
+        <rect x="30.5" y="35" width="2" height="2" fill="#ffd700" rx="0.4"/>
+        <!-- Silver Hip Floral Sakura Pin -->
+        <circle cx="26" cy="43" r="1.5" fill="#ffffff" stroke="#ffd700" stroke-width="0.5"/>
+
+        <!-- Twin Katana Sayas (Crossed Dual Scabbards matching anime cutscene) -->
+        <g transform="translate(20, 39) rotate(42)">
+          <rect x="-1.8" y="0" width="3.6" height="16" fill="#14111d" stroke="#241f33" stroke-width="0.5" rx="0.6"/>
+          <rect x="-1.8" y="13" width="3.6" height="2.5" fill="#ffd700" rx="0.4"/>
+          <circle cx="0" cy="5" r="0.8" fill="#ffffff"/>
         </g>
-        <!-- Flowing Celestial Starlight Robes (Pure White + Gold Border + Crimson Sash) -->
-        <path d="M 18,20 Q 9,34 11,46 Q 27,48 41,46 Q 43,34 34,20 Z" fill="#ffffff" stroke="#ffd700" stroke-width="1.2"/>
-        <polygon points="22,23 30,23 28,45 24,45" fill="#ff0055" opacity="0.9"/>
-        <!-- Long Radiant Silver Hair Flowing -->
-        <path d="M 15,10 Q 8,24 10,34 Q 14,32 16,22 Z" fill="#e2e8f0" filter="url(#ug-glow)"/>
-        <path d="M 37,10 Q 44,24 42,34 Q 38,32 36,22 Z" fill="#e2e8f0" filter="url(#ug-glow)"/>
-        <!-- Divine Face & Crown Tiara -->
-        <rect x="20" y="8" width="12" height="12" fill="#ffe0b2" rx="2"/>
-        <polygon points="19,8 23,4 27,7 31,4 34,8" fill="#ffd700" stroke="#ffffff" stroke-width="0.6"/>
-        <!-- Omniscient Heterochromatic Cosmic Eyes (Cyan & Crimson!) -->
-        <rect class="pixel-eye" x="22" y="12" width="2.8" height="2.2" fill="#00ffcc" filter="url(#ug-glow)"/>
-        <rect class="pixel-eye" x="27" y="12" width="2.8" height="2.2" fill="#ff0055" filter="url(#ug-red-glow)"/>
-        <!-- Floating Sacred Celestial Broadsword Radiating Prismatic Light -->
-        <g transform="translate(${isAtk ? 35 : 32}, ${isAtk ? 18 : 22}) rotate(${isAtk ? 65 : 20})">
-          <rect x="-1" y="6" width="2" height="6" fill="#ffd700"/>
-          <polygon points="-4,6 4,6 0,4" fill="#ff0055"/>
-          <polygon points="-2.5,4 2.5,4 2,-24 0,-28 -2,-24" fill="url(#prism-grad)" stroke="#ffffff" stroke-width="0.8" filter="url(#ug-glow)"/>
-          <line x1="0" y1="3" x2="0" y2="-25" stroke="#ffffff" stroke-width="0.8"/>
+        <g transform="translate(22, 38) rotate(32)">
+          <rect x="-2" y="0" width="4" height="18" fill="#0c0a12" stroke="#241f33" stroke-width="0.6" rx="0.8"/>
+          <rect x="-2" y="15" width="4" height="3" fill="#ffd700" rx="0.5"/>
+          <rect x="-2" y="1" width="4" height="2" fill="#ffd700" rx="0.5"/>
+          <circle cx="0" cy="6" r="1" fill="#ffffff"/>
+          <circle cx="0" cy="10" r="0.8" fill="#ffffff"/>
+          <!-- Sageo Hanging Cord -->
+          <path d="M 1,4 Q 4,8 3,14" stroke="#e11d48" stroke-width="0.9" fill="none"/>
+        </g>
+
+        <!-- Neck Choker & Fair Skin -->
+        <rect x="29" y="24" width="5" height="4" fill="#ffe8d6"/>
+        <rect x="28.5" y="25" width="6" height="1.5" fill="#0c0a12" stroke="#e11d48" stroke-width="0.5"/>
+
+        <!-- Head: Face & Cheek Blush -->
+        <rect x="26" y="13" width="12" height="12" fill="#fff0e6" rx="2"/>
+        <rect x="27" y="19" width="3" height="1.5" fill="rgba(255,100,130,0.35)" rx="0.5"/>
+        <rect x="34" y="19" width="3" height="1.5" fill="rgba(255,100,130,0.35)" rx="0.5"/>
+
+        <!-- Glowing Ruby Piercing Anime Slit Eyes & Crimson Eye Trail -->
+        <g class="ug-eye-flare">
+          <rect class="pixel-eye" x="28" y="16" width="3" height="2.5" rx="0.6" fill="#ff0055" filter="url(#ug-glow)"/>
+          <rect x="29" y="16.5" width="1" height="1.5" fill="#ffffff"/>
+          <rect class="pixel-eye" x="33" y="16" width="3" height="2.5" rx="0.6" fill="#ff0055" filter="url(#ug-glow)"/>
+          <rect x="34" y="16.5" width="1" height="1.5" fill="#ffffff"/>
+          <polygon points="35,17 43,15.5 38,18 41,19" fill="#ff0055" opacity="0.85" filter="url(#ug-glow)"/>
+          <line x1="34" y1="17.2" x2="44" y2="15.8" stroke="#ffffff" stroke-width="0.8" opacity="0.9"/>
+        </g>
+
+        <!-- Hair: Sleek Raven Hime Bangs with Specular Shine -->
+        <polygon points="25,13 39,13 38,10 32,8 26,10" fill="#0d0c14"/>
+        <path d="M 27,11 Q 32,9 37,11" stroke="rgba(255,255,255,0.45)" stroke-width="0.9" fill="none"/>
+        <rect x="25" y="13" width="3" height="11" fill="#0d0c14"/>
+        <rect x="36" y="13" width="3" height="11" fill="#0d0c14"/>
+        <polygon points="27,13 31,13 30,16 28,15" fill="#171422"/>
+        <polygon points="33,13 37,13 35,16 34,15" fill="#171422"/>
+
+        <!-- Attack Slash Flare Trail (When Attacking) -->
+        ${isAtk ? `
+        <path d="M 28,15 Q 56,8 63,32 Q 58,38 42,24 Z" fill="url(#ug-blade)" opacity="0.75" filter="url(#ug-blade-glow)"/>
+        ` : ''}
+
+        <!-- Drawn Primary Katana -->
+        <g transform="translate(${swordTx}, ${swordTy}) rotate(${swordRot})">
+          <rect x="-1" y="4" width="2.5" height="8" fill="#0c0a12" stroke="#ffd700" stroke-width="0.5" rx="0.4"/>
+          <path d="M 0,12 Q 3,17 2,22" stroke="#e11d48" stroke-width="1.2" fill="none"/>
+          <polygon points="1,21 3,21 2,25" fill="#be123c"/>
+          <ellipse cx="0.2" cy="4" rx="4.5" ry="1.8" fill="#ffd700" stroke="#b45309" stroke-width="0.5"/>
+          <polygon points="-1,3.5 1.5,3.5 1,-24 0,-28 -0.8,-24" fill="url(#ug-blade)" stroke="#ffffff" stroke-width="0.7" filter="url(#ug-blade-glow)"/>
+          <line x1="0.2" y1="3" x2="0.2" y2="-26" stroke="#ffffff" stroke-width="0.6"/>
+          <!-- Katana Tip Glint Star -->
+          <polygon points="0,-28 1,-27 0,-26 -1,-27" fill="#ffffff"/>
+          <!-- Sheathe mouth glint star when clicking into scabbard -->
+          ${isSheathe ? `
+          <g transform="translate(0, 4)">
+            <polygon points="0,-4 3,-1 6,0 3,1 0,4 -3,1 -6,0 -3,-1" fill="#ffd700" filter="url(#ug-blade-glow)"/>
+            <circle cx="0" cy="0" r="2" fill="#ffffff"/>
+          </g>
+          ` : ''}
         </g>
       </g>
+    </svg>`;
+  },
+
+  _getHeroCassiusSvg(action) {
+    const isAtk = action === 'attack';
+    const isSkill = action === 'skill';
+    const isSheathe = action === 'sheathe' || action === 'pose' || action === 'burst';
+    const isWalk = action === 'walk';
+    const isHit = action === 'hit';
+    const isShowcase = action === 'showcase' || action === 'model_3d';
+
+    let imgSrc = 'assets/characters/cassius/chibi_idle.webp';
+    let extraVfx = '';
+
+    if (isShowcase) {
+      imgSrc = 'assets/characters/cassius/model_3d_full.png';
+      extraVfx = '';
+    } else if (isAtk) {
+      imgSrc = 'assets/characters/cassius/chibi_attack.webp';
+      extraVfx = '';
+    } else if (isSkill) {
+      imgSrc = 'assets/characters/cassius/chibi_skill.webp';
+      extraVfx = '';
+    } else if (isSheathe) {
+      imgSrc = 'assets/characters/cassius/chibi_sheathe.webp';
+      extraVfx = '';
+    } else if (isHit) {
+      imgSrc = 'assets/characters/cassius/chibi_hit.webp';
+      extraVfx = '';
+    } else if (isWalk) {
+      imgSrc = 'assets/characters/cassius/chibi_walk.webp';
+      extraVfx = '';
+    } else {
+      // Default idle - clean and unobstructed chibi
+      extraVfx = '';
+    }
+
+    return `
+    <svg class="pixel-sprite hero-pixel-svg hero-cassius action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
+      ${extraVfx}
+      <!-- Authentic Character Visual (Chibi / 3D Model extracted from video) -->
+      <image href="${imgSrc}" xlink:href="${imgSrc}" x="3" y="4" width="94" height="89" preserveAspectRatio="xMidYMax meet"/>
     </svg>`;
   },
 
@@ -577,8 +724,10 @@ const Sprites = {
         return this._getHeroAetherisSvg(action);
       case 'hero_unknown_god':
         return this._getHeroUnknownGodSvg(action);
+      case 'hero_cassius':
+        return this._getHeroCassiusSvg(action);
       default:
-        return this._getHeroStarterSvg(action);
+        return this._getHeroCassiusSvg(action);
     }
   },
   // ============================================================
@@ -888,7 +1037,63 @@ const Sprites = {
       </svg>`;
     }
 
-    // 8. VÔ CỰC NGHỊCH MỆNH THẦN QUÂN (UNKNOWN GOD — THÁI CƠ)
+    // 8. QUÂN VƯƠNG BÀI BẠC CASSIUS (3D SPINE MODEL & GOLDEN CASINO ARENA)
+    if (targetId === 'hero_cassius') {
+      return `
+      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-cassius">
+        <defs>
+          <radialGradient id="cass-burst-bg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(255,215,0,0.4)"/>
+            <stop offset="45%" stop-color="rgba(225,29,72,0.2)"/>
+            <stop offset="85%" stop-color="rgba(10,10,18,0.95)"/>
+            <stop offset="100%" stop-color="#000000"/>
+          </radialGradient>
+          <filter id="cass-burst-glow"><feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#ffd700" flood-opacity="1"/></filter>
+          <filter id="cass-dice-glow"><feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#ff0044" flood-opacity="0.9"/></filter>
+        </defs>
+
+        <!-- Golden Casino Stage & Rotating Orbit -->
+        <rect width="520" height="360" fill="url(#cass-burst-bg)"/>
+        <ellipse cx="260" cy="300" rx="190" ry="42" fill="none" stroke="#ffd700" stroke-width="2.5" stroke-dasharray="10,6" filter="url(#cass-burst-glow)"/>
+        <ellipse cx="260" cy="300" rx="150" ry="32" fill="rgba(255,215,0,0.1)"/>
+
+        <!-- Floating Razor Cards in Orbit -->
+        <g filter="url(#cass-burst-glow)">
+          <g transform="translate(100, 160) rotate(-25)">
+            <rect x="-14" y="-22" width="28" height="44" rx="4" fill="#ffffff" stroke="#ffd700" stroke-width="2.5"/>
+            <text x="0" y="6" font-family="'Impact', sans-serif" font-size="20" fill="#e11d48" text-anchor="middle">A♠</text>
+          </g>
+          <g transform="translate(420, 150) rotate(20)">
+            <rect x="-14" y="-22" width="28" height="44" rx="4" fill="#ffffff" stroke="#ffd700" stroke-width="2.5"/>
+            <text x="0" y="6" font-family="'Impact', sans-serif" font-size="20" fill="#0f172a" text-anchor="middle">K♦</text>
+          </g>
+          <g transform="translate(70, 250) rotate(-10)">
+            <rect x="-12" y="-18" width="24" height="36" rx="3" fill="#ffffff" stroke="#ffd700" stroke-width="2"/>
+            <text x="0" y="5" font-family="'Impact', sans-serif" font-size="16" fill="#e11d48" text-anchor="middle">Q♥</text>
+          </g>
+          <g transform="translate(450, 240) rotate(15)">
+            <rect x="-12" y="-18" width="24" height="36" rx="3" fill="#ffffff" stroke="#ffd700" stroke-width="2"/>
+            <text x="0" y="5" font-family="'Impact', sans-serif" font-size="16" fill="#0f172a" text-anchor="middle">J♣</text>
+          </g>
+        </g>
+
+        <!-- Floating Golden Dice with Wings -->
+        <g filter="url(#cass-dice-glow)" transform="translate(130, 90)">
+          <rect x="-16" y="-16" width="32" height="32" rx="6" fill="#fffbeb" stroke="#ca8a04" stroke-width="3"/>
+          <circle cx="0" cy="0" r="5" fill="#e11d48"/>
+          <!-- Wings -->
+          <path d="M -16,-4 Q -36,-20 -44,-2 Q -28,2 -16,6 Z" fill="#ffd700" opacity="0.85"/>
+          <path d="M 16,-4 Q 36,-20 44,-2 Q 28,2 16,6 Z" fill="#ffd700" opacity="0.85"/>
+        </g>
+
+        <!-- Full 3D Spine Model of Cassius -->
+        <g transform="translate(260, 185)">
+          <image href="assets/characters/cassius/model_3d_full.png" xlink:href="assets/characters/cassius/model_3d_full.png" x="-180" y="-165" width="360" height="330" preserveAspectRatio="xMidYMid meet" filter="url(#cass-burst-glow)"/>
+        </g>
+      </svg>`;
+    }
+
+    // 9. VÔ CỰC NGHỊCH MỆNH THẦN QUÂN (UNKNOWN GOD — THÁI CƠ)
     return `
     <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-god">
       <defs>
@@ -1453,6 +1658,55 @@ const Sprites = {
     let gradColor3 = '#ffffff';
     let glowColor = '#00ffff';
 
+    if (type === 'cassius_card') {
+      const uid = 'cass_card_' + Math.floor(Math.random() * 100000);
+      return `
+      <svg class="pixel-slash-fx fx-cassius-card" viewBox="0 0 120 120" width="100%" height="100%" style="overflow:visible;">
+        <defs>
+          <linearGradient id="${uid}-blade" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ffd700" stop-opacity="0.1"/>
+            <stop offset="40%" stop-color="#f59e0b" stop-opacity="0.95"/>
+            <stop offset="70%" stop-color="#ffd700" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="1"/>
+          </linearGradient>
+          <filter id="${uid}-glow">
+            <feDropShadow dx="0" dy="0" stdDeviation="4.5" flood-color="#ffd700" flood-opacity="0.9"/>
+          </filter>
+        </defs>
+
+        <!-- Golden Razor Slash Crescent Curve -->
+        <path d="M 12,98 Q 50,18 108,24 Q 65,48 12,98 Z" fill="url(#${uid}-blade)" filter="url(#${uid}-glow)"/>
+        <path d="M 24,86 Q 54,28 102,28 Q 62,42 24,86 Z" fill="#ffffff" opacity="0.9"/>
+
+        <!-- 1. Flying Ace of Spades Card (Leading projectile) -->
+        <g transform="translate(86, 32) rotate(26)" filter="url(#${uid}-glow)">
+          <rect x="-8" y="-12" width="16" height="24" rx="2" fill="#ffffff" stroke="#ffd700" stroke-width="1.4"/>
+          <!-- Spade icon -->
+          <path d="M 0,-6 C-3,-2 -4,1.2 0,3.5 C4,1.2 3,-2 0,-6 Z" fill="#0f172a"/>
+          <polygon points="-1.5,3.2 1.5,3.2 0.8,6 -0.8,6" fill="#0f172a"/>
+          <text x="-5.5" y="-5.5" font-family="'Courier New', monospace" font-size="5" font-weight="900" fill="#ca8a04">A</text>
+        </g>
+
+        <!-- 2. Trailing King of Diamonds Card -->
+        <g transform="translate(52, 58) rotate(-16)">
+          <rect x="-6" y="-9" width="12" height="18" rx="1.6" fill="#fffbeb" stroke="#ffd700" stroke-width="1.2"/>
+          <polygon points="0,-4 -3,0 0,4 3,0" fill="#e11d48"/>
+          <text x="-4" y="-3.5" font-family="'Courier New', monospace" font-size="4" font-weight="900" fill="#e11d48">K</text>
+        </g>
+
+        <!-- 3. Trailing Queen Card -->
+        <g transform="translate(26, 82) rotate(-38)">
+          <rect x="-5" y="-7.5" width="10" height="15" rx="1.4" fill="#ffffff" stroke="#ffd700" stroke-width="1"/>
+          <circle cx="0" cy="0" r="2" fill="#0f172a"/>
+        </g>
+
+        <!-- Golden Sparkles & Suit Glints -->
+        <polygon points="98,18 100,14 102,18 100,22" fill="#ffffff"/>
+        <polygon points="40,36 42,32 44,36 42,40" fill="#ffd700"/>
+        <polygon points="76,68 78,64 80,68 78,72" fill="#ffd700"/>
+      </svg>`;
+    }
+
     if (type === 'extra') {
       gradColor1 = '#ff007f';
       gradColor2 = '#ffd700';
@@ -1793,6 +2047,50 @@ const Sprites = {
             <!-- Hand holding brim -->
             <polygon points="-15,-38 15,-38 12,-24 -12,-24" fill="#37474f" stroke="#ffd700" stroke-width="1.2"/>
             <circle cx="0" cy="-31" r="3.5" fill="#ffd700"/>
+          </g>
+        </svg>`;
+
+      case 'hero_cassius':
+        return `
+        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-cassius">
+          <defs>
+            <linearGradient id="cass-cutin-bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="rgba(17,17,25,0)"/>
+              <stop offset="15%" stop-color="#111119"/>
+              <stop offset="50%" stop-color="#451a03"/>
+              <stop offset="85%" stop-color="#111119"/>
+              <stop offset="100%" stop-color="rgba(17,17,25,0)"/>
+            </linearGradient>
+            <filter id="cass-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ffd700" flood-opacity="1"/></filter>
+            <filter id="cass-red-glow"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ff0044" flood-opacity="1"/></filter>
+          </defs>
+          <polygon points="20,0 640,0 620,130 0,130" fill="url(#cass-cutin-bg)"/>
+          <line x1="30" y1="0" x2="630" y2="0" stroke="#ffd700" stroke-width="3"/>
+          <line x1="10" y1="130" x2="610" y2="130" stroke="#ff0044" stroke-width="3"/>
+          <text x="320" y="80" font-family="'Courier New', monospace" font-size="52" font-weight="900" fill="rgba(255,215,0,0.16)" text-anchor="middle" letter-spacing="18">運 命 豪 賭</text>
+          
+          <g transform="translate(320, 65)">
+            <!-- Left Eye: Golden Hypnotic Spiral Swirl Eye -->
+            <g transform="translate(-110, 0)">
+              <path d="M -55,-8 Q 0,-24 50,-2 Q 10,18 -55,-8 Z" fill="#ffffff"/>
+              <ellipse cx="2" cy="0" rx="16" ry="12" fill="#451a03"/>
+              <ellipse cx="2" cy="0" rx="10" ry="10" fill="#ffd700" filter="url(#cass-eye-glow)"/>
+              <!-- Spiral -->
+              <path d="M 0,-4 Q 4,-4 4,0 Q 4,4 0,4 Q -4,4 -4,0 Q -4,-2 0,-2" fill="none" stroke="#78350f" stroke-width="1.8"/>
+              <circle cx="2" cy="0" r="2.2" fill="#ffffff"/>
+              <path d="M -60,-12 Q 5,-32 55,-4" stroke="#ffd700" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M -50,-8 Q -100,-25 -190,-12" stroke="#facc15" stroke-width="3" fill="none"/>
+            </g>
+
+            <!-- Right Eye: Glowing Crimson Slit Predator Eye -->
+            <g transform="translate(110, 0)">
+              <path d="M -50,-2 Q 0,-24 55,-8 Q 10,18 -50,-2 Z" fill="#ffffff"/>
+              <ellipse cx="-2" cy="0" rx="16" ry="12" fill="#450a0a"/>
+              <ellipse cx="-2" cy="0" rx="10" ry="10" fill="#ff0044" filter="url(#cass-red-glow)"/>
+              <line x1="-2" y1="-8" x2="-2" y2="8" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M -55,-4 Q -5,-32 60,-12" stroke="#ff0044" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M 50,-8 Q 100,-25 190,-12" stroke="#ffd700" stroke-width="3" fill="none"/>
+            </g>
           </g>
         </svg>`;
 
