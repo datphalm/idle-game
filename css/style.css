@@ -367,6 +367,22 @@ body {
   100% { transform: translateX(0) scale(1); }
 }
 
+/* Spine Chibi Characters Attack Animation: Subtle forward punch so they remain inside the ground aura */
+.player-attack-anim.hero-attack-hero_trisa,
+.player-attack-anim.hero-attack-hero_rhiannon,
+.player-attack-anim.hero-attack-hero_hilde,
+.player-attack-anim.hero-attack-hero_heide,
+.player-attack-anim.hero-attack-hero_meilin,
+.player-attack-anim.hero-attack-hero_cassius {
+  animation: playerSpineAttackPulse 0.35s ease-out forwards;
+}
+@keyframes playerSpineAttackPulse {
+  0%   { transform: translateX(0) scale(1); }
+  35%  { transform: translateX(6px) scale(1.02); }
+  70%  { transform: translateX(3px) scale(1.01); }
+  100% { transform: translateX(0) scale(1); }
+}
+
 .player-extra-anim {
   animation: playerExtraDash 0.42s ease-out forwards;
 }

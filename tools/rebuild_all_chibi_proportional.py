@@ -3,7 +3,7 @@ import sys
 import time
 import cv2
 import numpy as np
-from PIL import Image, ImageOps
+from PIL import Image
 import shutil
 from concurrent.futures import ProcessPoolExecutor
 
@@ -13,43 +13,43 @@ ASSETS_DIR = os.path.join(BASE_DIR, 'assets', 'characters')
 HERO_CONFIGS = {
     'trisa': {
         'video_path': os.path.join(BASE_DIR, 'scratch', 'trisa_raw', 'trisa2.mp4'),
-        'crop_box': (20, 40, 670, 788),
-        'wipe_x': 670,
+        'x_ref': 455.0,
+        'y_ground': 780.0,
+        'wipe_x': 665,
+        'left_cut': 30,
         'actions': {
-            # New Standing Idle (stop) replacing the crouching/sitting pose!
             'chibi_idle': {'start': 3420, 'end': 3500, 'step': 1, 'duration': 40},
             'chibi_walk': {'start': 240, 'end': 320, 'step': 1, 'duration': 40},
             'chibi_attack': {'start': 445, 'end': 525, 'step': 1, 'duration': 42},
             'chibi_attack2': {'start': 560, 'end': 640, 'step': 1, 'duration': 40},
-            'chibi_attack3': {'start': 1000, 'end': 1080, 'step': 1, 'duration': 40},
+            # Tactical Dagger Throw & Spin Strike replacing the crate-sitting camping animation!
+            'chibi_attack3': {'start': 3615, 'end': 3690, 'step': 1, 'duration': 40},
             'chibi_skill': {'start': 3525, 'end': 3615, 'step': 2, 'duration': 46},
             'chibi_hit': {'start': 3930, 'end': 4010, 'step': 1, 'duration': 45}
         }
     },
     'meilin': {
         'video_path': os.path.join(BASE_DIR, 'scratch', 'raw_hero3_meilin', 'meilin_chibi.mp4'),
-        'crop_box': (20, 40, 670, 788),
+        'x_ref': 444.0,
+        'y_ground': 785.0,
         'wipe_x': 670,
+        'left_cut': 30,
         'actions': {
-            # New Standing Graceful Idle (stop) replacing the vertical leg-split!
             'chibi_idle': {'start': 2380, 'end': 2460, 'step': 1, 'duration': 40},
-            # Forward martial arts run/walk
             'chibi_walk': {'start': 1610, 'end': 1690, 'step': 1, 'duration': 40},
-            # Rapid dual-fist martial arts punch combo
             'chibi_attack': {'start': 0, 'end': 70, 'step': 1, 'duration': 40},
-            # Heavy wind-up dragon knuckle punch
             'chibi_attack2': {'start': 1160, 'end': 1240, 'step': 1, 'duration': 40},
             'chibi_attack3': {'start': 2660, 'end': 2740, 'step': 1, 'duration': 40},
-            # Whirlwind dragon kick
             'chibi_skill': {'start': 3420, 'end': 3520, 'step': 2, 'duration': 46},
-            # Recoil
             'chibi_hit': {'start': 3670, 'end': 3760, 'step': 1, 'duration': 45}
         }
     },
     'heide': {
         'video_path': os.path.join(BASE_DIR, 'scratch', 'raw_hero2_heide', 'heide_chibi.mp4'),
-        'crop_box': (20, 40, 670, 788),
+        'x_ref': 434.0,
+        'y_ground': 785.0,
         'wipe_x': 670,
+        'left_cut': 30,
         'actions': {
             'chibi_idle': {'start': 285, 'end': 352, 'step': 1, 'duration': 45},
             'chibi_walk': {'start': 730, 'end': 805, 'step': 1, 'duration': 40},
@@ -61,8 +61,10 @@ HERO_CONFIGS = {
     },
     'hilde': {
         'video_path': os.path.join(BASE_DIR, 'scratch', 'raw_hero1_hilde', 'hilde_chibi.mp4'),
-        'crop_box': (10, 40, 670, 788),
-        'wipe_x': 670,
+        'x_ref': 436.0,
+        'y_ground': 785.0,
+        'wipe_x': None,  # Hilde has NO dropdown; zero right-edge clipping!
+        'left_cut': 25,
         'actions': {
             'chibi_idle': {'start': 80, 'end': 160, 'step': 1, 'duration': 45},
             'chibi_walk': {'start': 200, 'end': 280, 'step': 1, 'duration': 40},
@@ -74,27 +76,29 @@ HERO_CONFIGS = {
     }
 }
 
-def clean_frame(raw, wipe_x):
-    out = raw.copy()
-    out[:43, :] = 0
-    out[788:, :] = 0
-    out[:, :20] = 0
-    if wipe_x:
-        out[:, wipe_x:] = 0
-    return out
+SCALE = 0.55
+CANVAS_SIZE = 512
+ANCHOR_X = 256
+ANCHOR_Y = 480
 
 def process_single_hero(hero_name):
     t_start = time.time()
     cfg = HERO_CONFIGS[hero_name]
-    print(f'=== Starting {hero_name} (512x512 Proportional, Zero Distortion) ===', flush=True)
+    print(f'=== Starting {hero_name} (512x512 Aura-Anchored, Zero Distortion) ===', flush=True)
     out_dir = os.path.join(ASSETS_DIR, hero_name)
     os.makedirs(out_dir, exist_ok=True)
     vpath = cfg['video_path']
-    x1, y1, x2, y2 = cfg['crop_box']
+    x_ref = cfg['x_ref']
+    y_ground = cfg['y_ground']
     wipe_x = cfg['wipe_x']
+    left_cut = cfg['left_cut']
+
+    M = np.float32([
+        [SCALE, 0, ANCHOR_X - x_ref * SCALE],
+        [0, SCALE, ANCHOR_Y - y_ground * SCALE]
+    ])
 
     cap = cv2.VideoCapture(vpath)
-    canvas_size = 512
 
     for act_name, act in cfg['actions'].items():
         start, end, step, dur = act['start'], act['end'], act['step'], act['duration']
@@ -105,46 +109,49 @@ def process_single_hero(hero_name):
             ret, frame = cap.read()
             if not ret: break
             if (f_no - start) % step == 0:
-                cleaned = clean_frame(frame, wipe_x)
-                sub = cleaned[y1:y2, x1:x2]
-                
-                m = np.max(sub, axis=2)
-                char_mask = (m > 8).astype(np.uint8) * 255
-                
-                num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(char_mask, connectivity=8)
-                clean_mask = np.zeros_like(char_mask)
-                for lbl in range(1, num_labels):
-                    if stats[lbl, cv2.CC_STAT_AREA] >= 20:
-                        clean_mask[labels == lbl] = 255
-                
-                rgb = cv2.cvtColor(sub, cv2.COLOR_BGR2RGB)
-                rgb[clean_mask == 0] = 0
-                rgba = np.dstack([rgb, clean_mask])
-                
-                # UNIFORM PROPORTIONAL SCALING (sx == sy)
-                h, w = rgba.shape[:2]
-                scale = 496.0 / h
-                new_w = int(w * scale)
-                new_h = int(h * scale)
-                
-                resized = cv2.resize(rgba, (new_w, new_h), interpolation=cv2.INTER_LANCZOS4)
-                dark_mask = np.max(resized[:, :, :3], axis=2) <= 8
-                resized[dark_mask, 3] = 0
-                
-                # Place onto 512x512 canvas centered horizontally, grounded near bottom
-                canvas = np.zeros((canvas_size, canvas_size, 4), dtype=np.uint8)
-                x_off = max(0, (canvas_size - new_w) // 2)
-                y_off = max(0, canvas_size - new_h - 8)
-                
-                # Safe slice copy
-                cw = min(new_w, canvas_size - x_off)
-                ch = min(new_h, canvas_size - y_off)
-                canvas[y_off:y_off+ch, x_off:x_off+cw] = resized[:ch, :cw]
-                
+                clean = frame.copy()
+                clean[:45, :] = 0
+                clean[int(y_ground)+10:, :] = 0
+                clean[:, :left_cut] = 0
+                if wipe_x:
+                    clean[:, wipe_x:] = 0
+
+                m = (np.max(clean, axis=2) > 10).astype(np.uint8) * 255
+                num, labels, stats, _ = cv2.connectedComponentsWithStats(m, 8)
+                cmask = np.zeros_like(m)
+
+                if num > 1:
+                    main_lbl = 1 + np.argmax(stats[1:, cv2.CC_STAT_AREA])
+                    cmask[labels == main_lbl] = 255
+                    mx, my, mw, mh = stats[main_lbl, :4]
+                    for i in range(1, num):
+                        if i == main_lbl: continue
+                        x, y, w, h, a = stats[i]
+                        dist_x = max(0, mx - (x + w), x - (mx + mw))
+                        dist_y = max(0, my - (y + h), y - (my + mh))
+                        # Keep close components (sword, ribbons, arrows) but reject floating cursors
+                        if a >= 200 or (dist_x <= 25 and dist_y <= 25 and a >= 30 and y < 650):
+                            cmask[labels == i] = 255
+
+                rgb = cv2.cvtColor(clean, cv2.COLOR_BGR2RGB)
+                rgb[cmask == 0] = 0
+                rgba = np.dstack([rgb, cmask])
+
+                canvas = cv2.warpAffine(
+                    rgba, M, (CANVAS_SIZE, CANVAS_SIZE),
+                    flags=cv2.INTER_LANCZOS4,
+                    borderMode=cv2.BORDER_CONSTANT,
+                    borderValue=(0, 0, 0, 0)
+                )
+
+                # Pure transparency for dark boundary pixels
+                dark = np.max(canvas[:, :, :3], axis=2) <= 8
+                canvas[dark, 3] = 0
+
                 pil_im = Image.fromarray(canvas, 'RGBA')
                 frames.append(pil_im)
             f_no += 1
-            
+
         if frames:
             out_webp = os.path.join(out_dir, f'{act_name}.webp')
             frames[0].save(
@@ -167,7 +174,7 @@ def process_single_hero(hero_name):
     return hero_name, elapsed
 
 def sync_all():
-    print('=== Syncing Rebuilt Proportional Assets ===', flush=True)
+    print('=== Syncing Rebuilt Aura-Anchored Assets ===', flush=True)
     for hero in ['trisa', 'meilin', 'heide', 'hilde']:
         src = os.path.join(ASSETS_DIR, hero)
         for dest in [
@@ -182,7 +189,7 @@ def sync_all():
 if __name__ == '__main__':
     t0 = time.time()
     heroes = ['trisa', 'meilin', 'heide', 'hilde']
-    print('Starting concurrent rebuild of all 4 heroes with 512x512 uniform proportional scaling...')
+    print('Starting concurrent rebuild of all 4 heroes with 512x512 Aura-Anchored scaling...')
     with ProcessPoolExecutor(max_workers=4) as executor:
         results = list(executor.map(process_single_hero, heroes))
     for h, el in results:
