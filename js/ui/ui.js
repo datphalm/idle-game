@@ -1017,7 +1017,7 @@ const UI = {
           pSprite.innerHTML = Sprites.getPlayerSvg('idle', activeHero);
           pSprite.className = 'fighter-avatar player-idle';
         }
-      }, 420);
+      }, (activeHero === 'hero_rhiannon') ? 950 : 420);
     }
     if (!isSpecialHero) {
       const targetSlash = isBoss ? 'slash-fx-boss' : 'slash-fx-monster';
@@ -1054,7 +1054,7 @@ const UI = {
           pSprite.innerHTML = Sprites.getPlayerSvg('idle', activeHero);
           pSprite.className = 'fighter-avatar player-idle';
         }
-      }, (activeHero === 'hero_rhiannon') ? 440 : 340);
+      }, (activeHero === 'hero_rhiannon') ? 740 : 340);
     }
     if (activeHero === 'hero_rhiannon') {
       this._rhiannonAtkCycle = ((this._rhiannonAtkCycle || 0) + 1) % 3;
@@ -1248,14 +1248,14 @@ const UI = {
     let targetMonsterId = (mode === 'dungeon') ? 'dungeon-monster-sprite' : ((mode === 'tower') ? 'tower-enemy-sprite' : (GameState.boss?.active ? 'boss-active-sprite' : 'monster-sprite'));
     setTimeout(() => {
       this._triggerAnim(targetMonsterId, 'hit-flash', true);
-    }, 180);
+    }, 240);
 
     setTimeout(() => {
       if (arrowContainer) {
         arrowContainer.innerHTML = '';
         arrowContainer.classList.add('hidden');
       }
-    }, 300);
+    }, 480);
   },
 
   _triggerRhiannonBarrageFx(mode) {
@@ -1281,17 +1281,20 @@ const UI = {
     let targetMonsterId = (mode === 'dungeon') ? 'dungeon-monster-sprite' : ((mode === 'tower') ? 'tower-enemy-sprite' : (GameState.boss?.active ? 'boss-active-sprite' : 'monster-sprite'));
     setTimeout(() => {
       this._triggerAnim(targetMonsterId, 'hit-flash', true);
-    }, 150);
+    }, 220);
     setTimeout(() => {
       this._triggerAnim(targetMonsterId, 'hit-flash', true);
-    }, 320);
+    }, 480);
+    setTimeout(() => {
+      this._triggerAnim(targetMonsterId, 'hit-flash', true);
+    }, 720);
 
     setTimeout(() => {
       if (barrageContainer) {
         barrageContainer.innerHTML = '';
         barrageContainer.classList.add('hidden');
       }
-    }, 560);
+    }, 950);
   },
 
   _triggerRhiannonLaserFx(mode) {
@@ -1315,18 +1318,21 @@ const UI = {
     laserContainer.innerHTML = `<img src="assets/characters/rhiannon/laser_beam.webp" class="rhiannon-laser-img" alt="Laser Beam" />`;
     laserContainer.classList.remove('hidden');
 
-    // Impact flash on monster
+    // Impact flash on monster (multi-stage beam burning)
     let targetMonsterId = (mode === 'dungeon') ? 'dungeon-monster-sprite' : ((mode === 'tower') ? 'tower-enemy-sprite' : (GameState.boss?.active ? 'boss-active-sprite' : 'monster-sprite'));
     setTimeout(() => {
       this._triggerAnim(targetMonsterId, 'hit-flash', true);
-    }, 180);
+    }, 220);
+    setTimeout(() => {
+      this._triggerAnim(targetMonsterId, 'hit-flash', true);
+    }, 480);
 
     setTimeout(() => {
       if (laserContainer) {
         laserContainer.innerHTML = '';
         laserContainer.classList.add('hidden');
       }
-    }, 460);
+    }, 780);
   },
 
   showRhiannonTreeBuff(mode) {
@@ -1335,34 +1341,29 @@ const UI = {
     else if (mode === 'tower') stageId = 'tower-arena-stage';
     else if (GameState.boss?.active) stageId = 'boss-arena-stage';
 
-    const stageEl = document.getElementById(stageId) || document.getElementById('arena-stage');
-    if (!stageEl) return;
+    const pSpriteId = (mode === 'dungeon') ? 'dungeon-player-sprite' : ((mode === 'tower') ? 'tower-player-sprite' : (GameState.boss?.active ? 'boss-player-sprite' : 'player-sprite'));
+    const pSprite = document.getElementById(pSpriteId);
+    const parentTarget = pSprite ? pSprite.parentElement : (document.getElementById(stageId) || document.getElementById('arena-stage'));
+    if (!parentTarget) return;
 
-    let treeContainer = stageEl.querySelector('.rhiannon-tree-container');
+    let treeContainer = parentTarget.querySelector('.rhiannon-tree-container');
     if (!treeContainer) {
       treeContainer = document.createElement('div');
       treeContainer.className = 'rhiannon-tree-container';
-      stageEl.appendChild(treeContainer);
+      parentTarget.appendChild(treeContainer);
     }
 
-    // Play gentle tree blessing chime sound
-    try {
-      const treeAudio = new Audio('assets/audio/voice/skill_hero_rhiannon.mp3');
-      treeAudio.volume = 0.85;
-      treeAudio.play().catch(() => {});
-    } catch(e) {}
+    // Strictly NO chibi combat sound per user request (only ultimate has audio)
 
-    // Animate chibi skill pose
-    const pSpriteId = (mode === 'dungeon') ? 'dungeon-player-sprite' : ((mode === 'tower') ? 'tower-player-sprite' : (GameState.boss?.active ? 'boss-player-sprite' : 'player-sprite'));
-    const pSprite = document.getElementById(pSpriteId);
+    // Animate chibi skill pose with graceful timing
     if (pSprite && typeof Sprites !== 'undefined') {
       pSprite.innerHTML = Sprites.getPlayerSvg('skill', 'hero_rhiannon');
       setTimeout(() => {
         if (pSprite) pSprite.innerHTML = Sprites.getPlayerSvg('idle', 'hero_rhiannon');
-      }, 1200);
+      }, 1600);
     }
 
-    treeContainer.innerHTML = `<img src="assets/characters/rhiannon/tree_buff.webp" class="rhiannon-tree-img" alt="Yggdrasil Tree Buff" />`;
+    treeContainer.innerHTML = `<img src="assets/characters/rhiannon/tree_buff.webp" class="rhiannon-tree-img" alt="Yggdrasil Tree Aura" />`;
     treeContainer.classList.remove('hidden');
 
     setTimeout(() => {
@@ -1370,7 +1371,7 @@ const UI = {
         treeContainer.innerHTML = '';
         treeContainer.classList.add('hidden');
       }
-    }, 2400);
+    }, 3600);
   },
 
   _triggerAnim(elementId, className, force = false) {

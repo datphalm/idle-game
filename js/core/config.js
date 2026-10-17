@@ -665,7 +665,7 @@ const CONFIG = {
     }
   ],
 
-  GAME_VERSION: '2.3.0',
+  GAME_VERSION: '2.5.0',
   UPDATE_URL: 'https://idle-game-ypvy.onrender.com/api/version',
   SERVER_URL: 'https://idle-game-ypvy.onrender.com/api',
   AUTO_SAVE_INTERVAL: 20000,

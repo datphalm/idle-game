@@ -77,7 +77,7 @@ def build_obfuscated_bundle(base_dir: str, output_path: str):
 
     # Tạo wrapper tự giải mã và tự bảo vệ
     loader_template = """/* 
- * IDLE RPG — PROTECTED PRODUCTION BUILD v2.1.0
+ * IDLE RPG — PROTECTED PRODUCTION BUILD v2.5.0
  * (c) ALL RIGHTS RESERVED. DO NOT DECOMPILE OR MODIFY.
  */
 (function(_0xroot) {
@@ -192,7 +192,7 @@ def build_dist_release(base_dir: str):
             if os.path.exists(db_path):
                 with open(db_path, "r", encoding="utf-8") as dbf:
                     db_obj = json.load(dbf)
-                db_obj["version"] = v_data.get("version", "2.3.0")
+                db_obj["version"] = v_data.get("version", "2.5.0")
                 db_obj["changelog"] = v_data.get("changelog", [])
                 with open(db_path, "w", encoding="utf-8") as dbf:
                     json.dump(db_obj, dbf, ensure_ascii=False, indent=2)
@@ -296,9 +296,22 @@ def build_dist_release(base_dir: str):
             else:
                 print(f"⚠️ Cảnh báo lỗi csc: {out_err}")
 
+    # 6. Đóng gói file nén IdleRPG_Online_Latest.zip tự động
+    print("📦 [5/5] Đang nén toàn bộ bản phân phối thành IdleRPG_Online_Latest.zip...")
+    zip_path = os.path.join(base_dir, "IdleRPG_Online_Latest.zip")
+    import zipfile
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+        for root, dirs, files in os.walk(dist_dir):
+            for file in files:
+                abs_file = os.path.join(root, file)
+                rel_file = os.path.relpath(abs_file, dist_dir)
+                zf.write(abs_file, rel_file)
+    print(f"✨ Đã tạo gói zip tải về thành công: {zip_path} ({os.path.getsize(zip_path):,} bytes)")
+
     print("\n🎉 HOÀN TẤT ĐÓNG GÓI! Bản cài đặt phân phối đã sẵn sàng tại:")
     print(f"👉 {dist_dir}")
-    print("Người chơi chỉ cần giải nén thư mục 'dist' và mở 'IdleRPG.exe' là chơi ngay!")
+    print(f"👉 {zip_path} (Sẵn sàng up lên Google Drive)")
+    print("Người chơi chỉ cần giải nén thư mục 'dist' (hoặc file zip) và mở 'IdleRPG.exe' là chơi ngay!")
 
 if __name__ == "__main__":
     base = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))

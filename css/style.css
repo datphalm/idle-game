@@ -3001,7 +3001,7 @@ body {
   height: 100%;
   object-fit: fill;
   filter: drop-shadow(0 0 16px rgba(74, 222, 128, 0.95)) drop-shadow(0 0 35px rgba(254, 240, 138, 0.85));
-  animation: rhiannonLaserPulse 0.46s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: rhiannonLaserPulse 0.78s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes rhiannonLaserPulse {
@@ -3010,12 +3010,12 @@ body {
     transform: scaleX(0.1) scaleY(0.65);
     transform-origin: left center;
   }
-  15% {
+  14% {
     opacity: 1;
     transform: scaleX(1.0) scaleY(1.15);
     transform-origin: left center;
   }
-  75% {
+  80% {
     opacity: 1;
     transform: scaleX(1.0) scaleY(1.0);
   }
@@ -3036,7 +3036,7 @@ body {
   pointer-events: none;
   z-index: 125;
   overflow: visible;
-  animation: rhiannonArrowFly 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: rhiannonArrowFly 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .rhiannon-arrow-container.hidden {
@@ -3087,7 +3087,7 @@ body {
   height: 100%;
   object-fit: contain;
   filter: drop-shadow(0 0 18px rgba(74, 222, 128, 0.95)) drop-shadow(0 0 35px rgba(167, 243, 208, 0.85));
-  animation: rhiannonBarrageDrop 0.56s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: rhiannonBarrageDrop 0.92s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes rhiannonBarrageDrop {
@@ -3095,7 +3095,7 @@ body {
     opacity: 0;
     transform: translateY(-30px) scale(0.8);
   }
-  20% {
+  15% {
     opacity: 1;
     transform: translateY(0) scale(1.05);
   }
@@ -3109,18 +3109,20 @@ body {
   }
 }
 
-/* Sacred Tree Yggdrasil Bloom (Move 4 - Auto Buff) */
+/* Sacred Tree Yggdrasil Bloom (Move 4 - Auto Buff Aura Wrapping Around Character) */
 .rhiannon-tree-container {
   position: absolute;
-  left: 15px;
-  bottom: 0px;
-  width: 330px;
-  height: 330px;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  height: 230px;
   pointer-events: none;
-  z-index: 95;
+  z-index: 5;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible;
 }
 
 .rhiannon-tree-container.hidden {
@@ -3131,26 +3133,26 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 0 20px rgba(74, 222, 128, 0.95)) drop-shadow(0 0 40px rgba(167, 243, 208, 0.85));
-  animation: rhiannonTreeBloom 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  filter: drop-shadow(0 0 16px rgba(74, 222, 128, 0.85)) drop-shadow(0 0 32px rgba(254, 240, 138, 0.65));
+  animation: rhiannonTreeAura 3.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes rhiannonTreeBloom {
+@keyframes rhiannonTreeAura {
   0% {
     opacity: 0;
-    transform: scale(0.65) translateY(25px);
+    transform: scale(0.6) translateY(15px);
   }
   14% {
-    opacity: 1;
+    opacity: 0.95;
     transform: scale(1.05) translateY(0);
   }
   80% {
-    opacity: 1;
-    transform: scale(1.0) translateY(-6px);
+    opacity: 0.95;
+    transform: scale(1.0) translateY(-4px);
   }
   100% {
     opacity: 0;
-    transform: scale(0.95) translateY(-14px);
+    transform: scale(0.9) translateY(-10px);
   }
 }
 
