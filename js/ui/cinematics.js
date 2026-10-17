@@ -1909,8 +1909,8 @@ const Cinematics = {
         let dissolveTiming = 2800;
         let endingTiming = 3000;
         if (isTrisa) {
-          dissolveTiming = 3600;
-          endingTiming = 4050;
+          dissolveTiming = 2400;
+          endingTiming = 2700;
         } else if (isHilde) {
           dissolveTiming = 1450;
           endingTiming = 1900;
@@ -2121,8 +2121,8 @@ const Cinematics = {
       let climaxTiming = 2500;
       if (isVideoCutscene) {
         if (isTrisa) {
-          duration = 4050;
-          climaxTiming = 3250;
+          duration = 2700;
+          climaxTiming = 1850;
         } else if (isHilde) {
           duration = 1950;
           climaxTiming = 1400;

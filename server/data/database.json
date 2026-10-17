@@ -167,8 +167,8 @@
       "level": 999,
       "stage": 327,
       "towerFloor": 42,
-      "power": 52110345302,
-      "lastActive": 1792258749983,
+      "power": 52110345323,
+      "lastActive": 1792273019541,
       "knownPlayers": [
         {
           "id": "p_1",
@@ -669,6 +669,18 @@
       "towerFloor": 1,
       "power": 437,
       "lastActive": 1792000863169,
+      "isMe": false
+    },
+    {
+      "id": "p_mvadbggh_1ds63",
+      "name": "Lil Thành Cát Tư Hãn",
+      "heroId": "hero_cassius",
+      "constellation": 6,
+      "level": 281,
+      "stage": 219,
+      "towerFloor": 80,
+      "power": 44820169484,
+      "lastActive": 1792119942895,
       "isMe": false
     }
   ],
