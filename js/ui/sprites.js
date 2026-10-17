@@ -606,8 +606,8 @@ const Sprites = {
     }
 
     return `
-    <svg class="pixel-sprite hero-pixel-svg hero-trisa action-${action}" viewBox="-6 -10 112 116" width="100%" height="100%" overflow="visible">
-      <image href="${imgSrc}" xlink:href="${imgSrc}" x="-6" y="-10" width="112" height="116" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
+    <svg class="pixel-sprite hero-pixel-svg hero-trisa action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
+      <image href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
     </svg>`;
   },
 
@@ -640,8 +640,8 @@ const Sprites = {
     }
 
     return `
-    <svg class="pixel-sprite hero-pixel-svg hero-hilde action-${action}" viewBox="-6 -10 112 116" width="100%" height="100%" overflow="visible">
-      <image href="${imgSrc}" xlink:href="${imgSrc}" x="-6" y="-10" width="112" height="116" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
+    <svg class="pixel-sprite hero-pixel-svg hero-hilde action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
+      <image href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
     </svg>`;
   },
 
@@ -674,8 +674,8 @@ const Sprites = {
     }
 
     return `
-    <svg class="pixel-sprite hero-pixel-svg hero-heide action-${action}" viewBox="-6 -10 112 116" width="100%" height="100%" overflow="visible">
-      <image href="${imgSrc}" xlink:href="${imgSrc}" x="-6" y="-10" width="112" height="116" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
+    <svg class="pixel-sprite hero-pixel-svg hero-heide action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
+      <image href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
     </svg>`;
   },
 
@@ -695,8 +695,10 @@ const Sprites = {
       imgSrc = 'assets/characters/meilin/hover_3d_idle.webp';
     } else if (isAtk) {
       imgSrc = 'assets/characters/meilin/chibi_attack.webp';
-    } else if (isAtk2 || isAtk3) {
+    } else if (isAtk2) {
       imgSrc = 'assets/characters/meilin/chibi_attack2.webp';
+    } else if (isAtk3) {
+      imgSrc = 'assets/characters/meilin/chibi_attack3.webp';
     } else if (isSkill) {
       imgSrc = 'assets/characters/meilin/chibi_skill.webp';
     } else if (isSheathe) {
@@ -708,8 +710,8 @@ const Sprites = {
     }
 
     return `
-    <svg class="pixel-sprite hero-pixel-svg hero-meilin action-${action}" viewBox="-6 -10 112 116" width="100%" height="100%" overflow="visible">
-      <image href="${imgSrc}" xlink:href="${imgSrc}" x="-6" y="-10" width="112" height="116" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
+    <svg class="pixel-sprite hero-pixel-svg hero-meilin action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
+      <image href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
     </svg>`;
   },
 
