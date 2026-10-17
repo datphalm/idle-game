@@ -290,8 +290,8 @@ body {
   position: relative;
   display: inline-block;
   margin: 10px 0;
-  width: 170px;
-  height: 180px;
+  width: 185px;
+  height: 195px;
 }
 
 .fighter-ground-circle {
@@ -299,8 +299,8 @@ body {
   bottom: 0px;
   left: 50%;
   transform: translateX(-50%);
-  width: 156px;
-  height: 48px;
+  width: 180px;
+  height: 54px;
   pointer-events: none;
   z-index: 1;
 }
@@ -3583,9 +3583,9 @@ body {
   margin-bottom: 4px;
 }
 .hero-card-avatar {
-  width: 52px;
-  height: 52px;
-  margin: 4px 0;
+  width: 78px;
+  height: 78px;
+  margin: 2px auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5405,18 +5405,18 @@ body {
 }
 
 @keyframes heroWalkBob {
-  from { transform: scale(0.74) translateY(0) rotate(-1deg); }
-  to { transform: scale(0.74) translateY(-3px) rotate(1deg); }
+  from { transform: scale(1.15) translateY(0) rotate(-1deg); }
+  to { transform: scale(1.15) translateY(-3px) rotate(1deg); }
 }
 
 .fighter-avatar .hero-pixel-svg {
-  transform: scale(0.74);
+  transform: scale(1.15);
   transform-origin: 50% 92%;
 }
 
 .hero-card-avatar .hero-pixel-svg {
   animation: none !important;
-  transform: scale(1) !important;
+  transform: scale(1.42) !important;
   transform-origin: center center !important;
 }
 
@@ -5458,8 +5458,8 @@ body {
 }
 
 @keyframes heroLevitation {
-  0%, 100% { transform: scale(0.74) translateY(0); }
-  50% { transform: scale(0.75) translateY(-5px); }
+  0%, 100% { transform: scale(1.15) translateY(0); }
+  50% { transform: scale(1.17) translateY(-5px); }
 }
 
 /* ============================================================
