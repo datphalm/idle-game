@@ -2979,11 +2979,11 @@ body {
    ============================================================ */
 .rhiannon-laser-container {
   position: absolute;
-  left: 55px;
-  right: 55px;
+  left: 65px;
+  right: 50px;
   top: 50%;
   transform: translateY(-50%);
-  height: 190px;
+  height: 180px;
   pointer-events: none;
   z-index: 120;
   display: flex;
@@ -3000,7 +3000,6 @@ body {
   width: 100%;
   height: 100%;
   object-fit: fill;
-  mix-blend-mode: screen;
   filter: drop-shadow(0 0 16px rgba(74, 222, 128, 0.95)) drop-shadow(0 0 35px rgba(254, 240, 138, 0.85));
   animation: rhiannonLaserPulse 0.46s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -3026,9 +3025,94 @@ body {
   }
 }
 
+/* Starlight Arrow Shot (Move 1 - Normal Attack) */
+.rhiannon-arrow-container {
+  position: absolute;
+  left: 80px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 170px;
+  height: 120px;
+  pointer-events: none;
+  z-index: 125;
+  overflow: visible;
+  animation: rhiannonArrowFly 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.rhiannon-arrow-container.hidden {
+  display: none !important;
+}
+
+.rhiannon-arrow-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 14px rgba(74, 222, 128, 0.95)) drop-shadow(0 0 25px rgba(56, 189, 248, 0.85));
+}
+
+@keyframes rhiannonArrowFly {
+  0% {
+    left: 80px;
+    opacity: 0.8;
+    transform: translateY(-50%) scale(0.7);
+  }
+  100% {
+    left: calc(100% - 150px);
+    opacity: 1;
+    transform: translateY(-50%) scale(1.05);
+  }
+}
+
+/* Aerial Arrow Flurry Barrage (Move 3 - Extra Turn) */
+.rhiannon-barrage-container {
+  position: absolute;
+  right: 25px;
+  top: 25%;
+  width: 320px;
+  height: 280px;
+  pointer-events: none;
+  z-index: 125;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.rhiannon-barrage-container.hidden {
+  display: none !important;
+}
+
+.rhiannon-barrage-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 18px rgba(74, 222, 128, 0.95)) drop-shadow(0 0 35px rgba(167, 243, 208, 0.85));
+  animation: rhiannonBarrageDrop 0.56s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes rhiannonBarrageDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.8);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0) scale(1.05);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(5px) scale(1.0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(15px) scale(0.95);
+  }
+}
+
+/* Sacred Tree Yggdrasil Bloom (Move 4 - Auto Buff) */
 .rhiannon-tree-container {
   position: absolute;
-  left: 10px;
+  left: 15px;
   bottom: 0px;
   width: 330px;
   height: 330px;
@@ -3047,8 +3131,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  mix-blend-mode: screen;
-  filter: drop-shadow(0 0 22px rgba(74, 222, 128, 0.95)) drop-shadow(0 0 45px rgba(167, 243, 208, 0.85));
+  filter: drop-shadow(0 0 20px rgba(74, 222, 128, 0.95)) drop-shadow(0 0 40px rgba(167, 243, 208, 0.85));
   animation: rhiannonTreeBloom 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -5355,6 +5438,12 @@ body {
 .hero-pixel-svg.hero-cassius,
 .hero-pixel-svg.hero-rhiannon {
   animation: heroLevitation 3s ease-in-out infinite !important;
+}
+
+.hero-pixel-svg.hero-rhiannon image {
+  image-rendering: -webkit-optimize-contrast !important;
+  image-rendering: high-quality !important;
+  filter: contrast(1.1) brightness(1.03) drop-shadow(0 2px 7px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 6px rgba(74, 222, 128, 0.35));
 }
 
 @keyframes heroLevitation {

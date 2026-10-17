@@ -1023,7 +1023,7 @@ const UI = {
       const targetSlash = isBoss ? 'slash-fx-boss' : 'slash-fx-monster';
       this._triggerSlashFx(targetSlash, 'extra');
     } else if (activeHero === 'hero_rhiannon') {
-      this._triggerRhiannonLaserFx(isBoss ? 'boss' : null);
+      this._triggerRhiannonBarrageFx(isBoss ? 'boss' : null);
     }
   },
 
@@ -1057,7 +1057,14 @@ const UI = {
       }, (activeHero === 'hero_rhiannon') ? 440 : 340);
     }
     if (activeHero === 'hero_rhiannon') {
-      this._triggerRhiannonLaserFx(mode);
+      this._rhiannonAtkCycle = ((this._rhiannonAtkCycle || 0) + 1) % 3;
+      if (this._rhiannonAtkCycle === 0) {
+        // Move 2: Mega Laser Cannon (Charged / Heavy Shot)
+        this._triggerRhiannonLaserFx(mode);
+      } else {
+        // Move 1: Starlight Arrow Projectile Shot
+        this._triggerRhiannonArrowFx(mode);
+      }
     } else if (activeHero !== 'hero_cassius') {
       const slashType = 'normal';
       this._triggerSlashFx(targetSlash, slashType);
@@ -1216,6 +1223,75 @@ const UI = {
       container.classList.add('hidden');
       container.innerHTML = '';
     }, 450);
+  },
+
+  _triggerRhiannonArrowFx(mode) {
+    if (GameState.settings && GameState.settings.vfxEnabled === false) return;
+    let stageId = 'arena-stage';
+    if (mode === 'dungeon') stageId = 'dungeon-arena-stage';
+    else if (mode === 'tower') stageId = 'tower-arena-stage';
+    else if (GameState.boss?.active) stageId = 'boss-arena-stage';
+
+    const stageEl = document.getElementById(stageId) || document.getElementById('arena-stage');
+    if (!stageEl) return;
+
+    let arrowContainer = stageEl.querySelector('.rhiannon-arrow-container');
+    if (!arrowContainer) {
+      arrowContainer = document.createElement('div');
+      arrowContainer.className = 'rhiannon-arrow-container';
+      stageEl.appendChild(arrowContainer);
+    }
+
+    arrowContainer.innerHTML = `<img src="assets/characters/rhiannon/arrow_shot.webp" class="rhiannon-arrow-img" alt="Starlight Arrow" />`;
+    arrowContainer.classList.remove('hidden');
+
+    let targetMonsterId = (mode === 'dungeon') ? 'dungeon-monster-sprite' : ((mode === 'tower') ? 'tower-enemy-sprite' : (GameState.boss?.active ? 'boss-active-sprite' : 'monster-sprite'));
+    setTimeout(() => {
+      this._triggerAnim(targetMonsterId, 'hit-flash', true);
+    }, 180);
+
+    setTimeout(() => {
+      if (arrowContainer) {
+        arrowContainer.innerHTML = '';
+        arrowContainer.classList.add('hidden');
+      }
+    }, 300);
+  },
+
+  _triggerRhiannonBarrageFx(mode) {
+    if (GameState.settings && GameState.settings.vfxEnabled === false) return;
+    let stageId = 'arena-stage';
+    if (mode === 'dungeon') stageId = 'dungeon-arena-stage';
+    else if (mode === 'tower') stageId = 'tower-arena-stage';
+    else if (GameState.boss?.active) stageId = 'boss-arena-stage';
+
+    const stageEl = document.getElementById(stageId) || document.getElementById('arena-stage');
+    if (!stageEl) return;
+
+    let barrageContainer = stageEl.querySelector('.rhiannon-barrage-container');
+    if (!barrageContainer) {
+      barrageContainer = document.createElement('div');
+      barrageContainer.className = 'rhiannon-barrage-container';
+      stageEl.appendChild(barrageContainer);
+    }
+
+    barrageContainer.innerHTML = `<img src="assets/characters/rhiannon/arrow_barrage.webp" class="rhiannon-barrage-img" alt="Arrow Barrage" />`;
+    barrageContainer.classList.remove('hidden');
+
+    let targetMonsterId = (mode === 'dungeon') ? 'dungeon-monster-sprite' : ((mode === 'tower') ? 'tower-enemy-sprite' : (GameState.boss?.active ? 'boss-active-sprite' : 'monster-sprite'));
+    setTimeout(() => {
+      this._triggerAnim(targetMonsterId, 'hit-flash', true);
+    }, 150);
+    setTimeout(() => {
+      this._triggerAnim(targetMonsterId, 'hit-flash', true);
+    }, 320);
+
+    setTimeout(() => {
+      if (barrageContainer) {
+        barrageContainer.innerHTML = '';
+        barrageContainer.classList.add('hidden');
+      }
+    }, 560);
   },
 
   _triggerRhiannonLaserFx(mode) {

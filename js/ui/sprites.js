@@ -601,8 +601,8 @@ const Sprites = {
 
     return `
     <svg class="pixel-sprite hero-pixel-svg hero-rhiannon action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
-      <!-- Authentic Rhiannon Chibi Visual -->
-      <image href="${imgSrc}" xlink:href="${imgSrc}" x="3" y="4" width="94" height="89" preserveAspectRatio="xMidYMax meet"/>
+      <!-- Authentic Rhiannon Chibi Visual (Razor-Sharp, Zero Background) -->
+      <image href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
     </svg>`;
   },
 
