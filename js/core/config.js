@@ -590,6 +590,78 @@ const CONFIG = {
         { level: 5, name: 'E5: Thâm Uyên Cuồng Nộ', desc: 'Cấp Nộ Huyết Nguyệt Trảm Sát +3. Sát thương Tuyệt Kỹ Nộ tăng thêm 250%!', burstDmgMult: 2.5 },
         { level: 6, name: 'E6: ⟦ NỮ HOÀNG HUYẾT NGUYỆT TOÀN NĂNG ⟧', desc: 'Mọi đòn đánh đều kèm Trảm Kích Huyết Nguyệt 500% ATK, Tuyệt Kỹ Nộ lập tức kết liễu thẳng mọi kẻ thù dưới 40% HP!', uniquePassive: 'trisa_execute_e6' }
       ]
+    },
+    {
+      id: 'hero_hilde',
+      name: '⟦ HILDE • THÁNH NỮ BĂNG QUANG ⟧',
+      title: 'Thánh Nữ Băng Quang & Trọng Kiếm Thần Thánh',
+      rarity: 'unknown',
+      element: 'ice',
+      elementName: 'Băng Tuyết Thần Thánh ❄️⚔️',
+      elementColor: '#38bdf8',
+      pixelArchetype: 'hilde',
+      atkBonusPct: 2.4, hpBonusPct: 2.0, defBonusPct: 1.5, spdBonus: 65,
+      skills: [
+        { id: 's1', name: 'Băng Ngân Thánh Quang (Frost Starlight)', type: 'passive', icon: '❄️', desc: 'Tăng 240% Sát thương toàn thể. Đòn đánh kèm Băng Ngân trảm kích tạo hiệu ứng Tê Cóng giảm 40% Tốc độ và 30% Giáp đối thủ.', bonusAtk: 2.4 },
+        { id: 's2', name: 'Thánh Thuẫn Băng Giá (Aegis of Glaciers)', type: 'active', icon: '🛡️', cd: 6.0, dmgMult: 5.0, desc: 'Tự động kích hoạt: Giáp băng tuyệt đối hấp thụ 50% HP sát thương, phản lại 300% ATK sát thương băng và hồi 25% HP tối đa.' },
+        { id: 's3', name: 'Băng Cực Thần Kiếm (Absolute Zero Execution)', type: 'burst', icon: '⚔️', cd: 8.0, dmgMult: 75.0, desc: 'Khai mở cội nguồn Băng Tuyết: Giáng đòn trảm kích Tuyệt Đối Băng Phong đóng băng không gian gây 7500% ATK sát thương Băng Cực vạn trượng!' }
+      ],
+      eidolons: [
+        { level: 1, name: 'E1: Băng Sương Vô Tận', desc: 'Tăng 200% Sát thương toàn thể, khiên băng tăng thêm 50% dung lượng.', bonusAtk: 2.0, bonusHp: 1.0 },
+        { level: 2, name: 'E2: Hàn Băng Phản Kích', desc: 'Khiên băng phát nổ gây 400% ATK khi hết hạn.', uniquePassive: 'hilde_frost_retaliate' },
+        { level: 3, name: 'E3: Thánh Quang Khải Hoàn', desc: 'Cấp kỹ năng Thánh Thuẫn Băng Giá +3, phòng ngự +50%.', bonusDef: 1.0 },
+        { level: 4, name: 'E4: Băng Tâm Bất Tử', desc: 'Khi nhận sát thương chí tử, hóa thành tượng băng bất tử hồi phục 100% HP trong 4s!', uniquePassive: 'hilde_immortal_rebirth' },
+        { level: 5, name: 'E5: Bão Tuyết Thái Cổ', desc: 'Cấp Nộ Băng Cực Thần Kiếm +3, sát thương Nộ +250%!', burstDmgMult: 2.5 },
+        { level: 6, name: 'E6: ⟦ NỮ THẦN BĂNG QUANG TOÀN TRI ⟧', desc: 'Tuyệt Kỹ Nộ lập tức đóng băng vĩnh viễn và kết liễu thẳng kẻ thù dưới 38% HP!', uniquePassive: 'hilde_execute_e6' }
+      ]
+    },
+    {
+      id: 'hero_heide',
+      name: '⟦ HEIDE • PHONG LÔI KIẾM THÁNH ⟧',
+      title: 'Phong Lôi Kiếm Thánh & Lưỡi Kiếm Siêu Thanh',
+      rarity: 'unknown',
+      element: 'lightning',
+      elementName: 'Phong Lôi Bão Tố ⚡🌪️',
+      elementColor: '#a855f7',
+      pixelArchetype: 'heide',
+      atkBonusPct: 2.6, hpBonusPct: 1.7, defBonusPct: 1.2, spdBonus: 85,
+      skills: [
+        { id: 's1', name: 'Tốc Độ Siêu Thanh (Supersonic Blade)', type: 'passive', icon: '⚡', desc: 'Tăng 260% Sát thương toàn thể. Tốc độ đánh tăng 100%, bỏ qua 50% Giáp đối thủ và tăng 50% Tỉ lệ bạo kích.', bonusAtk: 2.6 },
+        { id: 's2', name: 'Lôi Quang Trảm Kích (Thunderclap Flash)', type: 'active', icon: '🗡️', cd: 5.5, dmgMult: 6.0, desc: 'Tự động kích hoạt: Lướt siêu thanh trảm kích bão lốc tia sét gây 600% ATK, làm tê liệt đối thủ 2 giây và tăng 120% Sát thương bạo kích.' },
+        { id: 's3', name: 'Phong Lôi Đoạt Diệt (Vortex Lightning Judgement)', type: 'burst', icon: '⚡', cd: 8.0, dmgMult: 80.0, desc: 'Tuyệt kỹ kiếm thuật tối thượng: Xé toạc thời không tung một nhát chém sấm sét kết liễu gây 8000% ATK sát thương Lôi Điện bạo kích!' }
+      ],
+      eidolons: [
+        { level: 1, name: 'E1: Lưỡi Kiếm Tích Điện', desc: 'Tăng 220% Sát thương toàn thể, tốc độ đánh +60.', bonusAtk: 2.2, bonusHp: 1.0 },
+        { level: 2, name: 'E2: Bão Sét Liên Hoàn', desc: 'Đòn đánh thường có 50% tỉ lệ kích hoạt đòn bồi Lôi Điện 400% ATK.', uniquePassive: 'heide_lightning_strike' },
+        { level: 3, name: 'E3: Âm Nhẫn Phong Cuồng', desc: 'Cấp kỹ năng Lôi Quang Trảm Kích +3.', skillDmgMult: 1.0 },
+        { level: 4, name: 'E4: Lôi Thần Hóa Thân', desc: 'Khi nhận sát thương chí tử, hóa thành tia chớp hồi 100% HP và miễn nhiễm sát thương 4s!', uniquePassive: 'heide_immortal_rebirth' },
+        { level: 5, name: 'E5: Thiên Lôi Diệt Thế', desc: 'Cấp Nộ Phong Lôi Đoạt Diệt +3, sát thương Nộ +250%!', burstDmgMult: 2.5 },
+        { level: 6, name: 'E6: ⟦ KIẾM THÁNH TỐC ĐỘ VÔ CỰC ⟧', desc: 'Tuyệt Kỹ Nộ lập tức kết liễu mọi kẻ thù dưới 40% HP!', uniquePassive: 'heide_execute_e6' }
+      ]
+    },
+    {
+      id: 'hero_meilin',
+      name: '⟦ MEI LIN • THẦN LONG QUYỀN THÁNH ⟧',
+      title: 'Thần Long Quyền Thánh & Tinh Linh Võ Đạo',
+      rarity: 'unknown',
+      element: 'wind',
+      elementName: 'Thần Long Thiên Khí 🐉🍃',
+      elementColor: '#10b981',
+      pixelArchetype: 'meilin',
+      atkBonusPct: 2.5, hpBonusPct: 1.9, defBonusPct: 1.4, spdBonus: 75,
+      skills: [
+        { id: 's1', name: 'Khí Công Thần Long (Dragon Qi Circulation)', type: 'passive', icon: '🐉', desc: 'Tăng 250% Sát thương toàn thể. Đòn đánh kèm sóng chấn động Long Khí gây sát thương lan và hồi 5% HP tối đa mỗi đòn đánh.', bonusAtk: 2.5 },
+        { id: 's2', name: 'Long Quyền Phá Hư (Dragon Fist Shockwave)', type: 'active', icon: '👊', cd: 6.0, dmgMult: 5.5, desc: 'Tự động kích hoạt: Tung chuỗi liên hoàn quyền rồng cuộn sóng gây 550% ATK, hất tung làm choáng đối thủ và tăng 100% Sát thương kỹ năng trong 5 giây.' },
+        { id: 's3', name: 'Thần Long Hàng Thế (Ascending Dragon Roar)', type: 'burst', icon: '🐲', cd: 8.0, dmgMult: 75.0, desc: 'Triệu hồi Chân Long Thần Thánh giáng lâm: Cuộn mình phóng quyền rồng phá nát thiên địa gây 7500% ATK sát thương Phong Thần bạo kích!' }
+      ],
+      eidolons: [
+        { level: 1, name: 'E1: Long Lân Chiến Giáp', desc: 'Tăng 200% Sát thương toàn thể, giảm 30% sát thương nhận vào.', bonusAtk: 2.0, bonusHp: 1.0 },
+        { level: 2, name: 'E2: Khí Huyết Cuồn Cuộn', desc: 'Long Quyền hồi thêm 25% Máu tối đa và tăng 40% Bạo kích.', uniquePassive: 'meilin_dragon_blood' },
+        { level: 3, name: 'E3: Chân Long Bí Quyết', desc: 'Cấp kỹ năng Long Quyền Phá Hư +3.', skillDmgMult: 1.0 },
+        { level: 4, name: 'E4: Bất Tử Long Hồn', desc: 'Khi nhận sát thương chí tử, Long Hồn bảo vệ hồi sinh 100% HP và bất tử trong 4 giây!', uniquePassive: 'meilin_immortal_rebirth' },
+        { level: 5, name: 'E5: Long Thần Nộ Hống', desc: 'Cấp Nộ Thần Long Hàng Thế +3, sát thương Nộ +250%!', burstDmgMult: 2.5 },
+        { level: 6, name: 'E6: ⟦ QUYỀN THÁNH THIÊN THẦN VÔ ĐỊCH ⟧', desc: 'Mọi đòn đánh đều phóng sóng rồng 500% ATK, Tuyệt Kỹ Nộ lập tức kết liễu kẻ thù dưới 38% HP!', uniquePassive: 'meilin_execute_e6' }
+      ]
     }
   ],
 
@@ -746,6 +818,9 @@ CONFIG.getHeroPixelArchetype = function(heroId) {
     hero_unknown_god: 'unknown_god',
     hero_cassius: 'cassius',
     hero_trisa: 'trisa',
+    hero_hilde: 'hilde',
+    hero_heide: 'heide',
+    hero_meilin: 'meilin',
     hero_rhiannon: 'trisa',
     // Fallback migration mapping
     hero_traveler: 'starter_knight',

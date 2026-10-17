@@ -577,6 +577,8 @@ const Sprites = {
 
   _getHeroTrisaSvg(action) {
     const isAtk = action === 'attack';
+    const isAtk2 = action === 'attack2';
+    const isAtk3 = action === 'attack3';
     const isSkill = action === 'skill';
     const isSheathe = action === 'sheathe' || action === 'pose' || action === 'burst';
     const isWalk = action === 'walk';
@@ -589,6 +591,10 @@ const Sprites = {
       imgSrc = 'assets/characters/trisa/hover_3d_idle.webp';
     } else if (isAtk) {
       imgSrc = 'assets/characters/trisa/chibi_attack.webp';
+    } else if (isAtk2) {
+      imgSrc = 'assets/characters/trisa/chibi_attack2.webp';
+    } else if (isAtk3) {
+      imgSrc = 'assets/characters/trisa/chibi_attack3.webp';
     } else if (isSkill) {
       imgSrc = 'assets/characters/trisa/chibi_skill.webp';
     } else if (isSheathe) {
@@ -601,7 +607,105 @@ const Sprites = {
 
     return `
     <svg class="pixel-sprite hero-pixel-svg hero-trisa action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
-      <!-- Authentic Trisa Chibi Visual (Razor-Sharp, Zero Background, Facing Monster) -->
+      <image href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
+    </svg>`;
+  },
+
+  _getHeroHildeSvg(action) {
+    const isAtk = action === 'attack';
+    const isAtk2 = action === 'attack2';
+    const isSkill = action === 'skill';
+    const isSheathe = action === 'sheathe' || action === 'pose' || action === 'burst';
+    const isWalk = action === 'walk';
+    const isHit = action === 'hit';
+    const isShowcase = action === 'showcase' || action === 'model_3d';
+
+    let imgSrc = 'assets/characters/hilde/chibi_idle.webp';
+
+    if (isShowcase) {
+      imgSrc = 'assets/characters/hilde/hover_3d_idle.webp';
+    } else if (isAtk) {
+      imgSrc = 'assets/characters/hilde/chibi_attack.webp';
+    } else if (isAtk2) {
+      imgSrc = 'assets/characters/hilde/chibi_attack2.webp';
+    } else if (isSkill) {
+      imgSrc = 'assets/characters/hilde/chibi_skill.webp';
+    } else if (isSheathe) {
+      imgSrc = 'assets/characters/hilde/chibi_attack.webp';
+    } else if (isHit) {
+      imgSrc = 'assets/characters/hilde/chibi_hit.webp';
+    } else if (isWalk) {
+      imgSrc = 'assets/characters/hilde/chibi_walk.webp';
+    }
+
+    return `
+    <svg class="pixel-sprite hero-pixel-svg hero-hilde action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
+      <image href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
+    </svg>`;
+  },
+
+  _getHeroHeideSvg(action) {
+    const isAtk = action === 'attack';
+    const isAtk2 = action === 'attack2';
+    const isSkill = action === 'skill';
+    const isSheathe = action === 'sheathe' || action === 'pose' || action === 'burst';
+    const isWalk = action === 'walk';
+    const isHit = action === 'hit';
+    const isShowcase = action === 'showcase' || action === 'model_3d';
+
+    let imgSrc = 'assets/characters/heide/chibi_idle.webp';
+
+    if (isShowcase) {
+      imgSrc = 'assets/characters/heide/hover_3d_idle.webp';
+    } else if (isAtk) {
+      imgSrc = 'assets/characters/heide/chibi_attack.webp';
+    } else if (isAtk2) {
+      imgSrc = 'assets/characters/heide/chibi_attack2.webp';
+    } else if (isSkill) {
+      imgSrc = 'assets/characters/heide/chibi_skill.webp';
+    } else if (isSheathe) {
+      imgSrc = 'assets/characters/heide/chibi_attack.webp';
+    } else if (isHit) {
+      imgSrc = 'assets/characters/heide/chibi_hit.webp';
+    } else if (isWalk) {
+      imgSrc = 'assets/characters/heide/chibi_walk.webp';
+    }
+
+    return `
+    <svg class="pixel-sprite hero-pixel-svg hero-heide action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
+      <image href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
+    </svg>`;
+  },
+
+  _getHeroMeilinSvg(action) {
+    const isAtk = action === 'attack';
+    const isAtk2 = action === 'attack2';
+    const isSkill = action === 'skill';
+    const isSheathe = action === 'sheathe' || action === 'pose' || action === 'burst';
+    const isWalk = action === 'walk';
+    const isHit = action === 'hit';
+    const isShowcase = action === 'showcase' || action === 'model_3d';
+
+    let imgSrc = 'assets/characters/meilin/chibi_idle.webp';
+
+    if (isShowcase) {
+      imgSrc = 'assets/characters/meilin/hover_3d_idle.webp';
+    } else if (isAtk) {
+      imgSrc = 'assets/characters/meilin/chibi_attack.webp';
+    } else if (isAtk2) {
+      imgSrc = 'assets/characters/meilin/chibi_attack2.webp';
+    } else if (isSkill) {
+      imgSrc = 'assets/characters/meilin/chibi_skill.webp';
+    } else if (isSheathe) {
+      imgSrc = 'assets/characters/meilin/chibi_attack.webp';
+    } else if (isHit) {
+      imgSrc = 'assets/characters/meilin/chibi_hit.webp';
+    } else if (isWalk) {
+      imgSrc = 'assets/characters/meilin/chibi_walk.webp';
+    }
+
+    return `
+    <svg class="pixel-sprite hero-pixel-svg hero-meilin action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
       <image href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
     </svg>`;
   },
@@ -765,6 +869,12 @@ const Sprites = {
         return this._getHeroTrisaSvg(action);
       case 'hero_rhiannon':
         return this._getHeroRhiannonSvg(action);
+      case 'hero_hilde':
+        return this._getHeroHildeSvg(action);
+      case 'hero_heide':
+        return this._getHeroHeideSvg(action);
+      case 'hero_meilin':
+        return this._getHeroMeilinSvg(action);
       default:
         return this._getHeroCassiusSvg(action);
     }
@@ -1149,6 +1259,69 @@ const Sprites = {
         <ellipse cx="260" cy="300" rx="190" ry="42" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="10,6" filter="url(#tri-burst-glow)"/>
         <g transform="translate(260, 185)">
           <image href="assets/characters/trisa/hover_3d_idle.webp" xlink:href="assets/characters/trisa/hover_3d_idle.webp" x="-180" y="-165" width="360" height="330" preserveAspectRatio="xMidYMid meet" filter="url(#tri-burst-glow)"/>
+        </g>
+      </svg>`;
+    }
+
+    // 10. THÁNH KỴ SĨ BĂNG GIÁ HILDE
+    if (targetId === 'hero_hilde') {
+      return `
+      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-hilde">
+        <defs>
+          <radialGradient id="hil-burst-bg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(56,189,248,0.45)"/>
+            <stop offset="45%" stop-color="rgba(2,132,199,0.25)"/>
+            <stop offset="85%" stop-color="rgba(10,25,47,0.95)"/>
+            <stop offset="100%" stop-color="#000000"/>
+          </radialGradient>
+          <filter id="hil-burst-glow"><feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#38bdf8" flood-opacity="1"/></filter>
+        </defs>
+        <rect width="520" height="360" fill="url(#hil-burst-bg)"/>
+        <ellipse cx="260" cy="300" rx="190" ry="42" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="10,6" filter="url(#hil-burst-glow)"/>
+        <g transform="translate(260, 185)">
+          <image href="assets/characters/hilde/hover_3d_idle.webp" xlink:href="assets/characters/hilde/hover_3d_idle.webp" x="-180" y="-165" width="360" height="330" preserveAspectRatio="xMidYMid meet" filter="url(#hil-burst-glow)"/>
+        </g>
+      </svg>`;
+    }
+
+    // 11. THIÊN PHONG LÔI ĐAO HEIDE
+    if (targetId === 'hero_heide') {
+      return `
+      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-heide">
+        <defs>
+          <radialGradient id="hei-burst-bg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(16,185,129,0.45)"/>
+            <stop offset="45%" stop-color="rgba(5,150,105,0.25)"/>
+            <stop offset="85%" stop-color="rgba(6,30,25,0.95)"/>
+            <stop offset="100%" stop-color="#000000"/>
+          </radialGradient>
+          <filter id="hei-burst-glow"><feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#10b981" flood-opacity="1"/></filter>
+        </defs>
+        <rect width="520" height="360" fill="url(#hei-burst-bg)"/>
+        <ellipse cx="260" cy="300" rx="190" ry="42" fill="none" stroke="#10b981" stroke-width="2.5" stroke-dasharray="10,6" filter="url(#hei-burst-glow)"/>
+        <g transform="translate(260, 185)">
+          <image href="assets/characters/heide/hover_3d_idle.webp" xlink:href="assets/characters/heide/hover_3d_idle.webp" x="-180" y="-165" width="360" height="330" preserveAspectRatio="xMidYMid meet" filter="url(#hei-burst-glow)"/>
+        </g>
+      </svg>`;
+    }
+
+    // 12. BÁ VƯƠNG LONG QUYỀN MEI LIN
+    if (targetId === 'hero_meilin') {
+      return `
+      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-meilin">
+        <defs>
+          <radialGradient id="mei-burst-bg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(245,158,11,0.45)"/>
+            <stop offset="45%" stop-color="rgba(217,119,6,0.25)"/>
+            <stop offset="85%" stop-color="rgba(35,20,5,0.95)"/>
+            <stop offset="100%" stop-color="#000000"/>
+          </radialGradient>
+          <filter id="mei-burst-glow"><feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#f59e0b" flood-opacity="1"/></filter>
+        </defs>
+        <rect width="520" height="360" fill="url(#mei-burst-bg)"/>
+        <ellipse cx="260" cy="300" rx="190" ry="42" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="10,6" filter="url(#mei-burst-glow)"/>
+        <g transform="translate(260, 185)">
+          <image href="assets/characters/meilin/hover_3d_idle.webp" xlink:href="assets/characters/meilin/hover_3d_idle.webp" x="-180" y="-165" width="360" height="330" preserveAspectRatio="xMidYMid meet" filter="url(#mei-burst-glow)"/>
         </g>
       </svg>`;
     }
@@ -2186,6 +2359,111 @@ const Sprites = {
               <ellipse cx="-2" cy="0" rx="10" ry="10" fill="#ef4444" filter="url(#tri-eye-glow)"/>
               <circle cx="-2" cy="0" r="3" fill="#ffffff"/>
               <path d="M -55,-4 Q -5,-32 60,-12" stroke="#ef4444" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            </g>
+          </g>
+        </svg>`;
+
+      case 'hero_hilde':
+        return `
+        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-hilde">
+          <defs>
+            <linearGradient id="hil-cutin-bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="rgba(10,25,47,0)"/>
+              <stop offset="15%" stop-color="#0a192f"/>
+              <stop offset="50%" stop-color="#0284c7"/>
+              <stop offset="85%" stop-color="#0a192f"/>
+              <stop offset="100%" stop-color="rgba(10,25,47,0)"/>
+            </linearGradient>
+            <filter id="hil-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#38bdf8" flood-opacity="1"/></filter>
+          </defs>
+          <polygon points="20,0 640,0 620,130 0,130" fill="url(#hil-cutin-bg)"/>
+          <line x1="30" y1="0" x2="630" y2="0" stroke="#38bdf8" stroke-width="3"/>
+          <line x1="10" y1="130" x2="610" y2="130" stroke="#7dd3fc" stroke-width="3"/>
+          <text x="320" y="80" font-family="'Courier New', monospace" font-size="52" font-weight="900" fill="rgba(56,189,248,0.25)" text-anchor="middle" letter-spacing="18">極 寒 聖 裁</text>
+          <g transform="translate(320, 65)">
+            <g transform="translate(-110, 0)">
+              <path d="M -55,-8 Q 0,-24 50,-2 Q 10,18 -55,-8 Z" fill="#ffffff"/>
+              <ellipse cx="2" cy="0" rx="16" ry="12" fill="#0369a1"/>
+              <ellipse cx="2" cy="0" rx="10" ry="10" fill="#38bdf8" filter="url(#hil-eye-glow)"/>
+              <circle cx="2" cy="0" r="3" fill="#ffffff"/>
+              <path d="M -60,-12 Q 5,-32 55,-4" stroke="#38bdf8" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            </g>
+            <g transform="translate(110, 0)">
+              <path d="M -50,-2 Q 0,-24 55,-8 Q 10,18 -50,-2 Z" fill="#ffffff"/>
+              <ellipse cx="-2" cy="0" rx="16" ry="12" fill="#0369a1"/>
+              <ellipse cx="-2" cy="0" rx="10" ry="10" fill="#7dd3fc" filter="url(#hil-eye-glow)"/>
+              <circle cx="-2" cy="0" r="3" fill="#ffffff"/>
+              <path d="M -55,-4 Q -5,-32 60,-12" stroke="#7dd3fc" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            </g>
+          </g>
+        </svg>`;
+
+      case 'hero_heide':
+        return `
+        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-heide">
+          <defs>
+            <linearGradient id="hei-cutin-bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="rgba(6,30,25,0)"/>
+              <stop offset="15%" stop-color="#062e25"/>
+              <stop offset="50%" stop-color="#059669"/>
+              <stop offset="85%" stop-color="#062e25"/>
+              <stop offset="100%" stop-color="rgba(6,30,25,0)"/>
+            </linearGradient>
+            <filter id="hei-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#10b981" flood-opacity="1"/></filter>
+          </defs>
+          <polygon points="20,0 640,0 620,130 0,130" fill="url(#hei-cutin-bg)"/>
+          <line x1="30" y1="0" x2="630" y2="0" stroke="#10b981" stroke-width="3"/>
+          <line x1="10" y1="130" x2="610" y2="130" stroke="#34d399" stroke-width="3"/>
+          <text x="320" y="80" font-family="'Courier New', monospace" font-size="52" font-weight="900" fill="rgba(16,185,129,0.25)" text-anchor="middle" letter-spacing="18">迅 雷 疾 風</text>
+          <g transform="translate(320, 65)">
+            <g transform="translate(-110, 0)">
+              <path d="M -55,-8 Q 0,-24 50,-2 Q 10,18 -55,-8 Z" fill="#ffffff"/>
+              <ellipse cx="2" cy="0" rx="16" ry="12" fill="#064e3b"/>
+              <ellipse cx="2" cy="0" rx="10" ry="10" fill="#10b981" filter="url(#hei-eye-glow)"/>
+              <circle cx="2" cy="0" r="3" fill="#ffffff"/>
+              <path d="M -60,-12 Q 5,-32 55,-4" stroke="#10b981" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            </g>
+            <g transform="translate(110, 0)">
+              <path d="M -50,-2 Q 0,-24 55,-8 Q 10,18 -50,-2 Z" fill="#ffffff"/>
+              <ellipse cx="-2" cy="0" rx="16" ry="12" fill="#064e3b"/>
+              <ellipse cx="-2" cy="0" rx="10" ry="10" fill="#34d399" filter="url(#hei-eye-glow)"/>
+              <circle cx="-2" cy="0" r="3" fill="#ffffff"/>
+              <path d="M -55,-4 Q -5,-32 60,-12" stroke="#34d399" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            </g>
+          </g>
+        </svg>`;
+
+      case 'hero_meilin':
+        return `
+        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-meilin">
+          <defs>
+            <linearGradient id="mei-cutin-bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="rgba(35,20,5,0)"/>
+              <stop offset="15%" stop-color="#2d1a08"/>
+              <stop offset="50%" stop-color="#d97706"/>
+              <stop offset="85%" stop-color="#2d1a08"/>
+              <stop offset="100%" stop-color="rgba(35,20,5,0)"/>
+            </linearGradient>
+            <filter id="mei-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#f59e0b" flood-opacity="1"/></filter>
+          </defs>
+          <polygon points="20,0 640,0 620,130 0,130" fill="url(#mei-cutin-bg)"/>
+          <line x1="30" y1="0" x2="630" y2="0" stroke="#f59e0b" stroke-width="3"/>
+          <line x1="10" y1="130" x2="610" y2="130" stroke="#fbbf24" stroke-width="3"/>
+          <text x="320" y="80" font-family="'Courier New', monospace" font-size="52" font-weight="900" fill="rgba(245,158,11,0.25)" text-anchor="middle" letter-spacing="18">蒼 龍 破 天</text>
+          <g transform="translate(320, 65)">
+            <g transform="translate(-110, 0)">
+              <path d="M -55,-8 Q 0,-24 50,-2 Q 10,18 -55,-8 Z" fill="#ffffff"/>
+              <ellipse cx="2" cy="0" rx="16" ry="12" fill="#78350f"/>
+              <ellipse cx="2" cy="0" rx="10" ry="10" fill="#f59e0b" filter="url(#mei-eye-glow)"/>
+              <circle cx="2" cy="0" r="3" fill="#ffffff"/>
+              <path d="M -60,-12 Q 5,-32 55,-4" stroke="#f59e0b" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            </g>
+            <g transform="translate(110, 0)">
+              <path d="M -50,-2 Q 0,-24 55,-8 Q 10,18 -50,-2 Z" fill="#ffffff"/>
+              <ellipse cx="-2" cy="0" rx="16" ry="12" fill="#78350f"/>
+              <ellipse cx="-2" cy="0" rx="10" ry="10" fill="#fbbf24" filter="url(#mei-eye-glow)"/>
+              <circle cx="-2" cy="0" r="3" fill="#ffffff"/>
+              <path d="M -55,-4 Q -5,-32 60,-12" stroke="#fbbf24" stroke-width="4.5" fill="none" stroke-linecap="round"/>
             </g>
           </g>
         </svg>`;

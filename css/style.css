@@ -2777,6 +2777,75 @@ body {
   text-shadow: 0 0 8px rgba(239, 68, 68, 0.85);
 }
 
+/* Hilde Ice Holy Frost Glow */
+.skill-burst-card.card-hilde.is-ready {
+  border-color: #38bdf8;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.9), 0 0 32px rgba(125, 211, 252, 0.6);
+  animation: cardHildeReadyGlow 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes cardHildeReadyGlow {
+  0% {
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.65), 0 0 22px rgba(3, 105, 161, 0.45);
+    border-color: #38bdf8;
+  }
+  100% {
+    box-shadow: 0 0 28px rgba(56, 189, 248, 1), 0 0 46px rgba(125, 211, 252, 0.9);
+    border-color: #ffffff;
+  }
+}
+
+.skill-burst-card.card-hilde.is-ready + .burst-card-status-text {
+  color: #38bdf8;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.85);
+}
+
+/* Heide Lightning Emerald Wind Glow */
+.skill-burst-card.card-heide.is-ready {
+  border-color: #10b981;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.9), 0 0 32px rgba(52, 211, 153, 0.6);
+  animation: cardHeideReadyGlow 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes cardHeideReadyGlow {
+  0% {
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.65), 0 0 22px rgba(6, 78, 59, 0.45);
+    border-color: #10b981;
+  }
+  100% {
+    box-shadow: 0 0 28px rgba(16, 185, 129, 1), 0 0 46px rgba(52, 211, 153, 0.9);
+    border-color: #ffffff;
+  }
+}
+
+.skill-burst-card.card-heide.is-ready + .burst-card-status-text {
+  color: #10b981;
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.85);
+}
+
+/* Mei Lin Dragon Fist Amber Glow */
+.skill-burst-card.card-meilin.is-ready {
+  border-color: #f59e0b;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.9), 0 0 32px rgba(251, 191, 36, 0.6);
+  animation: cardMeilinReadyGlow 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes cardMeilinReadyGlow {
+  0% {
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.65), 0 0 22px rgba(180, 83, 9, 0.45);
+    border-color: #f59e0b;
+  }
+  100% {
+    box-shadow: 0 0 28px rgba(245, 158, 11, 1), 0 0 46px rgba(251, 191, 36, 0.9);
+    border-color: #ffffff;
+  }
+}
+
+.skill-burst-card.card-meilin.is-ready + .burst-card-status-text {
+  color: #f59e0b;
+  text-shadow: 0 0 8px rgba(245, 158, 11, 0.85);
+}
+
 .burst-card-status-text {
   font-size: 0.72rem;
   font-weight: 800;
@@ -2979,6 +3048,84 @@ body {
 .hero-hover-showcase.showcase-trisa .showcase-jp-quote,
 .hero-hover-showcase.showcase-rhiannon .showcase-jp-quote {
   color: #fca5a5;
+}
+
+/* Hilde Ice Holy Showcase Variant */
+.hero-hover-showcase.showcase-hilde .showcase-aura-backdrop {
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.45) 0%, rgba(2, 132, 199, 0.25) 35%, rgba(10, 25, 47, 0.12) 55%, transparent 72%);
+}
+
+.hero-hover-showcase.showcase-hilde .showcase-pedestal-glow {
+  background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.95) 0%, rgba(2, 132, 199, 0.55) 55%, transparent 75%);
+  box-shadow: 0 0 38px rgba(56, 189, 248, 0.9);
+}
+
+.hero-hover-showcase.showcase-hilde .showcase-roman-title {
+  color: #38bdf8;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.85);
+}
+
+.hero-hover-showcase.showcase-hilde .showcase-jp-kanji {
+  background: linear-gradient(135deg, #ffffff 0%, #38bdf8 50%, #0369a1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.95));
+}
+
+.hero-hover-showcase.showcase-hilde .showcase-jp-quote {
+  color: #bae6fd;
+}
+
+/* Heide Lightning Wind Showcase Variant */
+.hero-hover-showcase.showcase-heide .showcase-aura-backdrop {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.45) 0%, rgba(5, 150, 105, 0.25) 35%, rgba(6, 30, 25, 0.12) 55%, transparent 72%);
+}
+
+.hero-hover-showcase.showcase-heide .showcase-pedestal-glow {
+  background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.55) 55%, transparent 75%);
+  box-shadow: 0 0 38px rgba(16, 185, 129, 0.9);
+}
+
+.hero-hover-showcase.showcase-heide .showcase-roman-title {
+  color: #10b981;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.85);
+}
+
+.hero-hover-showcase.showcase-heide .showcase-jp-kanji {
+  background: linear-gradient(135deg, #ffffff 0%, #10b981 50%, #047857 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 16px rgba(16, 185, 129, 0.95));
+}
+
+.hero-hover-showcase.showcase-heide .showcase-jp-quote {
+  color: #a7f3d0;
+}
+
+/* Mei Lin Dragon Fist Showcase Variant */
+.hero-hover-showcase.showcase-meilin .showcase-aura-backdrop {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.45) 0%, rgba(217, 119, 6, 0.25) 35%, rgba(35, 20, 5, 0.12) 55%, transparent 72%);
+}
+
+.hero-hover-showcase.showcase-meilin .showcase-pedestal-glow {
+  background: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.95) 0%, rgba(217, 119, 6, 0.55) 55%, transparent 75%);
+  box-shadow: 0 0 38px rgba(245, 158, 11, 0.9);
+}
+
+.hero-hover-showcase.showcase-meilin .showcase-roman-title {
+  color: #f59e0b;
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.85);
+}
+
+.hero-hover-showcase.showcase-meilin .showcase-jp-kanji {
+  background: linear-gradient(135deg, #ffffff 0%, #f59e0b 50%, #b45309 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.95));
+}
+
+.hero-hover-showcase.showcase-meilin .showcase-jp-quote {
+  color: #fde68a;
 }
 
 
@@ -3763,7 +3910,7 @@ body {
 #burst-video-player {
   width: 100vw !important;
   height: 100vh !important;
-  object-fit: contain !important;
+  object-fit: cover !important;
   display: block !important;
   background: #000 !important;
 }
@@ -5265,7 +5412,10 @@ body {
 .hero-pixel-svg.hero-unknown_god,
 .hero-pixel-svg.hero-cassius,
 .hero-pixel-svg.hero-trisa,
-.hero-pixel-svg.hero-rhiannon {
+.hero-pixel-svg.hero-rhiannon,
+.hero-pixel-svg.hero-hilde,
+.hero-pixel-svg.hero-heide,
+.hero-pixel-svg.hero-meilin {
   animation: heroLevitation 3s ease-in-out infinite !important;
 }
 
@@ -5274,6 +5424,24 @@ body {
   image-rendering: -webkit-optimize-contrast !important;
   image-rendering: high-quality !important;
   filter: contrast(1.08) brightness(1.02) drop-shadow(0 2px 7px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 6px rgba(220, 38, 38, 0.45));
+}
+
+.hero-pixel-svg.hero-hilde image {
+  image-rendering: -webkit-optimize-contrast !important;
+  image-rendering: high-quality !important;
+  filter: contrast(1.08) brightness(1.02) drop-shadow(0 2px 7px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 6px rgba(56, 189, 248, 0.45));
+}
+
+.hero-pixel-svg.hero-heide image {
+  image-rendering: -webkit-optimize-contrast !important;
+  image-rendering: high-quality !important;
+  filter: contrast(1.08) brightness(1.02) drop-shadow(0 2px 7px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 6px rgba(16, 185, 129, 0.45));
+}
+
+.hero-pixel-svg.hero-meilin image {
+  image-rendering: -webkit-optimize-contrast !important;
+  image-rendering: high-quality !important;
+  filter: contrast(1.08) brightness(1.02) drop-shadow(0 2px 7px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 6px rgba(245, 158, 11, 0.45));
 }
 
 @keyframes heroLevitation {

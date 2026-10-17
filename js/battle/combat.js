@@ -91,17 +91,46 @@ const Combat = {
           }
         }
 
-        // Video Cutscene Heroes: Cassius, Trisa and Unknown God
-        if (skillRes.type === 'burst' && (skillRes.hero?.id === 'hero_cassius' || skillRes.hero?.id === 'hero_trisa' || skillRes.hero?.id === 'hero_rhiannon' || skillRes.hero?.id === 'hero_unknown_god')) {
-          const isCassius = (skillRes.hero?.id === 'hero_cassius');
-          const isTrisa = (skillRes.hero?.id === 'hero_trisa' || skillRes.hero?.id === 'hero_rhiannon');
-          const badgeName = isCassius ? '🎰 CANH BẠC VÔ CỰC' : (isTrisa ? '🩸 HUYẾT NGUYỆT TRẢM SÁT' : '🌟 TUYỆT KỸ NỘ');
+        // Video Cutscene Heroes: Cassius, Trisa, Hilde, Heide, Mei Lin and Unknown God
+        if (skillRes.type === 'burst' && (
+          skillRes.hero?.id === 'hero_cassius' ||
+          skillRes.hero?.id === 'hero_trisa' ||
+          skillRes.hero?.id === 'hero_rhiannon' ||
+          skillRes.hero?.id === 'hero_hilde' ||
+          skillRes.hero?.id === 'hero_heide' ||
+          skillRes.hero?.id === 'hero_meilin' ||
+          skillRes.hero?.id === 'hero_unknown_god'
+        )) {
+          const hId = skillRes.hero?.id;
+          const isCassius = (hId === 'hero_cassius');
+          const isTrisa = (hId === 'hero_trisa' || hId === 'hero_rhiannon');
+          const isHilde = (hId === 'hero_hilde');
+          const isHeide = (hId === 'hero_heide');
+          const isMeilin = (hId === 'hero_meilin');
+
+          let badgeName = '🌟 TUYỆT KỸ NỘ';
+          let introLog = 'bắt đầu giải phóng thực tại...';
+          if (isCassius) {
+            badgeName = '🎰 CANH BẠC VÔ CỰC';
+            introLog = 'tung xúc xắc và lật lá bài Át Chủ Bài...';
+          } else if (isTrisa) {
+            badgeName = '🩸 HUYẾT NGUYỆT TRẢM SÁT';
+            introLog = 'xuyên phá thời không, vung Huyết Nguyệt Chi Nhẫn chém đứt sinh mệnh đối thủ...';
+          } else if (isHilde) {
+            badgeName = '❄️ BĂNG THÁNH TRẢM SÁT';
+            introLog = 'giáng phán quyết thần thánh đóng băng vạn dặm không gian...';
+          } else if (isHeide) {
+            badgeName = '⚡ THIÊN PHONG LÔI ĐAO';
+            introLog = 'hóa thân thành lôi ảnh tung đường kiếm sấm sét xé toạc đất trời...';
+          } else if (isMeilin) {
+            badgeName = '🐉 LONG THẦN GIÁNG THẾ';
+            introLog = 'triệu hồi chân long xuất sơn giáng bạt quyền chấn động càn khôn...';
+          }
+
           UI.addCombatLog(
             `<strong>${badgeName} [${skillRes.hero.name}]:</strong> ` +
             `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.skill.name}</span> ` +
-            (isCassius 
-              ? `tung xúc xắc và lật lá bài Át Chủ Bài...` 
-              : (isTrisa ? `xuyên phá thời không, vung Huyết Nguyệt Chi Nhẫn chém đứt sinh mệnh đối thủ...` : `bắt đầu giải phóng thực tại...`)),
+            introLog,
             'log-extra'
           );
 
@@ -112,10 +141,32 @@ const Combat = {
           }
 
           const willKill = (m.hp <= actualDmg);
-          const hitDelay = isTrisa ? 2750 : (isCassius ? 3450 : 5500);
-          const turnDelayKill = isTrisa ? 3050 : (isCassius ? 5800 : 6800);
-          const counterDelay = isTrisa ? 2950 : (isCassius ? 5600 : 6500);
-          const turnDelaySurvive = isTrisa ? 3150 : (isCassius ? 5900 : 7100);
+          let hitDelay = 5500;
+          let turnDelayKill = 6800;
+          let counterDelay = 6500;
+          let turnDelaySurvive = 7100;
+
+          if (isTrisa || isHilde) {
+            hitDelay = 2750;
+            turnDelayKill = 3050;
+            counterDelay = 2950;
+            turnDelaySurvive = 3150;
+          } else if (isHeide) {
+            hitDelay = 6750;
+            turnDelayKill = 7250;
+            counterDelay = 7150;
+            turnDelaySurvive = 7350;
+          } else if (isMeilin) {
+            hitDelay = 4150;
+            turnDelayKill = 4550;
+            counterDelay = 4450;
+            turnDelaySurvive = 4650;
+          } else if (isCassius) {
+            hitDelay = 3450;
+            turnDelayKill = 5800;
+            counterDelay = 5600;
+            turnDelaySurvive = 5900;
+          }
 
           setTimeout(() => {
             const hitResult = Monster.takeDamage(actualDmg);
@@ -125,20 +176,20 @@ const Combat = {
             UI.animateMonsterHit();
             UI.updateBattleStatsOnly();
 
-            UI.addCombatLog(
-              isCassius
-                ? `<strong>👑 ROYAL FLUSH JACKPOT:</strong> ` +
-                  `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.hero.name}</span> ` +
-                  `đập trọn bộ bài Hoàng Gia bùng nổ sát thương Hoàng Kim <strong style="color:#ffd700;">-${actualDmg}</strong>!`
-                : (isTrisa
-                  ? `<strong>🩸 HUYẾT NGUYỆT TRẢM SÁT:</strong> ` +
-                    `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.hero.name}</span> ` +
-                    `giáng đòn trảm kích tuyệt đối xé toạc linh hồn đối thủ gây sát thương cực hạn <strong style="color:#dc2626;">-${actualDmg}</strong>!`
-                  : `<strong>💥 TỊCH DIỆT HOÀN TOÀN:</strong> ` +
-                    `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.hero.name}</span> ` +
-                    `chém nát không gian gây sát thương bùng nổ <strong style="color:#ff0055;">-${actualDmg}</strong>!`),
-              'log-extra'
-            );
+            let impactMsg = `<strong>💥 TỊCH DIỆT HOÀN TOÀN:</strong> <span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.hero.name}</span> chém nát không gian gây sát thương bùng nổ <strong style="color:#ff0055;">-${actualDmg}</strong>!`;
+            if (isCassius) {
+              impactMsg = `<strong>👑 ROYAL FLUSH JACKPOT:</strong> <span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.hero.name}</span> đập trọn bộ bài Hoàng Gia bùng nổ sát thương Hoàng Kim <strong style="color:#ffd700;">-${actualDmg}</strong>!`;
+            } else if (isTrisa) {
+              impactMsg = `<strong>🩸 HUYẾT NGUYỆT TRẢM SÁT:</strong> <span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.hero.name}</span> giáng đòn trảm kích tuyệt đối xé toạc linh hồn đối thủ gây sát thương cực hạn <strong style="color:#dc2626;">-${actualDmg}</strong>!`;
+            } else if (isHilde) {
+              impactMsg = `<strong>❄️ THÁNH BĂNG TRẢM DIỆT:</strong> <span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.hero.name}</span> giáng kiếm thánh băng đóng băng linh hồn kẻ thù gây sát thương băng giá <strong style="color:#38bdf8;">-${actualDmg}</strong>!`;
+            } else if (isHeide) {
+              impactMsg = `<strong>⚡ LÔI ĐAO TẬN DIỆT:</strong> <span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.hero.name}</span> chém đòn lôi phong sát phạt vô cực gây sát thương sét giáng <strong style="color:#10b981;">-${actualDmg}</strong>!`;
+            } else if (isMeilin) {
+              impactMsg = `<strong>🐉 CHÂN LONG BẠT QUYỀN:</strong> <span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.hero.name}</span> tung long quyền phá thiên bộc phá kinh thiên động địa <strong style="color:#f59e0b;">-${actualDmg}</strong>!`;
+            }
+
+            UI.addCombatLog(impactMsg, 'log-extra');
 
             if (hitResult.isDead) {
               m.hp = 0;
@@ -213,6 +264,45 @@ const Combat = {
           UI.addCombatLog(
             `🗡️ <strong>ẢNH KIẾM HẮC ÁM [Trisa]:</strong> ` +
             `Vung song đao bóng đêm trảm kích bão lốc hồi phục <strong style="color:#ef4444;">+${healAmt} HP</strong> và tăng 100% Sát thương bạo kích!`,
+            'log-extra'
+          );
+        }
+
+        // Kỹ năng Bão Băng Thánh Khiên của Hilde
+        if (skillRes.hero?.id === 'hero_hilde' && skillRes.type === 'skill') {
+          if (typeof UI !== 'undefined' && UI.animatePlayerSkill) UI.animatePlayerSkill(null, 'skill');
+          const healAmt = Math.floor(Player.getEffectiveMaxHp() * 0.30);
+          Player.heal(healAmt);
+          UI.showDamageNumber(healAmt, false, 'player');
+          UI.addCombatLog(
+            `❄️ <strong>BÃO BĂNG THÁNH KHIÊN [Hilde]:</strong> ` +
+            `Triệu hồi Thánh Khiên Băng Tuyết hồi phục <strong style="color:#38bdf8;">+${healAmt} HP</strong> và đóng băng giảm tốc độ quái vật!`,
+            'log-extra'
+          );
+        }
+
+        // Kỹ năng Lôi Kiếm Vạn Lôi Trảm của Heide
+        if (skillRes.hero?.id === 'hero_heide' && skillRes.type === 'skill') {
+          if (typeof UI !== 'undefined' && UI.animatePlayerSkill) UI.animatePlayerSkill(null, 'skill');
+          const healAmt = Math.floor(Player.getEffectiveMaxHp() * 0.25);
+          Player.heal(healAmt);
+          UI.showDamageNumber(healAmt, false, 'player');
+          UI.addCombatLog(
+            `⚡ <strong>LÔI KIẾM VẠN LÔI TRẢM [Heide]:</strong> ` +
+            `Vung thanh lôi kiếm triệu hồi bão sét hồi phục <strong style="color:#10b981;">+${healAmt} HP</strong> và kích hoạt cuồng phong tốc đánh!`,
+            'log-extra'
+          );
+        }
+
+        // Kỹ năng Long Quyền Phá Thiên của Mei Lin
+        if (skillRes.hero?.id === 'hero_meilin' && skillRes.type === 'skill') {
+          if (typeof UI !== 'undefined' && UI.animatePlayerSkill) UI.animatePlayerSkill(null, 'skill');
+          const healAmt = Math.floor(Player.getEffectiveMaxHp() * 0.30);
+          Player.heal(healAmt);
+          UI.showDamageNumber(healAmt, false, 'player');
+          UI.addCombatLog(
+            `🐉 <strong>LONG QUYỀN PHÁ THIÊN [Mei Lin]:</strong> ` +
+            `Vận chuyển khí huyết giáng long quyền hồi phục <strong style="color:#f59e0b;">+${healAmt} HP</strong> và gia tăng 100% bạo kích!`,
             'log-extra'
           );
         }

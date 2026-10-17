@@ -101,11 +101,29 @@ const Boss = {
         try { UI.playBurstCinematic(skillRes); } catch(e) {}
       }
 
-      const isVideoCutscene = (skillRes.type === 'burst' && (skillRes.hero?.id === 'hero_unknown_god' || skillRes.hero?.id === 'hero_cassius' || skillRes.hero?.id === 'hero_trisa' || skillRes.hero?.id === 'hero_rhiannon'));
+      const isVideoCutscene = (skillRes.type === 'burst' && (
+        skillRes.hero?.id === 'hero_unknown_god' ||
+        skillRes.hero?.id === 'hero_cassius' ||
+        skillRes.hero?.id === 'hero_trisa' ||
+        skillRes.hero?.id === 'hero_rhiannon' ||
+        skillRes.hero?.id === 'hero_hilde' ||
+        skillRes.hero?.id === 'hero_heide' ||
+        skillRes.hero?.id === 'hero_meilin'
+      ));
       if (isVideoCutscene) {
-        const isCassius = (skillRes.hero?.id === 'hero_cassius');
-        const isTrisa = (skillRes.hero?.id === 'hero_trisa' || skillRes.hero?.id === 'hero_rhiannon');
-        const hitDelay = isTrisa ? 2750 : (isCassius ? 3000 : 5500);
+        const hId = skillRes.hero?.id;
+        const isCassius = (hId === 'hero_cassius');
+        const isTrisa = (hId === 'hero_trisa' || hId === 'hero_rhiannon');
+        const isHilde = (hId === 'hero_hilde');
+        const isHeide = (hId === 'hero_heide');
+        const isMeilin = (hId === 'hero_meilin');
+
+        let hitDelay = 5500;
+        if (isTrisa || isHilde) hitDelay = 2750;
+        else if (isHeide) hitDelay = 6750;
+        else if (isMeilin) hitDelay = 4150;
+        else if (isCassius) hitDelay = 3000;
+
         setTimeout(() => {
           if (!GameState.boss?.active) return;
           b.hp = Math.max(0, b.hp - pDmg);
@@ -115,7 +133,12 @@ const Boss = {
             UI.animatePlayerSkill('boss', skillRes.type);
             UI.animateBossHit(true);
             UI.updateBossChamber();
-            const badgeName = isCassius ? '🎰 CANH BẠC VÔ CỰC' : (isTrisa ? '🩸 HUYẾT NGUYỆT TRẢM SÁT' : '🌟 TUYỆT KỸ NỘ');
+            let badgeName = '🌟 TUYỆT KỸ NỘ';
+            if (isCassius) badgeName = '🎰 CANH BẠC VÔ CỰC';
+            else if (isTrisa) badgeName = '🩸 HUYẾT NGUYỆT TRẢM SÁT';
+            else if (isHilde) badgeName = '❄️ BĂNG THÁNH TRẢM SÁT';
+            else if (isHeide) badgeName = '⚡ THIÊN PHONG LÔI ĐAO';
+            else if (isMeilin) badgeName = '🐉 LONG THẦN GIÁNG THẾ';
             UI.addCombatLog(
               `<strong>${badgeName} [${skillRes.hero.name}]:</strong> ` +
               `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.skill.name}</span> ` +
@@ -189,9 +212,17 @@ const Boss = {
       if (b.hp <= 0) return;
     }
 
-    const bossCounterDelay = isVideoCutscene
-      ? (((skillRes.hero?.id === 'hero_trisa' || skillRes.hero?.id === 'hero_rhiannon')) ? 3100 : ((skillRes.hero?.id === 'hero_cassius') ? 5400 : 6600))
-      : ((skillRes.triggered && skillRes.type === 'burst') ? 4000 : 600);
+    let bossCounterDelay = 600;
+    if (isVideoCutscene) {
+      const hId = skillRes.hero?.id;
+      if (hId === 'hero_trisa' || hId === 'hero_rhiannon' || hId === 'hero_hilde') bossCounterDelay = 3100;
+      else if (hId === 'hero_heide') bossCounterDelay = 7200;
+      else if (hId === 'hero_meilin') bossCounterDelay = 4500;
+      else if (hId === 'hero_cassius') bossCounterDelay = 5400;
+      else bossCounterDelay = 6600;
+    } else if (skillRes.triggered && skillRes.type === 'burst') {
+      bossCounterDelay = 4000;
+    }
     setTimeout(() => {
       if (!GameState.boss?.active) return;
       b.rage = Math.min(100, (b.rage || 0) + 25);

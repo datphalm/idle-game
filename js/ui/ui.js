@@ -298,7 +298,10 @@ const UI = {
     const activeHeroId = GameState.activeHeroId || 'hero_starter';
     const isCassius = (activeHeroId === 'hero_cassius');
     const isTrisa = (activeHeroId === 'hero_trisa' || activeHeroId === 'hero_rhiannon');
-    const isCardBurst = (isCassius || isTrisa);
+    const isHilde = (activeHeroId === 'hero_hilde');
+    const isHeide = (activeHeroId === 'hero_heide');
+    const isMeilin = (activeHeroId === 'hero_meilin');
+    const isCardBurst = (isCassius || isTrisa || isHilde || isHeide || isMeilin);
     const heroCfg = CONFIG.getHeroById(activeHeroId);
     const s2 = heroCfg?.skills?.find(s => s.type === 'active');
     const s3 = heroCfg?.skills?.find(s => s.type === 'burst') || heroCfg?.skills?.[2];
@@ -314,7 +317,7 @@ const UI = {
       const s2El = document.getElementById(s2Id);
       const s3El = document.getElementById(s3Id);
 
-      // 1. Skill 2: An voi Cassius va Trisa per user request (Trisa tu dong kich hoat trong tran dau)
+      // 1. Skill 2: Ẩn với các tướng thẻ bài (tự động kích hoạt trong trận đấu)
       if (s2El) {
         if (isCardBurst) {
           s2El.style.display = 'none';
@@ -325,16 +328,29 @@ const UI = {
         }
       }
 
-      // 2. Skill 3: The bai Tarot CHI cho Cassius va Trisa, nut tron tieu chuan cho cac tuong khac
+      // 2. Skill 3: Thẻ bài Tarot cho các tướng độc bản, nút tròn tiêu chuẩn cho các tướng khác
       if (s3El) {
         if (isCardBurst) {
-          const cardImg = isTrisa 
-            ? 'assets/characters/trisa/art_skill_ultimate.png' 
-            : 'assets/characters/cassius/art_skill_ultimate.png';
+          let cardImg = 'assets/characters/cassius/art_skill_ultimate.png';
+          let cardClass = 'card-cassius';
+          if (isTrisa) {
+            cardImg = 'assets/characters/trisa/art_skill_ultimate.png';
+            cardClass = 'card-trisa';
+          } else if (isHilde) {
+            cardImg = 'assets/characters/hilde/art_skill_ultimate.png';
+            cardClass = 'card-hilde';
+          } else if (isHeide) {
+            cardImg = 'assets/characters/heide/art_skill_ultimate.png';
+            cardClass = 'card-heide';
+          } else if (isMeilin) {
+            cardImg = 'assets/characters/meilin/art_skill_ultimate.png';
+            cardClass = 'card-meilin';
+          }
+
           s3El.className = 'skill-hud-item skill-hud-burst-wrapper';
           s3El.innerHTML = `
             <div class="burst-card-container">
-              <div class="skill-burst-card is-ready ${isTrisa ? 'card-trisa' : 'card-cassius'}" id="${pfx}-burst-card" role="button" tabindex="0">
+              <div class="skill-burst-card is-ready ${cardClass}" id="${pfx}-burst-card" role="button" tabindex="0">
                 <div class="burst-card-inner">
                   <img src="${cardImg}" class="burst-card-img" alt="Tuyệt Kỹ Nộ" />
                   <div class="burst-card-cd-overlay" id="${pfx}-s3-fill"></div>
@@ -372,10 +388,11 @@ const UI = {
       const cardEl = document.getElementById(cardId);
       if (!cardEl) return;
 
-      // Mouse Hover Preview (For Cassius and Trisa!)
+      // Mouse Hover Preview (For Cassius, Trisa, Hilde, Heide, Mei Lin!)
       cardEl.onmouseenter = () => {
         const curHero = GameState.activeHeroId;
-        if (curHero !== 'hero_cassius' && curHero !== 'hero_trisa' && curHero !== 'hero_rhiannon') return;
+        const validHeroes = ['hero_cassius', 'hero_trisa', 'hero_rhiannon', 'hero_hilde', 'hero_heide', 'hero_meilin'];
+        if (!validHeroes.includes(curHero)) return;
         const showcase = document.getElementById('hero-hover-showcase');
         if (!showcase) return;
 
@@ -384,15 +401,33 @@ const UI = {
         const kanjiSpan = showcase.querySelector('.showcase-jp-kanji');
         const quoteSpan = showcase.querySelector('.showcase-jp-quote');
 
+        showcase.classList.remove('showcase-cassius', 'showcase-trisa', 'showcase-hilde', 'showcase-heide', 'showcase-meilin');
+
         if (curHero === 'hero_trisa' || curHero === 'hero_rhiannon') {
-          showcase.classList.remove('showcase-cassius');
           showcase.classList.add('showcase-trisa');
           if (charImg) charImg.src = 'assets/characters/trisa/hover_3d_idle.webp';
           if (titleSpan) titleSpan.textContent = 'TRISA · HẮC ÁM NỮ HOÀNG';
           if (kanjiSpan) kanjiSpan.textContent = 'トリサ · 深淵の影刃';
           if (quoteSpan) quoteSpan.textContent = '『血の月が昇るとき、影より現れ魂を刈り取る』';
+        } else if (curHero === 'hero_hilde') {
+          showcase.classList.add('showcase-hilde');
+          if (charImg) charImg.src = 'assets/characters/hilde/hover_3d_idle.webp';
+          if (titleSpan) titleSpan.textContent = 'HILDE · THÁNH KỴ SĨ BĂNG GIÁ';
+          if (kanjiSpan) kanjiSpan.textContent = 'ヒルデ · 極寒の聖女';
+          if (quoteSpan) quoteSpan.textContent = '『凍てつく刃が、悪しき魂を裁く！』';
+        } else if (curHero === 'hero_heide') {
+          showcase.classList.add('showcase-heide');
+          if (charImg) charImg.src = 'assets/characters/heide/hover_3d_idle.webp';
+          if (titleSpan) titleSpan.textContent = 'HEIDE · THIÊN PHONG LÔI ĐAO';
+          if (kanjiSpan) kanjiSpan.textContent = 'ハイデ · 迅雷の疾風';
+          if (quoteSpan) quoteSpan.textContent = '『風が叫び、雷が切り裂く！』';
+        } else if (curHero === 'hero_meilin') {
+          showcase.classList.add('showcase-meilin');
+          if (charImg) charImg.src = 'assets/characters/meilin/hover_3d_idle.webp';
+          if (titleSpan) titleSpan.textContent = 'MEI LIN · BÁ VƯƠNG LONG QUYỀN';
+          if (kanjiSpan) kanjiSpan.textContent = 'メイリン · 蒼龍の拳聖';
+          if (quoteSpan) quoteSpan.textContent = '『龍の怒りを受けよ！破天一撃！』';
         } else {
-          showcase.classList.remove('showcase-trisa');
           showcase.classList.add('showcase-cassius');
           if (charImg) charImg.src = 'assets/characters/cassius/hover_3d_idle.webp';
           if (titleSpan) titleSpan.textContent = 'CASSIUS · BÀN CƯỢC HOÀNG KIM';
@@ -827,7 +862,7 @@ const UI = {
           cardEl.classList.remove('is-charging');
         }
         if (s3Fill) s3Fill.style.height = '0%';
-        const isCardHud = (heroCfg.id === 'hero_cassius' || heroCfg.id === 'hero_trisa' || heroCfg.id === 'hero_rhiannon');
+        const isCardHud = (heroCfg.id === 'hero_cassius' || heroCfg.id === 'hero_trisa' || heroCfg.id === 'hero_rhiannon' || heroCfg.id === 'hero_hilde' || heroCfg.id === 'hero_heide' || heroCfg.id === 'hero_meilin');
         if (s3Timer) {
           s3Timer.textContent = 'Sẵn sàng';
           s3Timer.className = isCardHud ? 'burst-card-status-text skill-ready' : 'skill-hud-timer skill-ready';
@@ -838,7 +873,7 @@ const UI = {
           cardEl.classList.add('is-charging');
         }
         if (s3Fill) s3Fill.style.height = `${100 - progress.s3.pct}%`;
-        const isCardHud = (heroCfg.id === 'hero_cassius' || heroCfg.id === 'hero_trisa' || heroCfg.id === 'hero_rhiannon');
+        const isCardHud = (heroCfg.id === 'hero_cassius' || heroCfg.id === 'hero_trisa' || heroCfg.id === 'hero_rhiannon' || heroCfg.id === 'hero_hilde' || heroCfg.id === 'hero_heide' || heroCfg.id === 'hero_meilin');
         if (s3Timer) {
           s3Timer.textContent = `${progress.s3.remainingSec}s`;
           s3Timer.className = isCardHud ? 'burst-card-status-text' : 'skill-hud-timer';
@@ -1005,14 +1040,19 @@ const UI = {
     const pSpriteId = isBoss ? 'boss-player-sprite' : 'player-sprite';
     const pSprite = document.getElementById(pSpriteId);
     const activeHero = GameState.activeHeroId || 'hero_starter';
-    const isSpecialHero = (activeHero === 'hero_cassius' || activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon');
+    const isSpecialHero = (activeHero === 'hero_cassius' || activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon' || activeHero === 'hero_hilde' || activeHero === 'hero_heide' || activeHero === 'hero_meilin');
     if (pSprite && typeof Sprites !== 'undefined') {
-      pSprite.innerHTML = Sprites.getPlayerSvg(isSpecialHero ? 'attack' : 'extra', activeHero);
+      let extraAction = 'extra';
+      if (activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon') extraAction = 'attack3';
+      else if (activeHero === 'hero_hilde' || activeHero === 'hero_heide' || activeHero === 'hero_meilin') extraAction = 'attack2';
+      else if (activeHero === 'hero_cassius') extraAction = 'attack';
+
+      pSprite.innerHTML = Sprites.getPlayerSvg(extraAction, activeHero);
       pSprite.className = isSpecialHero
         ? 'fighter-avatar player-attack-anim'
         : `fighter-avatar player-extra-anim hero-extra-${activeHero}`;
       clearTimeout(this._playerAnimTimer);
-      const extraDuration = (activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon') ? 650 : 420;
+      const extraDuration = (activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon') ? 650 : 500;
       this._playerAnimTimer = setTimeout(() => {
         if (pSprite) {
           pSprite.innerHTML = Sprites.getPlayerSvg('idle', activeHero);
@@ -1043,11 +1083,41 @@ const UI = {
     }
     const pSprite = document.getElementById(pSpriteId);
     const activeHero = GameState.activeHeroId || 'hero_starter';
+
+    if (!this._attackComboCounts) this._attackComboCounts = {};
+    const curCombo = this._attackComboCounts[activeHero] || 0;
+    this._attackComboCounts[activeHero] = curCombo + 1;
+
+    let atkAction = 'attack';
+    let attackDuration = 340;
+
+    if (activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon') {
+      const step = curCombo % 3;
+      if (step === 0) {
+        atkAction = 'attack';
+        attackDuration = 520;
+      } else if (step === 1) {
+        atkAction = 'attack2';
+        attackDuration = 560;
+      } else {
+        atkAction = 'attack3';
+        attackDuration = 620;
+      }
+    } else if (activeHero === 'hero_hilde' || activeHero === 'hero_heide' || activeHero === 'hero_meilin') {
+      const step = curCombo % 2;
+      if (step === 0) {
+        atkAction = 'attack';
+        attackDuration = 500;
+      } else {
+        atkAction = 'attack2';
+        attackDuration = 540;
+      }
+    }
+
     if (pSprite && typeof Sprites !== 'undefined') {
-      pSprite.innerHTML = Sprites.getPlayerSvg('attack', activeHero);
-      pSprite.className = `fighter-avatar player-attack-anim hero-attack-${activeHero}`;
+      pSprite.innerHTML = Sprites.getPlayerSvg(atkAction, activeHero);
+      pSprite.className = `fighter-avatar player-attack-anim hero-attack-${activeHero} action-${atkAction}`;
       clearTimeout(this._playerAnimTimer);
-      const attackDuration = (activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon') ? 580 : 340;
       this._playerAnimTimer = setTimeout(() => {
         this._isPlayerAnimating = false;
         if (pSprite) {
@@ -1056,7 +1126,8 @@ const UI = {
         }
       }, attackDuration);
     }
-    if (activeHero !== 'hero_cassius' && activeHero !== 'hero_trisa' && activeHero !== 'hero_rhiannon') {
+    const hasEmbeddedVfx = (activeHero === 'hero_cassius' || activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon' || activeHero === 'hero_hilde' || activeHero === 'hero_heide' || activeHero === 'hero_meilin');
+    if (!hasEmbeddedVfx) {
       const slashType = 'normal';
       this._triggerSlashFx(targetSlash, slashType);
     }
@@ -1115,8 +1186,8 @@ const UI = {
         }
       }, duration);
     }
-    // Temporarily disabled slash VFX per user request for Cassius & Trisa
-    if (activeHero !== 'hero_cassius' && activeHero !== 'hero_trisa' && activeHero !== 'hero_rhiannon') {
+    const hasEmbeddedVfx = (activeHero === 'hero_cassius' || activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon' || activeHero === 'hero_hilde' || activeHero === 'hero_heide' || activeHero === 'hero_meilin');
+    if (!hasEmbeddedVfx) {
       this._triggerSlashFx(targetSlash, skillType === 'burst' ? 'burst' : 'skill');
     }
 
@@ -2276,6 +2347,63 @@ const UI = {
             </div>
             <div style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.45;">
               Tái hiện nguyên bản từ mô hình hoạt ảnh: Hắc Ám Nữ Hoàng Trisa với song đao bóng đêm trảm kích chớp nhoáng, sở hữu Huyết Nguyệt Trảm Sát xuyên phá không gian và tuyệt kỹ kết liễu tối thượng.
+            </div>
+          </div>
+        </div>
+        ` : ''}
+        ${activeId === 'hero_hilde' ? `
+        <div class="hero-3d-stage-banner" style="margin-bottom: 14px; position: relative; border-radius: 12px; background: radial-gradient(circle at 50% 50%, rgba(56,189,248,0.22) 0%, rgba(10,25,47,0.88) 65%, #050d1a 100%); border: 1px solid rgba(56,189,248,0.45); box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 0 30px rgba(56,189,248,0.1); overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 14px 20px; gap: 20px;">
+          <div style="position: absolute; top: 10px; right: 12px; font-size: 0.68rem; font-weight: 800; color: #38bdf8; background: rgba(0,0,0,0.6); border: 1px solid #38bdf8; border-radius: 6px; padding: 3px 8px; text-transform: uppercase; letter-spacing: 1px;">
+            ❄️ Authentic Animated WebP & Chibi
+          </div>
+          <div style="width: 140px; height: 160px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.8));">
+            <img src="assets/characters/hilde/hover_3d_idle.webp" alt="Hilde Animated Model" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 0.95rem; font-weight: 800; color: #38bdf8; display: flex; align-items: center; gap: 8px;">
+              <span>❄️ Thánh Nữ Băng Giá Hilde</span>
+              <span style="font-size: 0.7rem; color: #7dd3fc; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.4); padding: 1px 6px; border-radius: 4px;">Exclusive Model</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.45;">
+              Tái hiện nguyên bản từ mô hình hoạt ảnh: Nữ Thánh Kỵ Sĩ Băng Giá Hilde sở hữu Thánh Trảm Băng Tuyết trảm diệt tà ác, tạo khiên băng tuyệt đối và đóng băng chiến trường.
+            </div>
+          </div>
+        </div>
+        ` : ''}
+        ${activeId === 'hero_heide' ? `
+        <div class="hero-3d-stage-banner" style="margin-bottom: 14px; position: relative; border-radius: 12px; background: radial-gradient(circle at 50% 50%, rgba(16,185,129,0.22) 0%, rgba(6,30,25,0.88) 65%, #031410 100%); border: 1px solid rgba(16,185,129,0.45); box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 0 30px rgba(16,185,129,0.1); overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 14px 20px; gap: 20px;">
+          <div style="position: absolute; top: 10px; right: 12px; font-size: 0.68rem; font-weight: 800; color: #10b981; background: rgba(0,0,0,0.6); border: 1px solid #10b981; border-radius: 6px; padding: 3px 8px; text-transform: uppercase; letter-spacing: 1px;">
+            ⚡ Authentic Animated WebP & Chibi
+          </div>
+          <div style="width: 140px; height: 160px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.8));">
+            <img src="assets/characters/heide/hover_3d_idle.webp" alt="Heide Animated Model" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 0.95rem; font-weight: 800; color: #10b981; display: flex; align-items: center; gap: 8px;">
+              <span>⚡ Thiên Phong Lôi Đao Heide</span>
+              <span style="font-size: 0.7rem; color: #34d399; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4); padding: 1px 6px; border-radius: 4px;">Exclusive Model</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.45;">
+              Tái hiện nguyên bản từ mô hình hoạt ảnh: Kiếm khách cuồng lôi Heide với kiếm pháp lôi phong thần tốc, sở hữu tuyệt kỹ Thiên Cung Lôi Bộc giáng sét chấn diệt vạn vật.
+            </div>
+          </div>
+        </div>
+        ` : ''}
+        ${activeId === 'hero_meilin' ? `
+        <div class="hero-3d-stage-banner" style="margin-bottom: 14px; position: relative; border-radius: 12px; background: radial-gradient(circle at 50% 50%, rgba(245,158,11,0.22) 0%, rgba(35,20,5,0.88) 65%, #150a02 100%); border: 1px solid rgba(245,158,11,0.45); box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 0 30px rgba(245,158,11,0.1); overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 14px 20px; gap: 20px;">
+          <div style="position: absolute; top: 10px; right: 12px; font-size: 0.68rem; font-weight: 800; color: #f59e0b; background: rgba(0,0,0,0.6); border: 1px solid #f59e0b; border-radius: 6px; padding: 3px 8px; text-transform: uppercase; letter-spacing: 1px;">
+            🐉 Authentic Animated WebP & Chibi
+          </div>
+          <div style="width: 140px; height: 160px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.8));">
+            <img src="assets/characters/meilin/hover_3d_idle.webp" alt="Mei Lin Animated Model" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 0.95rem; font-weight: 800; color: #f59e0b; display: flex; align-items: center; gap: 8px;">
+              <span>🐉 Bá Vương Long Quyền Mei Lin</span>
+              <span style="font-size: 0.7rem; color: #fbbf24; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); padding: 1px 6px; border-radius: 4px;">Exclusive Model</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.45;">
+              Tái hiện nguyên bản từ mô hình hoạt ảnh: Quyền Thánh Long Tộc Mei Lin vận khí hóa rồng, giáng đòn Long Thần Bạt Quyền hủy diệt thiên địa và oanh tạc cực hạn.
             </div>
           </div>
         </div>

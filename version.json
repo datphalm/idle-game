@@ -1,15 +1,16 @@
 {
-  "version": "2.6.0",
-  "title": "Bản Cập Nhật v2.6.0 - Hắc Ám Nữ Hoàng: Trisa",
+  "version": "2.7.0",
+  "title": "Bản Cập Nhật v2.7.0 - Đại Tướng Hội Ngộ: Trisa Rework, Hilde, Heide & Mei Lin",
   "releaseDate": "2026-10-17",
   "changelog": [
-    "Ra mắt Đại Tướng Thần Cấp mới: Trisa - Hắc Ám Nữ Hoàng & Huyết Nguyệt Chi Nhẫn",
-    "Hoạt ảnh Idle 3D Showcase bên trái khung hình hiển thị Trisa xoay người hướng về quái vật với phong thái sát thủ bóng đêm huyền bí",
-    "Thẻ bài Tuyệt Kỹ Tarot độc bản với hiệu ứng phát sáng Huyết Nguyệt rực rỡ",
-    "Kỹ năng Nộ Cinematic Video Full HD 1080p: Huyết Nguyệt Trảm Sát (Blood Moon Annihilation) đồng bộ chính xác từng mili-giây âm thanh trảm kích cực hạn",
-    "Bộ hoạt ảnh Chibi Trisa hoàn chỉnh 5 trạng thái (Idle, Walk, Attack, Skill, Hit) hướng chuẩn xác về phía quái vật, đường viền trong suốt 100% không vệt vuông",
-    "Kỹ năng Tự Động Kích Hoạt trong trận đấu: Ảnh Kiếm Hắc Ám - Song đao bóng đêm trảm kích bão lốc hồi phục 35% HP tối đa và tăng 100% Sát thương bạo kích",
-    "Trọn bộ 6 Tinh Hồn Huyết Nguyệt (E1 - E6) độc bản mở khóa sẵn sàng"
+    "Rework toàn diện Trisa: Loại bỏ triệt để menu dropdown chọn dạng, nhân vật xoay mặt nhìn về phía quái vật, bổ sung combo 3 chuỗi animation đánh quái liên hoàn",
+    "Tuyệt kỹ Nộ Trisa: Cắt gọt bỏ hoàn toàn thanh tiến trình xem video và viền đen hai bên, hiển thị tràn viền Full HD 1080p siêu sắc nét",
+    "Tướng Mới 1: Hilde - Thánh Nữ Băng Quang (Hệ Băng, Thẻ bài Tarot Băng Cực, Chibi đa thế đánh, Video Cutscene Băng Thánh)",
+    "Tướng Mới 2: Heide - Phong Lôi Kiếm Thánh (Hệ Lôi, Thẻ bài Tarot Sấm Sét, Chibi lướt kiếm, Video Cutscene chém kết liễu)",
+    "Tướng Mới 3: Mei Lin - Thần Long Quyền Thánh (Hệ Phong Long, Thẻ bài Tarot Chân Long, Chibi võ thuật, Video Cutscene Long Thần)",
+    "Tự động kích hoạt Kỹ năng Nguyên Tố độc bản (S2) cho tất cả các tướng mới trong trận đấu",
+    "Trọn bộ 6 Tinh Hồn Cung Mệnh (E1 - E6) cho Hilde, Heide và Mei Lin",
+    "Hoạt ảnh Idle 3D Showcase và lời thoại tiếng Nhật độc bản khi trỏ chuột vào Thẻ bài Tuyệt Kỹ"
   ],
   "downloadUrl": "https://github.com/datphalm/idle-game/releases/latest"
 }

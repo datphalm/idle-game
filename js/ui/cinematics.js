@@ -996,6 +996,42 @@ const Cinematics = {
         sub: '「影より出でよ！暗殺の刃！」'
       }
     },
+    hero_hilde: {
+      burst: {
+        text: '聖なる氷刃よ、悪を断て！',
+        romaji: 'Seinaru hyōjin yo, aku o tate!',
+        sub: '「聖なる氷刃よ、悪を断て！絶対零度！」'
+      },
+      skill: {
+        text: '凍てつけ！',
+        romaji: 'Itetsuke!',
+        sub: '「凍てつけ！聖樹の加護！」'
+      }
+    },
+    hero_heide: {
+      burst: {
+        text: '雷光一閃！すべてを斬り裂く！',
+        romaji: 'Raikō issen! Subete o kirisaku!',
+        sub: '「雷光一閃！すべてを斬り裂く！風雷絶影！」'
+      },
+      skill: {
+        text: '疾風刃！',
+        romaji: 'Shippūjin!',
+        sub: '「疾風刃！雷鳴連斬！」'
+      }
+    },
+    hero_meilin: {
+      burst: {
+        text: '天翔ける龍よ、我が拳に宿れ！',
+        romaji: 'Amakakeru ryū yo, waga kobushi ni yadare!',
+        sub: '「天翔ける龍よ、我が拳に宿れ！神龍降臨！」'
+      },
+      skill: {
+        text: '龍気波！',
+        romaji: 'Ryūkiha!',
+        sub: '「龍気波！連環破空！」'
+      }
+    },
     hero_rhiannon: {
       burst: {
         text: '血の月よ、我が刃となれ！',
@@ -1030,8 +1066,9 @@ const Cinematics = {
     const voiceData = this.JAPANESE_VOICE_MAP[targetId] || this.JAPANESE_VOICE_MAP.hero_starter;
     const entry = voiceData[type] || voiceData.burst;
 
-    // RULE 2.5: For Hero Unknown God, Cassius & Trisa burst, the voice & SFX are already mastered into the cinematic video
-    if (type === 'burst' && (targetId === 'hero_unknown_god' || targetId === 'hero_cassius' || targetId === 'hero_trisa' || targetId === 'hero_rhiannon')) {
+    // RULE 2.5: For Video Cutscene heroes, voice & SFX are already mastered into the cinematic video
+    const videoHeroes = ['hero_unknown_god', 'hero_cassius', 'hero_trisa', 'hero_hilde', 'hero_heide', 'hero_meilin', 'hero_rhiannon'];
+    if (type === 'burst' && videoHeroes.includes(targetId)) {
       return entry;
     }
 
@@ -1739,10 +1776,13 @@ const Cinematics = {
       }
 
       // 2. High-Fidelity Anime Video Cutscene vs WebGL Canvas Setup
-      const isVideoCutscene = (heroId === 'hero_unknown_god' || heroId === 'hero_cassius' || heroId === 'hero_trisa' || heroId === 'hero_rhiannon');
+      const isVideoCutscene = ['hero_unknown_god', 'hero_cassius', 'hero_trisa', 'hero_hilde', 'hero_heide', 'hero_meilin', 'hero_rhiannon'].includes(heroId);
       const isCassius = (heroId === 'hero_cassius');
       const isTrisa = (heroId === 'hero_trisa' || heroId === 'hero_rhiannon');
-      const isCustomVideo = (isCassius || isTrisa);
+      const isHilde = (heroId === 'hero_hilde');
+      const isHeide = (heroId === 'hero_heide');
+      const isMeilin = (heroId === 'hero_meilin');
+      const isCustomVideo = (heroId !== 'hero_unknown_god' && isVideoCutscene);
       const videoContainer = document.getElementById('burst-video-container');
       const videoPlayer = document.getElementById('burst-video-player');
 
@@ -1866,8 +1906,24 @@ const Cinematics = {
       if (isVideoCutscene) {
         const wipeTiming = isCustomVideo ? 120 : 780;
         const videoStartTiming = isCustomVideo ? 180 : 920;
-        const dissolveTiming = isTrisa ? 2800 : (isCassius ? 3450 : 4800);
-        const endingTiming = isTrisa ? 3000 : (isCassius ? 5700 : 5100);
+        let dissolveTiming = 2800;
+        let endingTiming = 3000;
+        if (isTrisa || isHilde) {
+          dissolveTiming = 2800;
+          endingTiming = 3000;
+        } else if (isHeide) {
+          dissolveTiming = 6800;
+          endingTiming = 7200;
+        } else if (isMeilin) {
+          dissolveTiming = 4200;
+          endingTiming = 4500;
+        } else if (isCassius) {
+          dissolveTiming = 3450;
+          endingTiming = 5700;
+        } else {
+          dissolveTiming = 4800;
+          endingTiming = 5100;
+        }
 
         // ACT 1.5: DIAGONAL RAZOR BLADE FLASH WIPE ACROSS THE SCREEN (Unknown God only)
         if (!isCustomVideo) {
@@ -1899,9 +1955,12 @@ const Cinematics = {
           if (videoContainer && videoPlayer) {
             videoContainer.classList.remove('hidden');
             videoContainer.classList.remove('video-dissolve-to-battle');
-            const videoSrc = isTrisa
-              ? 'assets/video/trisa_ult.mp4'
-              : (isCassius ? 'assets/video/cassius_ult.mp4' : 'assets/video/unknown_god_ult.mp4');
+            let videoSrc = 'assets/video/unknown_god_ult.mp4';
+            if (isTrisa) videoSrc = 'assets/video/trisa_ult.mp4';
+            else if (isCassius) videoSrc = 'assets/video/cassius_ult.mp4';
+            else if (isHilde) videoSrc = 'assets/video/hilde_ult.mp4';
+            else if (isHeide) videoSrc = 'assets/video/heide_ult.mp4';
+            else if (isMeilin) videoSrc = 'assets/video/meilin_ult.mp4';
             if (!videoPlayer.src || !videoPlayer.src.includes(videoSrc)) {
               videoPlayer.src = videoSrc;
             }
@@ -2055,8 +2114,26 @@ const Cinematics = {
       const startTime = performance.now();
       this.startTime = startTime;
       this.lastTime = startTime;
-      const duration = isVideoCutscene ? (isTrisa ? 3000 : (isCassius ? 5700 : 6400)) : 3900;
-      const climaxTiming = isVideoCutscene ? (isTrisa ? 2750 : (isCassius ? 2950 : 4900)) : 2500;
+      let duration = 3900;
+      let climaxTiming = 2500;
+      if (isVideoCutscene) {
+        if (isTrisa || isHilde) {
+          duration = 3000;
+          climaxTiming = 2750;
+        } else if (isHeide) {
+          duration = 7200;
+          climaxTiming = 6750;
+        } else if (isMeilin) {
+          duration = 4500;
+          climaxTiming = 4150;
+        } else if (isCassius) {
+          duration = 5700;
+          climaxTiming = 2950;
+        } else {
+          duration = 6400;
+          climaxTiming = 4900;
+        }
+      }
 
       if (this.animId) cancelAnimationFrame(this.animId);
 
