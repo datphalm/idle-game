@@ -614,6 +614,7 @@ const Sprites = {
   _getHeroHildeSvg(action) {
     const isAtk = action === 'attack';
     const isAtk2 = action === 'attack2';
+    const isAtk3 = action === 'attack3';
     const isSkill = action === 'skill';
     const isSheathe = action === 'sheathe' || action === 'pose' || action === 'burst';
     const isWalk = action === 'walk';
@@ -626,7 +627,7 @@ const Sprites = {
       imgSrc = 'assets/characters/hilde/hover_3d_idle.webp';
     } else if (isAtk) {
       imgSrc = 'assets/characters/hilde/chibi_attack.webp';
-    } else if (isAtk2) {
+    } else if (isAtk2 || isAtk3) {
       imgSrc = 'assets/characters/hilde/chibi_attack2.webp';
     } else if (isSkill) {
       imgSrc = 'assets/characters/hilde/chibi_skill.webp';
@@ -647,6 +648,7 @@ const Sprites = {
   _getHeroHeideSvg(action) {
     const isAtk = action === 'attack';
     const isAtk2 = action === 'attack2';
+    const isAtk3 = action === 'attack3';
     const isSkill = action === 'skill';
     const isSheathe = action === 'sheathe' || action === 'pose' || action === 'burst';
     const isWalk = action === 'walk';
@@ -659,7 +661,7 @@ const Sprites = {
       imgSrc = 'assets/characters/heide/hover_3d_idle.webp';
     } else if (isAtk) {
       imgSrc = 'assets/characters/heide/chibi_attack.webp';
-    } else if (isAtk2) {
+    } else if (isAtk2 || isAtk3) {
       imgSrc = 'assets/characters/heide/chibi_attack2.webp';
     } else if (isSkill) {
       imgSrc = 'assets/characters/heide/chibi_skill.webp';
@@ -680,6 +682,7 @@ const Sprites = {
   _getHeroMeilinSvg(action) {
     const isAtk = action === 'attack';
     const isAtk2 = action === 'attack2';
+    const isAtk3 = action === 'attack3';
     const isSkill = action === 'skill';
     const isSheathe = action === 'sheathe' || action === 'pose' || action === 'burst';
     const isWalk = action === 'walk';
@@ -692,7 +695,7 @@ const Sprites = {
       imgSrc = 'assets/characters/meilin/hover_3d_idle.webp';
     } else if (isAtk) {
       imgSrc = 'assets/characters/meilin/chibi_attack.webp';
-    } else if (isAtk2) {
+    } else if (isAtk2 || isAtk3) {
       imgSrc = 'assets/characters/meilin/chibi_attack2.webp';
     } else if (isSkill) {
       imgSrc = 'assets/characters/meilin/chibi_skill.webp';
