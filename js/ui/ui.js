@@ -1422,19 +1422,8 @@ const UI = {
   },
 
   _triggerSlashFx(containerId, type = 'normal') {
-    if (GameState.settings && GameState.settings.vfxEnabled === false) return;
-    const activeHero = GameState.activeHeroId || 'hero_starter';
-    if (activeHero === 'hero_cassius' || activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon') return;
-    const container = document.getElementById(containerId);
-    if (!container || typeof Sprites === 'undefined') return;
-    container.innerHTML = Sprites.getSlashFxSvg(type);
-    container.classList.remove('hidden', 'slash-fx-anim', 'slash-fx-extra');
-    void container.offsetWidth;
-    container.classList.add(type === 'extra' ? 'slash-fx-extra' : 'slash-fx-anim');
-    setTimeout(() => {
-      container.classList.add('hidden');
-      container.innerHTML = '';
-    }, 450);
+    // Tắt toàn bộ hiệu ứng vệt chém theo yêu cầu người dùng
+    return;
   },
 
 

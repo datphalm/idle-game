@@ -907,17 +907,12 @@ body {
   100% { transform: translateX(0); filter: none; }
 }
 
-/* Hiệu ứng Vệt Chém Vũ Khí (Slash Cut FX) */
+/* Hiệu ứng Vệt Chém Vũ Khí (Slash Cut FX) - Đã ẩn theo yêu cầu */
 .slash-fx-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 80px;
-  height: 80px;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 60;
-  overflow: visible;
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .slash-fx-anim {

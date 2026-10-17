@@ -17,6 +17,7 @@ HERO_CONFIGS = {
         'y_ground': 780.0,
         'wipe_x': 665,
         'left_cut': 30,
+        'wipe_dropdown': (50, 385, 505),
         'actions': {
             'chibi_idle': {'start': 3420, 'end': 3500, 'step': 1, 'duration': 40},
             'chibi_walk': {'start': 240, 'end': 320, 'step': 1, 'duration': 40},
@@ -50,6 +51,7 @@ HERO_CONFIGS = {
         'y_ground': 785.0,
         'wipe_x': 670,
         'left_cut': 30,
+        'wipe_dropdown': (50, 385, 505),
         'actions': {
             'chibi_idle': {'start': 285, 'end': 352, 'step': 1, 'duration': 45},
             'chibi_walk': {'start': 730, 'end': 805, 'step': 1, 'duration': 40},
@@ -63,13 +65,14 @@ HERO_CONFIGS = {
         'video_path': os.path.join(BASE_DIR, 'scratch', 'raw_hero1_hilde', 'hilde_chibi.mp4'),
         'x_ref': 436.0,
         'y_ground': 785.0,
-        'wipe_x': None,  # Hilde has NO dropdown; zero right-edge clipping!
+        'wipe_x': 725,  # Spine right border
         'left_cut': 25,
+        'wipe_dropdown': (50, 385, 505),
         'actions': {
             'chibi_idle': {'start': 80, 'end': 160, 'step': 1, 'duration': 45},
             'chibi_walk': {'start': 200, 'end': 280, 'step': 1, 'duration': 40},
-            'chibi_attack': {'start': 340, 'end': 420, 'step': 1, 'duration': 42},
-            'chibi_attack2': {'start': 450, 'end': 530, 'step': 1, 'duration': 40},
+            'chibi_attack': {'start': 366, 'end': 418, 'step': 1, 'duration': 42},
+            'chibi_attack2': {'start': 485, 'end': 530, 'step': 1, 'duration': 40},
             'chibi_skill': {'start': 2100, 'end': 2200, 'step': 2, 'duration': 46},
             'chibi_hit': {'start': 3900, 'end': 3980, 'step': 1, 'duration': 45}
         }
@@ -92,6 +95,7 @@ def process_single_hero(hero_name):
     y_ground = cfg['y_ground']
     wipe_x = cfg['wipe_x']
     left_cut = cfg['left_cut']
+    wipe_dropdown = cfg.get('wipe_dropdown')
 
     M = np.float32([
         [SCALE, 0, ANCHOR_X - x_ref * SCALE],
@@ -115,6 +119,9 @@ def process_single_hero(hero_name):
                 clean[:, :left_cut] = 0
                 if wipe_x:
                     clean[:, wipe_x:] = 0
+                if wipe_dropdown:
+                    y1, y2, x1 = wipe_dropdown
+                    clean[y1:y2, x1:] = 0
 
                 m = (np.max(clean, axis=2) > 10).astype(np.uint8) * 255
                 num, labels, stats, _ = cv2.connectedComponentsWithStats(m, 8)
@@ -127,6 +134,10 @@ def process_single_hero(hero_name):
                     for i in range(1, num):
                         if i == main_lbl: continue
                         x, y, w, h, a = stats[i]
+                        if wipe_dropdown:
+                            y1, y2, x1 = wipe_dropdown
+                            if x >= x1 and y < y2:
+                                continue
                         dist_x = max(0, mx - (x + w), x - (mx + mw))
                         dist_y = max(0, my - (y + h), y - (my + mh))
                         # Keep close components (sword, ribbons, arrows) but reject floating cursors

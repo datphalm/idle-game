@@ -159,11 +159,63 @@ namespace IdleRPGLauncher
 
                 if (File.Exists(filePath))
                 {
-                    byte[] bytes = File.ReadAllBytes(filePath);
-                    res.ContentType = GetMimeType(Path.GetExtension(filePath));
-                    res.ContentLength64 = bytes.Length;
-                    res.OutputStream.Write(bytes, 0, bytes.Length);
-                    res.StatusCode = 200;
+                    FileInfo fi = new FileInfo(filePath);
+                    long totalLength = fi.Length;
+                    string mime = GetMimeType(Path.GetExtension(filePath));
+                    res.ContentType = mime;
+                    res.Headers.Add("Accept-Ranges", "bytes");
+
+                    string rangeHeader = req.Headers["Range"];
+                    if (!string.IsNullOrEmpty(rangeHeader) && rangeHeader.StartsWith("bytes="))
+                    {
+                        string rangeValue = rangeHeader.Substring(6).Trim();
+                        string[] range = rangeValue.Split('-');
+                        long start = 0;
+                        long end = totalLength - 1;
+                        if (!string.IsNullOrEmpty(range[0])) long.TryParse(range[0], out start);
+                        if (range.Length > 1 && !string.IsNullOrEmpty(range[1])) long.TryParse(range[1], out end);
+                        if (end >= totalLength) end = totalLength - 1;
+
+                        if (start > end || start < 0)
+                        {
+                            res.StatusCode = 416; // Range Not Satisfiable
+                            res.Headers.Add("Content-Range", string.Format("bytes */{0}", totalLength));
+                        }
+                        else
+                        {
+                            long length = end - start + 1;
+                            res.StatusCode = 206; // Partial Content
+                            res.Headers.Add("Content-Range", string.Format("bytes {0}-{1}/{2}", start, end, totalLength));
+                            res.ContentLength64 = length;
+                            using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                            {
+                                fs.Seek(start, SeekOrigin.Begin);
+                                byte[] buffer = new byte[65536];
+                                long remaining = length;
+                                while (remaining > 0)
+                                {
+                                    int read = fs.Read(buffer, 0, (int)Math.Min(buffer.Length, remaining));
+                                    if (read <= 0) break;
+                                    res.OutputStream.Write(buffer, 0, read);
+                                    remaining -= read;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        res.StatusCode = 200;
+                        res.ContentLength64 = totalLength;
+                        using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        {
+                            byte[] buffer = new byte[65536];
+                            int read;
+                            while ((read = fs.Read(buffer, 0, buffer.Length)) > 0)
+                            {
+                                res.OutputStream.Write(buffer, 0, read);
+                            }
+                        }
+                    }
                 }
                 else
                 {
@@ -188,10 +240,16 @@ namespace IdleRPGLauncher
                 case ".png": return "image/png";
                 case ".jpg": case ".jpeg": return "image/jpeg";
                 case ".gif": return "image/gif";
+                case ".webp": return "image/webp";
                 case ".svg": return "image/svg+xml";
                 case ".ico": return "image/x-icon";
+                case ".mp4": return "video/mp4";
+                case ".webm": return "video/webm";
+                case ".ogg": case ".ogv": return "video/ogg";
                 case ".mp3": return "audio/mpeg";
                 case ".wav": return "audio/wav";
+                case ".m4a": return "audio/mp4";
+                case ".wasm": return "application/wasm";
                 default: return "application/octet-stream";
             }
         }
