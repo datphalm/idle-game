@@ -517,8 +517,6 @@ const UI = {
         <ellipse cx="80" cy="25" rx="52" ry="13" fill="none" stroke="${t.stroke2}" stroke-width="1.8"/>
         <circle cx="14" cy="25" r="2.2" fill="${t.primary}"/>
         <circle cx="146" cy="25" r="2.2" fill="${t.primary}"/>
-        <circle cx="80" cy="8" r="2" fill="#ffffff"/>
-        <circle cx="80" cy="42" r="2" fill="#ffffff"/>
       </svg>
     `;
 

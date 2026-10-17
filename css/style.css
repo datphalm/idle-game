@@ -3133,10 +3133,10 @@ body {
 /* Video Cutscene Dissolve directly into Main Battle Scene with Cinematic Blur */
 .burst-video-container.video-dissolve-to-battle {
   opacity: 0 !important;
-  filter: blur(32px) brightness(1.2) !important;
-  transform: scale(1.03) !important;
+  filter: blur(24px) brightness(1.25) !important;
+  transform: scale(1.04) !important;
   pointer-events: none !important;
-  transition: opacity 2.2s cubic-bezier(0.2, 0.8, 0.2, 1), filter 2.2s cubic-bezier(0.2, 0.8, 0.2, 1), transform 2.2s ease-out !important;
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s ease-out !important;
 }
 
 .preview-3d-pedestal {

@@ -119,7 +119,8 @@ const Boss = {
         const isMeilin = (hId === 'hero_meilin');
 
         let hitDelay = 5500;
-        if (isTrisa || isHilde) hitDelay = 2750;
+        if (isTrisa) hitDelay = 1300;
+        else if (isHilde) hitDelay = 1400;
         else if (isHeide) hitDelay = 6750;
         else if (isMeilin) hitDelay = 4150;
         else if (isCassius) hitDelay = 3000;
@@ -215,7 +216,8 @@ const Boss = {
     let bossCounterDelay = 600;
     if (isVideoCutscene) {
       const hId = skillRes.hero?.id;
-      if (hId === 'hero_trisa' || hId === 'hero_rhiannon' || hId === 'hero_hilde') bossCounterDelay = 3100;
+      if (hId === 'hero_trisa' || hId === 'hero_rhiannon') bossCounterDelay = 1800;
+      else if (hId === 'hero_hilde') bossCounterDelay = 1950;
       else if (hId === 'hero_heide') bossCounterDelay = 7200;
       else if (hId === 'hero_meilin') bossCounterDelay = 4500;
       else if (hId === 'hero_cassius') bossCounterDelay = 5400;

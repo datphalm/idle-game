@@ -606,8 +606,8 @@ const Sprites = {
     }
 
     return `
-    <svg class="pixel-sprite hero-pixel-svg hero-trisa action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
-      <image href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
+    <svg class="pixel-sprite hero-pixel-svg hero-trisa action-${action}" viewBox="-6 -10 112 116" width="100%" height="100%" overflow="visible">
+      <image href="${imgSrc}" xlink:href="${imgSrc}" x="-6" y="-10" width="112" height="116" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
     </svg>`;
   },
 
@@ -640,8 +640,8 @@ const Sprites = {
     }
 
     return `
-    <svg class="pixel-sprite hero-pixel-svg hero-hilde action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
-      <image href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
+    <svg class="pixel-sprite hero-pixel-svg hero-hilde action-${action}" viewBox="-6 -10 112 116" width="100%" height="100%" overflow="visible">
+      <image href="${imgSrc}" xlink:href="${imgSrc}" x="-6" y="-10" width="112" height="116" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
     </svg>`;
   },
 
@@ -674,8 +674,8 @@ const Sprites = {
     }
 
     return `
-    <svg class="pixel-sprite hero-pixel-svg hero-heide action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
-      <image href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
+    <svg class="pixel-sprite hero-pixel-svg hero-heide action-${action}" viewBox="-6 -10 112 116" width="100%" height="100%" overflow="visible">
+      <image href="${imgSrc}" xlink:href="${imgSrc}" x="-6" y="-10" width="112" height="116" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
     </svg>`;
   },
 
@@ -708,8 +708,8 @@ const Sprites = {
     }
 
     return `
-    <svg class="pixel-sprite hero-pixel-svg hero-meilin action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
-      <image href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
+    <svg class="pixel-sprite hero-pixel-svg hero-meilin action-${action}" viewBox="-6 -10 112 116" width="100%" height="100%" overflow="visible">
+      <image href="${imgSrc}" xlink:href="${imgSrc}" x="-6" y="-10" width="112" height="116" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
     </svg>`;
   },
 

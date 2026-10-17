@@ -146,11 +146,16 @@ const Combat = {
           let counterDelay = 6500;
           let turnDelaySurvive = 7100;
 
-          if (isTrisa || isHilde) {
-            hitDelay = 2750;
-            turnDelayKill = 3050;
-            counterDelay = 2950;
-            turnDelaySurvive = 3150;
+          if (isTrisa) {
+            hitDelay = 1300;
+            turnDelayKill = 1800;
+            counterDelay = 1750;
+            turnDelaySurvive = 1850;
+          } else if (isHilde) {
+            hitDelay = 1400;
+            turnDelayKill = 1950;
+            counterDelay = 1900;
+            turnDelaySurvive = 2000;
           } else if (isHeide) {
             hitDelay = 6750;
             turnDelayKill = 7250;
