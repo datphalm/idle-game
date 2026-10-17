@@ -202,7 +202,7 @@ const Combat = {
           }
         }
 
-        // Kỹ năng Thánh Thụ Ban Phước của Rhiannon (Auto-Buff Cổ Thụ Yggdrasil)
+        // Kỹ năng Thánh Quang Ban Phước của Rhiannon (Auto-Buff Quyền Trượng Thánh Quang)
         if (skillRes.hero?.id === 'hero_rhiannon' && skillRes.type === 'skill') {
           if (typeof UI !== 'undefined' && UI.showRhiannonTreeBuff) {
             UI.showRhiannonTreeBuff();
@@ -211,8 +211,8 @@ const Combat = {
           Player.heal(healAmt);
           UI.showDamageNumber(healAmt, false, 'player');
           UI.addCombatLog(
-            `🌿 <strong>THÁNH THỤ BAN PHƯỚC [Rhiannon]:</strong> ` +
-            `Triệu hồi Cổ Thụ Yggdrasil giáng lâm hồi phục <strong style="color:#4ade80;">+${healAmt} HP</strong> và ban phước tăng 100% Sát thương!`,
+            `✨ <strong>THÁNH QUANG BAN PHƯỚC [Rhiannon]:</strong> ` +
+            `Quyền Trượng Thánh Quang tỏa sáng hồi phục <strong style="color:#4ade80;">+${healAmt} HP</strong> và ban phước tăng 100% Sát thương!`,
             'log-extra'
           );
         }

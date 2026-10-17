@@ -1346,32 +1346,37 @@ const UI = {
     const parentTarget = pSprite ? pSprite.parentElement : (document.getElementById(stageId) || document.getElementById('arena-stage'));
     if (!parentTarget) return;
 
-    let treeContainer = parentTarget.querySelector('.rhiannon-tree-container');
-    if (!treeContainer) {
-      treeContainer = document.createElement('div');
-      treeContainer.className = 'rhiannon-tree-container';
-      parentTarget.appendChild(treeContainer);
+    let auraContainer = parentTarget.querySelector('.rhiannon-staff-aura');
+    if (!auraContainer) {
+      auraContainer = document.createElement('div');
+      auraContainer.className = 'rhiannon-staff-aura';
+      parentTarget.appendChild(auraContainer);
     }
 
     // Strictly NO chibi combat sound per user request (only ultimate has audio)
 
-    // Animate chibi skill pose with graceful timing
+    // Animate chibi skill pose with graceful timing (raising staff overhead to cast blessing)
     if (pSprite && typeof Sprites !== 'undefined') {
       pSprite.innerHTML = Sprites.getPlayerSvg('skill', 'hero_rhiannon');
       setTimeout(() => {
         if (pSprite) pSprite.innerHTML = Sprites.getPlayerSvg('idle', 'hero_rhiannon');
-      }, 1600);
+      }, 1200);
     }
 
-    treeContainer.innerHTML = `<img src="assets/characters/rhiannon/tree_buff.webp" class="rhiannon-tree-img" alt="Yggdrasil Tree Aura" />`;
-    treeContainer.classList.remove('hidden');
+    // Ethereal starlight & rune blessing bursting directly from staff tip (ZERO tree)
+    auraContainer.innerHTML = `
+      <div class="staff-blessing-burst"></div>
+      <div class="staff-blessing-ring"></div>
+      <div class="staff-blessing-rays"></div>
+    `;
+    auraContainer.classList.remove('hidden');
 
     setTimeout(() => {
-      if (treeContainer) {
-        treeContainer.innerHTML = '';
-        treeContainer.classList.add('hidden');
+      if (auraContainer) {
+        auraContainer.innerHTML = '';
+        auraContainer.classList.add('hidden');
       }
-    }, 3600);
+    }, 2000);
   },
 
   _triggerAnim(elementId, className, force = false) {
