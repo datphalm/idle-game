@@ -5401,11 +5401,23 @@ body {
 
 .hero-pixel-svg.action-walk {
   animation: heroWalkBob 0.42s ease-in-out infinite alternate;
+  transform-origin: 50% 92% !important;
 }
 
 @keyframes heroWalkBob {
-  from { transform: translateY(0) rotate(-1deg); }
-  to { transform: translateY(-3px) rotate(1deg); }
+  from { transform: scale(0.74) translateY(0) rotate(-1deg); }
+  to { transform: scale(0.74) translateY(-3px) rotate(1deg); }
+}
+
+.fighter-avatar .hero-pixel-svg {
+  transform: scale(0.74);
+  transform-origin: 50% 92%;
+}
+
+.hero-card-avatar .hero-pixel-svg {
+  animation: none !important;
+  transform: scale(1) !important;
+  transform-origin: center center !important;
 }
 
 .hero-pixel-svg.hero-arcane_mage,
@@ -5417,6 +5429,7 @@ body {
 .hero-pixel-svg.hero-heide,
 .hero-pixel-svg.hero-meilin {
   animation: heroLevitation 3s ease-in-out infinite !important;
+  transform-origin: 50% 92% !important;
 }
 
 .hero-pixel-svg.hero-trisa image,
@@ -5435,18 +5448,18 @@ body {
 .hero-pixel-svg.hero-heide image {
   image-rendering: -webkit-optimize-contrast !important;
   image-rendering: high-quality !important;
-  filter: contrast(1.08) brightness(1.02) drop-shadow(0 2px 7px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 6px rgba(16, 185, 129, 0.45));
+  filter: contrast(1.08) brightness(1.02) drop-shadow(0 2px 7px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 6px rgba(168, 85, 247, 0.45));
 }
 
 .hero-pixel-svg.hero-meilin image {
   image-rendering: -webkit-optimize-contrast !important;
   image-rendering: high-quality !important;
-  filter: contrast(1.08) brightness(1.02) drop-shadow(0 2px 7px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 6px rgba(245, 158, 11, 0.45));
+  filter: contrast(1.08) brightness(1.02) drop-shadow(0 2px 7px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 6px rgba(16, 185, 129, 0.45));
 }
 
 @keyframes heroLevitation {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-6px) scale(1.02); }
+  0%, 100% { transform: scale(0.74) translateY(0); }
+  50% { transform: scale(0.75) translateY(-5px); }
 }
 
 /* ============================================================

@@ -373,7 +373,159 @@ const UI = {
       }
     });
 
+    this.updateHeroGroundCircles(activeHeroId);
     this._bindBurstCardEvents();
+  },
+
+  updateHeroGroundCircles(heroId) {
+    const rawId = heroId || (typeof GameState !== 'undefined' && GameState.activeHeroId) || 'hero_starter';
+    const idMap = {
+      hero_traveler: 'hero_starter',
+      hero_kazuha: 'hero_shadow_rogue',
+      hero_furina: 'hero_frost_knight',
+      hero_zhongli: 'hero_spear_lancer',
+      hero_jiyan: 'hero_spear_lancer',
+      hero_amber: 'hero_flame_knight',
+      hero_changli: 'hero_flame_knight',
+      hero_raiden: 'hero_arcane_mage'
+    };
+    const targetId = idMap[rawId] || rawId;
+    const heroCfg = typeof CONFIG !== 'undefined' ? CONFIG.getHeroById(targetId) : null;
+
+    const themes = {
+      hero_cassius: {
+        primary: '#ffd700',
+        secondary: '#f59e0b',
+        dark: '#ca8a04',
+        glow: 'rgba(255, 215, 0, 0.85)',
+        stroke1: 'rgba(255, 215, 0, 0.45)',
+        stroke2: 'rgba(255, 215, 0, 0.75)'
+      },
+      hero_trisa: {
+        primary: '#ef4444',
+        secondary: '#dc2626',
+        dark: '#991b1b',
+        glow: 'rgba(239, 68, 68, 0.9)',
+        stroke1: 'rgba(239, 68, 68, 0.45)',
+        stroke2: 'rgba(220, 38, 38, 0.85)'
+      },
+      hero_hilde: {
+        primary: '#38bdf8',
+        secondary: '#0284c7',
+        dark: '#0369a1',
+        glow: 'rgba(56, 189, 248, 0.9)',
+        stroke1: 'rgba(56, 189, 248, 0.45)',
+        stroke2: 'rgba(14, 165, 233, 0.85)'
+      },
+      hero_heide: {
+        primary: '#c084fc',
+        secondary: '#a855f7',
+        dark: '#7e22ce',
+        glow: 'rgba(192, 132, 252, 0.9)',
+        stroke1: 'rgba(192, 132, 252, 0.45)',
+        stroke2: 'rgba(168, 85, 247, 0.85)'
+      },
+      hero_meilin: {
+        primary: '#34d399',
+        secondary: '#10b981',
+        dark: '#059669',
+        glow: 'rgba(52, 211, 153, 0.9)',
+        stroke1: 'rgba(52, 211, 153, 0.45)',
+        stroke2: 'rgba(16, 185, 129, 0.85)'
+      },
+      hero_starter: {
+        primary: '#cbd5e1',
+        secondary: '#94a3b8',
+        dark: '#64748b',
+        glow: 'rgba(203, 213, 225, 0.8)',
+        stroke1: 'rgba(203, 213, 225, 0.45)',
+        stroke2: 'rgba(148, 163, 184, 0.8)'
+      },
+      hero_shadow_rogue: {
+        primary: '#60a5fa',
+        secondary: '#3b82f6',
+        dark: '#1d4ed8',
+        glow: 'rgba(96, 165, 250, 0.85)',
+        stroke1: 'rgba(96, 165, 250, 0.45)',
+        stroke2: 'rgba(59, 130, 246, 0.85)'
+      },
+      hero_frost_knight: {
+        primary: '#00e5ff',
+        secondary: '#00b4d8',
+        dark: '#0077b6',
+        glow: 'rgba(0, 229, 255, 0.9)',
+        stroke1: 'rgba(0, 229, 255, 0.45)',
+        stroke2: 'rgba(0, 180, 216, 0.85)'
+      },
+      hero_spear_lancer: {
+        primary: '#facc15',
+        secondary: '#eab308',
+        dark: '#ca8a04',
+        glow: 'rgba(250, 204, 21, 0.85)',
+        stroke1: 'rgba(250, 204, 21, 0.45)',
+        stroke2: 'rgba(234, 179, 8, 0.85)'
+      },
+      hero_flame_knight: {
+        primary: '#ff5722',
+        secondary: '#f97316',
+        dark: '#c2410c',
+        glow: 'rgba(255, 87, 34, 0.9)',
+        stroke1: 'rgba(255, 87, 34, 0.45)',
+        stroke2: 'rgba(249, 115, 22, 0.85)'
+      },
+      hero_arcane_mage: {
+        primary: '#d8b4fe',
+        secondary: '#b026ff',
+        dark: '#7c3aed',
+        glow: 'rgba(176, 38, 255, 0.9)',
+        stroke1: 'rgba(216, 180, 254, 0.45)',
+        stroke2: 'rgba(176, 38, 255, 0.85)'
+      },
+      hero_aetheris: {
+        primary: '#38bdf8',
+        secondary: '#00e5ff',
+        dark: '#0284c7',
+        glow: 'rgba(0, 229, 255, 0.9)',
+        stroke1: 'rgba(56, 189, 248, 0.45)',
+        stroke2: 'rgba(0, 229, 255, 0.85)'
+      }
+    };
+
+    const t = themes[targetId] || {
+      primary: heroCfg?.elementColor || '#ffd700',
+      secondary: heroCfg?.elementColor || '#f59e0b',
+      dark: '#1e293b',
+      glow: (heroCfg?.elementColor || '#ffd700') + 'dd',
+      stroke1: (heroCfg?.elementColor || '#ffd700') + '77',
+      stroke2: (heroCfg?.elementColor || '#ffd700') + 'cc'
+    };
+
+    const circleSvg = `
+      <svg viewBox="0 0 160 50" width="100%" height="100%" class="stationary-ground-svg" style="filter: drop-shadow(0 0 10px ${t.glow});">
+        <defs>
+          <radialGradient id="hero-ground-grad-${targetId}" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="${t.primary}" stop-opacity="0.38"/>
+            <stop offset="65%" stop-color="${t.secondary}" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="${t.dark}" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="ground-ring-glow-${targetId}">
+            <feDropShadow dx="0" dy="0" stdDeviation="2.4" flood-color="${t.primary}" flood-opacity="0.9"/>
+          </filter>
+        </defs>
+        <ellipse cx="80" cy="25" rx="72" ry="20" fill="url(#hero-ground-grad-${targetId})"/>
+        <ellipse cx="80" cy="25" rx="66" ry="17" fill="none" stroke="${t.stroke1}" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#ground-ring-glow-${targetId})"/>
+        <ellipse cx="80" cy="25" rx="52" ry="13" fill="none" stroke="${t.stroke2}" stroke-width="1.8"/>
+        <circle cx="14" cy="25" r="2.2" fill="${t.primary}"/>
+        <circle cx="146" cy="25" r="2.2" fill="${t.primary}"/>
+        <circle cx="80" cy="8" r="2" fill="#ffffff"/>
+        <circle cx="80" cy="42" r="2" fill="#ffffff"/>
+      </svg>
+    `;
+
+    ['player-ground-circle', 'boss-player-ground-circle', 'dungeon-player-ground-circle', 'tower-player-ground-circle'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = circleSvg;
+    });
   },
 
   _bindBurstCardEvents() {
