@@ -423,6 +423,17 @@ body {
   100% { transform: translateX(0) translateY(0) scale(1); }
 }
 
+.hero-attack-hero_rhiannon {
+  animation: rhiannonLaserRecoil 0.44s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+@keyframes rhiannonLaserRecoil {
+  0%   { transform: translateX(0) scale(1); }
+  25%  { transform: translateX(-14px) translateY(-2px) scale(1.06) rotate(-3deg); }
+  60%  { transform: translateX(6px) translateY(1px) scale(1.02); }
+  85%  { transform: translateX(2px) scale(1.01); }
+  100% { transform: translateX(0) translateY(0) scale(1); }
+}
+
 .hero-attack-hero_zhongli {
   animation: zhongliSpearKick 0.36s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important;
 }
@@ -2741,6 +2752,29 @@ body {
   }
 }
 
+/* Rhiannon Emerald Glow when Burst is Ready */
+.skill-burst-card.card-rhiannon.is-ready {
+  border-color: #4ade80;
+  box-shadow: 0 0 14px rgba(74, 222, 128, 0.85), 0 0 28px rgba(56, 189, 248, 0.55);
+  animation: cardRhiannonReadyGlow 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes cardRhiannonReadyGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.6), 0 0 18px rgba(56, 189, 248, 0.4);
+    border-color: #4ade80;
+  }
+  100% {
+    box-shadow: 0 0 24px rgba(74, 222, 128, 1), 0 0 42px rgba(167, 243, 208, 0.85);
+    border-color: #ffffff;
+  }
+}
+
+.skill-burst-card.card-rhiannon.is-ready + .burst-card-status-text {
+  color: #4ade80;
+  text-shadow: 0 0 6px rgba(74, 222, 128, 0.8);
+}
+
 .burst-card-status-text {
   font-size: 0.72rem;
   font-weight: 800;
@@ -2912,6 +2946,129 @@ body {
   color: #fcd34d;
   letter-spacing: 1.5px;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+/* Rhiannon Emerald Nature Showcase Variant */
+.hero-hover-showcase.showcase-rhiannon .showcase-aura-backdrop {
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.42) 0%, rgba(56, 189, 248, 0.22) 35%, rgba(167, 243, 208, 0.1) 55%, transparent 72%);
+}
+
+.hero-hover-showcase.showcase-rhiannon .showcase-pedestal-glow {
+  background: radial-gradient(ellipse at center, rgba(74, 222, 128, 0.95) 0%, rgba(56, 189, 248, 0.5) 55%, transparent 75%);
+  box-shadow: 0 0 38px rgba(74, 222, 128, 0.9);
+}
+
+.hero-hover-showcase.showcase-rhiannon .showcase-roman-title {
+  color: #4ade80;
+  text-shadow: 0 0 10px rgba(74, 222, 128, 0.85);
+}
+
+.hero-hover-showcase.showcase-rhiannon .showcase-jp-kanji {
+  background: linear-gradient(135deg, #ffffff 0%, #4ade80 50%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 16px rgba(74, 222, 128, 0.95));
+}
+
+.hero-hover-showcase.showcase-rhiannon .showcase-jp-quote {
+  color: #a7f3d0;
+}
+
+/* ============================================================
+   RHIANNON EXTENDED LASER BEAM & SACRED TREE BUFF VFX
+   ============================================================ */
+.rhiannon-laser-container {
+  position: absolute;
+  left: 55px;
+  right: 55px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 190px;
+  pointer-events: none;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: visible;
+}
+
+.rhiannon-laser-container.hidden {
+  display: none !important;
+}
+
+.rhiannon-laser-img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 16px rgba(74, 222, 128, 0.95)) drop-shadow(0 0 35px rgba(254, 240, 138, 0.85));
+  animation: rhiannonLaserPulse 0.46s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes rhiannonLaserPulse {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.1) scaleY(0.65);
+    transform-origin: left center;
+  }
+  15% {
+    opacity: 1;
+    transform: scaleX(1.0) scaleY(1.15);
+    transform-origin: left center;
+  }
+  75% {
+    opacity: 1;
+    transform: scaleX(1.0) scaleY(1.0);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1.0) scaleY(0.6);
+  }
+}
+
+.rhiannon-tree-container {
+  position: absolute;
+  left: 10px;
+  bottom: 0px;
+  width: 330px;
+  height: 330px;
+  pointer-events: none;
+  z-index: 95;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rhiannon-tree-container.hidden {
+  display: none !important;
+}
+
+.rhiannon-tree-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 22px rgba(74, 222, 128, 0.95)) drop-shadow(0 0 45px rgba(167, 243, 208, 0.85));
+  animation: rhiannonTreeBloom 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes rhiannonTreeBloom {
+  0% {
+    opacity: 0;
+    transform: scale(0.65) translateY(25px);
+  }
+  14% {
+    opacity: 1;
+    transform: scale(1.05) translateY(0);
+  }
+  80% {
+    opacity: 1;
+    transform: scale(1.0) translateY(-6px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.95) translateY(-14px);
+  }
 }
 
 /* Video Cutscene Dissolve directly into Main Battle Scene with Cinematic Blur */
@@ -5195,7 +5352,8 @@ body {
 
 .hero-pixel-svg.hero-arcane_mage,
 .hero-pixel-svg.hero-unknown_god,
-.hero-pixel-svg.hero-cassius {
+.hero-pixel-svg.hero-cassius,
+.hero-pixel-svg.hero-rhiannon {
   animation: heroLevitation 3s ease-in-out infinite !important;
 }
 

@@ -1,14 +1,15 @@
 {
-  "version": "2.4.0",
-  "title": "Bản Cập Nhật v2.4.0 - Đại Tướng Quân Vương Bài Bạc: Cassius",
-  "releaseDate": "2026-10-15",
+  "version": "2.5.0",
+  "title": "Bản Cập Nhật v2.5.0 - Thánh Nữ Rừng Thiêng: Rhiannon",
+  "releaseDate": "2026-10-17",
   "changelog": [
-    "Khởi tạo & Tái hiện hoàn hảo Quân Vương Bài Bạc: Cassius (The Sovereign Gambler) từ Spine 2D sang Pixel/SVG & Cinematic Cutscene",
-    "Ngoại hình độc bản: Mũ chú hề đại bác hai chỏm lục lạc vàng, mặt nạ đầu lâu hoàng kim mắt xoắn ốc vàng & mắt vạch đỏ, cánh tay rối vàng kim, thắt lưng 4 chất bài tây, trượng bích hoàng kim, xúc xắc bay và quỷ xúc xắc một mắt có cánh",
-    "Tuyệt Kỹ Vận Mệnh: Canh Bạc Vô Cực (All-In Jackpot) với video anime cutscene 1080p đồng bộ âm thanh chuẩn xác 100% từ frame đầu đến nhịp đập bài kết liễu",
-    "Cơ chế chiến đấu Canh Bạc Vận Mệnh: Đổ xúc xắc ngẫu nhiên kích hoạt bùa lợi tấn công/phòng thủ, phi bài sắc bén, nguyền rủa xúc xắc quỷ diện, kết liễu hành quyết 35% HP quái và cược mạng hồi sinh bất tử",
-    "Trọn bộ 6 Tinh Hồn (Eidolons E1 - E6) hoàng kim độc bản cho Cassius",
-    "Tối ưu hóa toàn diện hiệu năng và giao diện chiến đấu mượt mà 60fps"
+    "Ra mắt Đại Tướng Thần Cấp mới: Rhiannon - Thánh Nữ Rừng Thiêng & Cung Thủ Ánh Sáng",
+    "Hoạt ảnh Idle 3D Showcase bên trái khung hình hiển thị Rhiannon cùng thần hộ mệnh Cú Đêm và đàn chim xanh dẫn lối khi di chuột vào thẻ bài",
+    "Thẻ bài Tuyệt Kỹ Tarot độc bản với hiệu ứng phát sáng ngọc lục bảo Thánh Quang",
+    "Kỹ năng Nộ Cinematic Video: Thần Mộc Khải Huyền (Celestial Judgement) bắn phát thần tiễn xé rách không gian, nổ mandala ánh sáng và chuyển cảnh mượt mà vào sàn đấu",
+    "Đại Pháo Quang Tiễn (Laser Beam) kéo dài xuyên suốt toàn bộ sàn đấu bắn thẳng vào kẻ địch",
+    "Kỹ năng Tự Động Kích Hoạt trong trận đấu: Thánh Thụ Ban Phước triệu hồi Cổ Thụ Yggdrasil ban phước và hồi máu cực mạnh kèm âm thanh chuông thiêng",
+    "Trọn bộ 6 Tinh Hồn (E1 - E6) Thánh Mộc độc bản mở khóa sẵn sàng"
   ],
   "downloadUrl": "https://github.com/datphalm/idle-game/releases/latest"
 }

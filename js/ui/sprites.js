@@ -575,6 +575,37 @@ const Sprites = {
     </svg>`;
   },
 
+  _getHeroRhiannonSvg(action) {
+    const isAtk = action === 'attack';
+    const isSkill = action === 'skill';
+    const isSheathe = action === 'sheathe' || action === 'pose' || action === 'burst';
+    const isWalk = action === 'walk';
+    const isHit = action === 'hit';
+    const isShowcase = action === 'showcase' || action === 'model_3d';
+
+    let imgSrc = 'assets/characters/rhiannon/chibi_idle.webp';
+
+    if (isShowcase) {
+      imgSrc = 'assets/characters/rhiannon/hover_3d_idle.webp';
+    } else if (isAtk) {
+      imgSrc = 'assets/characters/rhiannon/chibi_attack.webp';
+    } else if (isSkill) {
+      imgSrc = 'assets/characters/rhiannon/chibi_skill.webp';
+    } else if (isSheathe) {
+      imgSrc = 'assets/characters/rhiannon/chibi_attack.webp';
+    } else if (isHit) {
+      imgSrc = 'assets/characters/rhiannon/chibi_hit.webp';
+    } else if (isWalk) {
+      imgSrc = 'assets/characters/rhiannon/chibi_walk.webp';
+    }
+
+    return `
+    <svg class="pixel-sprite hero-pixel-svg hero-rhiannon action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
+      <!-- Authentic Rhiannon Chibi Visual -->
+      <image href="${imgSrc}" xlink:href="${imgSrc}" x="3" y="4" width="94" height="89" preserveAspectRatio="xMidYMax meet"/>
+    </svg>`;
+  },
+
   _getHeroAetherisSvg(action) {
     const isAtk = action === 'attack';
     const isHit = action === 'hit';
@@ -726,6 +757,8 @@ const Sprites = {
         return this._getHeroUnknownGodSvg(action);
       case 'hero_cassius':
         return this._getHeroCassiusSvg(action);
+      case 'hero_rhiannon':
+        return this._getHeroRhiannonSvg(action);
       default:
         return this._getHeroCassiusSvg(action);
     }
@@ -1089,6 +1122,27 @@ const Sprites = {
         <!-- Full 3D Spine Model of Cassius -->
         <g transform="translate(260, 185)">
           <image href="assets/characters/cassius/model_3d_full.png" xlink:href="assets/characters/cassius/model_3d_full.png" x="-180" y="-165" width="360" height="330" preserveAspectRatio="xMidYMid meet" filter="url(#cass-burst-glow)"/>
+        </g>
+      </svg>`;
+    }
+
+    // 9. THÁNH NỮ RỪNG THIÊNG RHIANNON
+    if (targetId === 'hero_rhiannon') {
+      return `
+      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-rhiannon">
+        <defs>
+          <radialGradient id="rhi-burst-bg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(74,222,128,0.4)"/>
+            <stop offset="45%" stop-color="rgba(56,189,248,0.2)"/>
+            <stop offset="85%" stop-color="rgba(10,20,15,0.95)"/>
+            <stop offset="100%" stop-color="#000000"/>
+          </radialGradient>
+          <filter id="rhi-burst-glow"><feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#4ade80" flood-opacity="1"/></filter>
+        </defs>
+        <rect width="520" height="360" fill="url(#rhi-burst-bg)"/>
+        <ellipse cx="260" cy="300" rx="190" ry="42" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-dasharray="10,6" filter="url(#rhi-burst-glow)"/>
+        <g transform="translate(260, 185)">
+          <image href="assets/characters/rhiannon/hover_3d_idle.webp" xlink:href="assets/characters/rhiannon/hover_3d_idle.webp" x="-180" y="-165" width="360" height="330" preserveAspectRatio="xMidYMid meet" filter="url(#rhi-burst-glow)"/>
         </g>
       </svg>`;
     }
@@ -2090,6 +2144,41 @@ const Sprites = {
               <line x1="-2" y1="-8" x2="-2" y2="8" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
               <path d="M -55,-4 Q -5,-32 60,-12" stroke="#ff0044" stroke-width="4.5" fill="none" stroke-linecap="round"/>
               <path d="M 50,-8 Q 100,-25 190,-12" stroke="#ffd700" stroke-width="3" fill="none"/>
+            </g>
+          </g>
+        </svg>`;
+
+      case 'hero_rhiannon':
+        return `
+        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-rhiannon">
+          <defs>
+            <linearGradient id="rhi-cutin-bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="rgba(17,25,20,0)"/>
+              <stop offset="15%" stop-color="#0a1a10"/>
+              <stop offset="50%" stop-color="#064e3b"/>
+              <stop offset="85%" stop-color="#0a1a10"/>
+              <stop offset="100%" stop-color="rgba(17,25,20,0)"/>
+            </linearGradient>
+            <filter id="rhi-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#4ade80" flood-opacity="1"/></filter>
+          </defs>
+          <polygon points="20,0 640,0 620,130 0,130" fill="url(#rhi-cutin-bg)"/>
+          <line x1="30" y1="0" x2="630" y2="0" stroke="#4ade80" stroke-width="3"/>
+          <line x1="10" y1="130" x2="610" y2="130" stroke="#38bdf8" stroke-width="3"/>
+          <text x="320" y="80" font-family="'Courier New', monospace" font-size="52" font-weight="900" fill="rgba(74,222,128,0.22)" text-anchor="middle" letter-spacing="18">聖 樹 導 き</text>
+          <g transform="translate(320, 65)">
+            <g transform="translate(-110, 0)">
+              <path d="M -55,-8 Q 0,-24 50,-2 Q 10,18 -55,-8 Z" fill="#ffffff"/>
+              <ellipse cx="2" cy="0" rx="16" ry="12" fill="#064e3b"/>
+              <ellipse cx="2" cy="0" rx="10" ry="10" fill="#4ade80" filter="url(#rhi-eye-glow)"/>
+              <circle cx="2" cy="0" r="3" fill="#ffffff"/>
+              <path d="M -60,-12 Q 5,-32 55,-4" stroke="#4ade80" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            </g>
+            <g transform="translate(110, 0)">
+              <path d="M -50,-2 Q 0,-24 55,-8 Q 10,18 -50,-2 Z" fill="#ffffff"/>
+              <ellipse cx="-2" cy="0" rx="16" ry="12" fill="#064e3b"/>
+              <ellipse cx="-2" cy="0" rx="10" ry="10" fill="#38bdf8" filter="url(#rhi-eye-glow)"/>
+              <circle cx="-2" cy="0" r="3" fill="#ffffff"/>
+              <path d="M -55,-4 Q -5,-32 60,-12" stroke="#38bdf8" stroke-width="4.5" fill="none" stroke-linecap="round"/>
             </g>
           </g>
         </svg>`;

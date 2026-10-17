@@ -510,6 +510,8 @@ const Cinematics = {
         return [0x00ffcc, 0xff0055, 0xaa00ff, 0x880e4f, 0xffffff];
       case 'hero_cassius':
         return [0xffd700, 0xff0044, 0x111119, 0xffe066, 0xffffff];
+      case 'hero_rhiannon':
+        return [0x4ade80, 0x38bdf8, 0xfef08a, 0x10b981, 0xffffff];
       default:
         return [0xffd700, 0x00e5ff, 0xff007f, 0x76ff03, 0xffffff];
     }
@@ -980,6 +982,18 @@ const Cinematics = {
         romaji: 'Daisu o fure!',
         sub: '「ダイスを振れ！悪魔の囁き！」'
       }
+    },
+    hero_rhiannon: {
+      burst: {
+        text: '聖なる光よ、運命を射抜け！',
+        romaji: 'Seinaru hikari yo, unmei o inuke!',
+        sub: '「大地の息吹よ、聖樹の導きを！天罰の矢！」'
+      },
+      skill: {
+        text: '聖樹の加護を！',
+        romaji: 'Seiju no kago o!',
+        sub: '「聖なる樹よ、生命を紡ぎ出せ！」'
+      }
     }
   },
 
@@ -1003,8 +1017,8 @@ const Cinematics = {
     const voiceData = this.JAPANESE_VOICE_MAP[targetId] || this.JAPANESE_VOICE_MAP.hero_starter;
     const entry = voiceData[type] || voiceData.burst;
 
-    // RULE 2.5: For Hero Unknown God & Cassius burst, the voice & SFX are already mastered into the cinematic video
-    if (type === 'burst' && (targetId === 'hero_unknown_god' || targetId === 'hero_cassius')) {
+    // RULE 2.5: For Hero Unknown God, Cassius & Rhiannon burst, the voice & SFX are already mastered into the cinematic video
+    if (type === 'burst' && (targetId === 'hero_unknown_god' || targetId === 'hero_cassius' || targetId === 'hero_rhiannon')) {
       return entry;
     }
 
@@ -1679,6 +1693,7 @@ const Cinematics = {
         hero_aetheris: '⟦ 星 穹 ⟧',
         hero_unknown_god: '⟦ 無 極 創 生 ⟧',
         hero_cassius: '⟦ 命 運 賭 徒 ⟧',
+        hero_rhiannon: '⟦ 聖 樹 審 判 ⟧',
         // Fallbacks for legacy saves
         hero_traveler: '⟦ 開 山 破 石 ⟧',
         hero_kazuha: '⟦ 幻 影 絶 殺 ⟧',
@@ -1711,8 +1726,10 @@ const Cinematics = {
       }
 
       // 2. High-Fidelity Anime Video Cutscene vs WebGL Canvas Setup
-      const isVideoCutscene = (heroId === 'hero_unknown_god' || heroId === 'hero_cassius');
+      const isVideoCutscene = (heroId === 'hero_unknown_god' || heroId === 'hero_cassius' || heroId === 'hero_rhiannon');
       const isCassius = (heroId === 'hero_cassius');
+      const isRhiannon = (heroId === 'hero_rhiannon');
+      const isCustomVideo = (isCassius || isRhiannon);
       const videoContainer = document.getElementById('burst-video-container');
       const videoPlayer = document.getElementById('burst-video-player');
 
@@ -1737,7 +1754,7 @@ const Cinematics = {
       } else {
         // Video Cutscene starts hidden during Act 1 and starts playing at videoStartTiming
         if (videoContainer) videoContainer.classList.add('hidden');
-        if (isCassius) {
+        if (isCustomVideo) {
           if (this.pixiCanvas) this.pixiCanvas.style.display = 'none';
           if (this.threeCanvas) this.threeCanvas.style.display = 'none';
           if (this.particleLayer) this.particleLayer.removeChildren();
@@ -1747,7 +1764,7 @@ const Cinematics = {
       }
 
       // 3. Shockwave & Chromatic Aberration Spike on Activation
-      if (!isCassius) {
+      if (!isCustomVideo) {
         if (this.shockwaveFilter && this.shockwaveFilter.uniforms) {
           this.shockwaveFilter.uniforms.uProgress = 0.01;
           this.shockwaveFilter.uniforms.uCenter = [0.5, 0.5];
@@ -1773,7 +1790,7 @@ const Cinematics = {
       }
 
       // 5. Build Genuine 3D Three.js Scene
-      if (!isCassius) {
+      if (!isCustomVideo) {
         this._buildHero3DScene(heroId);
       } else {
         this._cleanHero3DScene();
@@ -1781,7 +1798,7 @@ const Cinematics = {
 
       // 6. Dynamic 3D Camera Tilt on 2D Arena & Staging
       if (arenaStage) {
-        if (!isCassius) {
+        if (!isCustomVideo) {
           arenaStage.classList.add('camera-3d-active', 'arena-burst-active', 'phase-1-charging', `theme-${heroId}`);
           this._apply3DCameraAngle(arenaStage, heroId);
         } else {
@@ -1807,7 +1824,7 @@ const Cinematics = {
           pSprite.innerHTML = Sprites.getPlayerSvg('sheathe', heroId);
         }
         pSprite.className = isVideoCutscene 
-          ? (isCassius ? 'fighter-avatar hero-burst-cassius-opening' : 'fighter-avatar hero-burst-god-opening')
+          ? (isCustomVideo ? 'fighter-avatar player-idle' : 'fighter-avatar hero-burst-god-opening')
           : `fighter-avatar hero-burst-charging hero-charge-${heroId}`;
       }
       if (mSprite) {
@@ -1834,13 +1851,13 @@ const Cinematics = {
       this._phaseTimers = [];
 
       if (isVideoCutscene) {
-        const wipeTiming = isCassius ? 120 : 780;
-        const videoStartTiming = isCassius ? 180 : 920;
-        const dissolveTiming = isCassius ? 3450 : 4800;
-        const endingTiming = isCassius ? 5700 : 5100;
+        const wipeTiming = isCustomVideo ? 120 : 780;
+        const videoStartTiming = isCustomVideo ? 180 : 920;
+        const dissolveTiming = isRhiannon ? 8800 : (isCassius ? 3450 : 4800);
+        const endingTiming = isRhiannon ? 9900 : (isCassius ? 5700 : 5100);
 
         // ACT 1.5: DIAGONAL RAZOR BLADE FLASH WIPE ACROSS THE SCREEN (Unknown God only)
-        if (!isCassius) {
+        if (!isCustomVideo) {
           const tBladeWipe = setTimeout(() => {
             if (!this.active) return;
             let wipeEl = document.getElementById('god-blade-wipe-overlay');
@@ -1862,14 +1879,16 @@ const Cinematics = {
         // ACT 2: SEAMLESS MATCH-CUT INTO FLUID ANIME CUTSCENE
         const tVideoStart = setTimeout(() => {
           if (!this.active) return;
-          if (overlay && !isCassius) {
+          if (overlay && !isCustomVideo) {
             overlay.classList.add('hitstop-active');
             setTimeout(() => overlay && overlay.classList.remove('hitstop-active'), 80);
           }
           if (videoContainer && videoPlayer) {
             videoContainer.classList.remove('hidden');
             videoContainer.classList.remove('video-dissolve-to-battle');
-            const videoSrc = isCassius ? 'assets/video/cassius_ult.mp4' : 'assets/video/unknown_god_ult.mp4';
+            const videoSrc = isRhiannon
+              ? 'assets/video/rhiannon_ult.mp4'
+              : (isCassius ? 'assets/video/cassius_ult.mp4' : 'assets/video/unknown_god_ult.mp4');
             if (!videoPlayer.src || !videoPlayer.src.includes(videoSrc)) {
               videoPlayer.src = videoSrc;
             }
@@ -1919,15 +1938,15 @@ const Cinematics = {
             arenaStage.classList.add('phase-3-sheathe');
           }
           if (pSprite) {
-            pSprite.className = isCassius ? 'fighter-avatar player-idle' : 'fighter-avatar hero-burst-god-ending';
+            pSprite.className = isCustomVideo ? 'fighter-avatar player-idle' : 'fighter-avatar hero-burst-god-ending';
             if (typeof Sprites !== 'undefined') {
               pSprite.innerHTML = Sprites.getPlayerSvg('idle', heroId);
             }
           }
           if (mSprite) {
-            mSprite.className = isCassius ? 'fighter-avatar monster-idle' : 'fighter-avatar monster-burst-god-airborne';
+            mSprite.className = isCustomVideo ? 'fighter-avatar monster-idle' : 'fighter-avatar monster-burst-god-airborne';
           }
-          if (!isCassius) {
+          if (!isCustomVideo) {
             if (impactFxEl) {
               impactFxEl.innerHTML = this._getHeroBurstImpactSvg(heroId);
               impactFxEl.className = `arena-burst-impact-fx theme-${heroId}`;
@@ -2023,8 +2042,8 @@ const Cinematics = {
       const startTime = performance.now();
       this.startTime = startTime;
       this.lastTime = startTime;
-      const duration = isVideoCutscene ? (isCassius ? 5700 : 6400) : 3900;
-      const climaxTiming = isVideoCutscene ? (isCassius ? 2950 : 4900) : 2500;
+      const duration = isVideoCutscene ? (isRhiannon ? 9900 : (isCassius ? 5700 : 6400)) : 3900;
+      const climaxTiming = isVideoCutscene ? (isRhiannon ? 8600 : (isCassius ? 2950 : 4900)) : 2500;
 
       if (this.animId) cancelAnimationFrame(this.animId);
 
@@ -2257,6 +2276,7 @@ const Cinematics = {
         break;
       case 'hero_unknown_god':
       case 'hero_cassius':
+      case 'hero_rhiannon':
         stage.style.transform = 'none';
         break;
       default:
@@ -2511,7 +2531,8 @@ const Cinematics = {
       }
 
       case 'hero_unknown_god':
-      case 'hero_cassius': {
+      case 'hero_cassius':
+      case 'hero_rhiannon': {
         // Cutscene hiệu ứng cũ được thay thế hoàn toàn bằng anime cutscene video
         break;
       }

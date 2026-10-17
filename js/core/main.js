@@ -15,12 +15,16 @@ function initGame() {
   if (!GameState.heroes || GameState.heroes.length === 0) {
     GameState.heroes = [
       { id: 'hero_cassius', constellation: 6, level: 90, skillLevels: { s1: 10, s2: 10, s3: 10 }, unlockedAt: Date.now() },
+      { id: 'hero_rhiannon', constellation: 6, level: 90, skillLevels: { s1: 10, s2: 10, s3: 10 }, unlockedAt: Date.now() },
       { id: 'hero_starter', constellation: 0, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() }
     ];
   } else {
-    // Luôn đảm bảo Cassius được mở khóa đầy đủ tinh hồn
+    // Luôn đảm bảo Cassius & Rhiannon được mở khóa đầy đủ tinh hồn
     if (!GameState.heroes.find(h => h.id === 'hero_cassius')) {
       GameState.heroes.push({ id: 'hero_cassius', constellation: 6, level: 90, skillLevels: { s1: 10, s2: 10, s3: 10 }, unlockedAt: Date.now() });
+    }
+    if (!GameState.heroes.find(h => h.id === 'hero_rhiannon')) {
+      GameState.heroes.push({ id: 'hero_rhiannon', constellation: 6, level: 90, skillLevels: { s1: 10, s2: 10, s3: 10 }, unlockedAt: Date.now() });
     }
   }
   if (!GameState.activeHeroId) {

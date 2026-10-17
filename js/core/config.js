@@ -566,6 +566,30 @@ const CONFIG = {
         { level: 5, name: 'E5: Hoàng Triều Át Bích', desc: 'Cấp Nộ Canh Bạc Vô Cực +3. Sát thương Tuyệt Kỹ Nộ tăng thêm 250%!', burstDmgMult: 2.5 },
         { level: 6, name: 'E6: ⟦ VUA SÒNG BẠC TOÀN TRI ⟧', desc: 'Mọi đòn đánh luôn duy trì hiệu ứng JACKPOT tối thượng, Tuyệt Kỹ Nộ lập tức kết liễu thẳng đối thủ dưới 35% HP!', uniquePassive: 'cassius_execute_e6' }
       ]
+    },
+    {
+      id: 'hero_rhiannon',
+      name: '⟦ RHIANNON • THÁNH NỮ RỪNG THIÊNG ⟧',
+      title: 'Thánh Nữ Rừng Thiêng & Cung Thủ Ánh Sáng',
+      rarity: 'unknown',
+      element: 'nature',
+      elementName: 'Thánh Quang Sinh Mệnh 🌿🏹',
+      elementColor: '#4ade80',
+      pixelArchetype: 'rhiannon',
+      atkBonusPct: 2.2, hpBonusPct: 1.6, defBonusPct: 1.2, spdBonus: 70,
+      skills: [
+        { id: 's1', name: 'Tinh Linh Tiễn Pháp (Spirit Piercing Beam)', type: 'passive', icon: '🏹', desc: 'Tăng 220% Sát thương toàn thể. Đòn đánh bắn Đại Pháo Quang Tiễn (Laser Thánh Quang) xuyên thấu toàn cõi thẳng vào kẻ địch và xé toạc 40% Giáp đối thủ.', bonusAtk: 2.2 },
+        { id: 's2', name: 'Thánh Thụ Ban Phước (Yggdrasil Blessing)', type: 'active', icon: '🌳', cd: 6.0, dmgMult: 0, desc: 'Tự động kích hoạt trong trận đấu: Triệu hồi Cổ Thụ Sinh Mệnh Yggdrasil giáng lâm, lập tức hồi 35% HP tối đa, ban phước tăng 100% Sát thương và miễn nhiễm sát thương trong 2.5s.' },
+        { id: 's3', name: 'Thần Mộc Khải Huyền (Celestial Judgement)', type: 'burst', icon: '✨', cd: 8.0, dmgMult: 65.0, desc: 'Khai mở sức mạnh Thần Cung Cổ Xưa: Mở Đại Trận Cổ Ngữ Rừng Thiêng, dồn toàn bộ tinh hoa đất trời bắn phát Thần Tiễn Xé Rách Không Gian gây 6500% ATK sát thương Thánh Mộc Vô Cực!' }
+      ],
+      eidolons: [
+        { level: 1, name: 'E1: Hơi Thở Đại Ngàn', desc: 'Tăng 180% Sát thương toàn thể, Đại Pháo Quang Tiễn tăng gấp đôi tầm sát thương và tốc độ đánh +40.', bonusAtk: 1.8, bonusHp: 1.0 },
+        { level: 2, name: 'E2: Ánh Sáng Yggdrasil', desc: 'Thánh Thụ Ban Phước nhận thêm khiên bảo hộ 50% HP và tăng 50% Tỉ lệ bạo kích trong 5 giây.', uniquePassive: 'rhiannon_tree_shield' },
+        { level: 3, name: 'E3: Khế Ước Cú Đêm & Tinh Linh', desc: 'Cấp kỹ năng Thánh Thụ Ban Phước +3. Sát thương nhận vào giảm 50% vĩnh viễn.', bonusDef: 1.0 },
+        { level: 4, name: 'E4: Sinh Mệnh Bất Tận', desc: 'Khi nhận sát thương chí tử, Thần Thụ lập tức hồi sinh 100% Máu và tạo kết giới bất tử trong 4 giây!', uniquePassive: 'rhiannon_immortal_rebirth' },
+        { level: 5, name: 'E5: Mũi Tên Tinh Tú', desc: 'Cấp Nộ Thần Mộc Khải Huyền +3. Sát thương Tuyệt Kỹ Nộ tăng thêm 250%!', burstDmgMult: 2.5 },
+        { level: 6, name: 'E6: ⟦ NỮ HOÀNG RỪNG THIÊNG TOÀN NĂNG ⟧', desc: 'Mọi đòn đánh đều kèm Laser Thánh Quang Vạn Trượng 400% ATK, Tuyệt Kỹ Nộ lập tức kết liễu thẳng mọi kẻ thù dưới 35% HP!', uniquePassive: 'rhiannon_execute_e6' }
+      ]
     }
   ],
 
@@ -721,6 +745,7 @@ CONFIG.getHeroPixelArchetype = function(heroId) {
     hero_arcane_mage: 'arcane_mage',
     hero_unknown_god: 'unknown_god',
     hero_cassius: 'cassius',
+    hero_rhiannon: 'rhiannon',
     // Fallback migration mapping
     hero_traveler: 'starter_knight',
     hero_amber: 'flame_knight',

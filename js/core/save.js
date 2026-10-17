@@ -216,6 +216,7 @@ const SaveManager = {
     CONFIG.INVENTORY_MAX = GameState.inventoryMax;
     GameState.heroes = [
       { id: 'hero_cassius', constellation: 6, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() },
+      { id: 'hero_rhiannon', constellation: 6, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() },
       { id: 'hero_starter', constellation: 0, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() }
     ];
     GameState.activeHeroId = 'hero_cassius';
@@ -412,9 +413,12 @@ const SaveManager = {
       GameState.heroes = [];
     }
 
-    // Đảm bảo luôn có Cassius & Hiệp Sĩ Khởi Đầu mở khóa sẵn
+    // Đảm bảo luôn có Cassius, Rhiannon & Hiệp Sĩ Khởi Đầu mở khóa sẵn
     if (!GameState.heroes.some(h => h.id === 'hero_cassius')) {
       GameState.heroes.unshift({ id: 'hero_cassius', constellation: 6, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() });
+    }
+    if (!GameState.heroes.some(h => h.id === 'hero_rhiannon')) {
+      GameState.heroes.unshift({ id: 'hero_rhiannon', constellation: 6, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() });
     }
     if (!GameState.heroes.some(h => h.id === 'hero_starter')) {
       GameState.heroes.push({ id: 'hero_starter', constellation: 0, level: 1, skillLevels: { s1: 1, s2: 1, s3: 1 }, unlockedAt: Date.now() });
