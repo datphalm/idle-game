@@ -101,11 +101,11 @@ const Boss = {
         try { UI.playBurstCinematic(skillRes); } catch(e) {}
       }
 
-      const isVideoCutscene = (skillRes.type === 'burst' && (skillRes.hero?.id === 'hero_unknown_god' || skillRes.hero?.id === 'hero_cassius' || skillRes.hero?.id === 'hero_rhiannon'));
+      const isVideoCutscene = (skillRes.type === 'burst' && (skillRes.hero?.id === 'hero_unknown_god' || skillRes.hero?.id === 'hero_cassius' || skillRes.hero?.id === 'hero_trisa' || skillRes.hero?.id === 'hero_rhiannon'));
       if (isVideoCutscene) {
         const isCassius = (skillRes.hero?.id === 'hero_cassius');
-        const isRhiannon = (skillRes.hero?.id === 'hero_rhiannon');
-        const hitDelay = isRhiannon ? 8600 : (isCassius ? 3000 : 5500);
+        const isTrisa = (skillRes.hero?.id === 'hero_trisa' || skillRes.hero?.id === 'hero_rhiannon');
+        const hitDelay = isTrisa ? 2750 : (isCassius ? 3000 : 5500);
         setTimeout(() => {
           if (!GameState.boss?.active) return;
           b.hp = Math.max(0, b.hp - pDmg);
@@ -115,7 +115,7 @@ const Boss = {
             UI.animatePlayerSkill('boss', skillRes.type);
             UI.animateBossHit(true);
             UI.updateBossChamber();
-            const badgeName = isCassius ? '🎰 CANH BẠC VÔ CỰC' : (isRhiannon ? '✨ THẦN MỘC KHẢI HUYỀN' : '🌟 TUYỆT KỸ NỘ');
+            const badgeName = isCassius ? '🎰 CANH BẠC VÔ CỰC' : (isTrisa ? '🩸 HUYẾT NGUYỆT TRẢM SÁT' : '🌟 TUYỆT KỸ NỘ');
             UI.addCombatLog(
               `<strong>${badgeName} [${skillRes.hero.name}]:</strong> ` +
               `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.skill.name}</span> ` +
@@ -189,9 +189,8 @@ const Boss = {
       if (b.hp <= 0) return;
     }
 
-    // --- LƯỢT ĐẠI BOSS PHẢN CÔNG ---
     const bossCounterDelay = isVideoCutscene
-      ? ((skillRes.hero?.id === 'hero_rhiannon') ? 10000 : ((skillRes.hero?.id === 'hero_cassius') ? 5400 : 6600))
+      ? (((skillRes.hero?.id === 'hero_trisa' || skillRes.hero?.id === 'hero_rhiannon')) ? 3100 : ((skillRes.hero?.id === 'hero_cassius') ? 5400 : 6600))
       : ((skillRes.triggered && skillRes.type === 'burst') ? 4000 : 600);
     setTimeout(() => {
       if (!GameState.boss?.active) return;

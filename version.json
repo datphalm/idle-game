@@ -1,15 +1,15 @@
 {
-  "version": "2.5.0",
-  "title": "Bản Cập Nhật v2.5.0 - Thánh Nữ Rừng Thiêng: Rhiannon",
+  "version": "2.6.0",
+  "title": "Bản Cập Nhật v2.6.0 - Hắc Ám Nữ Hoàng: Trisa",
   "releaseDate": "2026-10-17",
   "changelog": [
-    "Ra mắt Đại Tướng Thần Cấp mới: Rhiannon - Thánh Nữ Rừng Thiêng & Cung Thủ Ánh Sáng",
-    "Hoạt ảnh Idle 3D Showcase bên trái khung hình hiển thị Rhiannon cùng thần hộ mệnh Cú Đêm và đàn chim xanh dẫn lối khi di chuột vào thẻ bài",
-    "Thẻ bài Tuyệt Kỹ Tarot độc bản với hiệu ứng phát sáng ngọc lục bảo Thánh Quang",
-    "Kỹ năng Nộ Cinematic Video: Thần Mộc Khải Huyền (Celestial Judgement) bắn phát thần tiễn xé rách không gian, nổ mandala ánh sáng và chuyển cảnh mượt mà vào sàn đấu",
-    "Đại Pháo Quang Tiễn (Laser Beam) kéo dài xuyên suốt toàn bộ sàn đấu bắn thẳng vào kẻ địch",
-    "Kỹ năng Tự Động Kích Hoạt trong trận đấu: Thánh Quang Ban Phước - Rhiannon nâng cao Quyền Trượng phát tỏa hào quang Thánh Quang ban phước và hồi máu cực mạnh",
-    "Trọn bộ 6 Tinh Hồn (E1 - E6) Thánh Mộc độc bản mở khóa sẵn sàng"
+    "Ra mắt Đại Tướng Thần Cấp mới: Trisa - Hắc Ám Nữ Hoàng & Huyết Nguyệt Chi Nhẫn",
+    "Hoạt ảnh Idle 3D Showcase bên trái khung hình hiển thị Trisa xoay người hướng về quái vật với phong thái sát thủ bóng đêm huyền bí",
+    "Thẻ bài Tuyệt Kỹ Tarot độc bản với hiệu ứng phát sáng Huyết Nguyệt rực rỡ",
+    "Kỹ năng Nộ Cinematic Video Full HD 1080p: Huyết Nguyệt Trảm Sát (Blood Moon Annihilation) đồng bộ chính xác từng mili-giây âm thanh trảm kích cực hạn",
+    "Bộ hoạt ảnh Chibi Trisa hoàn chỉnh 5 trạng thái (Idle, Walk, Attack, Skill, Hit) hướng chuẩn xác về phía quái vật, đường viền trong suốt 100% không vệt vuông",
+    "Kỹ năng Tự Động Kích Hoạt trong trận đấu: Ảnh Kiếm Hắc Ám - Song đao bóng đêm trảm kích bão lốc hồi phục 35% HP tối đa và tăng 100% Sát thương bạo kích",
+    "Trọn bộ 6 Tinh Hồn Huyết Nguyệt (E1 - E6) độc bản mở khóa sẵn sàng"
   ],
   "downloadUrl": "https://github.com/datphalm/idle-game/releases/latest"
 }

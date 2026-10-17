@@ -575,7 +575,7 @@ const Sprites = {
     </svg>`;
   },
 
-  _getHeroRhiannonSvg(action) {
+  _getHeroTrisaSvg(action) {
     const isAtk = action === 'attack';
     const isSkill = action === 'skill';
     const isSheathe = action === 'sheathe' || action === 'pose' || action === 'burst';
@@ -583,27 +583,31 @@ const Sprites = {
     const isHit = action === 'hit';
     const isShowcase = action === 'showcase' || action === 'model_3d';
 
-    let imgSrc = 'assets/characters/rhiannon/chibi_idle.webp';
+    let imgSrc = 'assets/characters/trisa/chibi_idle.webp';
 
     if (isShowcase) {
-      imgSrc = 'assets/characters/rhiannon/hover_3d_idle.webp';
+      imgSrc = 'assets/characters/trisa/hover_3d_idle.webp';
     } else if (isAtk) {
-      imgSrc = 'assets/characters/rhiannon/chibi_attack.webp';
+      imgSrc = 'assets/characters/trisa/chibi_attack.webp';
     } else if (isSkill) {
-      imgSrc = 'assets/characters/rhiannon/chibi_skill.webp';
+      imgSrc = 'assets/characters/trisa/chibi_skill.webp';
     } else if (isSheathe) {
-      imgSrc = 'assets/characters/rhiannon/chibi_attack.webp';
+      imgSrc = 'assets/characters/trisa/chibi_attack.webp';
     } else if (isHit) {
-      imgSrc = 'assets/characters/rhiannon/chibi_hit.webp';
+      imgSrc = 'assets/characters/trisa/chibi_hit.webp';
     } else if (isWalk) {
-      imgSrc = 'assets/characters/rhiannon/chibi_walk.webp';
+      imgSrc = 'assets/characters/trisa/chibi_walk.webp';
     }
 
     return `
-    <svg class="pixel-sprite hero-pixel-svg hero-rhiannon action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
-      <!-- Authentic Rhiannon Chibi Visual (Razor-Sharp, Zero Background) -->
+    <svg class="pixel-sprite hero-pixel-svg hero-trisa action-${action}" viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
+      <!-- Authentic Trisa Chibi Visual (Razor-Sharp, Zero Background, Facing Monster) -->
       <image href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMax meet" style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"/>
     </svg>`;
+  },
+
+  _getHeroRhiannonSvg(action) {
+    return this._getHeroTrisaSvg(action);
   },
 
   _getHeroAetherisSvg(action) {
@@ -757,6 +761,8 @@ const Sprites = {
         return this._getHeroUnknownGodSvg(action);
       case 'hero_cassius':
         return this._getHeroCassiusSvg(action);
+      case 'hero_trisa':
+        return this._getHeroTrisaSvg(action);
       case 'hero_rhiannon':
         return this._getHeroRhiannonSvg(action);
       default:
@@ -1126,23 +1132,23 @@ const Sprites = {
       </svg>`;
     }
 
-    // 9. THÁNH NỮ RỪNG THIÊNG RHIANNON
-    if (targetId === 'hero_rhiannon') {
+    // 9. HẮC ÁM NỮ HOÀNG TRISA
+    if (targetId === 'hero_trisa' || targetId === 'hero_rhiannon') {
       return `
-      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-rhiannon">
+      <svg viewBox="0 0 520 360" width="100%" height="100%" class="burst-actor-svg burst-actor-trisa">
         <defs>
-          <radialGradient id="rhi-burst-bg" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="rgba(74,222,128,0.4)"/>
-            <stop offset="45%" stop-color="rgba(56,189,248,0.2)"/>
-            <stop offset="85%" stop-color="rgba(10,20,15,0.95)"/>
+          <radialGradient id="tri-burst-bg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(220,38,38,0.45)"/>
+            <stop offset="45%" stop-color="rgba(153,27,27,0.25)"/>
+            <stop offset="85%" stop-color="rgba(15,10,12,0.95)"/>
             <stop offset="100%" stop-color="#000000"/>
           </radialGradient>
-          <filter id="rhi-burst-glow"><feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#4ade80" flood-opacity="1"/></filter>
+          <filter id="tri-burst-glow"><feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#dc2626" flood-opacity="1"/></filter>
         </defs>
-        <rect width="520" height="360" fill="url(#rhi-burst-bg)"/>
-        <ellipse cx="260" cy="300" rx="190" ry="42" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-dasharray="10,6" filter="url(#rhi-burst-glow)"/>
+        <rect width="520" height="360" fill="url(#tri-burst-bg)"/>
+        <ellipse cx="260" cy="300" rx="190" ry="42" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="10,6" filter="url(#tri-burst-glow)"/>
         <g transform="translate(260, 185)">
-          <image href="assets/characters/rhiannon/hover_3d_idle.webp" xlink:href="assets/characters/rhiannon/hover_3d_idle.webp" x="-180" y="-165" width="360" height="330" preserveAspectRatio="xMidYMid meet" filter="url(#rhi-burst-glow)"/>
+          <image href="assets/characters/trisa/hover_3d_idle.webp" xlink:href="assets/characters/trisa/hover_3d_idle.webp" x="-180" y="-165" width="360" height="330" preserveAspectRatio="xMidYMid meet" filter="url(#tri-burst-glow)"/>
         </g>
       </svg>`;
     }
@@ -2148,37 +2154,38 @@ const Sprites = {
           </g>
         </svg>`;
 
+      case 'hero_trisa':
       case 'hero_rhiannon':
         return `
-        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-rhiannon">
+        <svg viewBox="0 0 640 130" width="100%" height="100%" class="eye-cutin-svg eye-cutin-trisa">
           <defs>
-            <linearGradient id="rhi-cutin-bg" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="rgba(17,25,20,0)"/>
-              <stop offset="15%" stop-color="#0a1a10"/>
-              <stop offset="50%" stop-color="#064e3b"/>
-              <stop offset="85%" stop-color="#0a1a10"/>
-              <stop offset="100%" stop-color="rgba(17,25,20,0)"/>
+            <linearGradient id="tri-cutin-bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="rgba(17,10,12,0)"/>
+              <stop offset="15%" stop-color="#1a0a0c"/>
+              <stop offset="50%" stop-color="#450a0a"/>
+              <stop offset="85%" stop-color="#1a0a0c"/>
+              <stop offset="100%" stop-color="rgba(17,10,12,0)"/>
             </linearGradient>
-            <filter id="rhi-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#4ade80" flood-opacity="1"/></filter>
+            <filter id="tri-eye-glow"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#dc2626" flood-opacity="1"/></filter>
           </defs>
-          <polygon points="20,0 640,0 620,130 0,130" fill="url(#rhi-cutin-bg)"/>
-          <line x1="30" y1="0" x2="630" y2="0" stroke="#4ade80" stroke-width="3"/>
-          <line x1="10" y1="130" x2="610" y2="130" stroke="#38bdf8" stroke-width="3"/>
-          <text x="320" y="80" font-family="'Courier New', monospace" font-size="52" font-weight="900" fill="rgba(74,222,128,0.22)" text-anchor="middle" letter-spacing="18">聖 樹 導 き</text>
+          <polygon points="20,0 640,0 620,130 0,130" fill="url(#tri-cutin-bg)"/>
+          <line x1="30" y1="0" x2="630" y2="0" stroke="#dc2626" stroke-width="3"/>
+          <line x1="10" y1="130" x2="610" y2="130" stroke="#ef4444" stroke-width="3"/>
+          <text x="320" y="80" font-family="'Courier New', monospace" font-size="52" font-weight="900" fill="rgba(220,38,38,0.25)" text-anchor="middle" letter-spacing="18">血 月 断 罪</text>
           <g transform="translate(320, 65)">
             <g transform="translate(-110, 0)">
               <path d="M -55,-8 Q 0,-24 50,-2 Q 10,18 -55,-8 Z" fill="#ffffff"/>
-              <ellipse cx="2" cy="0" rx="16" ry="12" fill="#064e3b"/>
-              <ellipse cx="2" cy="0" rx="10" ry="10" fill="#4ade80" filter="url(#rhi-eye-glow)"/>
+              <ellipse cx="2" cy="0" rx="16" ry="12" fill="#450a0a"/>
+              <ellipse cx="2" cy="0" rx="10" ry="10" fill="#dc2626" filter="url(#tri-eye-glow)"/>
               <circle cx="2" cy="0" r="3" fill="#ffffff"/>
-              <path d="M -60,-12 Q 5,-32 55,-4" stroke="#4ade80" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M -60,-12 Q 5,-32 55,-4" stroke="#dc2626" stroke-width="4.5" fill="none" stroke-linecap="round"/>
             </g>
             <g transform="translate(110, 0)">
               <path d="M -50,-2 Q 0,-24 55,-8 Q 10,18 -50,-2 Z" fill="#ffffff"/>
-              <ellipse cx="-2" cy="0" rx="16" ry="12" fill="#064e3b"/>
-              <ellipse cx="-2" cy="0" rx="10" ry="10" fill="#38bdf8" filter="url(#rhi-eye-glow)"/>
+              <ellipse cx="-2" cy="0" rx="16" ry="12" fill="#450a0a"/>
+              <ellipse cx="-2" cy="0" rx="10" ry="10" fill="#ef4444" filter="url(#tri-eye-glow)"/>
               <circle cx="-2" cy="0" r="3" fill="#ffffff"/>
-              <path d="M -55,-4 Q -5,-32 60,-12" stroke="#38bdf8" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M -55,-4 Q -5,-32 60,-12" stroke="#ef4444" stroke-width="4.5" fill="none" stroke-linecap="round"/>
             </g>
           </g>
         </svg>`;

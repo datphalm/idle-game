@@ -297,8 +297,8 @@ const UI = {
   renderHeroSkillsHudLayout() {
     const activeHeroId = GameState.activeHeroId || 'hero_starter';
     const isCassius = (activeHeroId === 'hero_cassius');
-    const isRhiannon = (activeHeroId === 'hero_rhiannon');
-    const isCardBurst = (isCassius || isRhiannon);
+    const isTrisa = (activeHeroId === 'hero_trisa' || activeHeroId === 'hero_rhiannon');
+    const isCardBurst = (isCassius || isTrisa);
     const heroCfg = CONFIG.getHeroById(activeHeroId);
     const s2 = heroCfg?.skills?.find(s => s.type === 'active');
     const s3 = heroCfg?.skills?.find(s => s.type === 'burst') || heroCfg?.skills?.[2];
@@ -314,7 +314,7 @@ const UI = {
       const s2El = document.getElementById(s2Id);
       const s3El = document.getElementById(s3Id);
 
-      // 1. Skill 2: An voi Cassius va Rhiannon per user request (Rhiannon tu dong kich hoat trong tran dau)
+      // 1. Skill 2: An voi Cassius va Trisa per user request (Trisa tu dong kich hoat trong tran dau)
       if (s2El) {
         if (isCardBurst) {
           s2El.style.display = 'none';
@@ -325,16 +325,16 @@ const UI = {
         }
       }
 
-      // 2. Skill 3: The bai Tarot CHI cho Cassius va Rhiannon, nut tron tieu chuan cho cac tuong khac
+      // 2. Skill 3: The bai Tarot CHI cho Cassius va Trisa, nut tron tieu chuan cho cac tuong khac
       if (s3El) {
         if (isCardBurst) {
-          const cardImg = isRhiannon 
-            ? 'assets/characters/rhiannon/art_skill_ultimate.png' 
+          const cardImg = isTrisa 
+            ? 'assets/characters/trisa/art_skill_ultimate.png' 
             : 'assets/characters/cassius/art_skill_ultimate.png';
           s3El.className = 'skill-hud-item skill-hud-burst-wrapper';
           s3El.innerHTML = `
             <div class="burst-card-container">
-              <div class="skill-burst-card is-ready ${isRhiannon ? 'card-rhiannon' : 'card-cassius'}" id="${pfx}-burst-card" role="button" tabindex="0">
+              <div class="skill-burst-card is-ready ${isTrisa ? 'card-trisa' : 'card-cassius'}" id="${pfx}-burst-card" role="button" tabindex="0">
                 <div class="burst-card-inner">
                   <img src="${cardImg}" class="burst-card-img" alt="Tuyệt Kỹ Nộ" />
                   <div class="burst-card-cd-overlay" id="${pfx}-s3-fill"></div>
@@ -372,10 +372,10 @@ const UI = {
       const cardEl = document.getElementById(cardId);
       if (!cardEl) return;
 
-      // Mouse Hover Preview (For Cassius and Rhiannon!)
+      // Mouse Hover Preview (For Cassius and Trisa!)
       cardEl.onmouseenter = () => {
         const curHero = GameState.activeHeroId;
-        if (curHero !== 'hero_cassius' && curHero !== 'hero_rhiannon') return;
+        if (curHero !== 'hero_cassius' && curHero !== 'hero_trisa' && curHero !== 'hero_rhiannon') return;
         const showcase = document.getElementById('hero-hover-showcase');
         if (!showcase) return;
 
@@ -384,15 +384,15 @@ const UI = {
         const kanjiSpan = showcase.querySelector('.showcase-jp-kanji');
         const quoteSpan = showcase.querySelector('.showcase-jp-quote');
 
-        if (curHero === 'hero_rhiannon') {
+        if (curHero === 'hero_trisa' || curHero === 'hero_rhiannon') {
           showcase.classList.remove('showcase-cassius');
-          showcase.classList.add('showcase-rhiannon');
-          if (charImg) charImg.src = 'assets/characters/rhiannon/hover_3d_idle.webp';
-          if (titleSpan) titleSpan.textContent = 'RHIANNON · THÁNH NỮ RỪNG THIÊNG';
-          if (kanjiSpan) kanjiSpan.textContent = 'リアノン · 聖樹の導き手';
-          if (quoteSpan) quoteSpan.textContent = '『聖なる光の矢よ、運命の闇を射抜きたまえ』';
+          showcase.classList.add('showcase-trisa');
+          if (charImg) charImg.src = 'assets/characters/trisa/hover_3d_idle.webp';
+          if (titleSpan) titleSpan.textContent = 'TRISA · HẮC ÁM NỮ HOÀNG';
+          if (kanjiSpan) kanjiSpan.textContent = 'トリサ · 深淵の影刃';
+          if (quoteSpan) quoteSpan.textContent = '『血の月が昇るとき、影より現れ魂を刈り取る』';
         } else {
-          showcase.classList.remove('showcase-rhiannon');
+          showcase.classList.remove('showcase-trisa');
           showcase.classList.add('showcase-cassius');
           if (charImg) charImg.src = 'assets/characters/cassius/hover_3d_idle.webp';
           if (titleSpan) titleSpan.textContent = 'CASSIUS · BÀN CƯỢC HOÀNG KIM';
@@ -827,7 +827,7 @@ const UI = {
           cardEl.classList.remove('is-charging');
         }
         if (s3Fill) s3Fill.style.height = '0%';
-        const isCardHud = (heroCfg.id === 'hero_cassius' || heroCfg.id === 'hero_rhiannon');
+        const isCardHud = (heroCfg.id === 'hero_cassius' || heroCfg.id === 'hero_trisa' || heroCfg.id === 'hero_rhiannon');
         if (s3Timer) {
           s3Timer.textContent = 'Sẵn sàng';
           s3Timer.className = isCardHud ? 'burst-card-status-text skill-ready' : 'skill-hud-timer skill-ready';
@@ -838,7 +838,7 @@ const UI = {
           cardEl.classList.add('is-charging');
         }
         if (s3Fill) s3Fill.style.height = `${100 - progress.s3.pct}%`;
-        const isCardHud = (heroCfg.id === 'hero_cassius' || heroCfg.id === 'hero_rhiannon');
+        const isCardHud = (heroCfg.id === 'hero_cassius' || heroCfg.id === 'hero_trisa' || heroCfg.id === 'hero_rhiannon');
         if (s3Timer) {
           s3Timer.textContent = `${progress.s3.remainingSec}s`;
           s3Timer.className = isCardHud ? 'burst-card-status-text' : 'skill-hud-timer';
@@ -1005,25 +1005,24 @@ const UI = {
     const pSpriteId = isBoss ? 'boss-player-sprite' : 'player-sprite';
     const pSprite = document.getElementById(pSpriteId);
     const activeHero = GameState.activeHeroId || 'hero_starter';
-    const isSpecialHero = (activeHero === 'hero_cassius' || activeHero === 'hero_rhiannon');
+    const isSpecialHero = (activeHero === 'hero_cassius' || activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon');
     if (pSprite && typeof Sprites !== 'undefined') {
       pSprite.innerHTML = Sprites.getPlayerSvg(isSpecialHero ? 'attack' : 'extra', activeHero);
       pSprite.className = isSpecialHero
         ? 'fighter-avatar player-attack-anim'
         : `fighter-avatar player-extra-anim hero-extra-${activeHero}`;
       clearTimeout(this._playerAnimTimer);
+      const extraDuration = (activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon') ? 650 : 420;
       this._playerAnimTimer = setTimeout(() => {
         if (pSprite) {
           pSprite.innerHTML = Sprites.getPlayerSvg('idle', activeHero);
           pSprite.className = 'fighter-avatar player-idle';
         }
-      }, (activeHero === 'hero_rhiannon') ? 950 : 420);
+      }, extraDuration);
     }
     if (!isSpecialHero) {
       const targetSlash = isBoss ? 'slash-fx-boss' : 'slash-fx-monster';
       this._triggerSlashFx(targetSlash, 'extra');
-    } else if (activeHero === 'hero_rhiannon') {
-      this._triggerRhiannonBarrageFx(isBoss ? 'boss' : null);
     }
   },
 
@@ -1048,24 +1047,16 @@ const UI = {
       pSprite.innerHTML = Sprites.getPlayerSvg('attack', activeHero);
       pSprite.className = `fighter-avatar player-attack-anim hero-attack-${activeHero}`;
       clearTimeout(this._playerAnimTimer);
+      const attackDuration = (activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon') ? 580 : 340;
       this._playerAnimTimer = setTimeout(() => {
         this._isPlayerAnimating = false;
         if (pSprite) {
           pSprite.innerHTML = Sprites.getPlayerSvg('idle', activeHero);
           pSprite.className = 'fighter-avatar player-idle';
         }
-      }, (activeHero === 'hero_rhiannon') ? 740 : 340);
+      }, attackDuration);
     }
-    if (activeHero === 'hero_rhiannon') {
-      this._rhiannonAtkCycle = ((this._rhiannonAtkCycle || 0) + 1) % 3;
-      if (this._rhiannonAtkCycle === 0) {
-        // Move 2: Mega Laser Cannon (Charged / Heavy Shot)
-        this._triggerRhiannonLaserFx(mode);
-      } else {
-        // Move 1: Starlight Arrow Projectile Shot
-        this._triggerRhiannonArrowFx(mode);
-      }
-    } else if (activeHero !== 'hero_cassius') {
+    if (activeHero !== 'hero_cassius' && activeHero !== 'hero_trisa' && activeHero !== 'hero_rhiannon') {
       const slashType = 'normal';
       this._triggerSlashFx(targetSlash, slashType);
     }
@@ -1124,8 +1115,8 @@ const UI = {
         }
       }, duration);
     }
-    // Temporarily disabled slash VFX per user request for Cassius & Rhiannon
-    if (activeHero !== 'hero_cassius' && activeHero !== 'hero_rhiannon') {
+    // Temporarily disabled slash VFX per user request for Cassius & Trisa
+    if (activeHero !== 'hero_cassius' && activeHero !== 'hero_trisa' && activeHero !== 'hero_rhiannon') {
       this._triggerSlashFx(targetSlash, skillType === 'burst' ? 'burst' : 'skill');
     }
 
@@ -1212,7 +1203,7 @@ const UI = {
   _triggerSlashFx(containerId, type = 'normal') {
     if (GameState.settings && GameState.settings.vfxEnabled === false) return;
     const activeHero = GameState.activeHeroId || 'hero_starter';
-    if (activeHero === 'hero_cassius' || activeHero === 'hero_rhiannon') return;
+    if (activeHero === 'hero_cassius' || activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon') return;
     const container = document.getElementById(containerId);
     if (!container || typeof Sprites === 'undefined') return;
     container.innerHTML = Sprites.getSlashFxSvg(type);
@@ -1225,159 +1216,6 @@ const UI = {
     }, 450);
   },
 
-  _triggerRhiannonArrowFx(mode) {
-    if (GameState.settings && GameState.settings.vfxEnabled === false) return;
-    let stageId = 'arena-stage';
-    if (mode === 'dungeon') stageId = 'dungeon-arena-stage';
-    else if (mode === 'tower') stageId = 'tower-arena-stage';
-    else if (GameState.boss?.active) stageId = 'boss-arena-stage';
-
-    const stageEl = document.getElementById(stageId) || document.getElementById('arena-stage');
-    if (!stageEl) return;
-
-    let arrowContainer = stageEl.querySelector('.rhiannon-arrow-container');
-    if (!arrowContainer) {
-      arrowContainer = document.createElement('div');
-      arrowContainer.className = 'rhiannon-arrow-container';
-      stageEl.appendChild(arrowContainer);
-    }
-
-    arrowContainer.innerHTML = `<img src="assets/characters/rhiannon/arrow_shot.webp" class="rhiannon-arrow-img" alt="Starlight Arrow" />`;
-    arrowContainer.classList.remove('hidden');
-
-    let targetMonsterId = (mode === 'dungeon') ? 'dungeon-monster-sprite' : ((mode === 'tower') ? 'tower-enemy-sprite' : (GameState.boss?.active ? 'boss-active-sprite' : 'monster-sprite'));
-    setTimeout(() => {
-      this._triggerAnim(targetMonsterId, 'hit-flash', true);
-    }, 240);
-
-    setTimeout(() => {
-      if (arrowContainer) {
-        arrowContainer.innerHTML = '';
-        arrowContainer.classList.add('hidden');
-      }
-    }, 480);
-  },
-
-  _triggerRhiannonBarrageFx(mode) {
-    if (GameState.settings && GameState.settings.vfxEnabled === false) return;
-    let stageId = 'arena-stage';
-    if (mode === 'dungeon') stageId = 'dungeon-arena-stage';
-    else if (mode === 'tower') stageId = 'tower-arena-stage';
-    else if (GameState.boss?.active) stageId = 'boss-arena-stage';
-
-    const stageEl = document.getElementById(stageId) || document.getElementById('arena-stage');
-    if (!stageEl) return;
-
-    let barrageContainer = stageEl.querySelector('.rhiannon-barrage-container');
-    if (!barrageContainer) {
-      barrageContainer = document.createElement('div');
-      barrageContainer.className = 'rhiannon-barrage-container';
-      stageEl.appendChild(barrageContainer);
-    }
-
-    barrageContainer.innerHTML = `<img src="assets/characters/rhiannon/arrow_barrage.webp" class="rhiannon-barrage-img" alt="Arrow Barrage" />`;
-    barrageContainer.classList.remove('hidden');
-
-    let targetMonsterId = (mode === 'dungeon') ? 'dungeon-monster-sprite' : ((mode === 'tower') ? 'tower-enemy-sprite' : (GameState.boss?.active ? 'boss-active-sprite' : 'monster-sprite'));
-    setTimeout(() => {
-      this._triggerAnim(targetMonsterId, 'hit-flash', true);
-    }, 220);
-    setTimeout(() => {
-      this._triggerAnim(targetMonsterId, 'hit-flash', true);
-    }, 480);
-    setTimeout(() => {
-      this._triggerAnim(targetMonsterId, 'hit-flash', true);
-    }, 720);
-
-    setTimeout(() => {
-      if (barrageContainer) {
-        barrageContainer.innerHTML = '';
-        barrageContainer.classList.add('hidden');
-      }
-    }, 950);
-  },
-
-  _triggerRhiannonLaserFx(mode) {
-    if (GameState.settings && GameState.settings.vfxEnabled === false) return;
-    
-    let stageId = 'arena-stage';
-    if (mode === 'dungeon') stageId = 'dungeon-arena-stage';
-    else if (mode === 'tower') stageId = 'tower-arena-stage';
-    else if (GameState.boss?.active) stageId = 'boss-arena-stage';
-
-    const stageEl = document.getElementById(stageId) || document.getElementById('arena-stage');
-    if (!stageEl) return;
-
-    let laserContainer = stageEl.querySelector('.rhiannon-laser-container');
-    if (!laserContainer) {
-      laserContainer = document.createElement('div');
-      laserContainer.className = 'rhiannon-laser-container';
-      stageEl.appendChild(laserContainer);
-    }
-
-    laserContainer.innerHTML = `<img src="assets/characters/rhiannon/laser_beam.webp" class="rhiannon-laser-img" alt="Laser Beam" />`;
-    laserContainer.classList.remove('hidden');
-
-    // Impact flash on monster (multi-stage beam burning)
-    let targetMonsterId = (mode === 'dungeon') ? 'dungeon-monster-sprite' : ((mode === 'tower') ? 'tower-enemy-sprite' : (GameState.boss?.active ? 'boss-active-sprite' : 'monster-sprite'));
-    setTimeout(() => {
-      this._triggerAnim(targetMonsterId, 'hit-flash', true);
-    }, 220);
-    setTimeout(() => {
-      this._triggerAnim(targetMonsterId, 'hit-flash', true);
-    }, 480);
-
-    setTimeout(() => {
-      if (laserContainer) {
-        laserContainer.innerHTML = '';
-        laserContainer.classList.add('hidden');
-      }
-    }, 780);
-  },
-
-  showRhiannonTreeBuff(mode) {
-    let stageId = 'arena-stage';
-    if (mode === 'dungeon') stageId = 'dungeon-arena-stage';
-    else if (mode === 'tower') stageId = 'tower-arena-stage';
-    else if (GameState.boss?.active) stageId = 'boss-arena-stage';
-
-    const pSpriteId = (mode === 'dungeon') ? 'dungeon-player-sprite' : ((mode === 'tower') ? 'tower-player-sprite' : (GameState.boss?.active ? 'boss-player-sprite' : 'player-sprite'));
-    const pSprite = document.getElementById(pSpriteId);
-    const parentTarget = pSprite ? pSprite.parentElement : (document.getElementById(stageId) || document.getElementById('arena-stage'));
-    if (!parentTarget) return;
-
-    let auraContainer = parentTarget.querySelector('.rhiannon-staff-aura');
-    if (!auraContainer) {
-      auraContainer = document.createElement('div');
-      auraContainer.className = 'rhiannon-staff-aura';
-      parentTarget.appendChild(auraContainer);
-    }
-
-    // Strictly NO chibi combat sound per user request (only ultimate has audio)
-
-    // Animate chibi skill pose with graceful timing (raising staff overhead to cast blessing)
-    if (pSprite && typeof Sprites !== 'undefined') {
-      pSprite.innerHTML = Sprites.getPlayerSvg('skill', 'hero_rhiannon');
-      setTimeout(() => {
-        if (pSprite) pSprite.innerHTML = Sprites.getPlayerSvg('idle', 'hero_rhiannon');
-      }, 1200);
-    }
-
-    // Ethereal starlight & rune blessing bursting directly from staff tip (ZERO tree)
-    auraContainer.innerHTML = `
-      <div class="staff-blessing-burst"></div>
-      <div class="staff-blessing-ring"></div>
-      <div class="staff-blessing-rays"></div>
-    `;
-    auraContainer.classList.remove('hidden');
-
-    setTimeout(() => {
-      if (auraContainer) {
-        auraContainer.innerHTML = '';
-        auraContainer.classList.add('hidden');
-      }
-    }, 2000);
-  },
 
   _triggerAnim(elementId, className, force = false) {
     const isEndingPhase = document.getElementById('arena-stage')?.classList.contains('phase-3-sheathe');
@@ -2351,8 +2189,8 @@ const UI = {
 
     const avatarSvg = (activeId === 'hero_cassius')
       ? `<img src="assets/characters/cassius/model_3d_bust.png" alt="Cassius Bust" style="width:100%; height:100%; object-fit:cover; object-position:center top; border-radius:inherit;" />`
-      : ((activeId === 'hero_rhiannon')
-        ? `<img src="assets/characters/rhiannon/hover_3d_idle.webp" alt="Rhiannon Bust" style="width:100%; height:100%; object-fit:cover; object-position:center top; border-radius:inherit;" />`
+      : ((activeId === 'hero_trisa' || activeId === 'hero_rhiannon')
+        ? `<img src="assets/characters/trisa/model_3d_bust.png" alt="Trisa Bust" style="width:100%; height:100%; object-fit:cover; object-position:center top; border-radius:inherit;" />`
         : (typeof Sprites !== 'undefined' ? Sprites.getPlayerSvg('idle', activeId) : '👑'));
     const cBadge = userHero.constellation > 0 ? `Cung Mệnh E${userHero.constellation}` : 'Cung Mệnh E0';
     const constellationBonus = (userHero.constellation || 0) * 20;
@@ -2423,21 +2261,21 @@ const UI = {
           </div>
         </div>
         ` : ''}
-        ${activeId === 'hero_rhiannon' ? `
-        <div class="hero-3d-stage-banner" style="margin-bottom: 14px; position: relative; border-radius: 12px; background: radial-gradient(circle at 50% 50%, rgba(74,222,128,0.2) 0%, rgba(15,30,20,0.85) 65%, #051008 100%); border: 1px solid rgba(74,222,128,0.45); box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 0 30px rgba(74,222,128,0.1); overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 14px 20px; gap: 20px;">
-          <div style="position: absolute; top: 10px; right: 12px; font-size: 0.68rem; font-weight: 800; color: #4ade80; background: rgba(0,0,0,0.6); border: 1px solid #4ade80; border-radius: 6px; padding: 3px 8px; text-transform: uppercase; letter-spacing: 1px;">
-            🌿 Authentic Animated WebP & Chibi
+        ${(activeId === 'hero_trisa' || activeId === 'hero_rhiannon') ? `
+        <div class="hero-3d-stage-banner" style="margin-bottom: 14px; position: relative; border-radius: 12px; background: radial-gradient(circle at 50% 50%, rgba(220,38,38,0.22) 0%, rgba(30,12,15,0.88) 65%, #0d0608 100%); border: 1px solid rgba(220,38,38,0.45); box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 0 30px rgba(220,38,38,0.1); overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 14px 20px; gap: 20px;">
+          <div style="position: absolute; top: 10px; right: 12px; font-size: 0.68rem; font-weight: 800; color: #ef4444; background: rgba(0,0,0,0.6); border: 1px solid #ef4444; border-radius: 6px; padding: 3px 8px; text-transform: uppercase; letter-spacing: 1px;">
+            🩸 Authentic Animated WebP & Chibi
           </div>
           <div style="width: 140px; height: 160px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.8));">
-            <img src="assets/characters/rhiannon/hover_3d_idle.webp" alt="Rhiannon Animated Model" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+            <img src="assets/characters/trisa/hover_3d_idle.webp" alt="Trisa Animated Model" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
           </div>
           <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
-            <div style="font-size: 0.95rem; font-weight: 800; color: #4ade80; display: flex; align-items: center; gap: 8px;">
-              <span>🏹 Cung Thủ Ánh Sáng & Cú Tinh Anh</span>
-              <span style="font-size: 0.7rem; color: #86efac; background: rgba(74,222,128,0.15); border: 1px solid rgba(74,222,128,0.4); padding: 1px 6px; border-radius: 4px;">Exclusive Model</span>
+            <div style="font-size: 0.95rem; font-weight: 800; color: #ef4444; display: flex; align-items: center; gap: 8px;">
+              <span>🗡️ Hắc Ám Nữ Hoàng & Huyết Nguyệt Chi Nhẫn</span>
+              <span style="font-size: 0.7rem; color: #f87171; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); padding: 1px 6px; border-radius: 4px;">Exclusive Model</span>
             </div>
             <div style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.45;">
-              Tái hiện nguyên bản từ mô hình hoạt ảnh: Thánh Nữ Rhiannon cùng thần hộ mệnh Cú Đêm và đàn chim xanh dẫn lối, sở hữu Đại Pháo Quang Tiễn Laser xuyên thấu vạn dặm và Cổ Thụ Yggdrasil giáng thế.
+              Tái hiện nguyên bản từ mô hình hoạt ảnh: Hắc Ám Nữ Hoàng Trisa với song đao bóng đêm trảm kích chớp nhoáng, sở hữu Huyết Nguyệt Trảm Sát xuyên phá không gian và tuyệt kỹ kết liễu tối thượng.
             </div>
           </div>
         </div>

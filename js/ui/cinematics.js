@@ -510,8 +510,9 @@ const Cinematics = {
         return [0x00ffcc, 0xff0055, 0xaa00ff, 0x880e4f, 0xffffff];
       case 'hero_cassius':
         return [0xffd700, 0xff0044, 0x111119, 0xffe066, 0xffffff];
+      case 'hero_trisa':
       case 'hero_rhiannon':
-        return [0x4ade80, 0x38bdf8, 0xfef08a, 0x10b981, 0xffffff];
+        return [0xdc2626, 0x991b1b, 0x111119, 0xef4444, 0xffffff];
       default:
         return [0xffd700, 0x00e5ff, 0xff007f, 0x76ff03, 0xffffff];
     }
@@ -983,16 +984,28 @@ const Cinematics = {
         sub: '「ダイスを振れ！悪魔の囁き！」'
       }
     },
-    hero_rhiannon: {
+    hero_trisa: {
       burst: {
-        text: '聖なる光よ、運命を射抜け！',
-        romaji: 'Seinaru hikari yo, unmei o inuke!',
-        sub: '「大地の息吹よ、聖樹の導きを！天罰の矢！」'
+        text: '血の月よ、我が刃となれ！',
+        romaji: 'Chi no tsuki yo, waga yaiba to nare!',
+        sub: '「血の月よ、我が刃となれ！深淵の断罪！」'
       },
       skill: {
-        text: '聖樹の加護を！',
-        romaji: 'Seiju no kago o!',
-        sub: '「聖なる樹よ、生命を紡ぎ出せ！」'
+        text: '影より出でよ！',
+        romaji: 'Kage yori ide yo!',
+        sub: '「影より出でよ！暗殺の刃！」'
+      }
+    },
+    hero_rhiannon: {
+      burst: {
+        text: '血の月よ、我が刃となれ！',
+        romaji: 'Chi no tsuki yo, waga yaiba to nare!',
+        sub: '「血の月よ、我が刃となれ！深淵の断罪！」'
+      },
+      skill: {
+        text: '影より出でよ！',
+        romaji: 'Kage yori ide yo!',
+        sub: '「影より出でよ！暗殺の刃！」'
       }
     }
   },
@@ -1017,8 +1030,8 @@ const Cinematics = {
     const voiceData = this.JAPANESE_VOICE_MAP[targetId] || this.JAPANESE_VOICE_MAP.hero_starter;
     const entry = voiceData[type] || voiceData.burst;
 
-    // RULE 2.5: For Hero Unknown God, Cassius & Rhiannon burst, the voice & SFX are already mastered into the cinematic video
-    if (type === 'burst' && (targetId === 'hero_unknown_god' || targetId === 'hero_cassius' || targetId === 'hero_rhiannon')) {
+    // RULE 2.5: For Hero Unknown God, Cassius & Trisa burst, the voice & SFX are already mastered into the cinematic video
+    if (type === 'burst' && (targetId === 'hero_unknown_god' || targetId === 'hero_cassius' || targetId === 'hero_trisa' || targetId === 'hero_rhiannon')) {
       return entry;
     }
 
@@ -1726,10 +1739,10 @@ const Cinematics = {
       }
 
       // 2. High-Fidelity Anime Video Cutscene vs WebGL Canvas Setup
-      const isVideoCutscene = (heroId === 'hero_unknown_god' || heroId === 'hero_cassius' || heroId === 'hero_rhiannon');
+      const isVideoCutscene = (heroId === 'hero_unknown_god' || heroId === 'hero_cassius' || heroId === 'hero_trisa' || heroId === 'hero_rhiannon');
       const isCassius = (heroId === 'hero_cassius');
-      const isRhiannon = (heroId === 'hero_rhiannon');
-      const isCustomVideo = (isCassius || isRhiannon);
+      const isTrisa = (heroId === 'hero_trisa' || heroId === 'hero_rhiannon');
+      const isCustomVideo = (isCassius || isTrisa);
       const videoContainer = document.getElementById('burst-video-container');
       const videoPlayer = document.getElementById('burst-video-player');
 
@@ -1853,8 +1866,8 @@ const Cinematics = {
       if (isVideoCutscene) {
         const wipeTiming = isCustomVideo ? 120 : 780;
         const videoStartTiming = isCustomVideo ? 180 : 920;
-        const dissolveTiming = isRhiannon ? 8800 : (isCassius ? 3450 : 4800);
-        const endingTiming = isRhiannon ? 9900 : (isCassius ? 5700 : 5100);
+        const dissolveTiming = isTrisa ? 2800 : (isCassius ? 3450 : 4800);
+        const endingTiming = isTrisa ? 3000 : (isCassius ? 5700 : 5100);
 
         // ACT 1.5: DIAGONAL RAZOR BLADE FLASH WIPE ACROSS THE SCREEN (Unknown God only)
         if (!isCustomVideo) {
@@ -1886,8 +1899,8 @@ const Cinematics = {
           if (videoContainer && videoPlayer) {
             videoContainer.classList.remove('hidden');
             videoContainer.classList.remove('video-dissolve-to-battle');
-            const videoSrc = isRhiannon
-              ? 'assets/video/rhiannon_ult.mp4'
+            const videoSrc = isTrisa
+              ? 'assets/video/trisa_ult.mp4'
               : (isCassius ? 'assets/video/cassius_ult.mp4' : 'assets/video/unknown_god_ult.mp4');
             if (!videoPlayer.src || !videoPlayer.src.includes(videoSrc)) {
               videoPlayer.src = videoSrc;
@@ -2042,8 +2055,8 @@ const Cinematics = {
       const startTime = performance.now();
       this.startTime = startTime;
       this.lastTime = startTime;
-      const duration = isVideoCutscene ? (isRhiannon ? 9900 : (isCassius ? 5700 : 6400)) : 3900;
-      const climaxTiming = isVideoCutscene ? (isRhiannon ? 8600 : (isCassius ? 2950 : 4900)) : 2500;
+      const duration = isVideoCutscene ? (isTrisa ? 3000 : (isCassius ? 5700 : 6400)) : 3900;
+      const climaxTiming = isVideoCutscene ? (isTrisa ? 2750 : (isCassius ? 2950 : 4900)) : 2500;
 
       if (this.animId) cancelAnimationFrame(this.animId);
 
@@ -2276,6 +2289,7 @@ const Cinematics = {
         break;
       case 'hero_unknown_god':
       case 'hero_cassius':
+      case 'hero_trisa':
       case 'hero_rhiannon':
         stage.style.transform = 'none';
         break;
@@ -2532,6 +2546,7 @@ const Cinematics = {
 
       case 'hero_unknown_god':
       case 'hero_cassius':
+      case 'hero_trisa':
       case 'hero_rhiannon': {
         // Cutscene hiệu ứng cũ được thay thế hoàn toàn bằng anime cutscene video
         break;

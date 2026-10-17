@@ -91,17 +91,17 @@ const Combat = {
           }
         }
 
-        // Video Cutscene Heroes: Cassius, Rhiannon and Unknown God
-        if (skillRes.type === 'burst' && (skillRes.hero?.id === 'hero_cassius' || skillRes.hero?.id === 'hero_rhiannon' || skillRes.hero?.id === 'hero_unknown_god')) {
+        // Video Cutscene Heroes: Cassius, Trisa and Unknown God
+        if (skillRes.type === 'burst' && (skillRes.hero?.id === 'hero_cassius' || skillRes.hero?.id === 'hero_trisa' || skillRes.hero?.id === 'hero_rhiannon' || skillRes.hero?.id === 'hero_unknown_god')) {
           const isCassius = (skillRes.hero?.id === 'hero_cassius');
-          const isRhiannon = (skillRes.hero?.id === 'hero_rhiannon');
-          const badgeName = isCassius ? '🎰 CANH BẠC VÔ CỰC' : (isRhiannon ? '✨ THẦN MỘC KHẢI HUYỀN' : '🌟 TUYỆT KỸ NỘ');
+          const isTrisa = (skillRes.hero?.id === 'hero_trisa' || skillRes.hero?.id === 'hero_rhiannon');
+          const badgeName = isCassius ? '🎰 CANH BẠC VÔ CỰC' : (isTrisa ? '🩸 HUYẾT NGUYỆT TRẢM SÁT' : '🌟 TUYỆT KỸ NỘ');
           UI.addCombatLog(
             `<strong>${badgeName} [${skillRes.hero.name}]:</strong> ` +
             `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.skill.name}</span> ` +
             (isCassius 
               ? `tung xúc xắc và lật lá bài Át Chủ Bài...` 
-              : (isRhiannon ? `giương Thần Cung khai mở đại trận rừng thiêng...` : `bắt đầu giải phóng thực tại...`)),
+              : (isTrisa ? `xuyên phá thời không, vung Huyết Nguyệt Chi Nhẫn chém đứt sinh mệnh đối thủ...` : `bắt đầu giải phóng thực tại...`)),
             'log-extra'
           );
 
@@ -112,10 +112,10 @@ const Combat = {
           }
 
           const willKill = (m.hp <= actualDmg);
-          const hitDelay = isRhiannon ? 8600 : (isCassius ? 3450 : 5500);
-          const turnDelayKill = isRhiannon ? 10000 : (isCassius ? 5800 : 6800);
-          const counterDelay = isRhiannon ? 9800 : (isCassius ? 5600 : 6500);
-          const turnDelaySurvive = isRhiannon ? 10200 : (isCassius ? 5900 : 7100);
+          const hitDelay = isTrisa ? 2750 : (isCassius ? 3450 : 5500);
+          const turnDelayKill = isTrisa ? 3050 : (isCassius ? 5800 : 6800);
+          const counterDelay = isTrisa ? 2950 : (isCassius ? 5600 : 6500);
+          const turnDelaySurvive = isTrisa ? 3150 : (isCassius ? 5900 : 7100);
 
           setTimeout(() => {
             const hitResult = Monster.takeDamage(actualDmg);
@@ -130,10 +130,10 @@ const Combat = {
                 ? `<strong>👑 ROYAL FLUSH JACKPOT:</strong> ` +
                   `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.hero.name}</span> ` +
                   `đập trọn bộ bài Hoàng Gia bùng nổ sát thương Hoàng Kim <strong style="color:#ffd700;">-${actualDmg}</strong>!`
-                : (isRhiannon
-                  ? `<strong>🏹 THẦN MỘC KHẢI HUYỀN:</strong> ` +
+                : (isTrisa
+                  ? `<strong>🩸 HUYẾT NGUYỆT TRẢM SÁT:</strong> ` +
                     `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.hero.name}</span> ` +
-                    `bắn phát thần tiễn xé rách không gian bùng nổ sát thương Thánh Mộc <strong style="color:#4ade80;">-${actualDmg}</strong>!`
+                    `giáng đòn trảm kích tuyệt đối xé toạc linh hồn đối thủ gây sát thương cực hạn <strong style="color:#dc2626;">-${actualDmg}</strong>!`
                   : `<strong>💥 TỊCH DIỆT HOÀN TOÀN:</strong> ` +
                     `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.hero.name}</span> ` +
                     `chém nát không gian gây sát thương bùng nổ <strong style="color:#ff0055;">-${actualDmg}</strong>!`),
@@ -202,17 +202,17 @@ const Combat = {
           }
         }
 
-        // Kỹ năng Thánh Quang Ban Phước của Rhiannon (Auto-Buff Quyền Trượng Thánh Quang)
-        if (skillRes.hero?.id === 'hero_rhiannon' && skillRes.type === 'skill') {
-          if (typeof UI !== 'undefined' && UI.showRhiannonTreeBuff) {
-            UI.showRhiannonTreeBuff();
+        // Kỹ năng Ảnh Kiếm Hắc Ám của Trisa (Auto-Skill Song Đao Bóng Đêm)
+        if ((skillRes.hero?.id === 'hero_trisa' || skillRes.hero?.id === 'hero_rhiannon') && skillRes.type === 'skill') {
+          if (typeof UI !== 'undefined' && UI.animatePlayerSkill) {
+            UI.animatePlayerSkill(null, 'skill');
           }
           const healAmt = Math.floor(Player.getEffectiveMaxHp() * 0.35);
           Player.heal(healAmt);
           UI.showDamageNumber(healAmt, false, 'player');
           UI.addCombatLog(
-            `✨ <strong>THÁNH QUANG BAN PHƯỚC [Rhiannon]:</strong> ` +
-            `Quyền Trượng Thánh Quang tỏa sáng hồi phục <strong style="color:#4ade80;">+${healAmt} HP</strong> và ban phước tăng 100% Sát thương!`,
+            `🗡️ <strong>ẢNH KIẾM HẮC ÁM [Trisa]:</strong> ` +
+            `Vung song đao bóng đêm trảm kích bão lốc hồi phục <strong style="color:#ef4444;">+${healAmt} HP</strong> và tăng 100% Sát thương bạo kích!`,
             'log-extra'
           );
         }

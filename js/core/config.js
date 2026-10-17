@@ -568,27 +568,27 @@ const CONFIG = {
       ]
     },
     {
-      id: 'hero_rhiannon',
-      name: '⟦ RHIANNON • THÁNH NỮ RỪNG THIÊNG ⟧',
-      title: 'Thánh Nữ Rừng Thiêng & Cung Thủ Ánh Sáng',
+      id: 'hero_trisa',
+      name: '⟦ TRISA • HẮC ÁM NỮ HOÀNG ⟧',
+      title: 'Hắc Ám Nữ Hoàng & Huyết Nguyệt Chi Nhẫn',
       rarity: 'unknown',
-      element: 'nature',
-      elementName: 'Thánh Quang Sinh Mệnh 🌿🏹',
-      elementColor: '#4ade80',
-      pixelArchetype: 'rhiannon',
-      atkBonusPct: 2.2, hpBonusPct: 1.6, defBonusPct: 1.2, spdBonus: 70,
+      element: 'chaos',
+      elementName: 'Huyết Nguyệt Hắc Ám 🩸🗡️',
+      elementColor: '#dc2626',
+      pixelArchetype: 'trisa',
+      atkBonusPct: 2.5, hpBonusPct: 1.8, defBonusPct: 1.3, spdBonus: 75,
       skills: [
-        { id: 's1', name: 'Tinh Linh Tiễn Pháp (Spirit Piercing Beam)', type: 'passive', icon: '🏹', desc: 'Tăng 220% Sát thương toàn thể. Đòn đánh bắn Đại Pháo Quang Tiễn (Laser Thánh Quang) xuyên thấu toàn cõi thẳng vào kẻ địch và xé toạc 40% Giáp đối thủ.', bonusAtk: 2.2 },
-        { id: 's2', name: 'Thánh Thụ Ban Phước (Yggdrasil Blessing)', type: 'active', icon: '🌳', cd: 6.0, dmgMult: 0, desc: 'Tự động kích hoạt trong trận đấu: Triệu hồi Cổ Thụ Sinh Mệnh Yggdrasil giáng lâm, lập tức hồi 35% HP tối đa, ban phước tăng 100% Sát thương và miễn nhiễm sát thương trong 2.5s.' },
-        { id: 's3', name: 'Thần Mộc Khải Huyền (Celestial Judgement)', type: 'burst', icon: '✨', cd: 8.0, dmgMult: 65.0, desc: 'Khai mở sức mạnh Thần Cung Cổ Xưa: Mở Đại Trận Cổ Ngữ Rừng Thiêng, dồn toàn bộ tinh hoa đất trời bắn phát Thần Tiễn Xé Rách Không Gian gây 6500% ATK sát thương Thánh Mộc Vô Cực!' }
+        { id: 's1', name: 'Huyết Nguyệt Đoạt Hồn (Blood Moon Harvest)', type: 'passive', icon: '🩸', desc: 'Tăng 250% Sát thương toàn thể. Đòn đánh kèm Lưỡi Đao Huyết Nguyệt xé rách không gian, bỏ qua 50% Giáp đối thủ và hồi 5% HP mỗi đòn đánh.', bonusAtk: 2.5 },
+        { id: 's2', name: 'Ảnh Kiếm Hắc Ám (Shadow Blade Execution)', type: 'active', icon: '🗡️', cd: 6.0, dmgMult: 4.5, desc: 'Tự động kích hoạt trong trận đấu: Vung song đao bóng đêm trảm kích bão lốc gây 450% ATK, hồi 35% HP tối đa và tăng 100% Sát thương bạo kích trong 4 giây.' },
+        { id: 's3', name: 'Huyết Nguyệt Trảm Sát (Blood Moon Annihilation)', type: 'burst', icon: '⚔️', cd: 8.0, dmgMult: 75.0, desc: 'Khai mở tuyệt kỹ Hắc Ám Nữ Hoàng: Xuyên phá thời không, tung nhát chém Huyết Nguyệt diệt thế gây 7500% ATK sát thương Hỗn Mang bạo kích!' }
       ],
       eidolons: [
-        { level: 1, name: 'E1: Hơi Thở Đại Ngàn', desc: 'Tăng 180% Sát thương toàn thể, Đại Pháo Quang Tiễn tăng gấp đôi tầm sát thương và tốc độ đánh +40.', bonusAtk: 1.8, bonusHp: 1.0 },
-        { level: 2, name: 'E2: Ánh Sáng Yggdrasil', desc: 'Thánh Thụ Ban Phước nhận thêm khiên bảo hộ 50% HP và tăng 50% Tỉ lệ bạo kích trong 5 giây.', uniquePassive: 'rhiannon_tree_shield' },
-        { level: 3, name: 'E3: Khế Ước Cú Đêm & Tinh Linh', desc: 'Cấp kỹ năng Thánh Thụ Ban Phước +3. Sát thương nhận vào giảm 50% vĩnh viễn.', bonusDef: 1.0 },
-        { level: 4, name: 'E4: Sinh Mệnh Bất Tận', desc: 'Khi nhận sát thương chí tử, Thần Thụ lập tức hồi sinh 100% Máu và tạo kết giới bất tử trong 4 giây!', uniquePassive: 'rhiannon_immortal_rebirth' },
-        { level: 5, name: 'E5: Mũi Tên Tinh Tú', desc: 'Cấp Nộ Thần Mộc Khải Huyền +3. Sát thương Tuyệt Kỹ Nộ tăng thêm 250%!', burstDmgMult: 2.5 },
-        { level: 6, name: 'E6: ⟦ NỮ HOÀNG RỪNG THIÊNG TOÀN NĂNG ⟧', desc: 'Mọi đòn đánh đều kèm Laser Thánh Quang Vạn Trượng 400% ATK, Tuyệt Kỹ Nộ lập tức kết liễu thẳng mọi kẻ thù dưới 35% HP!', uniquePassive: 'rhiannon_execute_e6' }
+        { level: 1, name: 'E1: Lưỡi Đao Hư Không', desc: 'Tăng 200% Sát thương toàn thể, tốc độ đánh +45 và tăng 40% Tỉ lệ bạo kích.', bonusAtk: 2.0, bonusHp: 1.0 },
+        { level: 2, name: 'E2: Áo Choàng Bóng Tối', desc: 'Nhận thêm khiên bóng đêm bảo hộ 50% HP và tăng 50% Tỉ lệ bạo kích trong 5 giây.', uniquePassive: 'trisa_shadow_shield' },
+        { level: 3, name: 'E3: Vũ Điệu Đoạt Mệnh', desc: 'Cấp kỹ năng Ảnh Kiếm Hắc Ám +3. Sát thương nhận vào giảm 50% vĩnh viễn.', bonusDef: 1.0 },
+        { level: 4, name: 'E4: Huyết Nguyệt Bất Tử', desc: 'Khi nhận sát thương chí tử, bóng đêm lập tức hồi sinh 100% Máu và tiến vào trạng thái Miễn nhiễm sát thương trong 4 giây!', uniquePassive: 'trisa_immortal_rebirth' },
+        { level: 5, name: 'E5: Thâm Uyên Cuồng Nộ', desc: 'Cấp Nộ Huyết Nguyệt Trảm Sát +3. Sát thương Tuyệt Kỹ Nộ tăng thêm 250%!', burstDmgMult: 2.5 },
+        { level: 6, name: 'E6: ⟦ NỮ HOÀNG HUYẾT NGUYỆT TOÀN NĂNG ⟧', desc: 'Mọi đòn đánh đều kèm Trảm Kích Huyết Nguyệt 500% ATK, Tuyệt Kỹ Nộ lập tức kết liễu thẳng mọi kẻ thù dưới 40% HP!', uniquePassive: 'trisa_execute_e6' }
       ]
     }
   ],
@@ -745,7 +745,8 @@ CONFIG.getHeroPixelArchetype = function(heroId) {
     hero_arcane_mage: 'arcane_mage',
     hero_unknown_god: 'unknown_god',
     hero_cassius: 'cassius',
-    hero_rhiannon: 'rhiannon',
+    hero_trisa: 'trisa',
+    hero_rhiannon: 'trisa',
     // Fallback migration mapping
     hero_traveler: 'starter_knight',
     hero_amber: 'flame_knight',
