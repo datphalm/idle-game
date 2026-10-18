@@ -157,6 +157,30 @@ namespace IdleRPGLauncher
                 res.Headers.Add("Pragma", "no-cache");
                 res.Headers.Add("Expires", "0");
 
+                // Nếu file chưa có trên đĩa và là tài nguyên assets, tự động kéo về từ Server và lưu cục bộ
+                if (!File.Exists(filePath))
+                {
+                    string normalRaw = req.Url.AbsolutePath.TrimStart('/');
+                    if (normalRaw.StartsWith("assets/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        try
+                        {
+                            string remoteUrl = "https://idle-game-ypvy.onrender.com/" + normalRaw;
+                            string parentDir = Path.GetDirectoryName(filePath);
+                            if (!string.IsNullOrEmpty(parentDir) && !Directory.Exists(parentDir))
+                            {
+                                Directory.CreateDirectory(parentDir);
+                            }
+                            using (WebClient wc = new WebClient())
+                            {
+                                wc.Headers.Add("User-Agent", "IdleRPG-Launcher");
+                                wc.DownloadFile(remoteUrl, filePath);
+                            }
+                        }
+                        catch { }
+                    }
+                }
+
                 if (File.Exists(filePath))
                 {
                     FileInfo fi = new FileInfo(filePath);

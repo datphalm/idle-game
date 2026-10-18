@@ -1970,12 +1970,19 @@ const Cinematics = {
             videoPlayer.currentTime = 0;
             videoPlayer.playbackRate = 1.0;
             videoPlayer.muted = false;
+            videoPlayer.onerror = (e) => {
+              console.warn("Video cutscene failed to load/decode, dismissing black screen overlay:", e);
+              if (videoContainer) videoContainer.classList.add('hidden');
+            };
             const playPromise = videoPlayer.play();
             if (playPromise !== undefined) {
               playPromise.catch(err => {
                 console.warn("Video audio autoplay blocked, using muted fallback:", err);
                 videoPlayer.muted = true;
-                videoPlayer.play().catch(e => console.error("Video play failed:", e));
+                videoPlayer.play().catch(e => {
+                  console.error("Video play failed:", e);
+                  if (videoContainer) videoContainer.classList.add('hidden');
+                });
               });
             }
           }

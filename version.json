@@ -1,16 +1,13 @@
 {
-  "version": "2.7.0",
-  "title": "Bản Cập Nhật v2.7.0 - Đại Tướng Hội Ngộ: Trisa Rework, Hilde, Heide & Mei Lin",
-  "releaseDate": "2026-10-17",
+  "version": "2.8.0",
+  "title": "Bản Cập Nhật v2.8.0 - Tối Ưu Hiển Thị Roster & Streaming Video Cutscene",
+  "releaseDate": "2026-10-18",
   "changelog": [
-    "Rework toàn diện Trisa: Loại bỏ triệt để menu dropdown chọn dạng, nhân vật xoay mặt nhìn về phía quái vật, bổ sung combo 3 chuỗi animation đánh quái liên hoàn",
-    "Tuyệt kỹ Nộ Trisa: Cắt gọt bỏ hoàn toàn thanh tiến trình xem video và viền đen hai bên, hiển thị tràn viền Full HD 1080p siêu sắc nét",
-    "Tướng Mới 1: Hilde - Thánh Nữ Băng Quang (Hệ Băng, Thẻ bài Tarot Băng Cực, Chibi đa thế đánh, Video Cutscene Băng Thánh)",
-    "Tướng Mới 2: Heide - Phong Lôi Kiếm Thánh (Hệ Lôi, Thẻ bài Tarot Sấm Sét, Chibi lướt kiếm, Video Cutscene chém kết liễu)",
-    "Tướng Mới 3: Mei Lin - Thần Long Quyền Thánh (Hệ Phong Long, Thẻ bài Tarot Chân Long, Chibi võ thuật, Video Cutscene Long Thần)",
-    "Tự động kích hoạt Kỹ năng Nguyên Tố độc bản (S2) cho tất cả các tướng mới trong trận đấu",
-    "Trọn bộ 6 Tinh Hồn Cung Mệnh (E1 - E6) cho Hilde, Heide và Mei Lin",
-    "Hoạt ảnh Idle 3D Showcase và lời thoại tiếng Nhật độc bản khi trỏ chuột vào Thẻ bài Tuyệt Kỹ"
+    "Xoay mặt mô hình 3D Trisa sang phải hướng về bảng thuộc tính trong giao diện Chi Tiết Tướng và Showcase",
+    "Nâng cấp máy chủ Web Server hỗ trợ phân phối đầy đủ tài nguyên Media tĩnh và streaming Video MP4 (HTTP 206 Partial Content)",
+    "Khắc phục triệt để lỗi thẻ tướng hiển thị file rỗng và nộ ulti bị màn hình đen cho bạn bè/người chơi trực tuyến",
+    "Tự động tải bổ sung và lưu đĩa vĩnh viễn tài nguyên tướng (On-demand Asset Sync & Cache) trong bản cài đặt IdleRPG.exe",
+    "Bổ sung biểu tượng nguyên tố dự phòng và cơ chế tự động hạ màn che video nếu tệp bị gián đoạn"
   ],
   "downloadUrl": "https://github.com/datphalm/idle-game/releases/latest"
 }

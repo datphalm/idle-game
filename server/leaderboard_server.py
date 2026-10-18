@@ -59,24 +59,146 @@ def save_db(db):
     with open(DB_FILE, "w", encoding="utf-8") as f:
         json.dump(db, f, ensure_ascii=False, indent=2)
 
-STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
-CSS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "css")
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
+CSS_DIR = os.path.join(PROJECT_ROOT, "css")
+DIST_DIR = os.path.join(PROJECT_ROOT, "dist")
 os.makedirs(STATIC_DIR, exist_ok=True)
+
+MIME_MAP = {
+    ".html": "text/html; charset=utf-8",
+    ".htm": "text/html; charset=utf-8",
+    ".js": "application/javascript; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+    ".json": "application/json; charset=utf-8",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+    ".svg": "image/svg+xml",
+    ".ico": "image/x-icon",
+    ".mp4": "video/mp4",
+    ".webm": "video/webm",
+    ".ogg": "video/ogg",
+    ".ogv": "video/ogg",
+    ".mp3": "audio/mpeg",
+    ".wav": "audio/wav",
+    ".m4a": "audio/mp4",
+    ".wasm": "application/wasm",
+}
+
+def get_mime(filepath):
+    ext = os.path.splitext(filepath)[1].lower()
+    return MIME_MAP.get(ext, "application/octet-stream")
+
+def resolve_static_file(rel_path):
+    rel_path = rel_path.lstrip("/\\")
+    if not rel_path or rel_path == "index.html":
+        for cand in [
+            os.path.join(STATIC_DIR, "index.html"),
+            os.path.join(DIST_DIR, "index.html"),
+            os.path.join(PROJECT_ROOT, "index.html")
+        ]:
+            if os.path.isfile(cand):
+                return cand
+        return None
+
+    # Protect against directory traversal
+    norm = os.path.normpath(rel_path)
+    if ".." in norm.split(os.sep):
+        return None
+
+    # Search static folder first, then project root, then dist
+    for base in [STATIC_DIR, PROJECT_ROOT, DIST_DIR]:
+        cand = os.path.join(base, rel_path)
+        if os.path.isfile(cand):
+            return cand
+    return None
 
 class RequestHandler(BaseHTTPRequestHandler):
     def _set_headers(self, status=200, content_type="application/json; charset=utf-8"):
         self.send_response(status)
         self.send_header("Content-Type", content_type)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, HEAD")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Range")
+        self.send_header("Access-Control-Expose-Headers", "Content-Range, Accept-Ranges, Content-Length")
         self.end_headers()
+
+    def _serve_file(self, file_path, is_head=False):
+        try:
+            total_size = os.path.getsize(file_path)
+            mime = get_mime(file_path)
+            range_header = self.headers.get("Range")
+
+            if range_header and range_header.startswith("bytes="):
+                parts = range_header[6:].split("-")
+                start = int(parts[0]) if parts[0] else 0
+                end = int(parts[1]) if len(parts) > 1 and parts[1] else total_size - 1
+                if end >= total_size:
+                    end = total_size - 1
+
+                if start > end or start < 0:
+                    self.send_response(416)
+                    self.send_header("Content-Range", f"bytes */{total_size}")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    return
+
+                length = end - start + 1
+                self.send_response(206)
+                self.send_header("Content-Type", mime)
+                self.send_header("Content-Range", f"bytes {start}-{end}/{total_size}")
+                self.send_header("Content-Length", str(length))
+                self.send_header("Accept-Ranges", "bytes")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.send_header("Access-Control-Expose-Headers", "Content-Range, Accept-Ranges, Content-Length")
+                self.end_headers()
+
+                if not is_head:
+                    with open(file_path, "rb") as f:
+                        f.seek(start)
+                        remaining = length
+                        while remaining > 0:
+                            chunk = f.read(min(65536, remaining))
+                            if not chunk:
+                                break
+                            self.wfile.write(chunk)
+                            remaining -= len(chunk)
+            else:
+                self.send_response(200)
+                self.send_header("Content-Type", mime)
+                self.send_header("Content-Length", str(total_size))
+                self.send_header("Accept-Ranges", "bytes")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.send_header("Access-Control-Expose-Headers", "Content-Range, Accept-Ranges, Content-Length")
+                self.end_headers()
+
+                if not is_head:
+                    with open(file_path, "rb") as f:
+                        while True:
+                            chunk = f.read(65536)
+                            if not chunk:
+                                break
+                            self.wfile.write(chunk)
+        except Exception:
+            pass
 
     def do_OPTIONS(self):
         self._set_headers(200)
 
     def do_HEAD(self):
-        self._set_headers(200)
+        path = self.path.split("?")[0]
+        if path.startswith("/api/"):
+            self._set_headers(200)
+            return
+
+        target_file = resolve_static_file(path)
+        if target_file:
+            self._serve_file(target_file, is_head=True)
+        else:
+            self._set_headers(404, "text/plain")
 
     def do_GET(self):
         db = load_db()
@@ -157,9 +279,17 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self._set_headers(404, "text/plain; charset=utf-8")
                 self.wfile.write(b"HTML not found on server")
 
+        elif path.startswith("/api/"):
+            self._set_headers(404)
+            self.wfile.write(json.dumps({"error": "API route not found"}).encode("utf-8"))
+
         else:
-            self._set_headers(200)
-            self.wfile.write(json.dumps({"status": "ok", "message": "Idle RPG Leaderboard Server Online"}).encode("utf-8"))
+            target_file = resolve_static_file(path)
+            if target_file:
+                self._serve_file(target_file, is_head=False)
+            else:
+                self._set_headers(404, "text/plain; charset=utf-8")
+                self.wfile.write(b"File not found on server")
 
     def do_POST(self):
         db = load_db()

@@ -2657,9 +2657,10 @@ const UI = {
       card.className = `hero-roster-card ${isActive ? 'active-hero' : ''} ${!isOwned ? 'locked-hero' : 'owned-hero'}`;
       card.style.borderColor = isActive ? '#00ffcc' : isOwned ? `${hero.elementColor}60` : 'rgba(255,255,255,0.12)';
 
+      const elemIcon = hero.element === 'fire' ? '🔥' : hero.element === 'ice' ? '❄️' : hero.element === 'lightning' ? '⚡' : hero.element === 'dark' ? '🩸' : hero.element === 'wind' ? '🌪️' : '⚔️';
       const avatarHtml = typeof Sprites !== 'undefined'
-        ? `<div class="hero-card-avatar ${!isOwned ? 'locked-avatar' : ''}">${Sprites.getPlayerSvg('idle', hero.id)}${!isOwned ? '<div class="avatar-lock-overlay">🔒</div>' : ''}</div>`
-        : `<div class="hero-card-avatar" style="font-size:1.8rem;">👑</div>`;
+        ? `<div class="hero-card-avatar ${!isOwned ? 'locked-avatar' : ''}"><div class="avatar-fallback-icon" style="position:absolute; font-size:1.6rem; opacity:0.35; pointer-events:none;">${elemIcon}</div>${Sprites.getPlayerSvg('idle', hero.id)}${!isOwned ? '<div class="avatar-lock-overlay">🔒</div>' : ''}</div>`
+        : `<div class="hero-card-avatar" style="font-size:1.8rem;">${elemIcon}</div>`;
 
       const activeTag = isActive ? `<span class="hero-active-tag">✓ ĐANG DÙNG</span>` : '';
       const cBadge = isOwned
