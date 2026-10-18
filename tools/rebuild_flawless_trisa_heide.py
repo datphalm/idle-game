@@ -35,14 +35,14 @@ def rebuild_trisa_hover():
         ret, frame = cap.read()
         if not ret: break
         
-        # In trisa1.mp4, there is NO dropdown menu at all. Only standard window borders.
+        # Wipe window borders and right panel/menu at x >= 650 (Trisa max_x is <= 635)
         out = frame.copy()
         out[:43, :] = 0
         out[788:, :] = 0
         out[:, :22] = 0
-        out[:, 870:] = 0
+        out[:, 650:] = 0
         
-        crop = out[50:800, 40:840]
+        crop = out[50:800, 40:650]
         m = np.max(crop, axis=2)
         char_mask = (m > 8).astype(np.uint8) * 255
         

@@ -15,14 +15,14 @@ HERO_CONFIGS = {
         'video_path': os.path.join(BASE_DIR, 'scratch', 'trisa_raw', 'trisa2.mp4'),
         'x_ref': 455.0,
         'y_ground': 780.0,
-        'wipe_x': 725,
+        'wipe_x': 658,
         'left_cut': 30,
         'actions': {
-            'chibi_idle': {'start': 3420, 'end': 3500, 'step': 1, 'duration': 40},
-            'chibi_walk': {'start': 240, 'end': 320, 'step': 1, 'duration': 40},
-            'chibi_attack': {'start': 445, 'end': 525, 'step': 1, 'duration': 42},
+            'chibi_idle': {'start': 3485, 'end': 3535, 'step': 1, 'duration': 40},
+            'chibi_walk': {'start': 200, 'end': 280, 'step': 1, 'duration': 40},
+            'chibi_attack': {'start': 445, 'end': 475, 'step': 1, 'duration': 42},
             'chibi_attack2': {'start': 560, 'end': 640, 'step': 1, 'duration': 40},
-            # Tactical Dagger Throw & Spin Strike replacing the crate-sitting camping animation!
+            # Tactical Dagger Throw & Spin Strike
             'chibi_attack3': {'start': 3615, 'end': 3690, 'step': 1, 'duration': 40},
             'chibi_skill': {'start': 3525, 'end': 3615, 'step': 2, 'duration': 46},
             'chibi_hit': {'start': 3930, 'end': 4010, 'step': 1, 'duration': 45}
@@ -32,7 +32,7 @@ HERO_CONFIGS = {
         'video_path': os.path.join(BASE_DIR, 'scratch', 'raw_hero3_meilin', 'meilin_chibi.mp4'),
         'x_ref': 444.0,
         'y_ground': 785.0,
-        'wipe_x': None,
+        'wipe_x': 658,
         'left_cut': 30,
         'actions': {
             'chibi_idle': {'start': 2380, 'end': 2460, 'step': 1, 'duration': 40},
@@ -48,10 +48,10 @@ HERO_CONFIGS = {
         'video_path': os.path.join(BASE_DIR, 'scratch', 'raw_hero2_heide', 'heide_chibi.mp4'),
         'x_ref': 434.0,
         'y_ground': 785.0,
-        'wipe_x': 725,
+        'wipe_x': 658,
         'left_cut': 30,
         'actions': {
-            'chibi_idle': {'start': 285, 'end': 352, 'step': 1, 'duration': 45},
+            'chibi_idle': {'start': 285, 'end': 350, 'step': 1, 'duration': 45},
             'chibi_walk': {'start': 730, 'end': 805, 'step': 1, 'duration': 40},
             'chibi_attack': {'start': 505, 'end': 580, 'step': 1, 'duration': 42},
             'chibi_attack2': {'start': 845, 'end': 902, 'step': 1, 'duration': 40},
@@ -63,14 +63,14 @@ HERO_CONFIGS = {
         'video_path': os.path.join(BASE_DIR, 'scratch', 'raw_hero1_hilde', 'hilde_chibi.mp4'),
         'x_ref': 436.0,
         'y_ground': 785.0,
-        'wipe_x': 725,
+        'wipe_x': 658,
         'left_cut': 25,
         'actions': {
             'chibi_idle': {'start': 80, 'end': 160, 'step': 1, 'duration': 45},
-            'chibi_walk': {'start': 200, 'end': 280, 'step': 1, 'duration': 40},
-            'chibi_attack': {'start': 366, 'end': 418, 'step': 1, 'duration': 42},
-            'chibi_attack2': {'start': 485, 'end': 530, 'step': 1, 'duration': 40},
-            'chibi_skill': {'start': 2100, 'end': 2200, 'step': 2, 'duration': 46},
+            'chibi_walk': {'start': 275, 'end': 335, 'step': 1, 'duration': 40},
+            'chibi_attack': {'start': 366, 'end': 415, 'step': 1, 'duration': 42},
+            'chibi_attack2': {'start': 485, 'end': 524, 'step': 1, 'duration': 40},
+            'chibi_skill': {'start': 2128, 'end': 2200, 'step': 2, 'duration': 46},
             'chibi_hit': {'start': 3900, 'end': 3980, 'step': 1, 'duration': 45}
         }
     }
