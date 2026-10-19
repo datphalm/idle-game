@@ -7,7 +7,14 @@ function initGame() {
     const offlineProgress = SaveManager.calculateOfflineProgress(savedData.timestamp);
     if (offlineProgress) {
       SaveManager.applyOfflineRewards(offlineProgress);
-      setTimeout(() => UI.showOfflinePopup(offlineProgress), 500);
+      GameState.isOfflineModalActive = true;
+      setTimeout(() => {
+        UI.showOfflinePopup(offlineProgress);
+        if (typeof UI !== 'undefined') {
+          UI.setPlayerAction('idle');
+          UI.setMonsterAction('idle');
+        }
+      }, 100);
     }
   }
 
@@ -48,7 +55,9 @@ function initGame() {
 
   UI.init();
   Monster.spawn();
-  Combat.start();
+  if (!GameState.isOfflineModalActive) {
+    Combat.start();
+  }
   SaveManager.startAutoSave();
   startUILoop();
   UI.updateAll();

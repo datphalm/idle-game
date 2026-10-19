@@ -1,12 +1,12 @@
 {
-  "version": "2.9.0",
-  "title": "Bản Cập Nhật v2.9.0 - Tích Hợp Hệ Thống Tự Động Cập Nhật Trực Tiếp Từ GitHub",
+  "version": "2.9.1",
+  "title": "Bản Cập Nhật v2.9.1 - Sửa Triệt Để Bounding Box Nhân Vật, Tạm Dừng Offline & Tối Ưu Ulti Audio",
   "releaseDate": "2026-10-19",
   "changelog": [
-    "Tích hợp cơ chế tự động cập nhật trực tiếp từ GitHub cho toàn bộ người chơi khi có bản cập nhật mới được push lên git",
-    "Tự động bù và lưu đĩa tài nguyên ảnh, âm thanh, video còn thiếu khi khởi chạy",
-    "Hỗ trợ cấu hình máy chủ động qua server_config.json, không phụ thuộc vào giới hạn của Render",
-    "Dọn dẹp toàn bộ mã nguồn, tối ưu hóa kích thước và hiệu năng nạp game"
+    "Sửa triệt để hiện tượng viền che mất bộ phận cơ thể của tất cả các nhân vật (Trisa, Heide, Hilde, Mei Lin)",
+    "Khắc phục nhân vật Mei Lin bị che mặt/tay ở bảng thông tin chi tiết showcase",
+    "Cập nhật cơ chế tạm dừng chiến đấu khi bảng Offline mở (nhân vật và quái vật đứng yên, click OK mới bắt đầu chiến đấu)",
+    "Khắc phục triệt để lỗi âm thanh Ulti lần đầu bị ngắt/cắt bằng hệ thống Preload và tính toán thời lượng phát mượt mà"
   ],
   "downloadUrl": "https://github.com/datphalm/idle-game/releases/latest"
 }

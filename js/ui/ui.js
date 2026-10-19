@@ -199,6 +199,14 @@ const UI = {
     document.querySelectorAll('.popup-overlay').forEach(overlay => {
       overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
+          if (overlay.id === 'offline-popup' && GameState.isOfflineModalActive) {
+            GameState.isOfflineModalActive = false;
+            if (typeof Combat !== 'undefined') {
+              Combat.start();
+              Combat._scheduleNextTurn(400);
+            }
+            UI.addCombatLog('⚔️ Bắt đầu cuộc phiêu lưu!', 'log-player');
+          }
           overlay.classList.add('hidden');
         }
       });
@@ -207,13 +215,43 @@ const UI = {
     // ESC key to close popups
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        const off = document.getElementById('offline-popup');
+        if (off && !off.classList.contains('hidden') && GameState.isOfflineModalActive) {
+          GameState.isOfflineModalActive = false;
+          if (typeof Combat !== 'undefined') {
+            Combat.start();
+            Combat._scheduleNextTurn(400);
+          }
+          UI.addCombatLog('⚔️ Bắt đầu cuộc phiêu lưu!', 'log-player');
+        }
         document.querySelectorAll('.popup-overlay:not(.hidden)').forEach(p => p.classList.add('hidden'));
+      }
+    });
+
+    // Close button on offline popup
+    document.getElementById('btn-close-offline-popup')?.addEventListener('click', () => {
+      document.getElementById('offline-popup').classList.add('hidden');
+      if (GameState.isOfflineModalActive) {
+        GameState.isOfflineModalActive = false;
+        if (typeof Combat !== 'undefined') {
+          Combat.start();
+          Combat._scheduleNextTurn(400);
+        }
+        UI.addCombatLog('⚔️ Bắt đầu cuộc phiêu lưu!', 'log-player');
       }
     });
 
     // Popups OK buttons
     document.getElementById('btn-offline-ok').addEventListener('click', () => {
       document.getElementById('offline-popup').classList.add('hidden');
+      if (GameState.isOfflineModalActive) {
+        GameState.isOfflineModalActive = false;
+        if (typeof Combat !== 'undefined') {
+          Combat.start();
+          Combat._scheduleNextTurn(400);
+        }
+        UI.addCombatLog('⚔️ Bắt đầu cuộc phiêu lưu!', 'log-player');
+      }
     });
     document.getElementById('btn-gacha-ok').addEventListener('click', () => {
       document.getElementById('gacha-result-popup').classList.add('hidden');
@@ -2721,10 +2759,13 @@ const UI = {
 
   showOfflinePopup(progress) {
     if (!progress) return;
+    GameState.isOfflineModalActive = true;
     document.getElementById('offline-time-text').textContent = `Bạn đã offline ${SaveManager.formatOfflineTime(progress.seconds)}`;
     document.getElementById('offline-gold').textContent = `+${this._formatNumber(progress.gold)} Vàng`;
     document.getElementById('offline-exp').textContent = `+${this._formatNumber(progress.exp)} EXP`;
     document.getElementById('offline-popup').classList.remove('hidden');
+    this.setPlayerAction('idle');
+    this.setMonsterAction('idle');
   },
 
   showLevelUp(level) {

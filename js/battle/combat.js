@@ -5,6 +5,13 @@ const Combat = {
 
   start() {
     if (this.isRunning) return;
+    if (GameState.isOfflineModalActive) {
+      if (typeof UI !== 'undefined') {
+        UI.setPlayerAction('idle');
+        UI.setMonsterAction('idle');
+      }
+      return;
+    }
     this.isRunning = true;
     if (!GameState.player) GameState.player = Player.createDefault();
     if (!GameState.stage) GameState.stage = { current: 1, max: 1, autoAdvance: true };
@@ -31,6 +38,11 @@ const Combat = {
 
   step() {
     if (!this.isRunning) return;
+
+    if (GameState.isOfflineModalActive) {
+      this._scheduleNextTurn(1000);
+      return;
+    }
 
     if (GameState.boss?.active || GameState.dungeon?.active) {
       this._scheduleNextTurn(1000);

@@ -172,11 +172,51 @@ const Cinematics = {
       this._initPixi(w, h);
       this._initThree(w, h);
       this._preloadAssets();
+      this.preloadHeroVideo();
+      this._setupAudioWarmup();
 
       window.addEventListener('resize', () => this.resize());
     } catch (e) {
       console.warn('Cinematics init error:', e);
     }
+  },
+
+  preloadHeroVideo(heroId) {
+    try {
+      const videoPlayer = document.getElementById('burst-video-player');
+      if (!videoPlayer) return;
+      const targetId = heroId || (typeof GameState !== 'undefined' ? GameState.activeHeroId : null) || 'hero_cassius';
+      let videoSrc = 'assets/video/unknown_god_ult.mp4';
+      if (targetId === 'hero_trisa' || targetId === 'hero_rhiannon') videoSrc = 'assets/video/trisa_ult.mp4';
+      else if (targetId === 'hero_cassius') videoSrc = 'assets/video/cassius_ult.mp4';
+      else if (targetId === 'hero_hilde') videoSrc = 'assets/video/hilde_ult.mp4';
+      else if (targetId === 'hero_heide') videoSrc = 'assets/video/heide_ult.mp4';
+      else if (targetId === 'hero_meilin') videoSrc = 'assets/video/meilin_ult.mp4';
+
+      if (!videoPlayer.src || !videoPlayer.src.includes(videoSrc)) {
+        videoPlayer.preload = 'auto';
+        videoPlayer.src = videoSrc;
+        videoPlayer.load();
+      }
+    } catch (e) {}
+  },
+
+  _setupAudioWarmup() {
+    const warmup = () => {
+      try {
+        const ctx = this._getAudioCtx();
+        if (ctx && ctx.state === 'suspended') {
+          ctx.resume().catch(() => {});
+        }
+        this.preloadHeroVideo();
+      } catch (e) {}
+      window.removeEventListener('pointerdown', warmup);
+      window.removeEventListener('keydown', warmup);
+      window.removeEventListener('click', warmup);
+    };
+    window.addEventListener('pointerdown', warmup);
+    window.addEventListener('keydown', warmup);
+    window.addEventListener('click', warmup);
   },
 
   resize() {
@@ -1906,27 +1946,20 @@ const Cinematics = {
       if (isVideoCutscene) {
         const wipeTiming = isCustomVideo ? 120 : 780;
         const videoStartTiming = isCustomVideo ? 180 : 920;
-        let dissolveTiming = 2800;
-        let endingTiming = 3000;
-        if (isTrisa) {
-          dissolveTiming = 2200;
-          endingTiming = 2500;
-        } else if (isHilde) {
-          dissolveTiming = 1450;
-          endingTiming = 1900;
-        } else if (isHeide) {
-          dissolveTiming = 6800;
-          endingTiming = 7200;
-        } else if (isMeilin) {
-          dissolveTiming = 4200;
-          endingTiming = 4500;
-        } else if (isCassius) {
-          dissolveTiming = 3450;
-          endingTiming = 5700;
-        } else {
-          dissolveTiming = 4800;
-          endingTiming = 5100;
-        }
+
+        let fallbackDur = 4.18;
+        if (isTrisa) fallbackDur = 2.33;
+        else if (isHilde) fallbackDur = 1.93;
+        else if (isHeide) fallbackDur = 7.20;
+        else if (isMeilin) fallbackDur = 4.53;
+        else if (isCassius) fallbackDur = 5.20;
+
+        const vDur = (videoPlayer && videoPlayer.duration && !isNaN(videoPlayer.duration) && videoPlayer.duration > 0.5)
+          ? videoPlayer.duration
+          : fallbackDur;
+
+        const endingTiming = Math.round(videoStartTiming + vDur * 1000 + 120);
+        const dissolveTiming = Math.max(videoStartTiming + 450, endingTiming - 380);
 
         // ACT 1.5: DIAGONAL RAZOR BLADE FLASH WIPE ACROSS THE SCREEN (Unknown God only)
         if (!isCustomVideo) {
@@ -1970,6 +2003,13 @@ const Cinematics = {
             videoPlayer.currentTime = 0;
             videoPlayer.playbackRate = 1.0;
             videoPlayer.muted = false;
+            videoPlayer.volume = 1.0;
+            videoPlayer.onended = () => {
+              if (videoContainer) {
+                videoContainer.classList.add('hidden');
+                videoContainer.classList.remove('video-dissolve-to-battle');
+              }
+            };
             videoPlayer.onerror = (e) => {
               console.warn("Video cutscene failed to load/decode, dismissing black screen overlay:", e);
               if (videoContainer) videoContainer.classList.add('hidden');
