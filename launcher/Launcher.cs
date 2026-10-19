@@ -61,7 +61,7 @@ namespace IdleRPGLauncher
                     {
                         ProcessStartInfo psi = new ProcessStartInfo();
                         psi.FileName = browserPath;
-                        psi.Arguments = string.Format("--app=\"{0}\" --window-size=1280,820 --user-data-dir=\"{1}\" --disable-extensions --disable-sync --disable-default-apps --no-first-run", 
+                        psi.Arguments = string.Format("--app=\"{0}\" --start-fullscreen --start-maximized --user-data-dir=\"{1}\" --disable-extensions --disable-sync --disable-default-apps --no-first-run", 
                                                       gameUrl, userDataDir);
                         psi.UseShellExecute = false;
                         gameProcess = Process.Start(psi);

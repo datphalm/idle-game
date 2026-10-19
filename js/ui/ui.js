@@ -331,10 +331,24 @@ const UI = {
       this.toggleVfx(e.target.checked);
     });
 
+    // Fullscreen Toggle Button & Auto Fullscreen
+    const btnFullscreen = document.getElementById('btn-toggle-fullscreen');
+    if (btnFullscreen) {
+      btnFullscreen.addEventListener('click', () => {
+        this.toggleFullscreen();
+      });
+      const updateFs = () => this.updateFullscreenButton();
+      document.addEventListener('fullscreenchange', updateFs);
+      document.addEventListener('webkitfullscreenchange', updateFs);
+      document.addEventListener('mozfullscreenchange', updateFs);
+    }
+    this.initAutoFullscreenOnGesture();
+
     this.renderHeroSkillsHudLayout();
     this._renderUpgradeCards();
     this._syncAutoControls();
     this.updateVfxToggleDisplay();
+    this.updateFullscreenButton();
     this._startSkillCooldownTicker();
   },
 
@@ -431,7 +445,8 @@ const UI = {
       hero_jiyan: 'hero_spear_lancer',
       hero_amber: 'hero_flame_knight',
       hero_changli: 'hero_flame_knight',
-      hero_raiden: 'hero_arcane_mage'
+      hero_raiden: 'hero_arcane_mage',
+      hero_rhiannon: 'hero_trisa'
     };
     const targetId = idMap[rawId] || rawId;
     const heroCfg = typeof CONFIG !== 'undefined' ? CONFIG.getHeroById(targetId) : null;
@@ -535,13 +550,14 @@ const UI = {
       }
     };
 
+    const fallbackColor = heroCfg?.elementColor || '#38bdf8';
     const t = themes[targetId] || {
-      primary: heroCfg?.elementColor || '#ffd700',
-      secondary: heroCfg?.elementColor || '#f59e0b',
-      dark: '#1e293b',
-      glow: (heroCfg?.elementColor || '#ffd700') + 'dd',
-      stroke1: (heroCfg?.elementColor || '#ffd700') + '77',
-      stroke2: (heroCfg?.elementColor || '#ffd700') + 'cc'
+      primary: fallbackColor,
+      secondary: fallbackColor,
+      dark: '#0f172a',
+      glow: fallbackColor + '66',
+      stroke1: fallbackColor + '55',
+      stroke2: fallbackColor + 'aa'
     };
 
     const circleSvg = `
@@ -731,6 +747,62 @@ const UI = {
     if (chk) {
       chk.checked = isEnabled;
     }
+  },
+
+  toggleFullscreen() {
+    const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+    if (!isFull) {
+      const docEl = document.documentElement;
+      const rfs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+      if (rfs) {
+        rfs.call(docEl).catch(err => {
+          console.warn('Không thể mở toàn màn hình:', err);
+        });
+      }
+    } else {
+      const efs = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+      if (efs) {
+        efs.call(document).catch(err => {
+          console.warn('Không thể thoát toàn màn hình:', err);
+        });
+      }
+    }
+  },
+
+  updateFullscreenButton() {
+    const btn = document.getElementById('btn-toggle-fullscreen');
+    if (!btn) return;
+    const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+    if (isFull) {
+      btn.textContent = '🗗 Thu Nhỏ';
+      btn.title = 'Thoát chế độ toàn màn hình';
+      btn.style.background = 'rgba(148, 163, 184, 0.25)';
+      btn.style.borderColor = '#94a3b8';
+      btn.style.color = '#cbd5e1';
+    } else {
+      btn.textContent = '⛶ Toàn Màn Hình';
+      btn.title = 'Bật chế độ Toàn Màn Hình (F11)';
+      btn.style.background = 'rgba(56, 189, 248, 0.25)';
+      btn.style.borderColor = '#38bdf8';
+      btn.style.color = '#7dd3fc';
+    }
+  },
+
+  initAutoFullscreenOnGesture() {
+    const enterFullscreen = () => {
+      const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+      if (!isFull) {
+        const docEl = document.documentElement;
+        const rfs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+        if (rfs) {
+          rfs.call(docEl).catch(() => {});
+        }
+      }
+      window.removeEventListener('pointerdown', enterFullscreen);
+      window.removeEventListener('keydown', enterFullscreen);
+    };
+    window.addEventListener('pointerdown', enterFullscreen, { once: true });
+    window.addEventListener('keydown', enterFullscreen, { once: true });
   },
 
   _ensureDynamicUiElements() {
@@ -2310,8 +2382,39 @@ const UI = {
     });
 
     const artContainer = document.getElementById('banner-visual-art');
-    if (artContainer && typeof Sprites !== 'undefined') {
-      artContainer.innerHTML = isHero ? Sprites.getHeroBannerSvg() : Sprites.getWeaponBannerSvg();
+    if (artContainer) {
+      const curPreview = GameState.gacha?.featuredHeroPreview;
+      const bannerSrc = isHero
+        ? (curPreview ? `assets/characters/${curPreview}/banner.png` : 'assets/banners/banner_heroes_rateup.png')
+        : 'assets/banners/banner_weapons_rateup.png';
+
+      const heroPills = isHero ? `
+        <div class="gacha-hero-banner-pills" style="position: absolute; bottom: 8px; right: 12px; display: flex; gap: 5px; z-index: 10; flex-wrap: wrap;">
+          <button class="banner-pill-btn ${!curPreview ? 'active' : ''}" data-hero="" style="background: rgba(0,0,0,0.75); border: 1px solid rgba(255,215,0,0.6); color: #ffd700; font-size: 0.65rem; font-weight: 800; padding: 3px 8px; border-radius: 6px; cursor: pointer;">✨ TỔNG HỢP</button>
+          <button class="banner-pill-btn ${curPreview === 'trisa' ? 'active' : ''}" data-hero="trisa" style="background: rgba(0,0,0,0.75); border: 1px solid #ef4444; color: #fca5a5; font-size: 0.65rem; font-weight: 800; padding: 3px 8px; border-radius: 6px; cursor: pointer;">🗡️ TRISA</button>
+          <button class="banner-pill-btn ${curPreview === 'cassius' ? 'active' : ''}" data-hero="cassius" style="background: rgba(0,0,0,0.75); border: 1px solid #f59e0b; color: #fde68a; font-size: 0.65rem; font-weight: 800; padding: 3px 8px; border-radius: 6px; cursor: pointer;">🎲 CASSIUS</button>
+          <button class="banner-pill-btn ${curPreview === 'hilde' ? 'active' : ''}" data-hero="hilde" style="background: rgba(0,0,0,0.75); border: 1px solid #38bdf8; color: #bae6fd; font-size: 0.65rem; font-weight: 800; padding: 3px 8px; border-radius: 6px; cursor: pointer;">❄️ HILDE</button>
+          <button class="banner-pill-btn ${curPreview === 'heide' ? 'active' : ''}" data-hero="heide" style="background: rgba(0,0,0,0.75); border: 1px solid #c084fc; color: #e9d5ff; font-size: 0.65rem; font-weight: 800; padding: 3px 8px; border-radius: 6px; cursor: pointer;">⚡ HEIDE</button>
+          <button class="banner-pill-btn ${curPreview === 'meilin' ? 'active' : ''}" data-hero="meilin" style="background: rgba(0,0,0,0.75); border: 1px solid #10b981; color: #a7f3d0; font-size: 0.65rem; font-weight: 800; padding: 3px 8px; border-radius: 6px; cursor: pointer;">🐉 MEI LIN</button>
+        </div>
+      ` : '';
+
+      artContainer.innerHTML = `
+        <div style="position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: inherit;">
+          <img src="${bannerSrc}" alt="Gacha Banner Art" class="gacha-banner-img" style="width: 100%; height: 100%; object-fit: cover; object-position: center;" />
+          <div style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(5,7,15,0.75) 100%); pointer-events: none;"></div>
+          ${heroPills}
+        </div>
+      `;
+
+      artContainer.querySelectorAll('.banner-pill-btn').forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          if (!GameState.gacha) GameState.gacha = {};
+          GameState.gacha.featuredHeroPreview = btn.dataset.hero || null;
+          this.updateGacha();
+        };
+      });
     }
 
     const autoGachaChk = document.getElementById('chk-auto-gacha');
@@ -2539,18 +2642,31 @@ const UI = {
             <button class="btn btn-primary btn-skill-upgrade" data-skill="${skKey}" ${!canAfford ? 'disabled' : ''}>
               ✨ Nâng Cấp
             </button>
-            ${sk.type === 'burst' ? `
-            <button class="btn btn-preview-burst" style="margin-top: 6px; width: 100%; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; font-weight: 800; font-size: 0.75rem; padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.25); cursor: pointer; text-shadow: 0 1px 3px rgba(0,0,0,0.6); box-shadow: 0 2px 8px rgba(239,68,68,0.35);">
-              🎬 Thử Nghiệm Nộ 3D x1000
-            </button>
-            ` : ''}
           </div>
         </div>
       `;
     }).join('');
 
+    const bannerHeroMap = {
+      hero_trisa: 'trisa',
+      hero_rhiannon: 'trisa',
+      hero_cassius: 'cassius',
+      hero_hilde: 'hilde',
+      hero_heide: 'heide',
+      hero_meilin: 'meilin',
+      hero_unknown_god: 'unknown_god'
+    };
+    const bHeroKey = bannerHeroMap[activeId];
+    const heroBannerHtml = bHeroKey ? `
+      <div class="hero-detail-banner-card" style="margin-bottom: 14px; position: relative; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,215,0,0.35); box-shadow: 0 8px 24px rgba(0,0,0,0.7); height: 160px;">
+        <img src="assets/characters/${bHeroKey}/banner.png" alt="${heroCfg.name} Banner" style="width: 100%; height: 100%; object-fit: cover; object-position: center;" />
+        <div style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(5,7,15,0.75) 100%); pointer-events: none;"></div>
+      </div>
+    ` : '';
+
     container.innerHTML = `
       <div class="hero-showcase-card">
+        ${heroBannerHtml}
         ${activeId === 'hero_cassius' ? `
         <div class="hero-3d-stage-banner" style="margin-bottom: 14px; position: relative; border-radius: 12px; background: radial-gradient(circle at 50% 50%, rgba(255,215,0,0.15) 0%, rgba(20,20,32,0.85) 65%, #0b0b12 100%); border: 1px solid rgba(255,215,0,0.4); box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 0 30px rgba(255,215,0,0.08); overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 14px 20px; gap: 20px;">
           <div style="position: absolute; top: 10px; right: 12px; font-size: 0.68rem; font-weight: 800; color: #ffd700; background: rgba(0,0,0,0.6); border: 1px solid #ffd700; border-radius: 6px; padding: 3px 8px; text-transform: uppercase; letter-spacing: 1px;">
@@ -2699,25 +2815,6 @@ const UI = {
 
     container.querySelectorAll('.btn-skill-upgrade').forEach(btn => {
       btn.addEventListener('click', () => this._handleUpgradeHeroSkill(btn.dataset.skill));
-    });
-
-    container.querySelectorAll('.btn-preview-burst').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const burstSkill = skills.find(s => s.type === 'burst') || skills[skills.length - 1];
-        const activeHeroData = (typeof Player !== 'undefined' && Player.getActiveHeroData) ? Player.getActiveHeroData() : null;
-        const baseAtk = (typeof Player !== 'undefined' && Player.getEffectiveAttack) ? Player.getEffectiveAttack() : 1000;
-        const previewDmg = Math.floor(baseAtk * (burstSkill?.dmgMult || 50.0) * (1 + (activeHeroData?.burstDmgBonus || 0)));
-        if (typeof Cinematics !== 'undefined' && Cinematics.playBurst) {
-          Cinematics.playBurst({
-            hero: heroCfg,
-            skill: burstSkill,
-            damage: previewDmg,
-            isCrit: true,
-            buffName: burstSkill?.buffDesc || 'Tuyệt Kỹ Nộ 3D',
-            forcePreview: true
-          });
-        }
-      });
     });
   },
 
