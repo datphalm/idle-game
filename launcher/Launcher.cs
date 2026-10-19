@@ -4,8 +4,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
 using System.Threading;
-using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
 namespace IdleRPGLauncher
@@ -17,27 +17,30 @@ namespace IdleRPGLauncher
         private static bool _isRunning = true;
         private static int _port = 39184;
 
+        private static readonly string[] UpdateBases = new string[]
+        {
+            "https://raw.githubusercontent.com/datphalm/idle-game/main/",
+            "https://idle-game-ypvy.onrender.com/"
+        };
+
         [STAThread]
         static void Main(string[] args)
         {
-            // 1. Kiểm soát Single Instance (Chống mở chồng chéo nhiều bản game)
             bool isNewInstance;
             using (Mutex mutex = new Mutex(true, "Global\\IdleRPG_Standalone_Game_Instance", out isNewInstance))
             {
                 if (!isNewInstance)
                 {
-                    MessageBox.Show("⚔️ Game Idle RPG đang chạy rồi! Vui lòng kiểm tra thanh tác vụ hoặc cửa sổ đang mở.", 
+                    MessageBox.Show("Game Idle RPG đang chạy. Vui lòng kiểm tra thanh tác vụ hoặc cửa sổ đang mở.", 
                                     "Idle RPG", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
                 try
                 {
-                    // Lấy thư mục gốc chứa file game (index.html, js, css...)
                     _baseDir = AppDomain.CurrentDomain.BaseDirectory;
                     if (!File.Exists(Path.Combine(_baseDir, "index.html")))
                     {
-                        // Thử tìm thư mục cha nếu exe nằm trong thư mục con
                         DirectoryInfo parent = Directory.GetParent(_baseDir);
                         if (parent != null && File.Exists(Path.Combine(parent.FullName, "index.html")))
                         {
@@ -45,27 +48,19 @@ namespace IdleRPGLauncher
                         }
                     }
 
-                    // 2. Tự động kiểm tra và cập nhật bản vá Hot-Patch từ Cloud Server Render
                     CheckAndApplyUpdates();
-
-                    // 3. Tìm cổng mạng khả dụng
                     _port = FindFreePort(39180, 39250);
-
-                    // 3. Khởi chạy HTTP Server cục bộ bảo mật
                     StartLocalServer();
 
-                    // 4. Tìm kiếm trình duyệt Chromium để chạy chế độ App Window độc lập
                     string browserPath = FindChromiumBrowser();
                     string gameUrl = string.Format("http://127.0.0.1:{0}/index.html", _port);
                     string userDataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "IdleRPG_AppProfile");
 
                     Process gameProcess = null;
-
                     if (!string.IsNullOrEmpty(browserPath))
                     {
                         ProcessStartInfo psi = new ProcessStartInfo();
                         psi.FileName = browserPath;
-                        // Chạy cửa sổ độc lập không có thanh địa chỉ / không tab / khóa extension gian lận
                         psi.Arguments = string.Format("--app=\"{0}\" --window-size=1280,820 --user-data-dir=\"{1}\" --disable-extensions --disable-sync --disable-default-apps --no-first-run", 
                                                       gameUrl, userDataDir);
                         psi.UseShellExecute = false;
@@ -73,11 +68,9 @@ namespace IdleRPGLauncher
                     }
                     else
                     {
-                        // Mở trình duyệt mặc định nếu không tìm thấy Chrome/Edge
                         gameProcess = Process.Start(new ProcessStartInfo(gameUrl) { UseShellExecute = true });
                     }
 
-                    // 5. Đợi người chơi đóng cửa sổ game thì dừng server và thoát sạch sẽ
                     if (gameProcess != null)
                     {
                         gameProcess.WaitForExit();
@@ -145,11 +138,9 @@ namespace IdleRPGLauncher
                 string rawPath = req.Url.AbsolutePath.TrimStart('/');
                 if (string.IsNullOrEmpty(rawPath)) rawPath = "index.html";
 
-                // Chống directory traversal
                 rawPath = rawPath.Replace('/', Path.DirectorySeparatorChar);
                 string filePath = Path.Combine(_baseDir, rawPath);
 
-                // Thêm Security & No-Cache Headers để client luôn nạp file mới nhất
                 res.Headers.Add("X-Content-Type-Options", "nosniff");
                 res.Headers.Add("X-Frame-Options", "SAMEORIGIN");
                 res.Headers.Add("Access-Control-Allow-Origin", "*");
@@ -157,27 +148,33 @@ namespace IdleRPGLauncher
                 res.Headers.Add("Pragma", "no-cache");
                 res.Headers.Add("Expires", "0");
 
-                // Nếu file chưa có trên đĩa và là tài nguyên assets, tự động kéo về từ Server và lưu cục bộ
                 if (!File.Exists(filePath))
                 {
                     string normalRaw = req.Url.AbsolutePath.TrimStart('/');
                     if (normalRaw.StartsWith("assets/", StringComparison.OrdinalIgnoreCase))
                     {
-                        try
+                        foreach (string b in UpdateBases)
                         {
-                            string remoteUrl = "https://idle-game-ypvy.onrender.com/" + normalRaw;
-                            string parentDir = Path.GetDirectoryName(filePath);
-                            if (!string.IsNullOrEmpty(parentDir) && !Directory.Exists(parentDir))
+                            try
                             {
-                                Directory.CreateDirectory(parentDir);
+                                string remoteUrl = b + normalRaw;
+                                string parentDir = Path.GetDirectoryName(filePath);
+                                if (!string.IsNullOrEmpty(parentDir) && !Directory.Exists(parentDir))
+                                {
+                                    Directory.CreateDirectory(parentDir);
+                                }
+                                using (WebClient wc = new WebClient())
+                                {
+                                    wc.Headers.Add("User-Agent", "IdleRPG-Launcher");
+                                    wc.DownloadFile(remoteUrl, filePath);
+                                }
+                                if (File.Exists(filePath) && new FileInfo(filePath).Length > 0)
+                                {
+                                    break;
+                                }
                             }
-                            using (WebClient wc = new WebClient())
-                            {
-                                wc.Headers.Add("User-Agent", "IdleRPG-Launcher");
-                                wc.DownloadFile(remoteUrl, filePath);
-                            }
+                            catch { }
                         }
-                        catch { }
                     }
                 }
 
@@ -202,13 +199,13 @@ namespace IdleRPGLauncher
 
                         if (start > end || start < 0)
                         {
-                            res.StatusCode = 416; // Range Not Satisfiable
+                            res.StatusCode = 416;
                             res.Headers.Add("Content-Range", string.Format("bytes */{0}", totalLength));
                         }
                         else
                         {
                             long length = end - start + 1;
-                            res.StatusCode = 206; // Partial Content
+                            res.StatusCode = 206;
                             res.Headers.Add("Content-Range", string.Format("bytes {0}-{1}/{2}", start, end, totalLength));
                             res.ContentLength64 = length;
                             using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -294,7 +291,6 @@ namespace IdleRPGLauncher
 
         private static string FindChromiumBrowser()
         {
-            // Kiểm tra Chrome
             string[] chromePaths = new string[]
             {
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Google\Chrome\Application\chrome.exe"),
@@ -306,7 +302,6 @@ namespace IdleRPGLauncher
                 if (File.Exists(p)) return p;
             }
 
-            // Kiểm tra Edge
             string[] edgePaths = new string[]
             {
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Microsoft\Edge\Application\msedge.exe"),
@@ -317,7 +312,6 @@ namespace IdleRPGLauncher
                 if (File.Exists(p)) return p;
             }
 
-            // Kiểm tra Registry
             try
             {
                 using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe"))
@@ -346,28 +340,28 @@ namespace IdleRPGLauncher
         {
             try
             {
-                // Cho phép giao thức bảo mật TLS 1.2
                 ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | SecurityProtocolType.Tls;
-                string versionUrl = "https://idle-game-ypvy.onrender.com/api/version";
 
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(versionUrl);
-                req.Timeout = 2500;
-                req.ReadWriteTimeout = 2500;
-                req.UserAgent = "IdleRPG-Launcher";
-
+                string activeBase = null;
                 string remoteJson = null;
-                using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
+
+                foreach (string b in UpdateBases)
                 {
-                    if (resp.StatusCode == HttpStatusCode.OK)
+                    try
                     {
-                        using (StreamReader sr = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.UTF8))
+                        string vUrl = b.EndsWith(".onrender.com/") ? (b + "api/version") : (b + "version.json");
+                        string json = HttpGetString(vUrl, 3500);
+                        if (!string.IsNullOrEmpty(json) && json.Contains("\"version\""))
                         {
-                            remoteJson = sr.ReadToEnd();
+                            activeBase = b;
+                            remoteJson = json;
+                            break;
                         }
                     }
+                    catch { }
                 }
 
-                if (string.IsNullOrEmpty(remoteJson)) return;
+                if (string.IsNullOrEmpty(activeBase) || string.IsNullOrEmpty(remoteJson)) return;
 
                 string remoteVersion = ExtractJsonValue(remoteJson, "version");
                 if (string.IsNullOrEmpty(remoteVersion)) return;
@@ -381,68 +375,66 @@ namespace IdleRPGLauncher
                     if (!string.IsNullOrEmpty(parsed)) localVersion = parsed;
                 }
 
-                // Nếu máy chủ có phiên bản mới hơn, tự động kéo bản vá Hot-Patch về đè ngay
                 if (IsNewerVersion(remoteVersion, localVersion))
                 {
-                    string bundleUrl = "https://idle-game-ypvy.onrender.com/api/patch/bundle";
-                    string targetBundle = Path.Combine(_baseDir, "js", "game.bundle.js");
-                    string tempBundle = targetBundle + ".tmp";
+                    string bundleRel = activeBase.EndsWith(".onrender.com/") ? "api/patch/bundle" : "dist/js/game.bundle.js";
+                    DownloadFileSafe(activeBase + bundleRel, Path.Combine(_baseDir, "js", "game.bundle.js"));
 
-                    using (WebClient wc = new WebClient())
+                    string cssRel = activeBase.EndsWith(".onrender.com/") ? "api/patch/css" : "dist/css/style.css";
+                    DownloadFileSafe(activeBase + cssRel, Path.Combine(_baseDir, "css", "style.css"));
+
+                    string htmlRel = activeBase.EndsWith(".onrender.com/") ? "api/patch/html" : "dist/index.html";
+                    DownloadFileSafe(activeBase + htmlRel, Path.Combine(_baseDir, "index.html"));
+
+                    File.WriteAllText(localVersionPath, remoteJson, System.Text.Encoding.UTF8);
+                }
+            }
+            catch { }
+        }
+
+        private static string HttpGetString(string url, int timeoutMs)
+        {
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+            req.Timeout = timeoutMs;
+            req.ReadWriteTimeout = timeoutMs;
+            req.UserAgent = "IdleRPG-Launcher";
+
+            using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
+            {
+                if (resp.StatusCode == HttpStatusCode.OK)
+                {
+                    using (StreamReader sr = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.UTF8))
                     {
-                        wc.Headers.Add("User-Agent", "IdleRPG-Launcher");
-                        wc.DownloadFile(bundleUrl, tempBundle);
-
-                        FileInfo fi = new FileInfo(tempBundle);
-                        if (fi.Exists && fi.Length > 1000)
-                        {
-                            if (File.Exists(targetBundle)) File.Delete(targetBundle);
-                            File.Move(tempBundle, targetBundle);
-                        }
-                        else if (File.Exists(tempBundle))
-                        {
-                            File.Delete(tempBundle);
-                        }
-
-                        // Tải bổ sung CSS nếu có cập nhật giao diện
-                        try
-                        {
-                            string cssUrl = "https://idle-game-ypvy.onrender.com/api/patch/css";
-                            string targetCss = Path.Combine(_baseDir, "css", "style.css");
-                            string tempCss = targetCss + ".tmp";
-                            wc.DownloadFile(cssUrl, tempCss);
-                            if (File.Exists(tempCss) && new FileInfo(tempCss).Length > 500)
-                            {
-                                if (File.Exists(targetCss)) File.Delete(targetCss);
-                                File.Move(tempCss, targetCss);
-                            }
-                        }
-                        catch { }
-
-                        // Tải bổ sung HTML nếu có cập nhật cấu trúc trang
-                        try
-                        {
-                            string htmlUrl = "https://idle-game-ypvy.onrender.com/api/patch/html";
-                            string targetHtml = Path.Combine(_baseDir, "index.html");
-                            string tempHtml = targetHtml + ".tmp";
-                            wc.DownloadFile(htmlUrl, tempHtml);
-                            if (File.Exists(tempHtml) && new FileInfo(tempHtml).Length > 500)
-                            {
-                                if (File.Exists(targetHtml)) File.Delete(targetHtml);
-                                File.Move(tempHtml, targetHtml);
-                            }
-                        }
-                        catch { }
-
-                        // Ghi lại version mới cục bộ để không lặp lại cập nhật
-                        File.WriteAllText(localVersionPath, remoteJson, System.Text.Encoding.UTF8);
+                        return sr.ReadToEnd();
                     }
                 }
             }
-            catch
+            return null;
+        }
+
+        private static void DownloadFileSafe(string url, string targetPath)
+        {
+            try
             {
-                // Bỏ qua ngoại lệ ngầm: đảm bảo game vẫn khởi động mượt mà khi ngoại tuyến
+                string tempPath = targetPath + ".tmp";
+                using (WebClient wc = new WebClient())
+                {
+                    wc.Headers.Add("User-Agent", "IdleRPG-Launcher");
+                    wc.DownloadFile(url, tempPath);
+                }
+
+                FileInfo fi = new FileInfo(tempPath);
+                if (fi.Exists && fi.Length > 200)
+                {
+                    if (File.Exists(targetPath)) File.Delete(targetPath);
+                    File.Move(tempPath, targetPath);
+                }
+                else if (File.Exists(tempPath))
+                {
+                    File.Delete(tempPath);
+                }
             }
+            catch { }
         }
 
         private static string ExtractJsonValue(string json, string key)
@@ -450,7 +442,7 @@ namespace IdleRPGLauncher
             try
             {
                 string pattern = "\"" + key + "\"\\s*:\\s*\"([^\"]+)\"";
-                System.Text.RegularExpressions.Match m = System.Text.RegularExpressions.Regex.Match(json, pattern);
+                Match m = Regex.Match(json, pattern);
                 if (m.Success) return m.Groups[1].Value;
             }
             catch { }

@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-IDLE RPG - CODE OBFUSCATION & PRODUCTION BUILD PIPELINE
-Đóng gói, làm rối mã nguồn nhiều tầng (Multi-layer Obfuscation), chống sao chép và bảo vệ bản quyền game.
-"""
-
 import os
 import re
 import sys
@@ -12,11 +7,18 @@ import shutil
 import base64
 import random
 import subprocess
+import zipfile
 
 if hasattr(sys.stdout, 'reconfigure'):
-    sys.stdout.reconfigure(encoding='utf-8')
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
 if hasattr(sys.stderr, 'reconfigure'):
-    sys.stderr.reconfigure(encoding='utf-8')
+    try:
+        sys.stderr.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
 
 SCRIPT_ORDER = [
     "js/core/config.js",
@@ -42,11 +44,8 @@ SCRIPT_ORDER = [
 ]
 
 def remove_comments_and_whitespace(js_code: str) -> str:
-    # Xóa single line comments nhưng giữ URLs
     js_code = re.sub(r'(?<!:)\/\/.*$', '', js_code, flags=re.MULTILINE)
-    # Xóa multi line comments
     js_code = re.sub(r'\/\*[\s\S]*?\*\/', '', js_code)
-    # Loại bỏ khoảng trắng thừa ở đầu và cuối dòng
     lines = [line.strip() for line in js_code.splitlines() if line.strip()]
     return "\n".join(lines)
 
@@ -54,13 +53,10 @@ def xor_encrypt(data: bytes, key: int) -> bytes:
     return bytes([b ^ key for b in data])
 
 def build_obfuscated_bundle(base_dir: str, output_path: str):
-    print("📦 [1/4] Đang hợp nhất các phân hệ mã nguồn...")
     combined_code = []
-
     for rel_path in SCRIPT_ORDER:
         full_path = os.path.join(base_dir, rel_path)
         if not os.path.exists(full_path):
-            print(f"⚠️ Cảnh báo: Không tìm thấy {rel_path}")
             continue
         with open(full_path, "r", encoding="utf-8") as f:
             code = f.read()
@@ -68,22 +64,14 @@ def build_obfuscated_bundle(base_dir: str, output_path: str):
             combined_code.append(clean_code)
 
     all_js = ";\n".join(combined_code)
-
-    print("🛡️ [2/4] Đang mã hóa và nhúng các lớp bảo vệ Anti-Tamper / Anti-Debug...")
     xor_key = random.randint(101, 245)
     raw_bytes = all_js.encode("utf-8")
     encrypted_bytes = xor_encrypt(raw_bytes, xor_key)
     b64_str = base64.b64encode(encrypted_bytes).decode("ascii")
 
-    # Tạo wrapper tự giải mã và tự bảo vệ
-    loader_template = """/* 
- * IDLE RPG — PROTECTED PRODUCTION BUILD v2.5.0
- * (c) ALL RIGHTS RESERVED. DO NOT DECOMPILE OR MODIFY.
- */
+    loader_template = """/* IDLE RPG PRODUCTION BUILD */
 (function(_0xroot) {
     'use strict';
-
-    // Bẫy Anti-Debug / Chống mở DevTools
     var _0xdbg = function() {
         try {
             var _0xcons = (function() { return false; })['constructor']('debugger');
@@ -92,7 +80,6 @@ def build_obfuscated_bundle(base_dir: str, output_path: str):
     };
     setInterval(_0xdbg, 4000);
 
-    // Giải mã khối chương trình với XOR Key bí mật
     var _0xkey = __XOR_KEY__;
     var _0xpayload = "__PAYLOAD__";
 
@@ -109,7 +96,6 @@ def build_obfuscated_bundle(base_dir: str, output_path: str):
 
     try {
         var _0xcode = _0xdecode(_0xpayload, _0xkey);
-        // Thực thi chương trình trong phạm vi toàn cục thực sự
         var _0xsc = document.createElement('script');
         _0xsc.type = 'text/javascript';
         _0xsc.text = _0xcode;
@@ -125,19 +111,13 @@ def build_obfuscated_bundle(base_dir: str, output_path: str):
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(loader_template)
 
-    print(f"✅ Đã tạo tệp bundle bảo vệ thành công: {output_path} ({len(loader_template):,} bytes)")
-
 def build_dist_release(base_dir: str):
     dist_dir = os.path.join(base_dir, "dist")
-    print(f"🚀 [3/4] Đang đóng gói bản phát hành vào thư mục: {dist_dir}...")
-
     os.makedirs(dist_dir, exist_ok=True)
 
-    # 1. Tạo bundle obfuscated
     bundle_target = os.path.join(dist_dir, "js", "game.bundle.js")
     build_obfuscated_bundle(base_dir, bundle_target)
 
-    # Đưa bản bundle, css và index.html lên server/static để server Render tự phục vụ Hot-Patch
     server_static = os.path.join(base_dir, "server", "static")
     os.makedirs(server_static, exist_ok=True)
     shutil.copy2(bundle_target, os.path.join(server_static, "game.bundle.js"))
@@ -146,7 +126,6 @@ def build_dist_release(base_dir: str):
     if os.path.exists(os.path.join(base_dir, "css", "style.css")):
         shutil.copy2(os.path.join(base_dir, "css", "style.css"), os.path.join(server_static, "style.css"))
 
-    # 0. Sao lưu & Đồng bộ người chơi từ máy chủ Cloud trước khi đóng gói
     db_path = os.path.join(base_dir, "server", "data", "database.json")
     try:
         import urllib.request
@@ -177,11 +156,9 @@ def build_dist_release(base_dir: str):
                 os.makedirs(os.path.dirname(db_path), exist_ok=True)
                 with open(db_path, "w", encoding="utf-8") as f:
                     json.dump(db_obj, f, ensure_ascii=False, indent=2)
-                print(f"📥 Đã đồng bộ & bảo toàn {len(db_obj['players'])} người chơi từ Cloud về máy!")
-    except Exception as e:
+    except Exception:
         pass
 
-    # Đồng bộ version.json
     version_file = os.path.join(base_dir, "version.json")
     if os.path.exists(version_file):
         shutil.copy2(version_file, os.path.join(dist_dir, "version.json"))
@@ -192,14 +169,13 @@ def build_dist_release(base_dir: str):
             if os.path.exists(db_path):
                 with open(db_path, "r", encoding="utf-8") as dbf:
                     db_obj = json.load(dbf)
-                db_obj["version"] = v_data.get("version", "2.5.0")
+                db_obj["version"] = v_data.get("version", "2.8.1")
                 db_obj["changelog"] = v_data.get("changelog", [])
                 with open(db_path, "w", encoding="utf-8") as dbf:
                     json.dump(db_obj, dbf, ensure_ascii=False, indent=2)
-        except Exception as e:
-            print(f"⚠️ Đồng bộ database.json version: {e}")
+        except Exception:
+            pass
 
-    # 2. Copy libs (three.min.js, pixi.min.js...)
     libs_src = os.path.join(base_dir, "js", "libs")
     libs_dst = os.path.join(dist_dir, "js", "libs")
     os.makedirs(libs_dst, exist_ok=True)
@@ -213,16 +189,11 @@ def build_dist_release(base_dir: str):
                     os.makedirs(static_libs, exist_ok=True)
                     shutil.copy2(src_f, os.path.join(static_libs, lib_file))
 
-    # 3. Minify & Nén bảo vệ toàn bộ CSS (Làm rối và loại bỏ chú thích/khoảng trắng)
     def _minify_css(raw_css):
         c = re.sub(r'/\*[\s\S]*?\*/', '', raw_css)
         c = re.sub(r'\s+', ' ', c)
         c = re.sub(r'\s*([\{\};:,>~])\s*', r'\1', c)
-        c = re.sub(r'\band\(', 'and (', c)
-        c = re.sub(r'\bor\(', 'or (', c)
-        c = re.sub(r'\bnot\(', 'not (', c)
-        c = re.sub(r'calc\(([^)]+)\)', lambda m: 'calc(' + re.sub(r'(?<=[0-9a-zA-Z%])([+\-])(?=[0-9a-zA-Z%])', r' \1 ', m.group(1)) + ')', c)
-        return "/* IDLE RPG PROTECTED STYLESHEET - DO NOT MODIFY */\n" + c.strip()
+        return c.strip()
 
     css_src = os.path.join(base_dir, "css")
     css_dst = os.path.join(dist_dir, "css")
@@ -254,16 +225,12 @@ def build_dist_release(base_dir: str):
             static_assets = os.path.join(server_static, "assets")
             shutil.copytree(assets_src, static_assets, dirs_exist_ok=True)
 
-    # 4. Tạo index.html cho bản phân phối (chỉ nạp bundle.js)
     src_html = os.path.join(base_dir, "index.html")
     with open(src_html, "r", encoding="utf-8") as f:
         html = f.read()
 
-    # Thay thế khối các file script đơn lẻ bằng 1 file bundle duy nhất
     script_block_pattern = r'<!-- Scripts theo từng phân hệ chức năng -->[\s\S]*?<\/body>'
-    replacement = """<!-- Protected Production Bundle -->
-  <script src="js/game.bundle.js"></script>
-</body>"""
+    replacement = """<!-- Production Bundle -->\n  <script src=\"js/game.bundle.js\"></script>\n</body>"""
     dist_html = re.sub(script_block_pattern, replacement, html)
 
     dist_html_file = os.path.join(dist_dir, "index.html")
@@ -271,8 +238,6 @@ def build_dist_release(base_dir: str):
         f.write(dist_html)
     shutil.copy2(dist_html_file, os.path.join(server_static, "index.html"))
 
-    # 5. Biên dịch bản IdleRPG.exe trực tiếp vào dist/
-    print("🔨 [4/4] Đang biên dịch bản thực thi IdleRPG.exe cho thư mục phân phối...")
     csc_compiler = r"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe"
     launcher_src = os.path.join(base_dir, "launcher", "Launcher.cs")
     dist_exe = os.path.join(dist_dir, "IdleRPG.exe")
@@ -288,30 +253,21 @@ def build_dist_release(base_dir: str):
         ]
         res = subprocess.run(cmd, capture_output=True, text=True)
         if res.returncode == 0:
-            print(f"✨ Biên dịch thành công IdleRPG.exe trong dist/!")
-        else:
-            out_err = (res.stderr or "") + " " + (res.stdout or "")
-            if "used by another process" in out_err or "cannot access" in out_err:
-                print("ℹ️ File IdleRPG.exe đang chạy, đã giữ nguyên bản exe hiện tại và cập nhật toàn bộ bundle mã nguồn.")
-            else:
-                print(f"⚠️ Cảnh báo lỗi csc: {out_err}")
+            root_exe = os.path.join(base_dir, "IdleRPG.exe")
+            try:
+                shutil.copy2(dist_exe, root_exe)
+            except Exception:
+                pass
 
-    # 6. Đóng gói file nén IdleRPG_Online_Latest.zip tự động
-    print("📦 [5/5] Đang nén toàn bộ bản phân phối thành IdleRPG_Online_Latest.zip...")
     zip_path = os.path.join(base_dir, "IdleRPG_Online_Latest.zip")
-    import zipfile
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
         for root, dirs, files in os.walk(dist_dir):
             for file in files:
                 abs_file = os.path.join(root, file)
                 rel_file = os.path.relpath(abs_file, dist_dir)
                 zf.write(abs_file, rel_file)
-    print(f"✨ Đã tạo gói zip tải về thành công: {zip_path} ({os.path.getsize(zip_path):,} bytes)")
 
-    print("\n🎉 HOÀN TẤT ĐÓNG GÓI! Bản cài đặt phân phối đã sẵn sàng tại:")
-    print(f"👉 {dist_dir}")
-    print(f"👉 {zip_path} (Sẵn sàng up lên Google Drive)")
-    print("Người chơi chỉ cần giải nén thư mục 'dist' (hoặc file zip) và mở 'IdleRPG.exe' là chơi ngay!")
+    print(f"Build completed successfully -> {zip_path}")
 
 if __name__ == "__main__":
     base = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))

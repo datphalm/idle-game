@@ -1,0 +1,7 @@
+{
+  "apiServer": "https://idle-game-ypvy.onrender.com/api",
+  "updateSources": [
+    "https://raw.githubusercontent.com/datphalm/idle-game/main/",
+    "https://idle-game-ypvy.onrender.com/"
+  ]
+}

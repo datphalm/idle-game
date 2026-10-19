@@ -1,15 +1,12 @@
 {
-  "version": "2.8.1",
-  "title": "Bản Cập Nhật v2.8.1 - Tối Ưu Âm Thanh Tuyệt Kỹ Trisa Final & Đồng Bộ Streaming",
-  "releaseDate": "2026-10-18",
+  "version": "2.9.0",
+  "title": "Bản Cập Nhật v2.9.0 - Tích Hợp Hệ Thống Tự Động Cập Nhật Trực Tiếp Từ GitHub",
+  "releaseDate": "2026-10-19",
   "changelog": [
-    "Cập nhật âm thanh Tuyệt Kỹ Nộ Trisa mới nhất (Trisa Sound Final) từ Drive: chất lượng chuẩn stereo, nhịp trảm chém và kết liễu khớp hoàn hảo từng khung hình",
-    "Đồng bộ thời gian chuyển cảnh Dissolve và thời điểm nổ sát thương Climax khớp chính xác với âm thanh mới (2.24s)",
-    "Xoay mặt mô hình 3D Trisa sang phải hướng về bảng thuộc tính trong giao diện Chi Tiết Tướng và Showcase",
-    "Nâng cấp máy chủ Web Server hỗ trợ phân phối đầy đủ tài nguyên Media tĩnh và streaming Video MP4 (HTTP 206 Partial Content)",
-    "Khắc phục triệt để lỗi thẻ tướng hiển thị file rỗng và nộ ulti bị màn hình đen cho bạn bè/người chơi trực tuyến",
-    "Tự động tải bổ sung và lưu đĩa vĩnh viễn tài nguyên tướng (On-demand Asset Sync & Cache) trong bản cài đặt IdleRPG.exe"
+    "Tích hợp cơ chế tự động cập nhật trực tiếp từ GitHub cho toàn bộ người chơi khi có bản cập nhật mới được push lên git",
+    "Tự động bù và lưu đĩa tài nguyên ảnh, âm thanh, video còn thiếu khi khởi chạy",
+    "Hỗ trợ cấu hình máy chủ động qua server_config.json, không phụ thuộc vào giới hạn của Render",
+    "Dọn dẹp toàn bộ mã nguồn, tối ưu hóa kích thước và hiệu năng nạp game"
   ],
   "downloadUrl": "https://github.com/datphalm/idle-game/releases/latest"
 }
-

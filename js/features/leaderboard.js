@@ -15,6 +15,15 @@ const Leaderboard = {
   },
 
   _loadInitialData() {
+    try {
+      fetch('server_config.json').then(r => r.json()).then(cfg => {
+        if (cfg && cfg.apiServer) {
+          this._serverUrl = cfg.apiServer;
+          if (typeof CONFIG !== 'undefined') CONFIG.SERVER_URL = cfg.apiServer;
+        }
+      }).catch(() => {});
+    } catch (e) {}
+
     const saved = localStorage.getItem('idle_rpg_leaderboard_cache');
     if (saved) {
       try {
@@ -26,7 +35,6 @@ const Leaderboard = {
       this._seedInitialCompetitors();
     }
 
-    // Tự động đồng bộ ngầm điểm số khi khởi động
     setTimeout(() => {
       this.syncCurrentPlayer();
     }, 1500);
