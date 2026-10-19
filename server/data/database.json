@@ -1,11 +1,13 @@
 {
-  "version": "2.9.4",
+  "version": "2.9.5",
   "downloadUrl": "https://github.com/idlerpg/release/releases/latest",
   "changelog": [
-    "Khắc phục triệt để hiện tượng xuất hiện menu dropdown trong hoạt ảnh của Hilde (đặc biệt ở các đòn tấn công combo 3, 4, 5)",
-    "Tích hợp thuật toán quét và triệt tiêu tự động hộp dropdown Spine ngay trong luồng xử lý trích xuất",
-    "Chuẩn hóa 100% frame hoạt ảnh của Hilde, Heide, Trisa và Mei Lin nằm trong các phân đoạn hoàn toàn không có menu",
-    "Bảo toàn trọn vẹn từng chi tiết cánh cung, mũi tên, thanh kiếm và tư thế chiến đấu của tất cả nhân vật"
+    "Nâng cấp toàn bộ giao diện theo chuẩn đồ họa Dark Fantasy & Anime RPG hiện đại (Genshin / Honkai UI standard)",
+    "Hệ thống Navigation Dock thủy tinh phát sáng nổi (Floating Glassmorphic Dock) với viền neon tinh xảo và chỉ báo chuyển tab mượt mà",
+    "Nâng cấp sàn đấu Arena & Stage Navigator với chiều sâu ánh sáng, biểu tượng Ải mạ vàng hoàng kim và hiệu ứng rung chấn chiến trường",
+    "Thanh máu kim loại cao cấp (Metallic HP Bars) với hiệu ứng vệt sáng quét liên tục (Shimmer Reflection) và số sát thương nổ bạo kích rực rỡ",
+    "Thanh trạng thái đáy màn hình (Bottom Luxury HUD Dock) nổi với chip tiền tệ vàng, kim cương, kinh nghiệm và nút bấm bo góc phát sáng",
+    "Nâng cấp toàn bộ thẻ trang bị 7 phẩm chất (Rarity Hologram), thẻ anh hùng (Hero Roster), trạm rèn & vòng quay Gacha sang trọng đẳng cấp"
   ],
   "players": [
     {
@@ -163,8 +165,8 @@
       "level": 999,
       "stage": 327,
       "towerFloor": 42,
-      "power": 52110345558,
-      "lastActive": 1792412542510,
+      "power": 52110345826,
+      "lastActive": 1792423344717,
       "knownPlayers": [
         {
           "id": "p_1",
@@ -313,10 +315,10 @@
       "heroId": "hero_unknown_god",
       "constellation": 3,
       "level": 999,
-      "stage": 321,
+      "stage": 323,
       "towerFloor": 189,
-      "power": 51301036716,
-      "lastActive": 1792418300261,
+      "power": 52111043366,
+      "lastActive": 1792423580392,
       "isMe": false
     },
     {
@@ -324,11 +326,11 @@
       "name": "Chiến Binh 1",
       "heroId": "hero_raiden",
       "constellation": 1,
-      "level": 161,
-      "stage": 65,
-      "towerFloor": 60,
-      "power": 116802,
-      "lastActive": 1791951190332,
+      "level": 999,
+      "stage": 322,
+      "towerFloor": 186,
+      "power": 49680437212,
+      "lastActive": 1792422649934,
       "isMe": false
     },
     {
@@ -516,11 +518,11 @@
       "name": "Chiến Binh 1",
       "heroId": "hero_arcane_mage",
       "constellation": 6,
-      "level": 480,
+      "level": 483,
       "stage": 98,
       "towerFloor": 1,
-      "power": 122176,
-      "lastActive": 1792418262840,
+      "power": 122583,
+      "lastActive": 1792423475047,
       "isMe": false
     },
     {

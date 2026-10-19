@@ -1,12 +1,14 @@
 {
-  "version": "2.9.4",
-  "title": "Bản Cập Nhật v2.9.4 - Xóa Sạch Triệt Để Dropdown Cho Hilde & Toàn Bộ Tướng",
+  "version": "2.9.5",
+  "title": "Bản Cập Nhật v2.9.5 - Đại Tu Toàn Diện Giao Diện Đồ Họa Cực Phẩm (Visual Masterpiece)",
   "releaseDate": "2026-10-19",
   "changelog": [
-    "Khắc phục triệt để hiện tượng xuất hiện menu dropdown trong hoạt ảnh của Hilde (đặc biệt ở các đòn tấn công combo 3, 4, 5)",
-    "Tích hợp thuật toán quét và triệt tiêu tự động hộp dropdown Spine ngay trong luồng xử lý trích xuất",
-    "Chuẩn hóa 100% frame hoạt ảnh của Hilde, Heide, Trisa và Mei Lin nằm trong các phân đoạn hoàn toàn không có menu",
-    "Bảo toàn trọn vẹn từng chi tiết cánh cung, mũi tên, thanh kiếm và tư thế chiến đấu của tất cả nhân vật"
+    "Nâng cấp toàn bộ giao diện theo chuẩn đồ họa Dark Fantasy & Anime RPG hiện đại (Genshin / Honkai UI standard)",
+    "Hệ thống Navigation Dock thủy tinh phát sáng nổi (Floating Glassmorphic Dock) với viền neon tinh xảo và chỉ báo chuyển tab mượt mà",
+    "Nâng cấp sàn đấu Arena & Stage Navigator với chiều sâu ánh sáng, biểu tượng Ải mạ vàng hoàng kim và hiệu ứng rung chấn chiến trường",
+    "Thanh máu kim loại cao cấp (Metallic HP Bars) với hiệu ứng vệt sáng quét liên tục (Shimmer Reflection) và số sát thương nổ bạo kích rực rỡ",
+    "Thanh trạng thái đáy màn hình (Bottom Luxury HUD Dock) nổi với chip tiền tệ vàng, kim cương, kinh nghiệm và nút bấm bo góc phát sáng",
+    "Nâng cấp toàn bộ thẻ trang bị 7 phẩm chất (Rarity Hologram), thẻ anh hùng (Hero Roster), trạm rèn & vòng quay Gacha sang trọng đẳng cấp"
   ],
   "downloadUrl": "https://github.com/datphalm/idle-game/releases/latest"
 }
