@@ -1231,8 +1231,10 @@ const UI = {
     const isSpecialHero = (activeHero === 'hero_cassius' || activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon' || activeHero === 'hero_hilde' || activeHero === 'hero_heide' || activeHero === 'hero_meilin');
     if (pSprite && typeof Sprites !== 'undefined') {
       let extraAction = 'extra';
-      if (activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon') extraAction = 'attack3';
-      else if (activeHero === 'hero_hilde' || activeHero === 'hero_heide' || activeHero === 'hero_meilin') extraAction = 'attack2';
+      if (activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon') extraAction = 'attack5';
+      else if (activeHero === 'hero_hilde') extraAction = 'attack3';
+      else if (activeHero === 'hero_heide') extraAction = 'attack4';
+      else if (activeHero === 'hero_meilin') extraAction = 'attack4';
       else if (activeHero === 'hero_cassius') extraAction = 'attack';
 
       pSprite.innerHTML = Sprites.getPlayerSvg(extraAction, activeHero);
@@ -1240,7 +1242,7 @@ const UI = {
         ? 'fighter-avatar player-attack-anim'
         : `fighter-avatar player-extra-anim hero-extra-${activeHero}`;
       clearTimeout(this._playerAnimTimer);
-      const extraDuration = (activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon') ? 650 : 500;
+      const extraDuration = (activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon') ? 650 : 540;
       this._playerAnimTimer = setTimeout(() => {
         if (pSprite) {
           pSprite.innerHTML = Sprites.getPlayerSvg('idle', activeHero);
@@ -1280,25 +1282,76 @@ const UI = {
     let attackDuration = 340;
 
     if (activeHero === 'hero_trisa' || activeHero === 'hero_rhiannon') {
-      const step = curCombo % 3;
+      const step = curCombo % 5;
       if (step === 0) {
         atkAction = 'attack';
         attackDuration = 520;
       } else if (step === 1) {
         atkAction = 'attack2';
+        attackDuration = 540;
+      } else if (step === 2) {
+        atkAction = 'attack3';
+        attackDuration = 560;
+      } else if (step === 3) {
+        atkAction = 'attack4';
         attackDuration = 560;
       } else {
-        atkAction = 'attack3';
+        atkAction = 'attack5';
         attackDuration = 620;
       }
-    } else if (activeHero === 'hero_hilde' || activeHero === 'hero_heide' || activeHero === 'hero_meilin') {
-      const step = curCombo % 2;
+    } else if (activeHero === 'hero_hilde') {
+      const step = curCombo % 5;
       if (step === 0) {
         atkAction = 'attack';
         attackDuration = 500;
-      } else {
+      } else if (step === 1) {
         atkAction = 'attack2';
+        attackDuration = 520;
+      } else if (step === 2) {
+        atkAction = 'attack3';
         attackDuration = 540;
+      } else if (step === 3) {
+        atkAction = 'attack4';
+        attackDuration = 520;
+      } else {
+        atkAction = 'attack5';
+        attackDuration = 560;
+      }
+    } else if (activeHero === 'hero_heide') {
+      const step = curCombo % 5;
+      if (step === 0) {
+        atkAction = 'attack';
+        attackDuration = 520;
+      } else if (step === 1) {
+        atkAction = 'attack2';
+        attackDuration = 500;
+      } else if (step === 2) {
+        atkAction = 'attack3';
+        attackDuration = 540;
+      } else if (step === 3) {
+        atkAction = 'attack4';
+        attackDuration = 560;
+      } else {
+        atkAction = 'attack5';
+        attackDuration = 600;
+      }
+    } else if (activeHero === 'hero_meilin') {
+      const step = curCombo % 5;
+      if (step === 0) {
+        atkAction = 'attack';
+        attackDuration = 480;
+      } else if (step === 1) {
+        atkAction = 'attack2';
+        attackDuration = 520;
+      } else if (step === 2) {
+        atkAction = 'attack3';
+        attackDuration = 520;
+      } else if (step === 3) {
+        atkAction = 'attack4';
+        attackDuration = 540;
+      } else {
+        atkAction = 'attack5';
+        attackDuration = 580;
       }
     }
 

@@ -1,12 +1,13 @@
 {
-  "version": "2.9.2",
-  "title": "Bản Cập Nhật v2.9.2 - Xóa Triệt Để Dropdown Menu, Chuẩn Hóa Sprite Không Bị Che Cắt",
+  "version": "2.9.3",
+  "title": "Bản Cập Nhật v2.9.3 - Đột Phá Hệ Thống Hoạt Ảnh Chiến Đấu 5-Hit Combo Siêu Mượt",
   "releaseDate": "2026-10-19",
   "changelog": [
-    "Loại bỏ 100% thanh dropdown Spine và thanh điều khiển khỏi hoạt ảnh của tất cả nhân vật (Trisa, Heide, Hilde, Mei Lin)",
-    "Tách lọc chính xác tuyệt đối hình thể nhân vật, bảo toàn trọn vẹn toàn bộ tóc, vũ khí, phụ kiện và tay chân",
-    "Nâng cấp hiển thị Showcase và Chibi của Mei Lin cùng các tướng với z-index cao và tỷ lệ chuẩn xác",
-    "Đồng bộ toàn diện tài nguyên game lên phiên bản v2.9.2 hoàn hảo"
+    "Trích xuất và bổ sung toàn diện chuỗi hoạt ảnh tấn công đa dạng (attack 1 đến 5) từ video gốc cho Trisa, Hilde, Heide và Mei Lin",
+    "Nâng cấp chuỗi combo chiến đấu liên hoàn 5 nhịp (5-hit combo chain) với đòn đánh thường, đá cao chẻ dọc, chưởng khí, lao kích và tuyệt kỹ kết liễu",
+    "Thêm hiệu ứng lướt tới, dậm sàn và nhịp di chuyển động lực học sống động cho mỗi đòn đánh của nhân vật trong giao tranh",
+    "Tối ưu hóa lượt đánh cộng thêm (extra turn) kích hoạt đòn đánh dứt điểm uy lực",
+    "Đảm bảo 100% không còn thanh dropdown menu hay viền giao diện, chuyển động mượt mà không bị méo lệch"
   ],
   "downloadUrl": "https://github.com/datphalm/idle-game/releases/latest"
 }

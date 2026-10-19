@@ -248,47 +248,57 @@ if __name__ == '__main__':
     t0 = time.time()
     
     # 1. TRISA (Naturally faces right)
-    process_hero_showcase('trisa', 'scratch/trisa_raw/trisa1.mp4', mirror=False)
+    # process_hero_showcase('trisa', 'scratch/trisa_raw/trisa1.mp4', mirror=False)
     process_hero_chibi('trisa', 'scratch/trisa_raw/trisa2.mp4', {
         'chibi_idle': {'start': 97, 'end': 137, 'step': 1, 'duration': 45},
         'chibi_walk': {'start': 195, 'end': 275, 'step': 1, 'duration': 40},
         'chibi_attack': {'start': 400, 'end': 465, 'step': 1, 'duration': 42},
         'chibi_attack2': {'start': 505, 'end': 570, 'step': 1, 'duration': 40},
         'chibi_attack3': {'start': 620, 'end': 695, 'step': 1, 'duration': 40},
+        'chibi_attack4': {'start': 3480, 'end': 3545, 'step': 1, 'duration': 42},
+        'chibi_attack5': {'start': 3585, 'end': 3650, 'step': 1, 'duration': 40},
         'chibi_skill': {'start': 868, 'end': 940, 'step': 2, 'duration': 46},
         'chibi_hit': {'start': 3670, 'end': 3760, 'step': 1, 'duration': 45}
     }, mirror=False)
     
     # 2. HEIDE (Naturally faces left -> mirror=True to face right)
-    process_hero_showcase('heide', 'scratch/raw_hero2_heide/heide_left.mp4', mirror=False)
+    # process_hero_showcase('heide', 'scratch/raw_hero2_heide/heide_left.mp4', mirror=False)
     process_hero_chibi('heide', 'scratch/raw_hero2_heide/heide_chibi.mp4', {
         'chibi_idle': {'start': 285, 'end': 352, 'step': 1, 'duration': 45},
         'chibi_walk': {'start': 730, 'end': 805, 'step': 1, 'duration': 40},
         'chibi_attack': {'start': 505, 'end': 580, 'step': 1, 'duration': 42},
         'chibi_attack2': {'start': 845, 'end': 902, 'step': 1, 'duration': 40},
+        'chibi_attack3': {'start': 1670, 'end': 1740, 'step': 1, 'duration': 40},
+        'chibi_attack4': {'start': 3045, 'end': 3130, 'step': 1, 'duration': 42},
+        'chibi_attack5': {'start': 610, 'end': 680, 'step': 1, 'duration': 40},
         'chibi_skill': {'start': 2260, 'end': 2345, 'step': 2, 'duration': 46},
         'chibi_hit': {'start': 395, 'end': 470, 'step': 1, 'duration': 45}
     }, mirror=True)
     
     # 3. HILDE (Naturally faces right)
-    process_hero_showcase('hilde', 'scratch/raw_hero1_hilde/hilde_left.mp4', mirror=False)
+    # process_hero_showcase('hilde', 'scratch/raw_hero1_hilde/hilde_left.mp4', mirror=False)
     process_hero_chibi('hilde', 'scratch/raw_hero1_hilde/hilde_chibi.mp4', {
         'chibi_idle': {'start': 80, 'end': 140, 'step': 1, 'duration': 45},
         'chibi_walk': {'start': 245, 'end': 325, 'step': 1, 'duration': 40},
         'chibi_attack': {'start': 165, 'end': 210, 'step': 1, 'duration': 42},
         'chibi_attack2': {'start': 675, 'end': 735, 'step': 1, 'duration': 40},
+        'chibi_attack3': {'start': 2460, 'end': 2530, 'step': 1, 'duration': 40},
+        'chibi_attack4': {'start': 3040, 'end': 3115, 'step': 1, 'duration': 40},
+        'chibi_attack5': {'start': 2700, 'end': 2765, 'step': 1, 'duration': 40},
         'chibi_skill': {'start': 770, 'end': 825, 'step': 2, 'duration': 46},
         'chibi_hit': {'start': 384, 'end': 415, 'step': 1, 'duration': 45}
     }, mirror=False)
     
     # 4. MEI LIN (Naturally faces right)
-    process_hero_showcase('meilin', 'scratch/raw_hero3_meilin/meilin_left.mp4', mirror=False)
+    # process_hero_showcase('meilin', 'scratch/raw_hero3_meilin/meilin_left.mp4', mirror=False)
     process_hero_chibi('meilin', 'scratch/raw_hero3_meilin/meilin_chibi.mp4', {
         'chibi_idle': {'start': 275, 'end': 335, 'step': 1, 'duration': 45},
         'chibi_walk': {'start': 640, 'end': 705, 'step': 1, 'duration': 40},
         'chibi_attack': {'start': 715, 'end': 765, 'step': 1, 'duration': 42},
-        'chibi_attack2': {'start': 1096, 'end': 1136, 'step': 1, 'duration': 40},
-        'chibi_attack3': {'start': 715, 'end': 765, 'step': 1, 'duration': 42},
+        'chibi_attack2': {'start': 70, 'end': 135, 'step': 1, 'duration': 42},
+        'chibi_attack3': {'start': 445, 'end': 505, 'step': 1, 'duration': 40},
+        'chibi_attack4': {'start': 1096, 'end': 1140, 'step': 1, 'duration': 40},
+        'chibi_attack5': {'start': 2064, 'end': 2125, 'step': 1, 'duration': 40},
         'chibi_skill': {'start': 450, 'end': 505, 'step': 2, 'duration': 46},
         'chibi_hit': {'start': 868, 'end': 902, 'step': 1, 'duration': 45}
     }, mirror=False)

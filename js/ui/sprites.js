@@ -579,6 +579,8 @@ const Sprites = {
     const isAtk = action === 'attack';
     const isAtk2 = action === 'attack2';
     const isAtk3 = action === 'attack3';
+    const isAtk4 = action === 'attack4';
+    const isAtk5 = action === 'attack5';
     const isSkill = action === 'skill';
     const isSheathe = action === 'sheathe' || action === 'pose' || action === 'burst';
     const isWalk = action === 'walk';
@@ -595,6 +597,10 @@ const Sprites = {
       imgSrc = 'assets/characters/trisa/chibi_attack2.webp';
     } else if (isAtk3) {
       imgSrc = 'assets/characters/trisa/chibi_attack3.webp';
+    } else if (isAtk4) {
+      imgSrc = 'assets/characters/trisa/chibi_attack4.webp';
+    } else if (isAtk5) {
+      imgSrc = 'assets/characters/trisa/chibi_attack5.webp';
     } else if (isSkill) {
       imgSrc = 'assets/characters/trisa/chibi_skill.webp';
     } else if (isSheathe) {
@@ -615,6 +621,8 @@ const Sprites = {
     const isAtk = action === 'attack';
     const isAtk2 = action === 'attack2';
     const isAtk3 = action === 'attack3';
+    const isAtk4 = action === 'attack4';
+    const isAtk5 = action === 'attack5';
     const isSkill = action === 'skill';
     const isSheathe = action === 'sheathe' || action === 'pose' || action === 'burst';
     const isWalk = action === 'walk';
@@ -627,8 +635,14 @@ const Sprites = {
       imgSrc = 'assets/characters/hilde/hover_3d_idle.webp';
     } else if (isAtk) {
       imgSrc = 'assets/characters/hilde/chibi_attack.webp';
-    } else if (isAtk2 || isAtk3) {
+    } else if (isAtk2) {
       imgSrc = 'assets/characters/hilde/chibi_attack2.webp';
+    } else if (isAtk3) {
+      imgSrc = 'assets/characters/hilde/chibi_attack3.webp';
+    } else if (isAtk4) {
+      imgSrc = 'assets/characters/hilde/chibi_attack4.webp';
+    } else if (isAtk5) {
+      imgSrc = 'assets/characters/hilde/chibi_attack5.webp';
     } else if (isSkill) {
       imgSrc = 'assets/characters/hilde/chibi_skill.webp';
     } else if (isSheathe) {
@@ -649,6 +663,8 @@ const Sprites = {
     const isAtk = action === 'attack';
     const isAtk2 = action === 'attack2';
     const isAtk3 = action === 'attack3';
+    const isAtk4 = action === 'attack4';
+    const isAtk5 = action === 'attack5';
     const isSkill = action === 'skill';
     const isSheathe = action === 'sheathe' || action === 'pose' || action === 'burst';
     const isWalk = action === 'walk';
@@ -661,8 +677,14 @@ const Sprites = {
       imgSrc = 'assets/characters/heide/hover_3d_idle.webp';
     } else if (isAtk) {
       imgSrc = 'assets/characters/heide/chibi_attack.webp';
-    } else if (isAtk2 || isAtk3) {
+    } else if (isAtk2) {
       imgSrc = 'assets/characters/heide/chibi_attack2.webp';
+    } else if (isAtk3) {
+      imgSrc = 'assets/characters/heide/chibi_attack3.webp';
+    } else if (isAtk4) {
+      imgSrc = 'assets/characters/heide/chibi_attack4.webp';
+    } else if (isAtk5) {
+      imgSrc = 'assets/characters/heide/chibi_attack5.webp';
     } else if (isSkill) {
       imgSrc = 'assets/characters/heide/chibi_skill.webp';
     } else if (isSheathe) {
@@ -683,6 +705,8 @@ const Sprites = {
     const isAtk = action === 'attack';
     const isAtk2 = action === 'attack2';
     const isAtk3 = action === 'attack3';
+    const isAtk4 = action === 'attack4';
+    const isAtk5 = action === 'attack5';
     const isSkill = action === 'skill';
     const isSheathe = action === 'sheathe' || action === 'pose' || action === 'burst';
     const isWalk = action === 'walk';
@@ -699,6 +723,10 @@ const Sprites = {
       imgSrc = 'assets/characters/meilin/chibi_attack2.webp';
     } else if (isAtk3) {
       imgSrc = 'assets/characters/meilin/chibi_attack3.webp';
+    } else if (isAtk4) {
+      imgSrc = 'assets/characters/meilin/chibi_attack4.webp';
+    } else if (isAtk5) {
+      imgSrc = 'assets/characters/meilin/chibi_attack5.webp';
     } else if (isSkill) {
       imgSrc = 'assets/characters/meilin/chibi_skill.webp';
     } else if (isSheathe) {
