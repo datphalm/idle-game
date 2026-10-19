@@ -1783,7 +1783,11 @@ const Cinematics = {
         hero_aetheris: '⟦ 星 穹 ⟧',
         hero_unknown_god: '⟦ 無 極 創 生 ⟧',
         hero_cassius: '⟦ 命 運 賭 徒 ⟧',
-        hero_rhiannon: '⟦ 聖 樹 審 判 ⟧',
+        hero_trisa: '⟦ 血 月 裁 断 ⟧',
+        hero_hilde: '⟦ 聖 霜 審 判 ⟧',
+        hero_heide: '⟦ 風 雷 絶 影 ⟧',
+        hero_meilin: '⟦ 神 龍 降 臨 ⟧',
+        hero_rhiannon: '⟦ 血 月 裁 断 ⟧',
         // Fallbacks for legacy saves
         hero_traveler: '⟦ 開 山 破 石 ⟧',
         hero_kazuha: '⟦ 幻 影 絶 殺 ⟧',
@@ -1944,13 +1948,17 @@ const Cinematics = {
       this._phaseTimers = [];
 
       if (isVideoCutscene) {
-        const wipeTiming = isCustomVideo ? 120 : 780;
-        const videoStartTiming = isCustomVideo ? 180 : 920;
+        let videoSrc = 'assets/video/unknown_god_ult.mp4';
+        if (isTrisa) videoSrc = 'assets/video/trisa_ult.mp4';
+        else if (isCassius) videoSrc = 'assets/video/cassius_ult.mp4';
+        else if (isHilde) videoSrc = 'assets/video/hilde_ult.mp4';
+        else if (isHeide) videoSrc = 'assets/video/heide_ult.mp4';
+        else if (isMeilin) videoSrc = 'assets/video/meilin_ult.mp4';
 
-        let fallbackDur = 4.18;
-        if (isTrisa) fallbackDur = 2.33;
-        else if (isHilde) fallbackDur = 1.93;
-        else if (isHeide) fallbackDur = 7.20;
+        let fallbackDur = 4.23;
+        if (isTrisa) fallbackDur = 2.24;
+        else if (isHilde) fallbackDur = 2.13;
+        else if (isHeide) fallbackDur = 7.21;
         else if (isMeilin) fallbackDur = 4.53;
         else if (isCassius) fallbackDur = 5.20;
 
@@ -1958,11 +1966,57 @@ const Cinematics = {
           ? videoPlayer.duration
           : fallbackDur;
 
-        const endingTiming = Math.round(videoStartTiming + vDur * 1000 + 120);
-        const dissolveTiming = Math.max(videoStartTiming + 450, endingTiming - 380);
+        const videoStartTiming = isCustomVideo ? 0 : 920;
+        const endingTiming = Math.round(videoStartTiming + vDur * 1000 + 40);
+        const dissolveTiming = Math.max(videoStartTiming + 350, endingTiming - 350);
 
-        // ACT 1.5: DIAGONAL RAZOR BLADE FLASH WIPE ACROSS THE SCREEN (Unknown God only)
-        if (!isCustomVideo) {
+        const startVideoPlayback = () => {
+          if (!this.active) return;
+          if (videoContainer && videoPlayer) {
+            videoContainer.classList.remove('hidden');
+            videoContainer.classList.remove('video-dissolve-to-battle');
+            if (!videoPlayer.src || !videoPlayer.src.includes(videoSrc)) {
+              videoPlayer.src = videoSrc;
+              videoPlayer.load();
+            } else if (videoPlayer.currentTime > 0.05) {
+              videoPlayer.currentTime = 0;
+            }
+            videoPlayer.playbackRate = 1.0;
+            videoPlayer.muted = false;
+            videoPlayer.volume = 1.0;
+            videoPlayer.onended = () => {
+              if (videoContainer) {
+                videoContainer.classList.add('hidden');
+                videoContainer.classList.remove('video-dissolve-to-battle');
+              }
+              this._finishBurst();
+            };
+            videoPlayer.onerror = (e) => {
+              console.warn("Video cutscene error:", e);
+              if (videoContainer) videoContainer.classList.add('hidden');
+              this._finishBurst();
+            };
+            const playPromise = videoPlayer.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(err => {
+                console.warn("Video autoplay blocked, using muted fallback:", err);
+                videoPlayer.muted = true;
+                videoPlayer.play().catch(e => {
+                  console.error("Video play failed:", e);
+                  if (videoContainer) videoContainer.classList.add('hidden');
+                  this._finishBurst();
+                });
+              });
+            }
+          }
+          if (this.active && arenaStage) arenaStage.classList.add('arena-video-burst-active');
+        };
+
+        if (isCustomVideo) {
+          // Zero-delay instant start for custom anime cutscenes
+          startVideoPlayback();
+        } else {
+          // Unknown God blade wipe before cutscene
           const tBladeWipe = setTimeout(() => {
             if (!this.active) return;
             let wipeEl = document.getElementById('god-blade-wipe-overlay');
@@ -1974,64 +2028,18 @@ const Cinematics = {
               document.body.appendChild(wipeEl);
             }
             wipeEl.classList.remove('active');
-            void wipeEl.offsetWidth; // Force DOM reflow
-            wipeEl.classList.add('active');
+            requestAnimationFrame(() => {
+              if (wipeEl) wipeEl.classList.add('active');
+            });
             setTimeout(() => wipeEl && wipeEl.classList.remove('active'), 450);
-          }, wipeTiming);
+          }, 780);
           this._phaseTimers.push(tBladeWipe);
-        }
 
-        // ACT 2: SEAMLESS MATCH-CUT INTO FLUID ANIME CUTSCENE
-        const tVideoStart = setTimeout(() => {
-          if (!this.active) return;
-          if (overlay && !isCustomVideo) {
-            overlay.classList.add('hitstop-active');
-            setTimeout(() => overlay && overlay.classList.remove('hitstop-active'), 80);
-          }
-          if (videoContainer && videoPlayer) {
-            videoContainer.classList.remove('hidden');
-            videoContainer.classList.remove('video-dissolve-to-battle');
-            let videoSrc = 'assets/video/unknown_god_ult.mp4';
-            if (isTrisa) videoSrc = 'assets/video/trisa_ult.mp4';
-            else if (isCassius) videoSrc = 'assets/video/cassius_ult.mp4';
-            else if (isHilde) videoSrc = 'assets/video/hilde_ult.mp4';
-            else if (isHeide) videoSrc = 'assets/video/heide_ult.mp4';
-            else if (isMeilin) videoSrc = 'assets/video/meilin_ult.mp4';
-            if (!videoPlayer.src || !videoPlayer.src.includes(videoSrc)) {
-              videoPlayer.src = videoSrc;
-            }
-            videoPlayer.currentTime = 0;
-            videoPlayer.playbackRate = 1.0;
-            videoPlayer.muted = false;
-            videoPlayer.volume = 1.0;
-            videoPlayer.onended = () => {
-              if (videoContainer) {
-                videoContainer.classList.add('hidden');
-                videoContainer.classList.remove('video-dissolve-to-battle');
-              }
-            };
-            videoPlayer.onerror = (e) => {
-              console.warn("Video cutscene failed to load/decode, dismissing black screen overlay:", e);
-              if (videoContainer) videoContainer.classList.add('hidden');
-            };
-            const playPromise = videoPlayer.play();
-            if (playPromise !== undefined) {
-              playPromise.catch(err => {
-                console.warn("Video audio autoplay blocked, using muted fallback:", err);
-                videoPlayer.muted = true;
-                videoPlayer.play().catch(e => {
-                  console.error("Video play failed:", e);
-                  if (videoContainer) videoContainer.classList.add('hidden');
-                });
-              });
-            }
-          }
-          // Hide arena backdrop smoothly as cutscene takes over
-          setTimeout(() => {
-            if (this.active && arenaStage) arenaStage.classList.add('arena-video-burst-active');
-          }, 60);
-        }, videoStartTiming);
-        this._phaseTimers.push(tVideoStart);
+          const tVideoStart = setTimeout(() => {
+            startVideoPlayback();
+          }, videoStartTiming);
+          this._phaseTimers.push(tVideoStart);
+        }
 
         // ACT 2.5: DISSOLVE CUTSCENE INTO MAIN BATTLE SCREEN WHILE AUDIO FINISHES
         const tDissolve = setTimeout(() => {
@@ -2050,8 +2058,9 @@ const Cinematics = {
               document.body.appendChild(whiteoutEl);
             }
             whiteoutEl.classList.remove('active');
-            void whiteoutEl.offsetWidth; // Force reflow
-            whiteoutEl.classList.add('active');
+            requestAnimationFrame(() => {
+              if (whiteoutEl) whiteoutEl.classList.add('active');
+            });
             setTimeout(() => whiteoutEl && whiteoutEl.classList.remove('active'), 500);
           }
 
@@ -2098,13 +2107,7 @@ const Cinematics = {
         // ACT 3: CUTSCENE FULL COMPLETION (Audio tail finishes cleanly)
         const tEnding = setTimeout(() => {
           if (!this.active) return;
-          if (videoPlayer) {
-            try { videoPlayer.pause(); } catch (e) {}
-          }
-          if (videoContainer) {
-            videoContainer.classList.add('hidden');
-            videoContainer.classList.remove('video-dissolve-to-battle');
-          }
+          this._finishBurst();
         }, endingTiming);
         this._phaseTimers.push(tEnding);
       } else {
@@ -2160,138 +2163,150 @@ const Cinematics = {
         this._phaseTimers.push(tPhase3);
       }
 
-      // 7. Delta-Time 60-144 FPS Rendering Loop
-      const startTime = performance.now();
-      this.startTime = startTime;
-      this.lastTime = startTime;
-      let duration = 3900;
-      let climaxTiming = 2500;
+      // 7. Render Execution Pipeline
       if (isVideoCutscene) {
+        let climaxTiming = 3000;
         if (isTrisa) {
-          duration = 2500;
-          climaxTiming = 1880;
+          climaxTiming = 1350;
         } else if (isHilde) {
-          duration = 1950;
           climaxTiming = 1400;
         } else if (isHeide) {
-          duration = 7200;
           climaxTiming = 6750;
         } else if (isMeilin) {
-          duration = 4500;
           climaxTiming = 4150;
         } else if (isCassius) {
-          duration = 5700;
-          climaxTiming = 2950;
+          climaxTiming = 3000;
         } else {
-          duration = 6400;
-          climaxTiming = 4900;
+          // Unknown God: 920ms intro + 3000ms slash = 3920ms
+          climaxTiming = 3950;
         }
-      }
 
-      if (this.animId) cancelAnimationFrame(this.animId);
-
-      const render = (now) => {
-        if (!this.active) return;
-        const dt = Math.min(0.033, (now - this.lastTime) / 1000);
-        this.lastTime = now;
-
-        const elapsed = now - startTime;
-        const progress = Math.min(1, elapsed / duration);
-
-        // Climax Impact Transition (Hitstop, reality shatter & particle explosion)
-        if (elapsed >= climaxTiming && !this.impactFired) {
+        const tClimax = setTimeout(() => {
+          if (!this.active) return;
           this.impactFired = true;
-
-          if (!isVideoCutscene) {
-            this._buildRealityShatterWebGL(heroId);
-            this._triggerParticleExplosion(heroId);
-            this.playBurstAudio(heroId, 'climax');
-          }
-
-          if (this.shockwaveFilter && this.shockwaveFilter.uniforms) {
-            this.shockwaveFilter.uniforms.uProgress = 0.01;
-            this.shockwaveFilter.uniforms.uAmplitude = 0.055;
-          }
-          if (this.chromaticFilter && this.chromaticFilter.uniforms) {
-            this.chromaticFilter.uniforms.uIntensity = 0.5;
-          }
-          if (this.bloomFilter && this.bloomFilter.uniforms) {
-            this.bloomFilter.uniforms.uGlowIntensity = 0.9;
-          }
-
-          if (overlay) {
-            overlay.classList.add('hitstop-active');
-            setTimeout(() => overlay && overlay.classList.remove('hitstop-active'), 100);
-          }
-
           const appEl = document.getElementById('app');
           if (appEl) {
             appEl.classList.remove('screen-shake-intense', 'screen-shake-light');
-            void appEl.offsetWidth;
-            appEl.classList.add('screen-shake-intense');
-            setTimeout(() => appEl && appEl.classList.remove('screen-shake-intense'), 600);
+            requestAnimationFrame(() => {
+              if (appEl) {
+                appEl.classList.add('screen-shake-intense');
+                setTimeout(() => appEl && appEl.classList.remove('screen-shake-intense'), 450);
+              }
+            });
           }
-        }
+        }, climaxTiming);
+        this._phaseTimers.push(tClimax);
+      } else {
+        // Standard WebGL Heroes 60-144 FPS Rendering Loop
+        const startTime = performance.now();
+        this.startTime = startTime;
+        this.lastTime = startTime;
+        const duration = 3900;
+        const climaxTiming = 2500;
 
-        // 8. Update Post-Processing Shaders
-        if (this.shockwaveFilter && this.shockwaveFilter.uniforms) {
-          if (!this.impactFired) {
-            const actProgress = Math.min(1.0, elapsed / 600);
-            this.shockwaveFilter.uniforms.uProgress = actProgress;
-          } else {
-            const climProgress = Math.min(1.0, (elapsed - climaxTiming) / 950);
-            this.shockwaveFilter.uniforms.uProgress = climProgress;
+        if (this.animId) cancelAnimationFrame(this.animId);
+
+        const render = (now) => {
+          if (!this.active) return;
+          const dt = Math.min(0.033, (now - this.lastTime) / 1000);
+          this.lastTime = now;
+
+          const elapsed = now - startTime;
+          const progress = Math.min(1, elapsed / duration);
+
+          // Climax Impact Transition (Hitstop, reality shatter & particle explosion)
+          if (elapsed >= climaxTiming && !this.impactFired) {
+            this.impactFired = true;
+            this._buildRealityShatterWebGL(heroId);
+            this._triggerParticleExplosion(heroId);
+            this.playBurstAudio(heroId, 'climax');
+
+            if (this.shockwaveFilter && this.shockwaveFilter.uniforms) {
+              this.shockwaveFilter.uniforms.uProgress = 0.01;
+              this.shockwaveFilter.uniforms.uAmplitude = 0.055;
+            }
+            if (this.chromaticFilter && this.chromaticFilter.uniforms) {
+              this.chromaticFilter.uniforms.uIntensity = 0.5;
+            }
+            if (this.bloomFilter && this.bloomFilter.uniforms) {
+              this.bloomFilter.uniforms.uGlowIntensity = 0.9;
+            }
+
+            if (overlay) {
+              overlay.classList.add('hitstop-active');
+              setTimeout(() => overlay && overlay.classList.remove('hitstop-active'), 100);
+            }
+
+            const appEl = document.getElementById('app');
+            if (appEl) {
+              appEl.classList.remove('screen-shake-intense', 'screen-shake-light');
+              requestAnimationFrame(() => {
+                if (appEl) {
+                  appEl.classList.add('screen-shake-intense');
+                  setTimeout(() => appEl && appEl.classList.remove('screen-shake-intense'), 600);
+                }
+              });
+            }
           }
-        }
 
-        if (this.chromaticFilter && this.chromaticFilter.uniforms) {
-          if (!this.impactFired) {
-            const actP = Math.min(1.0, elapsed / 600);
-            this.chromaticFilter.uniforms.uIntensity = Math.max(0.08, 0.35 - actP * 0.25);
-          } else {
-            const climElapsed = elapsed - climaxTiming;
-            this.chromaticFilter.uniforms.uIntensity = Math.max(0.0, 1.0 - (climElapsed / 600));
+          // 8. Update Post-Processing Shaders (only for WebGL canvas cutscenes)
+          if (this.shockwaveFilter && this.shockwaveFilter.uniforms) {
+            if (!this.impactFired) {
+              const actProgress = Math.min(1.0, elapsed / 600);
+              this.shockwaveFilter.uniforms.uProgress = actProgress;
+            } else {
+              const climProgress = Math.min(1.0, (elapsed - climaxTiming) / 950);
+              this.shockwaveFilter.uniforms.uProgress = climProgress;
+            }
           }
-        }
 
-        if (this.bloomFilter && this.bloomFilter.uniforms) {
-          if (!this.impactFired) {
-            this.bloomFilter.uniforms.uGlowIntensity = 0.45 + Math.sin(elapsed * 0.015) * 0.2;
-          } else {
-            const climElapsed = elapsed - climaxTiming;
-            this.bloomFilter.uniforms.uGlowIntensity = Math.max(0.12, 0.95 - (climElapsed / 800) * 0.8);
+          if (this.chromaticFilter && this.chromaticFilter.uniforms) {
+            if (!this.impactFired) {
+              const actP = Math.min(1.0, elapsed / 600);
+              this.chromaticFilter.uniforms.uIntensity = Math.max(0.08, 0.35 - actP * 0.25);
+            } else {
+              const climElapsed = elapsed - climaxTiming;
+              this.chromaticFilter.uniforms.uIntensity = Math.max(0.0, 1.0 - (climElapsed / 600));
+            }
           }
-        }
 
-        // 9. Update Pixi WebGL Scene Layers
-        if (!isVideoCutscene) {
+          if (this.bloomFilter && this.bloomFilter.uniforms) {
+            if (!this.impactFired) {
+              this.bloomFilter.uniforms.uGlowIntensity = 0.45 + Math.sin(elapsed * 0.015) * 0.2;
+            } else {
+              const climElapsed = elapsed - climaxTiming;
+              this.bloomFilter.uniforms.uGlowIntensity = Math.max(0.12, 0.95 - (climElapsed / 800) * 0.8);
+            }
+          }
+
+          // 9. Update Pixi WebGL Scene Layers
           this._updateEyeCutinWebGL(elapsed);
           this._updateHeroParallaxWebGL(elapsed, dt);
           this._updateParticles(elapsed, dt);
           if (this.impactFired) {
             this._updateRealityShatterWebGL(dt);
           }
-        }
 
-        // Render Pixi WebGL Stage
-        if (this.pixiApp && this.pixiApp.renderer) {
-          this.pixiApp.render();
-        }
+          // Render Pixi WebGL Stage (Only for WebGL canvas cutscenes)
+          if (this.pixiApp && this.pixiApp.renderer) {
+            this.pixiApp.render();
+          }
 
-        // 10. Update & Render Genuine 3D Three.js Scene
-        if (this.threeRenderer && this.threeScene && this.threeCamera) {
-          this._updateHero3DScene(heroId, progress, elapsed, dt);
-          this.threeRenderer.render(this.threeScene, this.threeCamera);
-        }
+          // 10. Update & Render Genuine 3D Three.js Scene (Only for WebGL canvas cutscenes)
+          if (this.threeRenderer && this.threeScene && this.threeCamera) {
+            this._updateHero3DScene(heroId, progress, elapsed, dt);
+            this.threeRenderer.render(this.threeScene, this.threeCamera);
+          }
 
-        if (progress < 1) {
-          this.animId = requestAnimationFrame(render);
-        } else {
-          this._finishBurst();
-        }
-      };
+          if (progress < 1) {
+            this.animId = requestAnimationFrame(render);
+          } else {
+            this._finishBurst();
+          }
+        };
 
-      this.animId = requestAnimationFrame(render);
+        this.animId = requestAnimationFrame(render);
+      }
     } catch (burstErr) {
       console.warn("Cinematics.playBurst safe catch:", burstErr);
       this._finishBurst();
@@ -2312,7 +2327,7 @@ const Cinematics = {
     if (videoPlayer) {
       try {
         videoPlayer.pause();
-        videoPlayer.currentTime = 0;
+        if (videoPlayer.currentTime !== 0) videoPlayer.currentTime = 0;
       } catch (e) {}
     }
     if (videoContainer) {
@@ -2377,12 +2392,28 @@ const Cinematics = {
       setTimeout(() => arenaStage.classList.remove('camera-3d-active'), 300);
     }
 
+    const wipeEl = document.getElementById('god-blade-wipe-overlay');
+    if (wipeEl) wipeEl.classList.remove('active');
+    const whiteoutEl = document.getElementById('god-supernova-whiteout-overlay');
+    if (whiteoutEl) whiteoutEl.classList.remove('active');
+
     if (pSprite && typeof Sprites !== 'undefined') {
       pSprite.className = 'fighter-avatar';
       pSprite.innerHTML = Sprites.getPlayerSvg('idle', this.currentHeroId || GameState.activeHeroId);
     }
     if (mSprite) {
       mSprite.className = 'fighter-avatar';
+    }
+
+    if (typeof Combat !== 'undefined' && Combat.isRunning && !GameState.boss?.active && !GameState.dungeon?.active) {
+      Combat._scheduleNextTurn(80);
+    } else if (typeof Dungeon !== 'undefined' && GameState.dungeon?.active) {
+      clearTimeout(Dungeon._turnTimer);
+      if (GameState.dungeon.subMode === 'tower') {
+        Dungeon._turnTimer = setTimeout(() => Dungeon.stepTower(), 80);
+      } else {
+        Dungeon._turnTimer = setTimeout(() => Dungeon.stepRoom(), 80);
+      }
     }
   },
 

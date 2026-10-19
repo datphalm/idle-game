@@ -118,12 +118,12 @@ const Boss = {
         const isHeide = (hId === 'hero_heide');
         const isMeilin = (hId === 'hero_meilin');
 
-        let hitDelay = 5500;
-        if (isTrisa) hitDelay = 1300;
+        let hitDelay = 3950;
+        if (isTrisa) hitDelay = 1350;
         else if (isHilde) hitDelay = 1400;
         else if (isHeide) hitDelay = 6750;
         else if (isMeilin) hitDelay = 4150;
-        else if (isCassius) hitDelay = 3000;
+        else if (isCassius) hitDelay = 3100;
 
         setTimeout(() => {
           if (!GameState.boss?.active) return;
@@ -140,11 +140,12 @@ const Boss = {
             else if (isHilde) badgeName = '❄️ BĂNG THÁNH TRẢM SÁT';
             else if (isHeide) badgeName = '⚡ THIÊN PHONG LÔI ĐAO';
             else if (isMeilin) badgeName = '🐉 LONG THẦN GIÁNG THẾ';
+            const formattedDmg = (typeof UI !== 'undefined' && UI._formatNumber) ? UI._formatNumber(pDmg) : pDmg;
             UI.addCombatLog(
-              `<strong>${badgeName} [${skillRes.hero.name}]:</strong> ` +
-              `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.skill.name}</span> ` +
-              `gây <strong style="color:${skillRes.hero.elementColor};">-${pDmg}</strong> lên Boss!`,
-              'log-extra'
+              `<span class="log-badge log-badge-burst">${badgeName}</span><strong>[${skillRes.hero.name}]:</strong> ` +
+              `<span style="color:${skillRes.hero.elementColor}; font-weight:700;">${skillRes.skill.name}</span> ` +
+              `gây <strong class="log-dmg-num">-${formattedDmg}</strong> lên Boss!`,
+              'log-burst'
             );
           }
           if (b.hp <= 0) {
@@ -160,12 +161,14 @@ const Boss = {
           UI.animatePlayerSkill('boss', skillRes.type);
           UI.animateBossHit();
           UI.updateBossChamber();
-          const badgeName = skillRes.type === 'burst' ? '🌟 TUYỆT KỸ NỘ' : '⚡ KỸ NĂNG';
+          const isBurst = skillRes.type === 'burst';
+          const badgeHtml = isBurst ? '<span class="log-badge log-badge-burst">🌟 TUYỆT KỸ</span>' : '<span class="log-badge log-badge-skill">⚡ KỸ NĂNG</span>';
+          const formattedDmg = (typeof UI !== 'undefined' && UI._formatNumber) ? UI._formatNumber(pDmg) : pDmg;
           UI.addCombatLog(
-            `<strong>${badgeName} [${skillRes.hero.name}]:</strong> ` +
-            `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.skill.name}</span> ` +
-            `gây <strong style="color:#ff0055;">-${pDmg}</strong> lên Boss!`,
-            'log-extra'
+            `${badgeHtml}<strong>[${skillRes.hero.name}]:</strong> ` +
+            `<span style="color:${skillRes.hero.elementColor}; font-weight:700;">${skillRes.skill.name}</span> ` +
+            `gây <strong class="log-dmg-num">-${formattedDmg}</strong> lên Boss!`,
+            isBurst ? 'log-burst' : 'log-skill'
           );
         }
       }
@@ -216,12 +219,12 @@ const Boss = {
     let bossCounterDelay = 600;
     if (isVideoCutscene) {
       const hId = skillRes.hero?.id;
-      if (hId === 'hero_trisa' || hId === 'hero_rhiannon') bossCounterDelay = 1800;
-      else if (hId === 'hero_hilde') bossCounterDelay = 1950;
-      else if (hId === 'hero_heide') bossCounterDelay = 7200;
-      else if (hId === 'hero_meilin') bossCounterDelay = 4500;
-      else if (hId === 'hero_cassius') bossCounterDelay = 5400;
-      else bossCounterDelay = 6600;
+      if (hId === 'hero_trisa' || hId === 'hero_rhiannon') bossCounterDelay = 2250;
+      else if (hId === 'hero_hilde') bossCounterDelay = 2150;
+      else if (hId === 'hero_heide') bossCounterDelay = 7250;
+      else if (hId === 'hero_meilin') bossCounterDelay = 4600;
+      else if (hId === 'hero_cassius') bossCounterDelay = 5300;
+      else bossCounterDelay = 5200;
     } else if (skillRes.triggered && skillRes.type === 'burst') {
       bossCounterDelay = 4000;
     }

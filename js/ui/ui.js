@@ -31,6 +31,12 @@ const UI = {
     document.getElementById('chk-auto-stage')?.addEventListener('change', (e) => {
       if (GameState.stage) GameState.stage.autoAdvance = e.target.checked;
     });
+    document.getElementById('chk-auto-burst')?.addEventListener('change', (e) => {
+      if (!GameState.settings) GameState.settings = {};
+      GameState.settings.autoBurst = e.target.checked;
+      GameState.autoBurst = e.target.checked;
+      SaveManager.save();
+    });
 
     // Expand Inventory
     document.getElementById('btn-expand-inv')?.addEventListener('click', () => this._handleExpandInventory());
@@ -1000,6 +1006,9 @@ const UI = {
 
     const chkAuto = document.getElementById('chk-auto-stage');
     if (chkAuto) chkAuto.checked = !!GameState.stage.autoAdvance;
+
+    const chkAutoBurst = document.getElementById('chk-auto-burst');
+    if (chkAutoBurst) chkAutoBurst.checked = !!(GameState.settings?.autoBurst ?? GameState.autoBurst ?? true);
   },
 
   _handleStagePrev() {
@@ -1431,8 +1440,6 @@ const UI = {
     if (!hasEmbeddedVfx) {
       this._triggerSlashFx(targetSlash, skillType === 'burst' ? 'burst' : 'skill');
     }
-
-    // Sub-skill voice lines disabled per user request (only ulti sound kept)
   },
 
   animatePlayerWalk(mode, duration = 600) {
@@ -1844,6 +1851,7 @@ const UI = {
     for (let i = 0; i < emptyCount; i++) {
       const el = document.createElement('div');
       el.className = 'inv-item-empty';
+      el.innerHTML = '<div class="empty-slot-socket"><span class="empty-slot-glyph">◇</span></div>';
       grid.appendChild(el);
     }
   },
@@ -2507,7 +2515,7 @@ const UI = {
       const cdTag = sk.cd ? `<span style="font-size:0.65rem; color:#00ffcc; margin-left:4px;">⏱️ ${sk.cd}s</span>` : '';
 
       return `
-        <div class="skill-card skill-card-enhanced ${sk.type}-card">
+        <div class="skill-card skill-card-enhanced ${sk.type}-card" id="hero-skill-card-${skKey}">
           <div class="skill-card-glow-bg"></div>
           <div class="skill-card-header">
             <div class="skill-icon-wrapper" style="border-color:${heroCfg.elementColor || '#a855f7'}; box-shadow:0 0 10px ${heroCfg.elementColor || '#a855f7'}40;">
@@ -2525,8 +2533,8 @@ const UI = {
           <div class="skill-desc-txt">${sk.desc}</div>
           <div class="skill-card-footer">
             <div class="skill-level-row">
-              <span class="skill-lvl-badge">Cấp ${skLevel}</span>
-              <span class="skill-cost-txt">💰 ${this._formatNumber(upgradeCost)}</span>
+              <span class="skill-lvl-badge" id="skill-lvl-badge-${skKey}">Cấp ${skLevel}</span>
+              <span class="skill-cost-txt" id="skill-cost-txt-${skKey}">💰 ${this._formatNumber(upgradeCost)}</span>
             </div>
             <button class="btn btn-primary btn-skill-upgrade" data-skill="${skKey}" ${!canAfford ? 'disabled' : ''}>
               ✨ Nâng Cấp
@@ -2713,6 +2721,22 @@ const UI = {
     });
   },
 
+  updateHeroesTabAffordability() {
+    const activeId = GameState.activeHeroId || 'hero_starter';
+    const userHero = GameState.heroes?.find(h => h.id === activeId);
+    if (!userHero) return;
+    const playerGold = GameState.player?.gold || 0;
+    ['s1', 's2', 's3'].forEach(skKey => {
+      const skLevel = userHero.skillLevels?.[skKey] || 1;
+      const cost = skKey === 's1' ? skLevel * 3000 : skKey === 's2' ? skLevel * 5000 : skLevel * 10000;
+      const canAfford = playerGold >= cost;
+      const btn = document.querySelector(`.btn-skill-upgrade[data-skill="${skKey}"]`);
+      if (btn && btn.disabled === canAfford) {
+        btn.disabled = !canAfford;
+      }
+    });
+  },
+
   _handleUpgradeHeroSkill(skKey) {
     const activeId = GameState.activeHeroId || 'hero_starter';
     let userHero = GameState.heroes?.find(h => h.id === activeId);
@@ -2728,8 +2752,18 @@ const UI = {
     }
 
     userHero.skillLevels[skKey] = curLevel + 1;
-    this.showToast(`✨ Nâng cấp kỹ năng lên Cấp ${userHero.skillLevels[skKey]}! (-${this._formatNumber(cost)} 💰)`);
-    this.updateHeroesTab();
+    const newLevel = userHero.skillLevels[skKey];
+    const newCost = skKey === 's1' ? newLevel * 3000 : skKey === 's2' ? newLevel * 5000 : newLevel * 10000;
+
+    // Cập nhật DOM in-place không render lại toàn bộ Tab để chống giật hover
+    const lvlBadge = document.getElementById(`skill-lvl-badge-${skKey}`);
+    if (lvlBadge) lvlBadge.textContent = `Cấp ${newLevel}`;
+    const costTxt = document.getElementById(`skill-cost-txt-${skKey}`);
+    if (costTxt) costTxt.innerHTML = `💰 ${this._formatNumber(newCost)}`;
+    const upBtn = document.querySelector(`.btn-skill-upgrade[data-skill="${skKey}"]`);
+    if (upBtn) upBtn.disabled = (GameState.player?.gold || 0) < newCost;
+
+    this.showToast(`✨ Nâng cấp kỹ năng lên Cấp ${newLevel}! (-${this._formatNumber(cost)} 💰)`);
     this.updateBattleStatsOnly();
     this.updateStatusBar();
   },
@@ -2805,6 +2839,9 @@ const UI = {
 
     this.renderHeroSkillsHudLayout();
     this.showToast(`👑 Đã đổi tướng xuất chiến: [${heroCfg.name}]!`);
+    if (typeof Cinematics !== 'undefined' && Cinematics.preloadHeroVideo) {
+      Cinematics.preloadHeroVideo(heroId);
+    }
     this.updateBattle();
     this.updateHeroesTab();
     this.updateStatusBar();
@@ -2852,6 +2889,9 @@ const UI = {
   // DUNGEON SYSTEM UI
   // ============================================================
   updateDungeonTab() {
+    if (typeof Dungeon !== 'undefined' && Dungeon.checkDailyReset) {
+      Dungeon.checkDailyReset();
+    }
     const list = document.getElementById('dungeon-cards-list');
     if (!list) return;
     list.innerHTML = '';
@@ -3228,12 +3268,21 @@ const UI = {
     ['s1', 's2', 's3'].forEach((skKey, idx) => {
       const skLevel = userHero.skillLevels?.[skKey] || 1;
       const cost = skKey === 's1' ? skLevel * 3000 : skKey === 's2' ? skLevel * 5000 : skLevel * 10000;
-      if (GameState.player && (GameState.player.gold || 0) >= cost && skLevel < 50) {
+      const maxLvl = CONFIG.SKILL_MAX_LEVEL || 1000;
+      if (GameState.player && (GameState.player.gold || 0) >= cost && skLevel < maxLvl) {
         if (Player.spendGold(cost)) {
           userHero.skillLevels[skKey] = skLevel + 1;
-          if (this._currentTab === 'heroes') {
-            this.updateHeroesTab();
-          }
+          const newLevel = userHero.skillLevels[skKey];
+          const newCost = skKey === 's1' ? newLevel * 3000 : skKey === 's2' ? newLevel * 5000 : newLevel * 10000;
+
+          // Cập nhật DOM in-place không huỷ HTML để không làm giật hover
+          const lvlElem = document.getElementById(`skill-lvl-badge-${skKey}`);
+          if (lvlElem) lvlElem.textContent = `Cấp ${newLevel}`;
+          const costElem = document.getElementById(`skill-cost-txt-${skKey}`);
+          if (costElem) costElem.innerHTML = `💰 ${this._formatNumber(newCost)}`;
+          const btn = document.querySelector(`.btn-skill-upgrade[data-skill="${skKey}"]`);
+          if (btn) btn.disabled = (GameState.player?.gold || 0) < newCost;
+
           this.updateStatusBar();
         }
       }

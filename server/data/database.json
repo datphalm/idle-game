@@ -1,5 +1,5 @@
 {
-  "version": "2.9.5",
+  "version": "2.9.6",
   "downloadUrl": "https://github.com/idlerpg/release/releases/latest",
   "changelog": [
     "Nâng cấp toàn bộ giao diện theo chuẩn đồ họa Dark Fantasy & Anime RPG hiện đại (Genshin / Honkai UI standard)",
@@ -166,7 +166,7 @@
       "stage": 327,
       "towerFloor": 42,
       "power": 52110345826,
-      "lastActive": 1792423344717,
+      "lastActive": 1792435434233,
       "knownPlayers": [
         {
           "id": "p_1",
@@ -318,7 +318,7 @@
       "stage": 323,
       "towerFloor": 189,
       "power": 52111043366,
-      "lastActive": 1792423580392,
+      "lastActive": 1792425000315,
       "isMe": false
     },
     {

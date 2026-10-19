@@ -202,8 +202,9 @@ const Player = {
     const skill2 = skills[1]; // Elemental Skill
     const skill3 = skills[2]; // Elemental Burst (Nộ)
 
-    // Ưu tiên nộ tuyệt kỹ (Skill 3) CHỈ KHI NGƯỜI CHƠI BẤM KÍCH HOẠT THỦ CÔNG
-    if (this._manualBurstQueued && skill3 && now >= this._skill3NextReady) {
+    // Ưu tiên nộ tuyệt kỹ (Skill 3) khi người chơi kích hoạt thủ công HOẶC bật Auto Ulti
+    const isAutoBurst = !!(GameState.settings?.autoBurst ?? GameState.autoBurst);
+    if ((this._manualBurstQueued || isAutoBurst) && skill3 && now >= this._skill3NextReady) {
       this._manualBurstQueued = false;
       const cd = Math.max(3, skill3.cd - (hero.cdReduction || 0));
       this._skill3NextReady = now + (cd * 1000);
@@ -371,6 +372,24 @@ const Player = {
   spendBossKeys(count) {
     if ((GameState.player?.bossKeys || 0) >= count) {
       GameState.player.bossKeys -= count;
+      if (typeof AntiCheat !== 'undefined') AntiCheat.refreshSignatures();
+      return true;
+    }
+    return false;
+  },
+
+  spendProtectionStones(count = 1) {
+    if ((GameState.player?.protectionStones || 0) >= count) {
+      GameState.player.protectionStones -= count;
+      if (typeof AntiCheat !== 'undefined') AntiCheat.refreshSignatures();
+      return true;
+    }
+    return false;
+  },
+
+  spendDiamond(amount) {
+    if ((GameState.player?.diamond || 0) >= amount) {
+      GameState.player.diamond -= amount;
       if (typeof AntiCheat !== 'undefined') AntiCheat.refreshSignatures();
       return true;
     }

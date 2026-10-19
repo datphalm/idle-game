@@ -86,9 +86,10 @@ const SaveManager = {
       dungeon: {
         abyssFloor: GameState.dungeon?.abyssFloor || 1,
         towerHighestFloor: GameState.dungeon?.towerHighestFloor || 1,
-        dailyRuns: GameState.dungeon?.dailyRuns || { gold: 3, exp: 3, rune: 3, forge: 3 }
+        dailyRuns: GameState.dungeon?.dailyRuns || { gold: 3, exp: 3, rune: 3, forge: 3 },
+        lastResetDate: GameState.dungeon?.lastResetDate || new Date().toDateString()
       },
-      settings: GameState.settings || { vfxEnabled: true }
+      settings: GameState.settings || { vfxEnabled: true, autoBurst: true }
     };
 
     try {
@@ -235,7 +236,8 @@ const SaveManager = {
       abyssFloor: 1,
       towerHighestFloor: 1,
       autoClimb: true,
-      dailyRuns: { gold: 3, exp: 3, rune: 3, forge: 3 }
+      dailyRuns: { gold: 3, exp: 3, rune: 3, forge: 3 },
+      lastResetDate: new Date().toDateString()
     };
     GameState.boss = { active: false, bossIndex: 0, hp: 0, maxHp: 0, timer: 0, timerMax: 0, rage: 0, rageMax: 100 };
     GameState.lastSaveTime = Date.now();
@@ -446,6 +448,10 @@ const SaveManager = {
       if (typeof data.dungeon.abyssFloor === 'number') GameState.dungeon.abyssFloor = data.dungeon.abyssFloor;
       if (typeof data.dungeon.towerHighestFloor === 'number') GameState.dungeon.towerHighestFloor = data.dungeon.towerHighestFloor;
       if (data.dungeon.dailyRuns) Object.assign(GameState.dungeon.dailyRuns, data.dungeon.dailyRuns);
+      if (data.dungeon.lastResetDate) GameState.dungeon.lastResetDate = data.dungeon.lastResetDate;
+    }
+    if (typeof Dungeon !== 'undefined' && Dungeon.checkDailyReset) {
+      Dungeon.checkDailyReset();
     }
     if (GameState.boss) GameState.boss.active = false;
 
@@ -457,6 +463,9 @@ const SaveManager = {
 
     Inventory.syncIdCounter();
     GameState.lastSaveTime = data.timestamp || Date.now();
+    if (typeof AntiCheat !== 'undefined' && AntiCheat.refreshSignatures) {
+      AntiCheat.refreshSignatures();
+    }
     return true;
   },
 
@@ -474,6 +483,9 @@ const SaveManager = {
     GameState.player.gold += progress.gold;
     Player.gainExp(progress.exp);
     GameState.combat.monstersKilled += progress.kills;
+    if (typeof AntiCheat !== 'undefined' && AntiCheat.refreshSignatures) {
+      AntiCheat.refreshSignatures();
+    }
   },
 
   startAutoSave() {

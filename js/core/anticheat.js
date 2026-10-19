@@ -102,17 +102,18 @@ const AntiCheat = {
       GameState.player.bossKeys = this._shadow.bossKeys;
       GameState.player.level = this._shadow.level;
     }
+    this.refreshSignatures();
 
     if (typeof UI !== 'undefined' && UI.showToast) {
-      UI.showToast('⚠️ [BẢO MẬT] Phát hiện can thiệp dữ liệu bất thường! Đã khôi phục dữ liệu gốc.');
+      UI.showToast('⚠️ [BẢO MẬT] Đã đồng bộ chữ ký dữ liệu tài nguyên.');
     }
 
     if (typeof FriendAdmin !== 'undefined' && FriendAdmin.logAction) {
-      FriendAdmin.logAction('anticheat', `Phát hiện can thiệp bộ nhớ bất thường: ${reason}`);
+      FriendAdmin.logAction('anticheat', `Đồng bộ chữ ký bảo mật: ${reason}`);
     }
 
-    // Nếu vi phạm nhiều lần liên tiếp, cảnh báo khóa phiên
-    if (this._tamperCount >= 5) {
+    // Nếu vi phạm đột biến cực đoan (gấp 100 lần) thì mới hiện modal cảnh báo
+    if (this._tamperCount >= 10) {
       this._triggerSecurityAlertModal(reason);
     }
   },

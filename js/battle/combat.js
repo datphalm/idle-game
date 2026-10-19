@@ -153,36 +153,36 @@ const Combat = {
           }
 
           const willKill = (m.hp <= actualDmg);
-          let hitDelay = 5500;
-          let turnDelayKill = 6800;
-          let counterDelay = 6500;
-          let turnDelaySurvive = 7100;
+          let hitDelay = 3950;
+          let turnDelayKill = 5250;
+          let counterDelay = 5150;
+          let turnDelaySurvive = 5300;
 
           if (isTrisa) {
-            hitDelay = 1300;
-            turnDelayKill = 1800;
-            counterDelay = 1750;
-            turnDelaySurvive = 1850;
+            hitDelay = 1350;
+            turnDelayKill = 2300;
+            counterDelay = 2200;
+            turnDelaySurvive = 2350;
           } else if (isHilde) {
             hitDelay = 1400;
-            turnDelayKill = 1950;
-            counterDelay = 1900;
-            turnDelaySurvive = 2000;
+            turnDelayKill = 2200;
+            counterDelay = 2100;
+            turnDelaySurvive = 2250;
           } else if (isHeide) {
             hitDelay = 6750;
-            turnDelayKill = 7250;
-            counterDelay = 7150;
+            turnDelayKill = 7300;
+            counterDelay = 7200;
             turnDelaySurvive = 7350;
           } else if (isMeilin) {
             hitDelay = 4150;
-            turnDelayKill = 4550;
-            counterDelay = 4450;
-            turnDelaySurvive = 4650;
+            turnDelayKill = 4650;
+            counterDelay = 4550;
+            turnDelaySurvive = 4700;
           } else if (isCassius) {
-            hitDelay = 3450;
-            turnDelayKill = 5800;
-            counterDelay = 5600;
-            turnDelaySurvive = 5900;
+            hitDelay = 3100;
+            turnDelayKill = 5350;
+            counterDelay = 5250;
+            turnDelaySurvive = 5400;
           }
 
           setTimeout(() => {
@@ -324,19 +324,23 @@ const Combat = {
           );
         }
 
-        const badgeName = skillRes.type === 'burst' ? '🌟 TUYỆT KỸ NỘ' : '⚡ KỸ NĂNG NGUYÊN TỐ';
+        const isBurst = skillRes.type === 'burst';
+        const badgeHtml = isBurst
+          ? '<span class="log-badge log-badge-burst">🌟 TUYỆT KỸ</span>'
+          : '<span class="log-badge log-badge-skill">⚡ KỸ NĂNG</span>';
+        const formattedDmg = (typeof UI !== 'undefined' && UI._formatNumber) ? UI._formatNumber(skillRes.damage) : skillRes.damage;
         UI.addCombatLog(
-          `<strong>${badgeName} [${skillRes.hero.name}]:</strong> ` +
-          `<span style="color:${skillRes.hero.elementColor}; font-weight:800;">${skillRes.skill.name}</span> ` +
-          `gây sát thương hủy diệt <strong style="color:#ff0055;">-${skillRes.damage}</strong>!`,
-          'log-extra'
+          `${badgeHtml}<strong>[${skillRes.hero.name}]:</strong> ` +
+          `<span style="color:${skillRes.hero.elementColor}; font-weight:700;">${skillRes.skill.name}</span> ` +
+          `gây sát thương <strong class="log-dmg-num">-${formattedDmg}</strong>!`,
+          isBurst ? 'log-burst' : 'log-skill'
         );
 
         if (hitResult.isDead) {
           m.hp = 0;
           UI.updateBattleStatsOnly();
           const deathDelay = (skillRes.type === 'burst') ? 3900 : 180;
-          const nextTurnDelay = (skillRes.type === 'burst') ? 4350 : 650;
+          const nextTurnDelay = (skillRes.type === 'burst') ? 4100 : 650;
           setTimeout(() => {
             UI.animateMonsterDeath(() => {
               UI.animatePlayerWalk(null, 500);
@@ -378,8 +382,8 @@ const Combat = {
                 }, 180);
               }
             }, 120);
-            Player._skill3NextReady = Math.max(0, Player._skill3NextReady - 2500);
-            UI.addCombatLog(`🌌 <strong>VŨ KHÚC TINH THẦN:</strong> Thu hồi 3 Tinh Thể kích nổ bạo kích <strong style="color:#00e5ff;">-${resonanceDmg}</strong> & nạp năng lượng Nộ!`, 'log-extra');
+            const formattedRes = (typeof UI !== 'undefined' && UI._formatNumber) ? UI._formatNumber(resonanceDmg) : resonanceDmg;
+            UI.addCombatLog(`🌌 <strong>VŨ KHÚC TINH THẦN:</strong> Thu hồi 3 Tinh Thể kích nổ bạo kích <strong class="log-dmg-num">-${formattedRes}</strong> & nạp năng lượng Nộ!`, 'log-skill');
           } else {
             const shardDmg = Math.max(1, Math.floor(pDamage * 0.45));
             Monster.takeDamage(shardDmg);
@@ -436,12 +440,12 @@ const Combat = {
         UI.addCombatLog(`🌀 <strong>[${m.name}]</strong> bị Cổng Xoáy Cổ Ngữ làm tê liệt, mất lượt phản công!`, 'log-extra');
         UI.updateBattleStatsOnly();
         UI.updateMonsterDisplay();
-        this._scheduleNextTurn(skillRes.triggered && skillRes.type === 'burst' ? 4350 : 650);
+        this._scheduleNextTurn(skillRes.triggered && skillRes.type === 'burst' ? 4100 : 650);
         return;
       }
       const mDamage = Math.max(1, Math.floor(m.attack * (0.85 + Math.random() * 0.3)) - Player.getEffectiveDefense());
       const pTakeDmg = Player.takeDamage(mDamage);
-      const counterDelay = (skillRes.triggered && skillRes.type === 'burst') ? 4000 : 350;
+      const counterDelay = (skillRes.triggered && skillRes.type === 'burst') ? 3900 : 350;
 
       setTimeout(() => {
         UI.showDamageNumber(mDamage, false, 'player');
@@ -450,7 +454,8 @@ const Combat = {
 
         if (pTakeDmg.isDead) {
           UI.animatePlayerDeath();
-          UI.addCombatLog(`💥 ${m.name} tung đòn chí mạng gây <strong>-${mDamage}</strong>! Bạn đã tử trận!`, 'log-danger');
+          const formattedMDmg = (typeof UI !== 'undefined' && UI._formatNumber) ? UI._formatNumber(mDamage) : mDamage;
+          UI.addCombatLog(`💥 <strong>${m.name}</strong> tung đòn chí mạng gây <strong class="log-dmg-num">-${formattedMDmg}</strong>! Bạn đã tử trận!`, 'log-danger');
         } else {
           const regen = Player.getEffectiveHpRegen();
           if (regen > 0) Player.heal(regen);
@@ -460,7 +465,7 @@ const Combat = {
 
       UI.updateBattleStatsOnly();
       UI.updateMonsterDisplay();
-      this._scheduleNextTurn(skillRes.triggered && skillRes.type === 'burst' ? 4350 : undefined);
+      this._scheduleNextTurn(skillRes.triggered && skillRes.type === 'burst' ? 4100 : undefined);
     } catch (err) {
       console.error("Combat step recovered from error:", err);
       this._scheduleNextTurn(600);
@@ -477,10 +482,13 @@ const Combat = {
       UI.addCombatLog(`💎 Nhận 5 Kim Cương (${GameState.combat.monstersKilled} quái đã hạ)!`, 'level-up');
     }
 
+    const formattedGold = (typeof UI !== 'undefined' && UI._formatNumber) ? UI._formatNumber(goldEarned) : goldEarned;
+    const formattedExp = (typeof UI !== 'undefined' && UI._formatNumber) ? UI._formatNumber(m.expReward) : m.expReward;
     UI.addCombatLog(
       `☠️ Hạ gục <strong>${m.name}</strong> (Ải ${GameState.stage?.current || 1})! ` +
-      `<span class="gold-reward">+${goldEarned} 💰</span> ` +
-      `<span class="exp-reward">+${m.expReward} ✨</span>`
+      `<span class="gold-reward">+${formattedGold} 💰</span> ` +
+      `<span class="exp-reward">+${formattedExp} ✨</span>`,
+      'log-normal'
     );
 
     // TỰ ĐỘNG TIẾN ẢI KHI THẮNG QUÁI

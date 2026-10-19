@@ -3,7 +3,17 @@ const Dungeon = {
   _turnTimer: null,
   _isClimbing: false,
 
+  checkDailyReset() {
+    if (!GameState.dungeon) return;
+    const today = new Date().toDateString();
+    if (GameState.dungeon.lastResetDate !== today) {
+      GameState.dungeon.dailyRuns = { gold: 3, exp: 3, rune: 3, forge: 3 };
+      GameState.dungeon.lastResetDate = today;
+    }
+  },
+
   canEnter(dungeonId) {
+    this.checkDailyReset();
     const cfg = CONFIG.getDungeonById(dungeonId);
     if (!cfg) return false;
     if (cfg.isTower) return true;
@@ -13,6 +23,7 @@ const Dungeon = {
   },
 
   getRemainingRuns(dungeonId) {
+    this.checkDailyReset();
     const cfg = CONFIG.getDungeonById(dungeonId);
     if (!cfg || cfg.isTower) return 999;
     const key = cfg.id.replace('dungeon_', '');
@@ -21,6 +32,7 @@ const Dungeon = {
 
   // Khởi động từ sảnh phó bản
   start(dungeonId) {
+    this.checkDailyReset();
     const cfg = CONFIG.getDungeonById(dungeonId);
     if (!cfg) return { error: 'invalid_dungeon' };
 
@@ -157,6 +169,10 @@ const Dungeon = {
 
   stepRoom() {
     if (!GameState.dungeon.active || GameState.dungeon.subMode === 'tower') return;
+    if (typeof Cinematics !== 'undefined' && Cinematics.active) {
+      this._turnTimer = setTimeout(() => this.stepRoom(), 300);
+      return;
+    }
     const m = this.currentMonster;
     const p = GameState.player;
 
@@ -393,6 +409,10 @@ const Dungeon = {
 
   stepTower() {
     if (!GameState.dungeon.active || GameState.dungeon.subMode !== 'tower') return;
+    if (typeof Cinematics !== 'undefined' && Cinematics.active) {
+      this._turnTimer = setTimeout(() => this.stepTower(), 300);
+      return;
+    }
     const m = this.currentMonster;
     const p = GameState.player;
 

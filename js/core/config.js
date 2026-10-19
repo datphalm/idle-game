@@ -40,12 +40,14 @@ const GameState = {
     abyssFloor: 1,
     towerHighestFloor: 1,
     autoClimb: true,
-    dailyRuns: { gold: 3, exp: 3, rune: 3, forge: 3 }
+    dailyRuns: { gold: 3, exp: 3, rune: 3, forge: 3 },
+    lastResetDate: new Date().toDateString()
   },
   combat: { monstersKilled: 0 },
   boss: { active: false, bossIndex: 0, hp: 0, maxHp: 0, timer: 0, timerMax: 0, rage: 0, rageMax: 100 },
   settings: {
-    vfxEnabled: true
+    vfxEnabled: true,
+    autoBurst: true
   },
   lastSaveTime: Date.now()
 };
@@ -58,6 +60,7 @@ const CONFIG = {
   BASE_SPEED: 12,
   BASE_GOLD_RATE: 1.0,
   BASE_HP_REGEN: 3,
+  SKILL_MAX_LEVEL: 1000,
 
   // Level scaling
   EXP_BASE: 70,

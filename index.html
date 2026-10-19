@@ -119,6 +119,10 @@
             <input type="checkbox" id="chk-auto-stage" checked>
             <span>Tự động leo ải</span>
           </label>
+          <label class="auto-stage-toggle auto-burst-toggle" title="Tự động tung Tuyệt Kỹ Nộ (Ulti) khi hồi chiêu xong" style="margin-left: 8px;">
+            <input type="checkbox" id="chk-auto-burst" checked>
+            <span style="color:#fbbf24; font-weight:800;">⚡ Auto Ulti</span>
+          </label>
           <label class="auto-stage-toggle" title="Bật/Tắt hiệu ứng kỹ năng, hoạt ảnh & nộ 3D" style="margin-left: 8px;">
             <input type="checkbox" id="chk-toggle-vfx" checked>
             <span>Hiệu ứng FX</span>
@@ -136,6 +140,11 @@
           </div>
 
           <div id="arena-stage">
+            <!-- Atmospheric Dungeon Torches & Rune Floor -->
+            <div class="arena-torch torch-left"><div class="torch-fire"></div><div class="torch-glow"></div></div>
+            <div class="arena-torch torch-right"><div class="torch-fire"></div><div class="torch-glow"></div></div>
+            <div class="arena-dungeon-runes"></div>
+
             <!-- Player Side -->
             <div id="fighter-player" class="fighter-side">
               <div class="fighter-header">
@@ -278,49 +287,52 @@
           </div>
         </div>
 
-        <!-- Player Full Stats Panel -->
-        <div id="player-stats-panel" class="glass-panel">
-          <h2 class="panel-title">📊 Thuộc tính chiến đấu</h2>
-          <div class="stats-grid">
-            <div class="stat-item">
-              <span class="stat-label">❤️ Máu tối đa</span>
-              <span class="stat-value" id="stat-hp">120</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">⚔️ Sát thương</span>
-              <span class="stat-value" id="stat-attack">15</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">🛡️ Phòng thủ</span>
-              <span class="stat-value" id="stat-defense">3</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">⚡ Tốc độ (SPD)</span>
-              <span class="stat-value" id="stat-speed">12</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">🧪 Hồi phục/Lượt</span>
-              <span class="stat-value" id="stat-regen">+2 HP</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">💨 Tỉ lệ Đòn bồi</span>
-              <span class="stat-value" id="stat-extra-turn">15%</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">💰 Tỉ lệ vàng</span>
-              <span class="stat-value" id="stat-gold-rate">x1.00</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">📈 EXP cần</span>
-              <span class="stat-value" id="stat-exp-needed">80</span>
+        <!-- Lower HUD: Side-by-side Compact Stats & Combat Log to eliminate scrolling -->
+        <div class="battle-lower-hud">
+          <!-- Player Full Stats Panel -->
+          <div id="player-stats-panel" class="glass-panel">
+            <h2 class="panel-title">📊 Thuộc tính chiến đấu</h2>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <span class="stat-label">❤️ Máu tối đa</span>
+                <span class="stat-value" id="stat-hp">120</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">⚔️ Sát thương</span>
+                <span class="stat-value" id="stat-attack">15</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">🛡️ Phòng thủ</span>
+                <span class="stat-value" id="stat-defense">3</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">⚡ Tốc độ (SPD)</span>
+                <span class="stat-value" id="stat-speed">12</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">🧪 Hồi phục/Lượt</span>
+                <span class="stat-value" id="stat-regen">+2 HP</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">💨 Tỉ lệ Đòn bồi</span>
+                <span class="stat-value" id="stat-extra-turn">15%</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">💰 Tỉ lệ vàng</span>
+                <span class="stat-value" id="stat-gold-rate">x1.00</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">📈 EXP cần</span>
+                <span class="stat-value" id="stat-exp-needed">80</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Combat Log -->
-        <div id="combat-log-panel" class="glass-panel">
-          <h2 class="panel-title">📜 Nhật ký chiến đấu</h2>
-          <div id="combat-log"></div>
+          <!-- Combat Log -->
+          <div id="combat-log-panel" class="glass-panel">
+            <h2 class="panel-title">📜 Nhật ký chiến đấu</h2>
+            <div id="combat-log"></div>
+          </div>
         </div>
       </section>
 

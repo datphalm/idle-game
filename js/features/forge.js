@@ -15,11 +15,11 @@ const Forge = {
     const currentLevel = item.enhanceLevel || 0;
     if (currentLevel >= CONFIG.ENHANCE_MAX) return { error: 'max_level' };
 
+    const hasProtection = useProtectionStone && ((GameState.player?.protectionStones || 0) > 0);
+    if (useProtectionStone && !hasProtection) return { error: 'no_protection_stone' };
+
     const cost = CONFIG.getEnhanceCost(currentLevel, item.rarity);
     if (!Player.spendGold(cost)) return { error: 'not_enough_gold', cost };
-
-    const hasProtection = useProtectionStone && (GameState.player.protectionStones > 0);
-    if (useProtectionStone && !hasProtection) return { error: 'no_protection_stone' };
 
     const rates = CONFIG.getEnhanceRates(currentLevel);
     const oldLevel = currentLevel;
@@ -48,7 +48,7 @@ const Forge = {
 
     // 2. Thất bại có Bùa Bảo Hiểm
     if (hasProtection) {
-      GameState.player.protectionStones--;
+      Player.spendProtectionStones(1);
       return { success: false, type: 'protected', item, level: item.enhanceLevel, cost, stoneUsed: true };
     }
 

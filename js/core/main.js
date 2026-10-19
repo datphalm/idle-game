@@ -104,12 +104,17 @@ function startUILoop() {
       }
     }
 
+    // Kiểm tra reset phó bản qua ngày mới mỗi 10 giây
+    if (_autoTickCounter % 40 === 0 && typeof Dungeon !== 'undefined' && Dungeon.checkDailyReset) {
+      Dungeon.checkDailyReset();
+    }
+
     if (UI._currentTab === 'battle') {
       UI.updateBattleStatsOnly();
       UI.updateSkillCooldowns();
       UI.updateStageDisplay();
     } else if (UI._currentTab === 'heroes') {
-      UI.updateHeroesTab();
+      UI.updateHeroesTabAffordability();
     } else if (UI._currentTab === 'gacha') {
       UI.updateGacha();
     } else if (UI._currentTab === 'upgrades') {
