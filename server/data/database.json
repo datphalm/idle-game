@@ -1,12 +1,11 @@
 {
-  "version": "2.9.3",
+  "version": "2.9.4",
   "downloadUrl": "https://github.com/idlerpg/release/releases/latest",
   "changelog": [
-    "Trích xuất và bổ sung toàn diện chuỗi hoạt ảnh tấn công đa dạng (attack 1 đến 5) từ video gốc cho Trisa, Hilde, Heide và Mei Lin",
-    "Nâng cấp chuỗi combo chiến đấu liên hoàn 5 nhịp (5-hit combo chain) với đòn đánh thường, đá cao chẻ dọc, chưởng khí, lao kích và tuyệt kỹ kết liễu",
-    "Thêm hiệu ứng lướt tới, dậm sàn và nhịp di chuyển động lực học sống động cho mỗi đòn đánh của nhân vật trong giao tranh",
-    "Tối ưu hóa lượt đánh cộng thêm (extra turn) kích hoạt đòn đánh dứt điểm uy lực",
-    "Đảm bảo 100% không còn thanh dropdown menu hay viền giao diện, chuyển động mượt mà không bị méo lệch"
+    "Khắc phục triệt để hiện tượng xuất hiện menu dropdown trong hoạt ảnh của Hilde (đặc biệt ở các đòn tấn công combo 3, 4, 5)",
+    "Tích hợp thuật toán quét và triệt tiêu tự động hộp dropdown Spine ngay trong luồng xử lý trích xuất",
+    "Chuẩn hóa 100% frame hoạt ảnh của Hilde, Heide, Trisa và Mei Lin nằm trong các phân đoạn hoàn toàn không có menu",
+    "Bảo toàn trọn vẹn từng chi tiết cánh cung, mũi tên, thanh kiếm và tư thế chiến đấu của tất cả nhân vật"
   ],
   "players": [
     {

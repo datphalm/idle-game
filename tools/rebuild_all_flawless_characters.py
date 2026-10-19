@@ -13,13 +13,22 @@ def clean_spine_frame(frame):
     out = frame.copy()
     h, w = out.shape[:2]
     # Remove Spine window chrome:
-    out[:46, :] = 0          # Top title bar
-    out[:50, 830:] = 0       # Right close button 'X'
+    out[:48, :] = 0          # Top title bar
+    out[:55, 825:] = 0       # Right close button 'X'
     out[:, :22] = 0          # Left border
     out[:, w-8:] = 0         # Right border
-    out[815:, :] = 0         # Bottom player controls bar (scrubber, speed, loop, animation combobox)
-    out[805:, :55] = 0       # Play / pause button on bottom left
-    out[790:, 725:] = 0      # Zoom / pan text on bottom right
+    out[795:, :] = 0         # Bottom player controls bar (scrubber, speed, loop, animation combobox)
+    out[785:, :60] = 0       # Play / pause button on bottom left
+    out[775:, 700:] = 0      # Zoom / pan text on bottom right
+    
+    # Active Dropdown Menu Detection & Purge:
+    # If the Spine dropdown popup is open, it appears as a solid column of gray pixels (RGB 22..60)
+    gray = cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
+    dd_box = gray[100:750, 670:875]
+    dd_px = np.count_nonzero((dd_box > 22) & (dd_box < 60))
+    if dd_px > 3000:
+        # Wipe out entire dropdown menu box cleanly
+        out[60:800, 660:] = 0
     return out
 
 def extract_character_alpha(frame, mirror=False):
@@ -43,8 +52,8 @@ def extract_character_alpha(frame, mirror=False):
         
         if area < 15:
             continue
-        # 1. Eliminate Spine dropdown popup menu (tall vertical box situated at right edge x >= 640)
-        if x >= 640 and cx >= 720 and (ch > 80 or area > 1500):
+        # 1. Eliminate Spine dropdown popup menu or any vertical box at right edge
+        if x >= 640 and (ch > 60 or area > 1000):
             continue
         # 2. Eliminate mouse hand cursor in right quadrant
         if cw <= 35 and ch <= 40 and area < 400 and x > 640:
@@ -53,7 +62,7 @@ def extract_character_alpha(frame, mirror=False):
         if x >= 640 and y >= 640 and (cw <= 120 and ch <= 120) and area < 5000 and cx > 680:
             continue
         # 4. Eliminate any remaining bottom-right zoom / fit text
-        if y >= 780 and x >= 700:
+        if y >= 770 and x >= 680:
             continue
         # 5. Eliminate thin horizontal window/toolbar border lines (e.g. 3px tall by 670px wide)
         if ch <= 8 and cw > 80:
@@ -256,7 +265,7 @@ if __name__ == '__main__':
         'chibi_attack2': {'start': 505, 'end': 570, 'step': 1, 'duration': 40},
         'chibi_attack3': {'start': 620, 'end': 695, 'step': 1, 'duration': 40},
         'chibi_attack4': {'start': 3480, 'end': 3545, 'step': 1, 'duration': 42},
-        'chibi_attack5': {'start': 3585, 'end': 3650, 'step': 1, 'duration': 40},
+        'chibi_attack5': {'start': 3645, 'end': 3695, 'step': 1, 'duration': 40},
         'chibi_skill': {'start': 868, 'end': 940, 'step': 2, 'duration': 46},
         'chibi_hit': {'start': 3670, 'end': 3760, 'step': 1, 'duration': 45}
     }, mirror=False)
@@ -264,29 +273,29 @@ if __name__ == '__main__':
     # 2. HEIDE (Naturally faces left -> mirror=True to face right)
     # process_hero_showcase('heide', 'scratch/raw_hero2_heide/heide_left.mp4', mirror=False)
     process_hero_chibi('heide', 'scratch/raw_hero2_heide/heide_chibi.mp4', {
-        'chibi_idle': {'start': 285, 'end': 352, 'step': 1, 'duration': 45},
-        'chibi_walk': {'start': 730, 'end': 805, 'step': 1, 'duration': 40},
-        'chibi_attack': {'start': 505, 'end': 580, 'step': 1, 'duration': 42},
-        'chibi_attack2': {'start': 845, 'end': 902, 'step': 1, 'duration': 40},
-        'chibi_attack3': {'start': 1670, 'end': 1740, 'step': 1, 'duration': 40},
-        'chibi_attack4': {'start': 3045, 'end': 3130, 'step': 1, 'duration': 42},
-        'chibi_attack5': {'start': 610, 'end': 680, 'step': 1, 'duration': 40},
-        'chibi_skill': {'start': 2260, 'end': 2345, 'step': 2, 'duration': 46},
-        'chibi_hit': {'start': 395, 'end': 470, 'step': 1, 'duration': 45}
+        'chibi_idle': {'start': 285, 'end': 345, 'step': 1, 'duration': 45},
+        'chibi_walk': {'start': 730, 'end': 800, 'step': 1, 'duration': 40},
+        'chibi_attack': {'start': 510, 'end': 575, 'step': 1, 'duration': 42},
+        'chibi_attack2': {'start': 845, 'end': 900, 'step': 1, 'duration': 40},
+        'chibi_attack3': {'start': 1482, 'end': 1544, 'step': 1, 'duration': 40},
+        'chibi_attack4': {'start': 3030, 'end': 3082, 'step': 1, 'duration': 42},
+        'chibi_attack5': {'start': 618, 'end': 672, 'step': 1, 'duration': 40},
+        'chibi_skill': {'start': 2260, 'end': 2338, 'step': 2, 'duration': 46},
+        'chibi_hit': {'start': 395, 'end': 465, 'step': 1, 'duration': 45}
     }, mirror=True)
     
     # 3. HILDE (Naturally faces right)
     # process_hero_showcase('hilde', 'scratch/raw_hero1_hilde/hilde_left.mp4', mirror=False)
     process_hero_chibi('hilde', 'scratch/raw_hero1_hilde/hilde_chibi.mp4', {
-        'chibi_idle': {'start': 80, 'end': 140, 'step': 1, 'duration': 45},
+        'chibi_idle': {'start': 80, 'end': 135, 'step': 1, 'duration': 45},
         'chibi_walk': {'start': 245, 'end': 325, 'step': 1, 'duration': 40},
-        'chibi_attack': {'start': 165, 'end': 210, 'step': 1, 'duration': 42},
+        'chibi_attack': {'start': 155, 'end': 205, 'step': 1, 'duration': 42},
         'chibi_attack2': {'start': 675, 'end': 735, 'step': 1, 'duration': 40},
-        'chibi_attack3': {'start': 2460, 'end': 2530, 'step': 1, 'duration': 40},
-        'chibi_attack4': {'start': 3040, 'end': 3115, 'step': 1, 'duration': 40},
-        'chibi_attack5': {'start': 2700, 'end': 2765, 'step': 1, 'duration': 40},
+        'chibi_attack3': {'start': 2395, 'end': 2452, 'step': 1, 'duration': 42},
+        'chibi_attack4': {'start': 3380, 'end': 3425, 'step': 1, 'duration': 40},
+        'chibi_attack5': {'start': 3860, 'end': 3900, 'step': 1, 'duration': 40},
         'chibi_skill': {'start': 770, 'end': 825, 'step': 2, 'duration': 46},
-        'chibi_hit': {'start': 384, 'end': 415, 'step': 1, 'duration': 45}
+        'chibi_hit': {'start': 370, 'end': 412, 'step': 1, 'duration': 45}
     }, mirror=False)
     
     # 4. MEI LIN (Naturally faces right)
