@@ -1,12 +1,12 @@
 {
-  "version": "2.9.1",
-  "title": "Bản Cập Nhật v2.9.1 - Sửa Triệt Để Bounding Box Nhân Vật, Tạm Dừng Offline & Tối Ưu Ulti Audio",
+  "version": "2.9.2",
+  "title": "Bản Cập Nhật v2.9.2 - Xóa Triệt Để Dropdown Menu, Chuẩn Hóa Sprite Không Bị Che Cắt",
   "releaseDate": "2026-10-19",
   "changelog": [
-    "Sửa triệt để hiện tượng viền che mất bộ phận cơ thể của tất cả các nhân vật (Trisa, Heide, Hilde, Mei Lin)",
-    "Khắc phục nhân vật Mei Lin bị che mặt/tay ở bảng thông tin chi tiết showcase",
-    "Cập nhật cơ chế tạm dừng chiến đấu khi bảng Offline mở (nhân vật và quái vật đứng yên, click OK mới bắt đầu chiến đấu)",
-    "Khắc phục triệt để lỗi âm thanh Ulti lần đầu bị ngắt/cắt bằng hệ thống Preload và tính toán thời lượng phát mượt mà"
+    "Loại bỏ 100% thanh dropdown Spine và thanh điều khiển khỏi hoạt ảnh của tất cả nhân vật (Trisa, Heide, Hilde, Mei Lin)",
+    "Tách lọc chính xác tuyệt đối hình thể nhân vật, bảo toàn trọn vẹn toàn bộ tóc, vũ khí, phụ kiện và tay chân",
+    "Nâng cấp hiển thị Showcase và Chibi của Mei Lin cùng các tướng với z-index cao và tỷ lệ chuẩn xác",
+    "Đồng bộ toàn diện tài nguyên game lên phiên bản v2.9.2 hoàn hảo"
   ],
   "downloadUrl": "https://github.com/datphalm/idle-game/releases/latest"
 }

@@ -13,42 +13,56 @@ def clean_spine_frame(frame):
     out = frame.copy()
     h, w = out.shape[:2]
     # Remove Spine window chrome:
-    out[:44, :] = 0          # Top title bar
-    out[788:, :] = 0         # Bottom toolbar
+    out[:46, :] = 0          # Top title bar
+    out[:50, 830:] = 0       # Right close button 'X'
     out[:, :22] = 0          # Left border
-    out[:50, 835:] = 0       # Right close button 'X'
+    out[:, w-8:] = 0         # Right border
+    out[815:, :] = 0         # Bottom player controls bar (scrubber, speed, loop, animation combobox)
+    out[805:, :55] = 0       # Play / pause button on bottom left
+    out[790:, 725:] = 0      # Zoom / pan text on bottom right
     return out
 
 def extract_character_alpha(frame, mirror=False):
     cleaned = clean_spine_frame(frame)
+    h, w = cleaned.shape[:2]
     m = np.max(cleaned, axis=2)
     char_mask = (m > 8).astype(np.uint8) * 255
     
-    num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(char_mask, connectivity=8)
+    num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(char_mask, connectivity=8)
     clean_mask = np.zeros_like(char_mask)
+    if num_labels <= 1:
+        return Image.fromarray(np.zeros((h, w, 4), dtype=np.uint8), 'RGBA')
     
     for lbl in range(1, num_labels):
         area = stats[lbl, cv2.CC_STAT_AREA]
         x = stats[lbl, cv2.CC_STAT_LEFT]
         y = stats[lbl, cv2.CC_STAT_TOP]
-        w = stats[lbl, cv2.CC_STAT_WIDTH]
-        h = stats[lbl, cv2.CC_STAT_HEIGHT]
+        cw = stats[lbl, cv2.CC_STAT_WIDTH]
+        ch = stats[lbl, cv2.CC_STAT_HEIGHT]
+        cx, cy = centroids[lbl]
         
-        if area < 20:
+        if area < 15:
             continue
-        # Remove mouse hand cursor: small disconnected icon in right area
-        if w <= 32 and h <= 36 and area < 380 and x > 640:
+        # 1. Eliminate Spine dropdown popup menu (tall vertical box situated at right edge x >= 640)
+        if x >= 640 and cx >= 720 and (ch > 80 or area > 1500):
             continue
-        # Remove any lingering zoom text / bottom-right loop toolbar artifacts
-        if y >= 775 and x >= 640 and area < 500:
+        # 2. Eliminate mouse hand cursor in right quadrant
+        if cw <= 35 and ch <= 40 and area < 400 and x > 640:
+            continue
+        # 3. Eliminate collapsed dropdown button / loop checkbox
+        if x >= 640 and y >= 640 and (cw <= 120 and ch <= 120) and area < 5000 and cx > 680:
+            continue
+        # 4. Eliminate any remaining bottom-right zoom / fit text
+        if y >= 780 and x >= 700:
+            continue
+        # 5. Eliminate thin horizontal window/toolbar border lines (e.g. 3px tall by 670px wide)
+        if ch <= 8 and cw > 80:
             continue
             
         clean_mask[labels == lbl] = 255
         
     rgb = cv2.cvtColor(cleaned, cv2.COLOR_BGR2RGB)
     rgb[clean_mask == 0] = 0
-    
-    # Smooth edges slightly
     alpha = clean_mask
     rgba = np.dstack([rgb, alpha])
     
@@ -237,11 +251,11 @@ if __name__ == '__main__':
     process_hero_showcase('trisa', 'scratch/trisa_raw/trisa1.mp4', mirror=False)
     process_hero_chibi('trisa', 'scratch/trisa_raw/trisa2.mp4', {
         'chibi_idle': {'start': 97, 'end': 137, 'step': 1, 'duration': 45},
-        'chibi_walk': {'start': 240, 'end': 320, 'step': 1, 'duration': 40},
-        'chibi_attack': {'start': 360, 'end': 420, 'step': 1, 'duration': 42},
-        'chibi_attack2': {'start': 520, 'end': 600, 'step': 1, 'duration': 40},
-        'chibi_attack3': {'start': 700, 'end': 780, 'step': 1, 'duration': 40},
-        'chibi_skill': {'start': 860, 'end': 950, 'step': 2, 'duration': 46},
+        'chibi_walk': {'start': 195, 'end': 275, 'step': 1, 'duration': 40},
+        'chibi_attack': {'start': 400, 'end': 465, 'step': 1, 'duration': 42},
+        'chibi_attack2': {'start': 505, 'end': 570, 'step': 1, 'duration': 40},
+        'chibi_attack3': {'start': 620, 'end': 695, 'step': 1, 'duration': 40},
+        'chibi_skill': {'start': 868, 'end': 940, 'step': 2, 'duration': 46},
         'chibi_hit': {'start': 3670, 'end': 3760, 'step': 1, 'duration': 45}
     }, mirror=False)
     
@@ -260,23 +274,23 @@ if __name__ == '__main__':
     process_hero_showcase('hilde', 'scratch/raw_hero1_hilde/hilde_left.mp4', mirror=False)
     process_hero_chibi('hilde', 'scratch/raw_hero1_hilde/hilde_chibi.mp4', {
         'chibi_idle': {'start': 80, 'end': 140, 'step': 1, 'duration': 45},
-        'chibi_walk': {'start': 300, 'end': 350, 'step': 1, 'duration': 40},
-        'chibi_attack': {'start': 210, 'end': 255, 'step': 1, 'duration': 42},
-        'chibi_attack2': {'start': 660, 'end': 710, 'step': 1, 'duration': 40},
-        'chibi_skill': {'start': 765, 'end': 865, 'step': 2, 'duration': 46},
+        'chibi_walk': {'start': 245, 'end': 325, 'step': 1, 'duration': 40},
+        'chibi_attack': {'start': 165, 'end': 210, 'step': 1, 'duration': 42},
+        'chibi_attack2': {'start': 675, 'end': 735, 'step': 1, 'duration': 40},
+        'chibi_skill': {'start': 770, 'end': 825, 'step': 2, 'duration': 46},
         'chibi_hit': {'start': 384, 'end': 415, 'step': 1, 'duration': 45}
     }, mirror=False)
     
     # 4. MEI LIN (Naturally faces right)
     process_hero_showcase('meilin', 'scratch/raw_hero3_meilin/meilin_left.mp4', mirror=False)
     process_hero_chibi('meilin', 'scratch/raw_hero3_meilin/meilin_chibi.mp4', {
-        'chibi_idle': {'start': 270, 'end': 330, 'step': 1, 'duration': 45},
-        'chibi_walk': {'start': 650, 'end': 710, 'step': 1, 'duration': 40},
-        'chibi_attack': {'start': 760, 'end': 820, 'step': 1, 'duration': 42},
-        'chibi_attack2': {'start': 1070, 'end': 1130, 'step': 1, 'duration': 40},
-        'chibi_attack3': {'start': 760, 'end': 820, 'step': 1, 'duration': 42},
-        'chibi_skill': {'start': 370, 'end': 470, 'step': 2, 'duration': 46},
-        'chibi_hit': {'start': 835, 'end': 868, 'step': 1, 'duration': 45}
+        'chibi_idle': {'start': 275, 'end': 335, 'step': 1, 'duration': 45},
+        'chibi_walk': {'start': 640, 'end': 705, 'step': 1, 'duration': 40},
+        'chibi_attack': {'start': 715, 'end': 765, 'step': 1, 'duration': 42},
+        'chibi_attack2': {'start': 1096, 'end': 1136, 'step': 1, 'duration': 40},
+        'chibi_attack3': {'start': 715, 'end': 765, 'step': 1, 'duration': 42},
+        'chibi_skill': {'start': 450, 'end': 505, 'step': 2, 'duration': 46},
+        'chibi_hit': {'start': 868, 'end': 902, 'step': 1, 'duration': 45}
     }, mirror=False)
     
     sync_all()

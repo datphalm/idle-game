@@ -1,11 +1,11 @@
 {
-  "version": "2.9.1",
+  "version": "2.9.2",
   "downloadUrl": "https://github.com/idlerpg/release/releases/latest",
   "changelog": [
-    "Sửa triệt để hiện tượng viền che mất bộ phận cơ thể của tất cả các nhân vật (Trisa, Heide, Hilde, Mei Lin)",
-    "Khắc phục nhân vật Mei Lin bị che mặt/tay ở bảng thông tin chi tiết showcase",
-    "Cập nhật cơ chế tạm dừng chiến đấu khi bảng Offline mở (nhân vật và quái vật đứng yên, click OK mới bắt đầu chiến đấu)",
-    "Khắc phục triệt để lỗi âm thanh Ulti lần đầu bị ngắt/cắt bằng hệ thống Preload và tính toán thời lượng phát mượt mà"
+    "Loại bỏ 100% thanh dropdown Spine và thanh điều khiển khỏi hoạt ảnh của tất cả nhân vật (Trisa, Heide, Hilde, Mei Lin)",
+    "Tách lọc chính xác tuyệt đối hình thể nhân vật, bảo toàn trọn vẹn toàn bộ tóc, vũ khí, phụ kiện và tay chân",
+    "Nâng cấp hiển thị Showcase và Chibi của Mei Lin cùng các tướng với z-index cao và tỷ lệ chuẩn xác",
+    "Đồng bộ toàn diện tài nguyên game lên phiên bản v2.9.2 hoàn hảo"
   ],
   "players": [
     {
@@ -313,10 +313,10 @@
       "heroId": "hero_unknown_god",
       "constellation": 3,
       "level": 999,
-      "stage": 144,
-      "towerFloor": 89,
-      "power": 1570946,
-      "lastActive": 1791959073709,
+      "stage": 321,
+      "towerFloor": 189,
+      "power": 51301036716,
+      "lastActive": 1792418300261,
       "isMe": false
     },
     {
@@ -516,11 +516,11 @@
       "name": "Chiến Binh 1",
       "heroId": "hero_arcane_mage",
       "constellation": 6,
-      "level": 195,
-      "stage": 89,
+      "level": 480,
+      "stage": 98,
       "towerFloor": 1,
-      "power": 83748,
-      "lastActive": 1791960688080,
+      "power": 122176,
+      "lastActive": 1792418262840,
       "isMe": false
     },
     {
