@@ -115,6 +115,26 @@ def build_dist_release(base_dir: str):
     dist_dir = os.path.join(base_dir, "dist")
     os.makedirs(dist_dir, exist_ok=True)
 
+    version_file = os.path.join(base_dir, "version.json")
+    curr_version = "2.9.8"
+    if os.path.exists(version_file):
+        try:
+            with open(version_file, "r", encoding="utf-8") as vf:
+                curr_version = json.load(vf).get("version", "2.9.8")
+        except Exception:
+            pass
+
+    config_path = os.path.join(base_dir, "js", "core", "config.js")
+    if os.path.exists(config_path):
+        try:
+            with open(config_path, "r", encoding="utf-8") as cf:
+                c_content = cf.read()
+            c_content = re.sub(r"GAME_VERSION:\s*['\"][^'\"]*['\"]", f"GAME_VERSION: '{curr_version}'", c_content)
+            with open(config_path, "w", encoding="utf-8") as cf:
+                cf.write(c_content)
+        except Exception:
+            pass
+
     bundle_target = os.path.join(dist_dir, "js", "game.bundle.js")
     build_obfuscated_bundle(base_dir, bundle_target)
 
@@ -229,9 +249,18 @@ def build_dist_release(base_dir: str):
     with open(src_html, "r", encoding="utf-8") as f:
         html = f.read()
 
+    v_tag = "2.9.8"
+    if os.path.exists(version_file):
+        try:
+            with open(version_file, "r", encoding="utf-8") as vf:
+                v_tag = json.load(vf).get("version", "2.9.8")
+        except Exception:
+            pass
+
     script_block_pattern = r'<!-- Scripts theo từng phân hệ chức năng -->[\s\S]*?<\/body>'
-    replacement = """<!-- Production Bundle -->\n  <script src=\"js/game.bundle.js\"></script>\n</body>"""
+    replacement = f"""<!-- Production Bundle -->\n  <script src=\"js/game.bundle.js?v={v_tag}\"></script>\n</body>"""
     dist_html = re.sub(script_block_pattern, replacement, html)
+    dist_html = re.sub(r'href="css/style\.css(?:\?[^"]*)?"', f'href="css/style.css?v={v_tag}"', dist_html)
 
     dist_html_file = os.path.join(dist_dir, "index.html")
     with open(dist_html_file, "w", encoding="utf-8") as f:

@@ -377,16 +377,43 @@ namespace IdleRPGLauncher
 
                 if (IsNewerVersion(remoteVersion, localVersion))
                 {
-                    string bundleRel = activeBase.EndsWith(".onrender.com/") ? "api/patch/bundle" : "dist/js/game.bundle.js";
-                    DownloadFileSafe(activeBase + bundleRel, Path.Combine(_baseDir, "js", "game.bundle.js"));
+                    bool s1 = false;
+                    if (activeBase.EndsWith(".onrender.com/"))
+                    {
+                        s1 = DownloadFileSafe(activeBase + "api/patch/bundle", Path.Combine(_baseDir, "js", "game.bundle.js"));
+                    }
+                    else
+                    {
+                        s1 = DownloadFileSafe(activeBase + "dist/js/game.bundle.js", Path.Combine(_baseDir, "js", "game.bundle.js"));
+                        if (!s1) s1 = DownloadFileSafe(activeBase + "server/static/game.bundle.js", Path.Combine(_baseDir, "js", "game.bundle.js"));
+                    }
 
-                    string cssRel = activeBase.EndsWith(".onrender.com/") ? "api/patch/css" : "dist/css/style.css";
-                    DownloadFileSafe(activeBase + cssRel, Path.Combine(_baseDir, "css", "style.css"));
+                    bool s2 = false;
+                    if (activeBase.EndsWith(".onrender.com/"))
+                    {
+                        s2 = DownloadFileSafe(activeBase + "api/patch/css", Path.Combine(_baseDir, "css", "style.css"));
+                    }
+                    else
+                    {
+                        s2 = DownloadFileSafe(activeBase + "dist/css/style.css", Path.Combine(_baseDir, "css", "style.css"));
+                        if (!s2) s2 = DownloadFileSafe(activeBase + "server/static/css/style.css", Path.Combine(_baseDir, "css", "style.css"));
+                    }
 
-                    string htmlRel = activeBase.EndsWith(".onrender.com/") ? "api/patch/html" : "dist/index.html";
-                    DownloadFileSafe(activeBase + htmlRel, Path.Combine(_baseDir, "index.html"));
+                    bool s3 = false;
+                    if (activeBase.EndsWith(".onrender.com/"))
+                    {
+                        s3 = DownloadFileSafe(activeBase + "api/patch/html", Path.Combine(_baseDir, "index.html"));
+                    }
+                    else
+                    {
+                        s3 = DownloadFileSafe(activeBase + "dist/index.html", Path.Combine(_baseDir, "index.html"));
+                        if (!s3) s3 = DownloadFileSafe(activeBase + "server/static/index.html", Path.Combine(_baseDir, "index.html"));
+                    }
 
-                    File.WriteAllText(localVersionPath, remoteJson, System.Text.Encoding.UTF8);
+                    if (s1 || s3)
+                    {
+                        File.WriteAllText(localVersionPath, remoteJson, System.Text.Encoding.UTF8);
+                    }
                 }
             }
             catch { }
@@ -412,10 +439,16 @@ namespace IdleRPGLauncher
             return null;
         }
 
-        private static void DownloadFileSafe(string url, string targetPath)
+        private static bool DownloadFileSafe(string url, string targetPath)
         {
             try
             {
+                string targetDir = Path.GetDirectoryName(targetPath);
+                if (!string.IsNullOrEmpty(targetDir) && !Directory.Exists(targetDir))
+                {
+                    Directory.CreateDirectory(targetDir);
+                }
+
                 string tempPath = targetPath + ".tmp";
                 using (WebClient wc = new WebClient())
                 {
@@ -428,6 +461,7 @@ namespace IdleRPGLauncher
                 {
                     if (File.Exists(targetPath)) File.Delete(targetPath);
                     File.Move(tempPath, targetPath);
+                    return true;
                 }
                 else if (File.Exists(tempPath))
                 {
@@ -435,6 +469,7 @@ namespace IdleRPGLauncher
                 }
             }
             catch { }
+            return false;
         }
 
         private static string ExtractJsonValue(string json, string key)

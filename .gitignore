@@ -2,14 +2,14 @@
 # IDLE RPG - GIT IGNORE CONFIGURATION
 # ==========================================
 
-# 1. Thư mục phân phối và file thực thi nhị phân
-# (Tạo tự động bằng 'python tools/obfuscator.py', không đưa lên Git)
-dist/
+# 1. File thực thi nhị phân và file nén lớn
 *.exe
 *.dll
 *.pdb
 *.zip
 *.rar
+dist/*.exe
+dist/assets/
 js/game.bundle.js
 
 # 2. Python bytecode & cache

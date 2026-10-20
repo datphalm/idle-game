@@ -1,13 +1,12 @@
 {
-  "version": "2.9.7",
+  "version": "2.9.8",
   "downloadUrl": "https://github.com/idlerpg/release/releases/latest",
   "changelog": [
-    "Nâng cấp toàn bộ giao diện theo chuẩn đồ họa Dark Fantasy & Anime RPG hiện đại (Genshin / Honkai UI standard)",
-    "Hệ thống Navigation Dock thủy tinh phát sáng nổi (Floating Glassmorphic Dock) với viền neon tinh xảo và chỉ báo chuyển tab mượt mà",
-    "Nâng cấp sàn đấu Arena & Stage Navigator với chiều sâu ánh sáng, biểu tượng Ải mạ vàng hoàng kim và hiệu ứng rung chấn chiến trường",
-    "Thanh máu kim loại cao cấp (Metallic HP Bars) với hiệu ứng vệt sáng quét liên tục (Shimmer Reflection) và số sát thương nổ bạo kích rực rỡ",
-    "Thanh trạng thái đáy màn hình (Bottom Luxury HUD Dock) nổi với chip tiền tệ vàng, kim cương, kinh nghiệm và nút bấm bo góc phát sáng",
-    "Nâng cấp toàn bộ thẻ trang bị 7 phẩm chất (Rarity Hologram), thẻ anh hùng (Hero Roster), trạm rèn & vòng quay Gacha sang trọng đẳng cấp"
+    "Sửa triệt để lỗi phông chữ tiếng Việt trên toàn bộ hệ thống banner và giao diện game",
+    "Tự động bật chế độ Toàn Màn Hình (Fullscreen) ngay khi mở game trên máy tính",
+    "Thêm nút chuyển đổi nhanh Toàn Màn Hình / Cửa Sổ ở thanh trạng thái",
+    "Sửa lỗi hệ thống tự động cập nhật GitHub Hotpatch giúp client luôn tải đúng bản mới nhất",
+    "Tối ưu hóa hiệu năng, khử giật khung hình và chống lưu bộ nhớ đệm (Cache-Busting)"
   ],
   "players": [
     {
@@ -166,7 +165,7 @@
       "stage": 327,
       "towerFloor": 42,
       "power": 52110345826,
-      "lastActive": 1792441682689,
+      "lastActive": 1792468729758,
       "knownPlayers": [
         {
           "id": "p_1",
@@ -318,7 +317,7 @@
       "stage": 323,
       "towerFloor": 189,
       "power": 52111043366,
-      "lastActive": 1792425000315,
+      "lastActive": 1792468090159,
       "isMe": false
     },
     {
@@ -330,7 +329,7 @@
       "stage": 322,
       "towerFloor": 186,
       "power": 49680437212,
-      "lastActive": 1792422649934,
+      "lastActive": 1792468603457,
       "isMe": false
     },
     {
@@ -518,11 +517,11 @@
       "name": "Chiến Binh 1",
       "heroId": "hero_arcane_mage",
       "constellation": 6,
-      "level": 483,
-      "stage": 98,
+      "level": 500,
+      "stage": 101,
       "towerFloor": 1,
-      "power": 122583,
-      "lastActive": 1792423475047,
+      "power": 124873,
+      "lastActive": 1792468063345,
       "isMe": false
     },
     {

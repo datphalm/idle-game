@@ -158,6 +158,10 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.send_header("Accept-Ranges", "bytes")
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.send_header("Access-Control-Expose-Headers", "Content-Range, Accept-Ranges, Content-Length")
+                if any(file_path.endswith(ext) for ext in [".html", ".js", ".css", ".json"]):
+                    self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+                    self.send_header("Pragma", "no-cache")
+                    self.send_header("Expires", "0")
                 self.end_headers()
 
                 if not is_head:
