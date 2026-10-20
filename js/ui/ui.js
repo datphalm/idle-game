@@ -2590,6 +2590,22 @@ const UI = {
     this._renderHeroCollection();
   },
 
+  _formatSkillEffect(skKey, sk, level) {
+    if (skKey === 's3') {
+      const bonusPct = ((level - 1) * 1.0).toFixed(1);
+      const scaledMult = ((sk?.dmgMult || 5.5) * (1 + (level - 1) * 0.01) * 100).toFixed(1);
+      return `⚡ Uy lực hiện tại: <strong style="color:#00ffcc;">${scaledMult}% ATK</strong> <span style="color:#94a3b8;">(+${bonusPct}% Nộ)</span>`;
+    } else if (skKey === 's2') {
+      const bonusPct = ((level - 1) * 0.6).toFixed(1);
+      const scaledMult = ((sk?.dmgMult || 2.0) * (1 + (level - 1) * 0.006) * 100).toFixed(1);
+      return `⚔️ Uy lực hiện tại: <strong style="color:#38bdf8;">${scaledMult}% ATK</strong> <span style="color:#94a3b8;">(+${bonusPct}% Chiêu)</span>`;
+    } else {
+      const bonusPct = ((level - 1) * 0.3).toFixed(1);
+      const totalBonus = (((sk?.bonusAtk || 0.08) * (1 + (level - 1) * 0.003)) * 100).toFixed(1);
+      return `🔥 Hiệu quả hiện tại: <strong style="color:#fbbf24;">+${totalBonus}% ATK</strong> <span style="color:#94a3b8;">(+${bonusPct}% Tích Lũy)</span>`;
+    }
+  },
+
   _renderHeroShowcase() {
     const container = document.getElementById('active-hero-showcase');
     if (!container) return;
@@ -2634,6 +2650,9 @@ const UI = {
             </div>
           </div>
           <div class="skill-desc-txt">${sk.desc}</div>
+          <div class="skill-current-effect" id="skill-current-effect-${skKey}" style="font-size:0.75rem; margin:6px 0; padding:4px 8px; background:rgba(0,0,0,0.35); border-radius:6px; border:1px solid rgba(255,255,255,0.08);">
+            ${this._formatSkillEffect(skKey, sk, skLevel)}
+          </div>
           <div class="skill-card-footer">
             <div class="skill-level-row">
               <span class="skill-lvl-badge" id="skill-lvl-badge-${skKey}">Cấp ${skLevel}</span>
@@ -2859,6 +2878,14 @@ const UI = {
     if (costTxt) costTxt.innerHTML = `💰 ${this._formatNumber(newCost)}`;
     const upBtn = document.querySelector(`.btn-skill-upgrade[data-skill="${skKey}"]`);
     if (upBtn) upBtn.disabled = (GameState.player?.gold || 0) < newCost;
+
+    const effElem = document.getElementById(`skill-current-effect-${skKey}`);
+    if (effElem) {
+      const activeId = GameState.activeHeroId || 'hero_starter';
+      const heroCfg = CONFIG.getHeroById(activeId);
+      const sk = skKey === 's1' ? heroCfg?.skills?.[0] : (skKey === 's2' ? heroCfg?.skills?.[1] : heroCfg?.skills?.[2]);
+      effElem.innerHTML = this._formatSkillEffect(skKey, sk, newLevel);
+    }
 
     this.showToast(`✨ Nâng cấp kỹ năng lên Cấp ${newLevel}! (-${this._formatNumber(cost)} 💰)`);
     this.updateBattleStatsOnly();
@@ -3379,6 +3406,12 @@ const UI = {
           if (costElem) costElem.innerHTML = `💰 ${this._formatNumber(newCost)}`;
           const btn = document.querySelector(`.btn-skill-upgrade[data-skill="${skKey}"]`);
           if (btn) btn.disabled = (GameState.player?.gold || 0) < newCost;
+
+          const effElem = document.getElementById(`skill-current-effect-${skKey}`);
+          if (effElem) {
+            const sk = skKey === 's1' ? heroCfg?.skills?.[0] : (skKey === 's2' ? heroCfg?.skills?.[1] : heroCfg?.skills?.[2]);
+            effElem.innerHTML = this._formatSkillEffect(skKey, sk, newLevel);
+          }
 
           this.updateStatusBar();
         }

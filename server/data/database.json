@@ -1,5 +1,5 @@
 {
-  "version": "2.9.8",
+  "version": "2.9.9",
   "downloadUrl": "https://github.com/idlerpg/release/releases/latest",
   "changelog": [
     "Sửa triệt để lỗi phông chữ tiếng Việt trên toàn bộ hệ thống banner và giao diện game",
@@ -163,9 +163,9 @@
       "constellation": 1,
       "level": 999,
       "stage": 327,
-      "towerFloor": 42,
-      "power": 52110345826,
-      "lastActive": 1792468729758,
+      "towerFloor": 68,
+      "power": 52110345917,
+      "lastActive": 1792470317559,
       "knownPlayers": [
         {
           "id": "p_1",
@@ -317,7 +317,7 @@
       "stage": 323,
       "towerFloor": 189,
       "power": 52111043366,
-      "lastActive": 1792468090159,
+      "lastActive": 1792470818912,
       "isMe": false
     },
     {
@@ -326,10 +326,10 @@
       "heroId": "hero_raiden",
       "constellation": 1,
       "level": 999,
-      "stage": 322,
+      "stage": 323,
       "towerFloor": 186,
       "power": 49680437212,
-      "lastActive": 1792468603457,
+      "lastActive": 1792470044396,
       "isMe": false
     },
     {
@@ -517,11 +517,11 @@
       "name": "Chiến Binh 1",
       "heroId": "hero_arcane_mage",
       "constellation": 6,
-      "level": 500,
+      "level": 501,
       "stage": 101,
       "towerFloor": 1,
-      "power": 124873,
-      "lastActive": 1792468063345,
+      "power": 125011,
+      "lastActive": 1792469841868,
       "isMe": false
     },
     {

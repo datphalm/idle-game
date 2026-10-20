@@ -64,6 +64,12 @@ const Player = {
     const weaponRefinement = equippedWeapon?.refinement || 1;
     const weaponRefinementMult = 1 + (CONFIG.WEAPON_REFINEMENT?.getBonus(weaponRefinement) || 0);
 
+    const s1Level = userHero.skillLevels?.s1 || 1;
+    const s1Scale = 1 + (s1Level - 1) * 0.003; // +0.3% mỗi cấp cho kỹ năng nội tại vô hạn
+    const s1BonusAtk = (heroCfg.skills?.[0]?.bonusAtk || 0.08) * s1Scale;
+    const s1BonusDef = (heroCfg.skills?.[0]?.bonusDef || 0) * s1Scale;
+    const s1BonusGold = (heroCfg.skills?.[0]?.bonusGold || 0) * (1 + (s1Level - 1) * 0.002);
+
     return {
       config: heroCfg,
       userHero,
@@ -75,11 +81,11 @@ const Player = {
       extraTurnBonus,
       weaponRefinement,
       weaponRefinementMult,
-      totalAtkMult: (1 + (heroCfg.atkBonusPct || 0) + bonusAtk + (heroCfg.skills?.[0]?.bonusAtk || 0)) * weaponRefinementMult,
+      totalAtkMult: (1 + (heroCfg.atkBonusPct || 0) + bonusAtk + s1BonusAtk) * weaponRefinementMult,
       totalHpMult: 1 + (heroCfg.hpBonusPct || 0) + bonusHp,
-      totalDefMult: 1 + (heroCfg.defBonusPct || 0) + bonusDef + (heroCfg.skills?.[0]?.bonusDef || 0),
+      totalDefMult: 1 + (heroCfg.defBonusPct || 0) + bonusDef + s1BonusDef,
       extraSpd: (heroCfg.spdBonus || 0) + extraSpd,
-      extraGoldRate: (heroCfg.skills?.[0]?.bonusGold || 0) + extraGoldRate
+      extraGoldRate: s1BonusGold + extraGoldRate
     };
   },
 
@@ -210,7 +216,7 @@ const Player = {
       this._skill3NextReady = now + (cd * 1000);
       const userHero = hero.userHero;
       const skillLevel = userHero.skillLevels?.s3 || 1;
-      const baseDmg = this.getEffectiveAttack() * (skill3.dmgMult * (1 + (skillLevel - 1) * 0.1));
+      const baseDmg = this.getEffectiveAttack() * (skill3.dmgMult * (1 + (skillLevel - 1) * 0.01)); // +1.0% mỗi cấp nộ vô hạn
       const dmg = Math.floor(baseDmg * (1 + (hero.burstDmgBonus || 0)));
 
       // Kazuha E1: Tung Nộ lập tức làm mới 100% hồi chiêu của Skill 2!
@@ -239,7 +245,7 @@ const Player = {
       this._skill2NextReady = now + (cd * 1000);
       const userHero = hero.userHero;
       const skillLevel = userHero.skillLevels?.s2 || 1;
-      const baseDmg = this.getEffectiveAttack() * (skill2.dmgMult * (1 + (skillLevel - 1) * 0.08));
+      const baseDmg = this.getEffectiveAttack() * (skill2.dmgMult * (1 + (skillLevel - 1) * 0.006)); // +0.6% mỗi cấp chiến kỹ vô hạn
       const dmg = Math.floor(baseDmg * (1 + (hero.skillDmgBonus || 0)));
       return { triggered: true, type: 'skill', skill: skill2, damage: dmg, hero: hero.config };
     }
